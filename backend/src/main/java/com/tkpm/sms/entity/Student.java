@@ -1,6 +1,12 @@
 package com.tkpm.sms.entity;
 
+import com.tkpm.sms.Enum.Faculty;
+import com.tkpm.sms.Enum.Gender;
+import com.tkpm.sms.Enum.Status;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,15 +24,28 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+    @Column(name = "studentId", unique = true)
     String studentId;
     String name;
     Date dob;
-    String gender;
-    String faculty;
+    @Enumerated(EnumType.STRING)
+    @Column (nullable = false)
+    Gender gender;
+    @Enumerated(EnumType.STRING)
+    @Column (nullable = false)
+    Faculty faculty;
     Integer course;
     String program;
+    @Email
+    @NotNull
+    @Column(nullable = false, unique = true)
     String email;
     String address;
+    @NotNull
+    @Pattern(regexp = "^0\\d{9}$", message = "Phone number must start with 0 and have 10 digits")
+    @Column(nullable = false, unique = true, length = 10)
     String phone;
-    String status;
+    @Enumerated(EnumType.STRING)
+    @Column (nullable = false)
+    Status status = Status.Studying;
 }
