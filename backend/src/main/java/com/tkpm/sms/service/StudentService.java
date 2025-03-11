@@ -4,9 +4,11 @@ import com.tkpm.sms.dto.StudentRequest;
 import com.tkpm.sms.dto.StudentResponse;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.beans.Transient;
 import java.util.List;
 
 @Service
@@ -19,8 +21,6 @@ public class StudentService {
     }
 
     public void addNewStudent(StudentRequest studentRequest) {
-        // create UUID
-        String id = java.util.UUID.randomUUID().toString();
         if(studentRepository.existsStudentByStudentId(studentRequest.getStudentId())) {
             throw new RuntimeException("Student ID already exists");
         }
@@ -28,7 +28,6 @@ public class StudentService {
             throw new RuntimeException("Email already exists");
         }
         Student student = Student.builder()
-                    .id(id)
                     .studentId(studentRequest.getStudentId())
                     .name(studentRequest.getName())
                     .dob(studentRequest.getDob())
@@ -53,8 +52,20 @@ public class StudentService {
     }
 
     public void updateStudent(String id, StudentRequest studentRequest) {
-        var student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found"));
-        student.setStudentId(studentRequest.getStudentId());
+        var student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        if (studentRequest.getName() != null) student.setName(studentRequest.getName());
+        if (studentRequest.getDob() != null) student.setDob(studentRequest.getDob());
+        if (studentRequest.getGender() != null) student.setGender(studentRequest.getGender());
+        if (studentRequest.getFaculty() != null) student.setFaculty(studentRequest.getFaculty());
+        if (studentRequest.getCourse() != null) student.setCourse(studentRequest.getCourse());
+        if (studentRequest.getProgram() != null) student.setProgram(studentRequest.getProgram());
+        if (studentRequest.getEmail() != null) student.setEmail(studentRequest.getEmail());
+        if (studentRequest.getAddress() != null) student.setAddress(studentRequest.getAddress());
+        if (studentRequest.getPhone() != null) student.setPhone(studentRequest.getPhone());
+        if (studentRequest.getStatus() != null) student.setStatus(studentRequest.getStatus());
+
         studentRepository.save(student);
     }
 

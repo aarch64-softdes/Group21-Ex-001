@@ -36,7 +36,7 @@ public class StudentController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> updateStudent(@PathVariable String id,  @RequestBody StudentRequest student)
     {
         studentService.updateStudent(id, student);
