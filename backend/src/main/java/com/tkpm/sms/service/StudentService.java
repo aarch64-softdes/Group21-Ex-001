@@ -21,6 +21,12 @@ public class StudentService {
     public void addNewStudent(StudentRequest studentRequest) {
         // create UUID
         String id = java.util.UUID.randomUUID().toString();
+        if(studentRepository.existsStudentByStudentId(studentRequest.getStudentId())) {
+            throw new RuntimeException("Student ID already exists");
+        }
+        if(studentRepository.existsStudentByEmail(studentRequest.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
         Student student = Student.builder()
                     .id(id)
                     .studentId(studentRequest.getStudentId())
@@ -40,6 +46,9 @@ public class StudentService {
     }
 
     public void deleteStudentById(String id) {
+        if(studentRepository.existsStudentByStudentId(id)) {
+            throw new RuntimeException("Student not found");
+        }
         studentRepository.deleteById(id);
     }
 

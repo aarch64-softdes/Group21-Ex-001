@@ -4,6 +4,7 @@ import com.tkpm.sms.dto.StudentRequest;
 import com.tkpm.sms.dto.StudentResponse;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,8 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<?> addNewStudent(@RequestBody StudentRequest student) {
+    @PostMapping("/")
+    public ResponseEntity<?> addNewStudent(@Valid @RequestBody StudentRequest student) {
         studentService.addNewStudent(student);
         return ResponseEntity.ok().build();
     }
