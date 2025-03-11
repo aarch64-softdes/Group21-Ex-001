@@ -1,5 +1,7 @@
 package com.tkpm.sms.controller;
 
+import com.tkpm.sms.dto.StudentRequest;
+import com.tkpm.sms.dto.StudentResponse;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +17,13 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Student>> getAllStudents() {
-        List<Student> students = studentService.getAllStudents();
+    public ResponseEntity<List<StudentResponse>> getAllStudents() {
+        List<StudentResponse> students = studentService.getAllStudents();
         return ResponseEntity.ok(students);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> addNewStudent(@RequestBody Student student) {
+    public ResponseEntity<?> addNewStudent(@RequestBody StudentRequest student) {
         studentService.addNewStudent(student);
         return ResponseEntity.ok().build();
     }
@@ -34,15 +36,15 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateStudent(@PathVariable String id,  @RequestBody Student student)
+    public ResponseEntity<?> updateStudent(@PathVariable String id,  @RequestBody StudentRequest student)
     {
         studentService.updateStudent(id, student);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Student>> getStudentsByNameOrId(@RequestParam String find) {
-        List<Student> students = studentService.getStudentsByNameOrId(find);
+    public ResponseEntity<List<StudentResponse>> getStudentsByNameOrId(@RequestParam String find) {
+        List<StudentResponse> students = studentService.getStudentsByNameOrId(find);
         return ResponseEntity.ok(students);
     }
 }
