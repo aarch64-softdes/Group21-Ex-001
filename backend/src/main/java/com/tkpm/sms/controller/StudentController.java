@@ -2,7 +2,6 @@ package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.StudentRequest;
 import com.tkpm.sms.dto.StudentResponse;
-import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +16,12 @@ import java.util.List;
 public class StudentController {
     private final StudentService studentService;
 
-    @GetMapping("/")
-    public ResponseEntity<List<StudentResponse>> getAllStudents() {
-        List<StudentResponse> students = studentService.getAllStudents();
+    @GetMapping
+    public ResponseEntity<List<StudentResponse>> getStudents(@RequestParam(defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "studentId") String sortName,
+                                                                @RequestParam(defaultValue = "asc") String sortType,
+                                                                @RequestParam(defaultValue = "") String search) {
+        List<StudentResponse> students = studentService.getStudents(page, sortName, sortType, search);
         return ResponseEntity.ok(students);
     }
 
@@ -41,11 +43,5 @@ public class StudentController {
     {
         studentService.updateStudent(id, student);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<StudentResponse>> getStudentsByNameOrId(@RequestParam String find) {
-        List<StudentResponse> students = studentService.getStudentsByNameOrId(find);
-        return ResponseEntity.ok(students);
     }
 }

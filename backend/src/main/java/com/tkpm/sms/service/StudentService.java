@@ -4,20 +4,27 @@ import com.tkpm.sms.dto.StudentRequest;
 import com.tkpm.sms.dto.StudentResponse;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.repository.StudentRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
-import java.beans.Transient;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final int PAGE_SIZE = 5;
 
-    public List<StudentResponse> getAllStudents() {
-        return studentRepository.findAll().stream().map(this::mapToResponse).toList();
+    public List<StudentResponse> getStudents(int page, String sortName, String sortType, String search) {
+        Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE,
+                                            Sort.by(sortType.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                                            sortName));
+        Page<Student> students = studentRepository.getStudents(search, pageable);
+        return students.stream().map(this::mapToResponse).toList();
     }
 
     public void addNewStudent(StudentRequest studentRequest) {
@@ -67,10 +74,6 @@ public class StudentService {
         if (studentRequest.getStatus() != null) student.setStatus(studentRequest.getStatus());
 
         studentRepository.save(student);
-    }
-
-    public List<StudentResponse> getStudentsByNameOrId(String find) {
-        return studentRepository.getStudentsByNameOrId(find).stream().map(this::mapToResponse).toList();
     }
 
     private StudentResponse mapToResponse(Student student) {
