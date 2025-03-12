@@ -21,6 +21,8 @@ public class StudentRequest {
     @NotNull(message = "Student ID is required")
     String studentId;
 
+    @NotNull
+    @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "Name must contain only letters")
     String name;
     Date dob;
     Gender gender;

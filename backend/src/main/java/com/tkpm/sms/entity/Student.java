@@ -28,6 +28,8 @@ public class Student {
     @Column(name = "student_Id", unique = true)
     String studentId;
 
+    @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "Name must contain only letters")
+    @NotNull
     String name;
 
     Date dob;
@@ -46,14 +48,14 @@ public class Student {
 
     @Email
     @NotNull
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     String email;
 
     String address;
 
     @NotNull
     @Pattern(regexp = "^0\\d{9}$", message = "Phone number must start with 0 and have 10 digits")
-    @Column(nullable = false, unique = true, length = 10)
+    @Column(unique = true, length = 10)
     String phone;
 
     @Enumerated(EnumType.STRING)
