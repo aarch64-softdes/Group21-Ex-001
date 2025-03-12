@@ -1,6 +1,5 @@
-package com.tkpm.sms.Exception;
+package com.tkpm.sms.exceptions;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
