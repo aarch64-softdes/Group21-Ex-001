@@ -1,5 +1,4 @@
 import { SortConfig } from "@/components/table/TableSort";
-import { getErrorMessage } from "@/lib/utils";
 import { FilterOption, FilterParams } from "@/types/filter";
 import { Column, QueryHook, TableActions } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
@@ -15,10 +14,8 @@ export const useTableAdd = <T extends { id: string }>(
       setIsAdding(true);
       setDialogOpen(false);
       await actions?.onAdd?.(value);
-      // Toast removed
     } catch (error) {
-      // Toast removed
-      console.error("Failed to add:", getErrorMessage(error));
+      console.error(error);
     } finally {
       setIsAdding(false);
     }
@@ -74,17 +71,14 @@ export const useTableEdit = <T extends { id: string }>(
       setIsSaving(true);
       const errors = validateFields();
       if (Object.keys(errors).length > 0) {
-        // Toast removed
-        console.error("Validation error:", errors[Object.keys(errors)[0]]);
+        console.error("Validation failed", errors);
         return;
       }
 
       await actions?.onSave?.(id, editedValues as T);
       handleCancel();
-      // Toast removed
     } catch (error) {
-      // Toast removed
-      console.error("Failed to save:", getErrorMessage(error));
+      console.error(error);
     } finally {
       setIsSaving(false);
     }
@@ -125,10 +119,8 @@ export const useTableDelete = (actions?: TableActions) => {
       setDeletingRow(id);
       await actions?.onDelete?.(id);
       setDeletingRow(null);
-      // Toast removed
     } catch (error) {
-      // Toast removed
-      console.error("Failed to delete:", getErrorMessage(error));
+      console.error(error);
     } finally {
       setIsDeleting(false);
     }
@@ -180,7 +172,7 @@ export function useGenericTableData<T>({
         setSortConfig({ key: defaultSortColumn ?? null, direction: "asc" });
       }
     },
-    [defaultSortColumn]
+    []
   );
 
   const query = useQueryHook({

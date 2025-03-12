@@ -56,6 +56,9 @@ const StudentPage: React.FC = () => {
           const result = StudentFormSchema.shape.dob.safeParse(value);
           return result.success ? null : result.error.errors[0].message;
         },
+        transform: (value: string) => {
+          return new Date(value).toLocaleDateString();
+        },
       },
       {
         header: "Gender",
@@ -157,6 +160,7 @@ const StudentPage: React.FC = () => {
     id: "search",
     label: "Search",
     labelIcon: Search,
+    placeholder: "Search by id, name",
     type: "search",
   };
 

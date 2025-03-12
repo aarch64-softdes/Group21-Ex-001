@@ -37,6 +37,7 @@ export interface BaseFilterOption {
 
 export interface SearchFilterOption extends BaseFilterOption {
   value?: string;
+  placeholder?: string;
   onChange?: (value: string) => void;
   type: "search";
 }

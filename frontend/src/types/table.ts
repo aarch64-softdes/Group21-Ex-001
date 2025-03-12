@@ -17,6 +17,7 @@ export interface Column<T> {
   sortable?: boolean;
   style?: ColumnStyle;
   validate?: (value: T[keyof T]) => string | null;
+  transform?: (value: T[keyof T]) => string;
 }
 
 // Must use "any" here because the type of the data is not known

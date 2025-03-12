@@ -116,6 +116,8 @@ const GenericTable = <T extends { id: string }>({
                       fieldErrors[String(column.key)] ? "border-red-500" : ""
                     )}
                   />
+                ) : column.transform ? (
+                  column.transform(cell[column.key])
                 ) : (
                   String(cell[column.key])
                 )}
@@ -237,13 +239,9 @@ const GenericTable = <T extends { id: string }>({
     [filterOptions, filters.onChange, filters.value]
   );
 
-  if (state.isLoading) {
-    return <SkeletonTable rows={10} />;
-  }
-
   return (
     <>
-      <div className="flex h-full min-w-1/5 flex-col gap-4 rounded-md border-2 px-4">
+      <div className="flex h-full min-w-72 flex-col gap-4 rounded-md border-2 px-4">
         <h2 className="pt-4 text-center text-2xl font-semibold">
           {tableTitle}
         </h2>
@@ -270,14 +268,20 @@ const GenericTable = <T extends { id: string }>({
       </div>
 
       <div className="flex-grow">
-        <Table>
-          {tableHeader}
+        {state.isLoading ? (
+          <SkeletonTable rows={pagination.pageSize} />
+        ) : (
+          <>
+            <Table>
+              {tableHeader}
 
-          {tableBody}
-        </Table>
+              {tableBody}
+            </Table>
 
-        <Separator />
-        <TablePagination {...pagination} />
+            <Separator />
+            <TablePagination {...pagination} />
+          </>
+        )}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
