@@ -1,5 +1,7 @@
 package com.tkpm.sms.enums;
 
+import java.util.Arrays;
+
 public enum Faculty {
     Faculty_of_Japanese,
     Faculty_of_French,
