@@ -160,15 +160,6 @@ export function useGenericTableData<T>({
   const [filters, setFilters] = useState<Record<string, FilterParams>>(
     filterOptions.reduce((acc, option) => {
       switch (option.type) {
-        case "enum":
-          acc[option.id] = [];
-          break;
-        case "range":
-          acc[option.id] = [option.min, option.max];
-          break;
-        case "date":
-          acc[option.id] = [option.minDate, option.maxDate];
-          break;
         case "search":
           acc[option.id] = option.value ?? "";
           break;

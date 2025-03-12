@@ -23,9 +23,6 @@ import {
 import { GenericTableProps } from "@/types/table";
 import { PlusCircle } from "lucide-react";
 import { useMemo } from "react";
-import DateRangeFilter from "@/components/filter/DateRangeFilter";
-import EnumFilter from "@/components/filter/EnumFilter";
-import RangeFilter from "@/components/filter/RangeFilter";
 import SearchFilter from "@/components/filter/SearchFilter";
 import { Accordion } from "@/components/ui/accordion";
 import LoadingButton from "@/components/ui/loadingButton";
@@ -34,6 +31,7 @@ import TableSort from "./TableSort";
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
+  addingTitle,
   columns,
   actions,
   formComponent: CreateForm,
@@ -190,37 +188,37 @@ const GenericTable = <T extends { id: string }>({
     () =>
       filterOptions.map((filterOption) => {
         switch (filterOption.type) {
-          case "enum":
-            return (
-              <EnumFilter
-                key={filterOption.id}
-                onChange={(value) => filters.onChange(filterOption.id, value)}
-                {...filterOption}
-                componentType="accordion"
-              />
-            );
+          // case "enum":
+          //   return (
+          //     <EnumFilter
+          //       key={filterOption.id}
+          //       onChange={(value) => filters.onChange(filterOption.id, value)}
+          //       {...filterOption}
+          //       componentType="accordion"
+          //     />
+          //   );
 
-          case "range":
-            return (
-              <RangeFilter
-                key={filterOption.id}
-                value={filters.value[filterOption.id] as [number, number]}
-                onChange={(value) => filters.onChange(filterOption.id, value)}
-                {...filterOption}
-                componentType="accordion"
-              />
-            );
+          // case "range":
+          //   return (
+          //     <RangeFilter
+          //       key={filterOption.id}
+          //       value={filters.value[filterOption.id] as [number, number]}
+          //       onChange={(value) => filters.onChange(filterOption.id, value)}
+          //       {...filterOption}
+          //       componentType="accordion"
+          //     />
+          //   );
 
-          case "date":
-            return (
-              <DateRangeFilter
-                key={filterOption.id}
-                value={filters.value[filterOption.id] as [Date, Date]}
-                onChange={(value) => filters.onChange(filterOption.id, value)}
-                {...filterOption}
-                componentType="accordion"
-              />
-            );
+          // case "date":
+          //   return (
+          //     <DateRangeFilter
+          //       key={filterOption.id}
+          //       value={filters.value[filterOption.id] as [Date, Date]}
+          //       onChange={(value) => filters.onChange(filterOption.id, value)}
+          //       {...filterOption}
+          //       componentType="accordion"
+          //     />
+          //   );
 
           case "search":
             return (
@@ -245,9 +243,9 @@ const GenericTable = <T extends { id: string }>({
 
   return (
     <>
-      <div className="flex h-full min-w-64 flex-col gap-4 rounded-md border-2 px-4">
+      <div className="flex h-full min-w-1/5 flex-col gap-4 rounded-md border-2 px-4">
         <h2 className="pt-4 text-center text-2xl font-semibold">
-          {tableTitle} List
+          {tableTitle}
         </h2>
 
         <LoadingButton
@@ -257,7 +255,7 @@ const GenericTable = <T extends { id: string }>({
           isLoading={isAdding}
         >
           <PlusCircle className="h-5 w-5" />
-          Add {tableTitle}
+          {addingTitle}
         </LoadingButton>
         <Separator />
 

@@ -69,6 +69,7 @@ export type QueryHookParams = {
 
 export interface GenericTableProps<T extends { id: string }> {
   tableTitle: string;
+  addingTitle: string;
   columns: Column<T>[];
   actions?: TableActions;
   formComponent: React.ComponentType<{

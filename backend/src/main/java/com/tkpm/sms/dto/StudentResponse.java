@@ -21,8 +21,8 @@ public class StudentResponse {
     String studentId;
     String name;
     Date dob;
-    Gender gender;
-    Faculty faculty;
+    String gender;
+    String faculty;
     Integer course;
     String program;
     String email;

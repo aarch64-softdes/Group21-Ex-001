@@ -17,7 +17,7 @@ public class EnumUtils {
                 .map(enumVal -> {
                     Map<String, String> pair = new HashMap<>();
                     pair.put("name", enumVal.name());
-                    pair.put("value", enumVal.toString());
+                    pair.put("value", enumVal.name().replace("_", " "));
                     return pair;
                 })
                 .toList();
