@@ -1,5 +1,4 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -9,7 +8,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { cn } from "@/lib/utils";
 import ActionCell from "./ActionCell";
 import SkeletonTable from "./SkeletonTable";
 
@@ -22,7 +20,7 @@ import {
 } from "@/hooks/useTableDataOperation";
 import { GenericTableProps } from "@/types/table";
 import { PlusCircle } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import SearchFilter from "@/components/filter/SearchFilter";
 import { Accordion } from "@/components/ui/accordion";
 import LoadingButton from "@/components/ui/loadingButton";
@@ -34,7 +32,7 @@ const GenericTable = <T extends { id: string }>({
   addingTitle,
   columns,
   actions,
-  formComponent: CreateForm,
+  formComponent: FormComponent,
   disabledActions = {},
   queryHook,
   filterOptions,
@@ -51,16 +49,36 @@ const GenericTable = <T extends { id: string }>({
     defaultSortColumn,
   });
 
-  const {
-    editingRow,
-    editedValues,
-    fieldErrors,
-    isSaving,
-    handleEdit,
-    handleCancel,
-    handleSave,
-    handleCellValueChange,
-  } = useTableEdit(data, columns, actions);
+  // State for editing dialog
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [currentEditItem, setCurrentEditItem] = useState<T | null>(null);
+  const [isEditSaving, setIsEditSaving] = useState(false);
+
+  // Handle edit button click
+  const handleEditClick = (id: string) => {
+    const itemToEdit = data.find((item) => item.id === id);
+    if (itemToEdit) {
+      setCurrentEditItem(itemToEdit);
+      setEditDialogOpen(true);
+    }
+  };
+
+  // Handle save after editing
+  const handleEditSave = async (updatedData: Partial<T>) => {
+    if (!currentEditItem) return;
+
+    try {
+      setIsEditSaving(true);
+      await actions?.onSave?.(currentEditItem.id, updatedData as T);
+      setEditDialogOpen(false);
+      setCurrentEditItem(null);
+    } catch (error) {
+      console.error("Error saving edit:", error);
+    } finally {
+      setIsEditSaving(false);
+    }
+  };
+
   const { isDeleting, deletingRow, handleDelete } = useTableDelete(actions);
   const { isAdding, dialogOpen, setDialogOpen, handleAdd, handleShowDialog } =
     useTableAdd(actions);
@@ -103,36 +121,17 @@ const GenericTable = <T extends { id: string }>({
                   width: column.style?.width,
                 }}
               >
-                {editingRow === cell.id && column.editable ? (
-                  <Input
-                    value={String(
-                      editedValues?.[column.key] ?? cell[column.key]
-                    )}
-                    onChange={(e) =>
-                      handleCellValueChange(column.key, e.target.value)
-                    }
-                    className={cn(
-                      "h-full w-full border-2 p-1 focus:border-slate-800 focus-visible:ring-transparent",
-                      fieldErrors[String(column.key)] ? "border-red-500" : ""
-                    )}
-                  />
-                ) : column.transform ? (
-                  column.transform(cell[column.key])
-                ) : (
-                  String(cell[column.key])
-                )}
+                {column.transform
+                  ? column.transform(cell[column.key])
+                  : String(cell[column.key])}
               </TableCell>
             ))}
             <TableCell className="min-w-40 py-1">
               <ActionCell
                 requireDeleteConfirmation={requireDeleteConfirmation}
-                isEditing={editingRow === cell.id}
                 isDeleting={deletingRow === cell.id && isDeleting}
-                isSaving={isSaving}
-                onEdit={() => handleEdit(cell.id)}
+                onEdit={() => handleEditClick(cell.id)}
                 onDelete={() => handleDelete(cell.id)}
-                onSave={() => handleSave(cell.id)}
-                onCancel={handleCancel}
                 disabledActions={disabledActions}
                 additionalActions={additionalActions.map((action) => ({
                   label: action.label,
@@ -149,18 +148,10 @@ const GenericTable = <T extends { id: string }>({
     state.isFetching,
     state.isError,
     columns,
-    editingRow,
-    editedValues,
-    fieldErrors,
     deletingRow,
     isDeleting,
-    isSaving,
     pagination.pageSize,
-    handleCellValueChange,
-    handleEdit,
     handleDelete,
-    handleSave,
-    handleCancel,
     disabledActions,
   ]);
 
@@ -190,44 +181,13 @@ const GenericTable = <T extends { id: string }>({
     () =>
       filterOptions.map((filterOption) => {
         switch (filterOption.type) {
-          // case "enum":
-          //   return (
-          //     <EnumFilter
-          //       key={filterOption.id}
-          //       onChange={(value) => filters.onChange(filterOption.id, value)}
-          //       {...filterOption}
-          //       componentType="accordion"
-          //     />
-          //   );
-
-          // case "range":
-          //   return (
-          //     <RangeFilter
-          //       key={filterOption.id}
-          //       value={filters.value[filterOption.id] as [number, number]}
-          //       onChange={(value) => filters.onChange(filterOption.id, value)}
-          //       {...filterOption}
-          //       componentType="accordion"
-          //     />
-          //   );
-
-          // case "date":
-          //   return (
-          //     <DateRangeFilter
-          //       key={filterOption.id}
-          //       value={filters.value[filterOption.id] as [Date, Date]}
-          //       onChange={(value) => filters.onChange(filterOption.id, value)}
-          //       {...filterOption}
-          //       componentType="accordion"
-          //     />
-          //   );
-
           case "search":
             return (
               <SearchFilter
                 key={filterOption.id}
                 onChange={(value) => filters.onChange(filterOption.id, value)}
                 {...filterOption}
+                value={filters.value[filterOption.id] || ""}
                 componentType="accordion"
               />
             );
@@ -239,9 +199,13 @@ const GenericTable = <T extends { id: string }>({
     [filterOptions, filters.onChange, filters.value]
   );
 
+  if (state.isLoading) {
+    return <SkeletonTable rows={10} />;
+  }
+
   return (
     <>
-      <div className="flex h-full min-w-72 flex-col gap-4 rounded-md border-2 px-4">
+      <div className="flex h-full min-w-1/5 flex-col gap-4 rounded-md border-2 px-4">
         <h2 className="pt-4 text-center text-2xl font-semibold">
           {tableTitle}
         </h2>
@@ -268,25 +232,32 @@ const GenericTable = <T extends { id: string }>({
       </div>
 
       <div className="flex-grow">
-        {state.isLoading ? (
-          <SkeletonTable rows={pagination.pageSize} />
-        ) : (
-          <>
-            <Table>
-              {tableHeader}
+        <Table>
+          {tableHeader}
 
-              {tableBody}
-            </Table>
+          {tableBody}
+        </Table>
 
-            <Separator />
-            <TablePagination {...pagination} />
-          </>
-        )}
+        <Separator />
+        <TablePagination {...pagination} />
       </div>
 
+      {/* Add Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
-          <CreateForm onSubmit={handleAdd} />
+          <FormComponent onSubmit={handleAdd} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <FormComponent
+            initialData={currentEditItem}
+            onSubmit={handleEditSave}
+            isLoading={isEditSaving}
+            isEditing={true}
+          />
         </DialogContent>
       </Dialog>
     </>

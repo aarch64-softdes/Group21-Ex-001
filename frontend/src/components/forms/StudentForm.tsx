@@ -19,13 +19,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Student, { Gender, Faculty, Status } from "@/types/student";
+import Student, {
+  Gender,
+  Faculty,
+  Status,
+  CreateStudentDTO,
+} from "@/types/student";
 import {
   useFaculties,
   useGenders,
   useStudentStatuses,
 } from "@/hooks/useMetadata";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { FormComponentProps } from "@/types/table";
+import LoadingButton from "../ui/loadingButton";
 
 // Define schema based on the Java validation annotations
 export const StudentFormSchema = z.object({
@@ -53,49 +61,82 @@ export const StudentFormSchema = z.object({
 
 export type StudentFormValues = z.infer<typeof StudentFormSchema>;
 
-interface StudentFormProps {
-  onSubmit: (data: StudentFormValues) => void;
-}
-
-const StudentForm: React.FC<StudentFormProps> = ({ onSubmit }) => {
-  // Fetch metadata from API
-  const facultiesQuery = useFaculties();
+const StudentForm: React.FC<FormComponentProps<Student>> = ({
+  onSubmit,
+  initialData,
+  isLoading = false,
+  isEditing = false,
+}) => {
   const gendersQuery = useGenders();
+  const facultiesQuery = useFaculties();
   const statusesQuery = useStudentStatuses();
 
   const form = useForm<StudentFormValues>({
     resolver: zodResolver(StudentFormSchema),
     defaultValues: {
-      studentId: "",
       name: "",
       dob: "",
-      gender: undefined,
-      faculty: undefined,
+      gender: "",
+      faculty: "",
       course: 1,
       program: "",
       email: "",
-      address: "",
       phone: "",
-      status: undefined,
+      status: "",
     },
   });
 
+  const formatDateForInput = (date: Date | string): string => {
+    if (!date) return "";
+
+    const d = typeof date === "string" ? new Date(date) : date;
+    return d.toISOString().split("T")[0]; // Returns YYYY-MM-DD
+  };
+
+  useEffect(() => {
+    if (initialData) {
+      const formattedDob =
+        initialData.dob instanceof Date
+          ? formatDateForInput(initialData.dob)
+          : formatDateForInput(initialData.dob as string);
+
+      form.reset({
+        name: initialData.name,
+        dob: formattedDob,
+        gender: initialData.gender,
+        faculty: initialData.faculty,
+        course: parseInt(initialData.course.toString()),
+        program: initialData.program,
+        email: initialData.email,
+        phone: initialData.phone,
+        status: initialData.status,
+      });
+    }
+  }, [initialData, form]);
+
+  const handleSubmit = (values: StudentFormValues) => {
+    const formattedValues = {
+      ...values,
+      dob: new Date(values.dob),
+    };
+
+    onSubmit(formattedValues as unknown as CreateStudentDTO);
+  };
+
   return (
     <Form {...form}>
+      <h2 className="mb-4 text-xl font-semibold">
+        {isEditing ? "Edit Student" : "Add New Student"}
+      </h2>
       <form
         onSubmit={(e) => {
-          // Prevent default form submission
           e.preventDefault();
-          form.handleSubmit(onSubmit)(e);
+          form.handleSubmit(handleSubmit);
         }}
         className="mx-auto w-full max-w-md space-y-4 p-6"
         autoComplete="off"
         noValidate
       >
-        <span className="block text-center text-2xl font-bold">
-          Add Student
-        </span>
-
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -405,16 +446,21 @@ const StudentForm: React.FC<StudentFormProps> = ({ onSubmit }) => {
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full bg-blue-500"
-          onClick={(e) => {
-            e.preventDefault();
-            form.handleSubmit(onSubmit)();
-          }}
-        >
-          Add Student
-        </Button>
+        <div className="flex justify-end gap-2 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              form.reset();
+              onSubmit({});
+            }}
+          >
+            Cancel
+          </Button>
+          <LoadingButton type="submit" isLoading={isLoading}>
+            {isEditing ? "Save Changes" : "Add Student"}
+          </LoadingButton>
+        </div>
       </form>
     </Form>
   );

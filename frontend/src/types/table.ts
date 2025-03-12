@@ -41,20 +41,9 @@ export interface AdditionalAction {
   handler: (id: string) => void;
 }
 
-export interface ActionCellProps {
-  requireDeleteConfirmation?: boolean;
-  isEditing?: boolean;
-  isDeleting?: boolean;
-  isSaving?: boolean;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onSave?: () => void;
-  onCancel?: () => void;
-  disabledActions?: {
-    edit?: boolean;
-    delete?: boolean;
-  };
-  additionalActions?: AdditionalAction[];
+export interface AdditionalActionItem {
+  label: string;
+  handler: () => void;
 }
 
 export type QueryHook<T> = (
@@ -68,17 +57,37 @@ export type QueryHookParams = {
   sort: SortConfig;
 };
 
+export interface FormComponentProps<T> {
+  onSubmit: (data: Partial<T>) => void;
+  initialData?: T | null;
+  isLoading?: boolean;
+  isEditing?: boolean;
+}
+
 export interface GenericTableProps<T extends { id: string }> {
   tableTitle: string;
   addingTitle: string;
   columns: Column<T>[];
   actions?: TableActions;
-  formComponent: React.ComponentType<{
-    onSubmit: () => void;
-  }>;
-  requireDeleteConfirmation?: boolean;
-  disabledActions?: ActionCellProps["disabledActions"];
+  formComponent: React.FC<FormComponentProps<T>>;
+  disabledActions?: {
+    edit?: boolean;
+    delete?: boolean;
+  };
   queryHook: QueryHook<T>;
   filterOptions: FilterOption[];
+  requireDeleteConfirmation?: boolean;
   additionalActions?: AdditionalAction[];
+}
+
+export interface ActionCellProps {
+  requireDeleteConfirmation?: boolean;
+  isDeleting?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  disabledActions?: {
+    edit?: boolean;
+    delete?: boolean;
+  };
+  additionalActions?: AdditionalActionItem[];
 }

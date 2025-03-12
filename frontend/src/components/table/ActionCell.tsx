@@ -21,17 +21,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import LoadingButton from "@/components/ui/loadingButton";
 
 const ActionCell: React.FC<ActionCellProps> = ({
   requireDeleteConfirmation = true,
-  isEditing = false,
   isDeleting = false,
-  isSaving = false,
   onEdit = () => {},
   onDelete = () => {},
-  onSave = () => {},
-  onCancel = () => {},
   disabledActions = {
     edit: false,
     delete: true,
@@ -52,29 +47,6 @@ const ActionCell: React.FC<ActionCellProps> = ({
     return (
       <div className="flex p-1">
         <Loader2 className="h-6 w-6 animate-spin" />
-      </div>
-    );
-  }
-
-  if (isEditing) {
-    return (
-      <div className="flex gap-2">
-        <Button
-          onClick={onCancel}
-          variant="outline"
-          className="h-8 w-16"
-          disabled={isSaving}
-        >
-          Cancel
-        </Button>
-        <LoadingButton
-          variant="outline"
-          className="h-8 w-16 items-center gap-2 bg-blue-500 text-white"
-          onClick={onSave}
-          isLoading={isSaving}
-        >
-          Save
-        </LoadingButton>
       </div>
     );
   }
