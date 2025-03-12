@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -15,8 +16,8 @@ import java.util.List;
 @RequestMapping("/metadata")
 public class MetadataController {
     @GetMapping("/faculty")
-    public List<String> getAllFaculty() {
-        return Arrays.stream(EnumUtils.getNames(Faculty.class)).toList();
+    public List<Map<String, String>> getAllFaculty() {
+        return EnumUtils.getNamesAndValues(Faculty.class);
     }
 
     @GetMapping("/student-status")
