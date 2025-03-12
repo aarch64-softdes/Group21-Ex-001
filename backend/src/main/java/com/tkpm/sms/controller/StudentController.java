@@ -5,6 +5,7 @@ import com.tkpm.sms.dto.StudentResponse;
 import com.tkpm.sms.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,8 @@ public class StudentController {
 
     @PostMapping("/")
     public ResponseEntity<?> addNewStudent(@Valid @RequestBody StudentRequest student) {
-        studentService.addNewStudent(student);
-        return ResponseEntity.ok().build();
+        var newStudent = studentService.addNewStudent(student);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newStudent);
     }
 
     @DeleteMapping("/{id}")
@@ -41,7 +42,7 @@ public class StudentController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateStudent(@PathVariable String id,  @RequestBody StudentRequest student)
     {
-        studentService.updateStudent(id, student);
-        return ResponseEntity.ok().build();
+        var updatedStudent = studentService.updateStudent(id, student);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedStudent);
     }
 }

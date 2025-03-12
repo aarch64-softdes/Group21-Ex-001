@@ -27,7 +27,7 @@ public class StudentService {
         return students.stream().map(this::mapToResponse).toList();
     }
 
-    public void addNewStudent(StudentRequest studentRequest) {
+    public StudentResponse addNewStudent(StudentRequest studentRequest) {
         if(studentRepository.existsStudentByStudentId(studentRequest.getStudentId())) {
             throw new RuntimeException("Student ID already exists");
         }
@@ -49,6 +49,7 @@ public class StudentService {
                     .build();
 
         studentRepository.save(student);
+        return mapToResponse(student);
     }
 
     public void deleteStudentById(String id) {
@@ -58,7 +59,7 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 
-    public void updateStudent(String id, StudentRequest studentRequest) {
+    public StudentResponse updateStudent(String id, StudentRequest studentRequest) {
         var student = studentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
@@ -74,6 +75,7 @@ public class StudentService {
         if (studentRequest.getStatus() != null) student.setStatus(studentRequest.getStatus());
 
         studentRepository.save(student);
+        return mapToResponse(student);
     }
 
     private StudentResponse mapToResponse(Student student) {
