@@ -1,6 +1,8 @@
 import React from "react";
 import GenericTable from "@/components/table/GenericTable";
-import StudentForm, { StudentFormSchema } from "@/components/forms/StudentForm";
+import StudentForm, {
+  StudentFormSchema,
+} from "@/components/student/StudentForm";
 
 import {
   useStudents,
@@ -13,6 +15,7 @@ import { SearchFilterOption } from "@/types/filter";
 import Student, { CreateStudentDTO, UpdateStudentDTO } from "@/types/student";
 import { Column } from "@/types/table";
 import { Search } from "lucide-react";
+import StudentDetail from "@/components/student/StudentDetail";
 
 const StudentPage: React.FC = () => {
   const createStudent = useCreateStudent();
@@ -173,6 +176,7 @@ const StudentPage: React.FC = () => {
         columns={columns}
         actions={actions}
         formComponent={StudentForm}
+        detailComponent={StudentDetail}
         disabledActions={{
           edit: false,
           delete: false,

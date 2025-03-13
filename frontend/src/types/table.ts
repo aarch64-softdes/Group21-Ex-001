@@ -65,12 +65,17 @@ export interface FormComponentProps<T> {
   isEditing?: boolean;
 }
 
+export interface DetailComponentProps {
+  id?: string;
+}
+
 export interface GenericTableProps<T extends { id: string }> {
   tableTitle: string;
   addingTitle: string;
   columns: Column<T>[];
   actions?: TableActions;
   formComponent: React.FC<FormComponentProps<T>>;
+  detailComponent: React.FC<DetailComponentProps>;
   disabledActions?: {
     edit?: boolean;
     delete?: boolean;
@@ -84,9 +89,11 @@ export interface GenericTableProps<T extends { id: string }> {
 export interface ActionCellProps {
   requireDeleteConfirmation?: boolean;
   isDeleting?: boolean;
+  onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
   disabledActions?: {
+    view?: boolean;
     edit?: boolean;
     delete?: boolean;
   };

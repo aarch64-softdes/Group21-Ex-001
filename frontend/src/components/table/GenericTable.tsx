@@ -33,6 +33,7 @@ const GenericTable = <T extends { id: string }>({
   columns,
   actions,
   formComponent: FormComponent,
+  detailComponent: DetailComponent,
   disabledActions = {},
   queryHook,
   filterOptions,
@@ -48,6 +49,10 @@ const GenericTable = <T extends { id: string }>({
     filterOptions,
     defaultSortColumn,
   });
+
+  // State for detail dialog
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [currentDetailItem, setCurrentDetailItem] = useState<T | null>(null);
 
   // State for editing dialog
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -130,6 +135,10 @@ const GenericTable = <T extends { id: string }>({
               <ActionCell
                 requireDeleteConfirmation={requireDeleteConfirmation}
                 isDeleting={deletingRow === cell.id && isDeleting}
+                onView={() => {
+                  setCurrentDetailItem(cell);
+                  setDetailDialogOpen(true);
+                }}
                 onEdit={() => handleEditClick(cell.id)}
                 onDelete={() => handleDelete(cell.id)}
                 disabledActions={disabledActions}
@@ -227,11 +236,11 @@ const GenericTable = <T extends { id: string }>({
         )}
       </div>
 
-      <div className="flex-grow">
+      <div className="flex-grow overflow-hidden">
         {state.isLoading ? (
           <SkeletonTable rows={pagination.pageSize} columns={columns.length} />
         ) : (
-          <>
+          <div className="overflow-x-auto">
             <Table>
               {tableHeader}
 
@@ -240,7 +249,7 @@ const GenericTable = <T extends { id: string }>({
 
             <Separator />
             <TablePagination {...pagination} />
-          </>
+          </div>
         )}
       </div>
 
@@ -264,6 +273,13 @@ const GenericTable = <T extends { id: string }>({
             isLoading={isEditSaving}
             isEditing={true}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Detail Dialog */}
+      <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
+        <DialogContent>
+          <DetailComponent id={currentDetailItem?.id} />
         </DialogContent>
       </Dialog>
     </>

@@ -25,9 +25,11 @@ import {
 const ActionCell: React.FC<ActionCellProps> = ({
   requireDeleteConfirmation = true,
   isDeleting = false,
+  onView = () => {},
   onEdit = () => {},
   onDelete = () => {},
   disabledActions = {
+    view: false,
     edit: false,
     delete: true,
   },
@@ -68,6 +70,9 @@ const ActionCell: React.FC<ActionCellProps> = ({
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          {!disabledActions.view && (
+            <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
+          )}
           {!disabledActions.edit && (
             <>
               <DropdownMenuSeparator />
