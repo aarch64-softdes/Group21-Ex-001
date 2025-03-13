@@ -3,7 +3,6 @@ package com.tkpm.sms.exceptions;
 import com.tkpm.sms.enums.Faculty;
 import com.tkpm.sms.enums.Gender;
 import com.tkpm.sms.enums.Status;
-import jakarta.validation.ValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,9 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -35,10 +33,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(Map.of("error", errorMessage));
     }
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidEnumValue(HttpMessageNotReadableException ex) {
+    public ResponseEntity<String> handleInvalidEnumValue(HttpMessageNotReadableException ex) {
         String message = ex.getMostSpecificCause().getMessage();
 
-        // Xác định enum nào đang bị lỗi
         if (message.contains("Status")) {
             return buildErrorResponse("status", Status.class);
         } else if (message.contains("Gender")) {
@@ -47,19 +44,18 @@ public class GlobalExceptionHandler {
             return buildErrorResponse("faculty", Faculty.class);
         }
 
-        return ResponseEntity.badRequest().body(Map.of("error", "Invalid input value."));
+        return ResponseEntity.badRequest().body("Invalid input value.");
     }
 
-    private <E extends Enum<E>> ResponseEntity<Map<String, Object>> buildErrorResponse(String field, Class<E> enumClass) {
-        List<String> validValues = Arrays.stream(enumClass.getEnumConstants())
+    private <E extends Enum<E>> ResponseEntity<String> buildErrorResponse(String field, Class<E> enumClass) {
+        String validValues = Arrays.stream(enumClass.getEnumConstants())
                 .map(Enum::name)
-                .toList();
+                .map(value -> value.replace("_", " "))
+                .collect(Collectors.joining(", "));
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("error", "Invalid value for field '" + field + "'.");
-        response.put("allowed_values", validValues);
+        String message = String.format("Invalid value for field '%s'. Allowed values: %s.", field, validValues);
 
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.badRequest().body(message);
     }
 }
 

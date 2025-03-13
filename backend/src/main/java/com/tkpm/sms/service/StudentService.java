@@ -27,6 +27,12 @@ public class StudentService {
         return students.stream().map(this::mapToResponse).toList();
     }
 
+    public StudentResponse getStudentDetail(String id) {
+        var student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+        return mapToResponse(student);
+    }
+
     public StudentResponse addNewStudent(StudentRequest studentRequest) {
         if(studentRepository.existsStudentByStudentId(studentRequest.getStudentId())) {
             throw new RuntimeException("Student ID already exists");
