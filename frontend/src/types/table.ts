@@ -59,7 +59,8 @@ export type QueryHookParams = {
 
 export interface FormComponentProps<T> {
   onSubmit: (data: Partial<T>) => void;
-  initialData?: T | null;
+  onCancel: () => void;
+  id?: string;
   isLoading?: boolean;
   isEditing?: boolean;
 }

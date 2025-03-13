@@ -34,13 +34,20 @@ export const useStudents = (params: QueryHookParams) => {
   });
 };
 
+export const useStudent = (id: string) => {
+  return useQuery({
+    queryKey: ["student", id],
+    queryFn: () => studentService.getStudent(id),
+  });
+};
+
 export const useCreateStudent = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: CreateStudentDTO) => studentService.addNewStudent(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["students"] });
+      queryClient.invalidateQueries();
     },
   });
 };
@@ -52,7 +59,7 @@ export const useUpdateStudent = () => {
     mutationFn: ({ id, data }: { id: string; data: UpdateStudentDTO }) =>
       studentService.updateStudent(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["students"] });
+      queryClient.invalidateQueries();
     },
   });
 };
@@ -63,16 +70,16 @@ export const useDeleteStudent = () => {
   return useMutation({
     mutationFn: (id: string) => studentService.deleteStudent(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["students"] });
+      queryClient.invalidateQueries();
     },
   });
 };
 
 function mapSortKeyToEntityProperty(key: string | null): string {
-  if (!key) return "studentId";
+  if (!key) return "id";
 
   const sortKeyMap: Record<string, string> = {
-    studentId: "studentId",
+    id: "id",
     name: "name",
     dob: "dob",
     gender: "gender",

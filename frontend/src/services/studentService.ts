@@ -47,6 +47,28 @@ export default class StudentService {
     };
   };
 
+  getStudent = async (id: string): Promise<Student> => {
+    if (id == "") {
+      return {
+        id: "",
+        studentId: "",
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        dob: new Date(),
+        gender: "",
+        faculty: "",
+        status: "",
+        program: "",
+        course: 0,
+      };
+    }
+
+    const response = await api.get(`/api/students/${id}`);
+    return mapToStudent(response.data);
+  };
+
   addNewStudent = async (data: CreateStudentDTO): Promise<void> => {
     await api.post("/api/students/", data);
   };

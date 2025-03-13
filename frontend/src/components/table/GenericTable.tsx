@@ -20,7 +20,7 @@ import {
 } from "@/hooks/useTableDataOperation";
 import { GenericTableProps } from "@/types/table";
 import { PlusCircle } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SearchFilter from "@/components/filter/SearchFilter";
 import { Accordion } from "@/components/ui/accordion";
 import LoadingButton from "@/components/ui/loadingButton";
@@ -199,13 +199,9 @@ const GenericTable = <T extends { id: string }>({
     [filterOptions, filters.onChange, filters.value]
   );
 
-  if (state.isLoading) {
-    return <SkeletonTable rows={10} />;
-  }
-
   return (
     <>
-      <div className="flex h-full min-w-1/5 flex-col gap-4 rounded-md border-2 px-4">
+      <div className="flex h-full min-w-64 flex-col gap-4 rounded-md border-2 px-4">
         <h2 className="pt-4 text-center text-2xl font-semibold">
           {tableTitle}
         </h2>
@@ -232,20 +228,29 @@ const GenericTable = <T extends { id: string }>({
       </div>
 
       <div className="flex-grow">
-        <Table>
-          {tableHeader}
+        {state.isLoading ? (
+          <SkeletonTable rows={pagination.pageSize} columns={columns.length} />
+        ) : (
+          <>
+            <Table>
+              {tableHeader}
 
-          {tableBody}
-        </Table>
+              {tableBody}
+            </Table>
 
-        <Separator />
-        <TablePagination {...pagination} />
+            <Separator />
+            <TablePagination {...pagination} />
+          </>
+        )}
       </div>
 
       {/* Add Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
-          <FormComponent onSubmit={handleAdd} />
+          <FormComponent
+            onSubmit={handleAdd}
+            onCancel={() => setDialogOpen(false)}
+          />
         </DialogContent>
       </Dialog>
 
@@ -253,8 +258,9 @@ const GenericTable = <T extends { id: string }>({
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent>
           <FormComponent
-            initialData={currentEditItem}
+            id={currentEditItem?.id}
             onSubmit={handleEditSave}
+            onCancel={() => setEditDialogOpen(false)}
             isLoading={isEditSaving}
             isEditing={true}
           />
