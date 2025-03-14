@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/students")
 @RequiredArgsConstructor
 public class StudentController {
@@ -24,6 +25,13 @@ public class StudentController {
                                                                 @RequestParam(defaultValue = "") String search) {
         List<StudentResponse> students = studentService.getStudents(page, sortName, sortType, search);
         return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentResponse> getStudentDetail(@PathVariable String id)
+    {
+        var student = studentService.getStudentDetail(id);
+        return ResponseEntity.ok(student);
     }
 
     @PostMapping("/")

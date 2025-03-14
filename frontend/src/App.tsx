@@ -1,10 +1,13 @@
-import { Button } from "@/components/ui/button";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import StudentPage from "./pages/studentPage";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-svh">
-      <Button className="bg-primary">Click me</Button>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <StudentPage />
+    </QueryClientProvider>
   );
 }
 
