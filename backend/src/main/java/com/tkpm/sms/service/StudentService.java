@@ -1,7 +1,7 @@
 package com.tkpm.sms.service;
 
-import com.tkpm.sms.dto.StudentRequest;
-import com.tkpm.sms.dto.StudentResponse;
+import com.tkpm.sms.dto.request.StudentRequest;
+import com.tkpm.sms.dto.reponse.StudentResponse;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,6 @@
-package com.tkpm.sms.dto;
+package com.tkpm.sms.dto.reponse;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tkpm.sms.enums.Faculty;
-import com.tkpm.sms.enums.Gender;
 import com.tkpm.sms.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -1,7 +1,7 @@
 package com.tkpm.sms.controller;
 
-import com.tkpm.sms.dto.StudentRequest;
-import com.tkpm.sms.dto.StudentResponse;
+import com.tkpm.sms.dto.request.StudentRequest;
+import com.tkpm.sms.dto.reponse.StudentResponse;
 import com.tkpm.sms.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
