@@ -5,6 +5,7 @@ import com.tkpm.sms.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Builder
@@ -14,11 +15,11 @@ import java.util.Date;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class StudentResponse {
+public class StudentDto {
     String id;
     String studentId;
     String name;
-    Date dob;
+    LocalDate dob;
     String gender;
     String faculty;
     Integer course;
@@ -26,5 +27,5 @@ public class StudentResponse {
     String email;
     String address;
     String phone;
-    Status status;
+    String status;
 }

@@ -3,12 +3,15 @@ package com.tkpm.sms.dto.request;
 import com.tkpm.sms.enums.Faculty;
 import com.tkpm.sms.enums.Gender;
 import com.tkpm.sms.enums.Status;
+import com.tkpm.sms.validator.StatusConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -20,24 +23,27 @@ public class StudentRequest {
     @NotNull(message = "Student ID is required")
     String studentId;
 
-    @NotNull
-    @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "Name must contain only letters")
+    @NotNull(message = "Student name is required")
+    @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "INVALID_NAME")
     String name;
-    Date dob;
-    Gender gender;
-    Faculty faculty;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    LocalDate dob;
+    String gender;
+    String faculty;
     Integer course;
     String program;
 
-    @Email
-    @NotNull
+    @Email(message = "INVALID_EMAIL")
+    @NotNull(message = "Student email is required")
     String email;
 
     String address;
 
-    @NotNull
-    @Pattern(regexp = "^0\\d{9}$", message = "Phone number must start with 0 and have 10 digits")
+    @NotNull(message = "Student phone number is required")
+    @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE")
     String phone;
 
-    Status status = Status.Studying;
+    @StatusConstraint(message = "INVALID_STATUS")
+    String status = Status.Studying.name();
 }
