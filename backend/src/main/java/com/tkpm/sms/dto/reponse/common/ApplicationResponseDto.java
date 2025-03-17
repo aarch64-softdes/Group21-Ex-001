@@ -1,6 +1,7 @@
 package com.tkpm.sms.dto.reponse.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tkpm.sms.exceptions.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApplicationResponseDto<T> {
+    int code;
     String message;
     T content;
 
@@ -40,11 +42,11 @@ public class ApplicationResponseDto<T> {
                 .content(null)
                 .build();
     }
-//
-//    public static <T> ApplicationResponseDto<T> failure(ErrorCode exception) {
-//        return ApplicationResponseDto.<T>builder()
-//                .code(exception.getCode())
-//                .message(exception.getMessage())
-//                .build();
-//    }
+
+    public static <T> ApplicationResponseDto<T> failure(ErrorCode exception) {
+        return ApplicationResponseDto.<T>builder()
+                .code(exception.getHttpStatus().value())
+                .message(exception.getMessage())
+                .build();
+    }
 }

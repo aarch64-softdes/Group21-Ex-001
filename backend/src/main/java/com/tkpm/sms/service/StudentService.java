@@ -1,103 +1,94 @@
 package com.tkpm.sms.service;
 
 import com.tkpm.sms.dto.request.StudentRequest;
-import com.tkpm.sms.dto.reponse.StudentResponse;
 import com.tkpm.sms.entity.Student;
+import com.tkpm.sms.enums.Faculty;
+import com.tkpm.sms.enums.Gender;
+import com.tkpm.sms.enums.Status;
+import com.tkpm.sms.exceptions.ApplicationException;
+import com.tkpm.sms.exceptions.ErrorCode;
+import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentService {
-    private final StudentRepository studentRepository;
-    private final int PAGE_SIZE = 5;
+    StudentRepository studentRepository;
+    int PAGE_SIZE = 5;
+    StudentMapper studentMapper;
 
-    public List<StudentResponse> getStudents(int page, String sortName, String sortType, String search) {
+    public Page<Student> getStudents(int page, String sortName, String sortType, String search) {
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE,
-                                            Sort.by(sortType.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
-                                            sortName));
-        Page<Student> students = studentRepository.getStudents(search, pageable);
-        return students.stream().map(this::mapToResponse).toList();
+                Sort.by(sortType.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                        sortName));
+
+        return studentRepository.getStudents(search, pageable);
     }
 
-    public StudentResponse getStudentDetail(String id) {
-        var student = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-        return mapToResponse(student);
+    public Student getStudentDetail(String id) {
+        return studentRepository.findById(id)
+                .orElseThrow(() -> {
+                    var errorCode = ErrorCode.NOT_FOUND;
+                    errorCode.setMessage(String.format("Student with id %s not found", id));
+                    return new ApplicationException(errorCode);
+                });
     }
 
-    public StudentResponse addNewStudent(StudentRequest studentRequest) {
-        if(studentRepository.existsStudentByStudentId(studentRequest.getStudentId())) {
-            throw new RuntimeException("Student ID already exists");
+    public Student addNewStudent(StudentRequest studentRequest) {
+        if (studentRepository.existsStudentByStudentId(studentRequest.getStudentId())) {
+            var errorCode = ErrorCode.CONFLICT;
+            errorCode.setMessage(String.format("Student with id %s already existed", studentRequest.getStudentId()));
+            throw new ApplicationException(errorCode);
         }
-        if(studentRepository.existsStudentByEmail(studentRequest.getEmail())) {
-            throw new RuntimeException("Email already exists");
+        if (studentRepository.existsStudentByEmail(studentRequest.getEmail())) {
+            var errorCode = ErrorCode.CONFLICT;
+            errorCode.setMessage(String.format("Student with email %s already existed", studentRequest.getEmail()));
+            throw new ApplicationException(errorCode);
         }
-        Student student = Student.builder()
-                    .studentId(studentRequest.getStudentId())
-                    .name(studentRequest.getName())
-                    .dob(studentRequest.getDob())
-                    .gender(studentRequest.getGender())
-                    .faculty(studentRequest.getFaculty())
-                    .course(studentRequest.getCourse())
-                    .program(studentRequest.getProgram())
-                    .email(studentRequest.getEmail())
-                    .address(studentRequest.getAddress())
-                    .phone(studentRequest.getPhone())
-                    .status(studentRequest.getStatus())
-                    .build();
+
+        Student student = studentMapper.createStudent(studentRequest);
+
+        student.setStatus(Status.valueOf(studentRequest.getStatus()));
+        student.setFaculty(Faculty.fromString(studentRequest.getFaculty()));
+        student.setGender(Gender.valueOf(studentRequest.getGender()));
 
         studentRepository.save(student);
-        return mapToResponse(student);
+        return student;
     }
 
     public void deleteStudentById(String id) {
-        if(studentRepository.existsStudentByStudentId(id)) {
-            throw new RuntimeException("Student not found");
+        if (studentRepository.existsStudentByStudentId(id)) {
+            var errorCode = ErrorCode.NOT_FOUND;
+            errorCode.setMessage(String.format("Student with id %s not found", id));
+            throw new ApplicationException(errorCode);
         }
         studentRepository.deleteById(id);
     }
 
-    public StudentResponse updateStudent(String id, StudentRequest studentRequest) {
+    public Student updateStudent(String id, StudentRequest studentRequest) {
         var student = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> {
+                    var errorCode = ErrorCode.NOT_FOUND;
+                    errorCode.setMessage(String.format("Student with id %s not found", id));
+                    return new ApplicationException(errorCode);
+                });
 
-        if (studentRequest.getName() != null) student.setName(studentRequest.getName());
-        if (studentRequest.getDob() != null) student.setDob(studentRequest.getDob());
-        if (studentRequest.getGender() != null) student.setGender(studentRequest.getGender());
-        if (studentRequest.getFaculty() != null) student.setFaculty(studentRequest.getFaculty());
-        if (studentRequest.getCourse() != null) student.setCourse(studentRequest.getCourse());
-        if (studentRequest.getProgram() != null) student.setProgram(studentRequest.getProgram());
-        if (studentRequest.getEmail() != null) student.setEmail(studentRequest.getEmail());
-        if (studentRequest.getAddress() != null) student.setAddress(studentRequest.getAddress());
-        if (studentRequest.getPhone() != null) student.setPhone(studentRequest.getPhone());
-        if (studentRequest.getStatus() != null) student.setStatus(studentRequest.getStatus());
+        studentMapper.updateStudent(student, studentRequest);
+        student.setStatus(Status.valueOf(studentRequest.getStatus()));
+        student.setFaculty(Faculty.valueOf(studentRequest.getFaculty()));
+        student.setGender(Gender.valueOf(studentRequest.getGender()));
 
         studentRepository.save(student);
-        return mapToResponse(student);
-    }
 
-    private StudentResponse mapToResponse(Student student) {
-        return StudentResponse.builder()
-                .id(student.getId())
-                .studentId(student.getStudentId())
-                .name(student.getName())
-                .dob(student.getDob())
-                .gender(student.getGender().toString())
-                .faculty(student.getFaculty().toString())
-                .course(student.getCourse())
-                .program(student.getProgram())
-                .email(student.getEmail())
-                .address(student.getAddress())
-                .phone(student.getPhone())
-                .status(student.getStatus())
-                .build();
+        return student;
     }
 }
