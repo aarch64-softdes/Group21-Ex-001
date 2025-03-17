@@ -37,28 +37,18 @@ public class StudentService {
 
     public Student getStudentDetail(String id) {
         return studentRepository.findById(id)
-                .orElseThrow(() -> {
-                    var errorCode = ErrorCode.NOT_FOUND;
-                    errorCode.setMessage(String.format("Student with id %s not found", id));
-                    return new ApplicationException(errorCode);
-                });
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
     }
 
     public Student addNewStudent(StudentCreateRequestDto studentCreateRequestDto) {
         if (studentRepository.existsStudentByStudentId(studentCreateRequestDto.getStudentId())) {
-            var errorCode = ErrorCode.CONFLICT;
-            errorCode.setMessage(String.format("Student with id %s already existed", studentCreateRequestDto.getStudentId()));
-            throw new ApplicationException(errorCode);
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with id %s already existed", studentCreateRequestDto.getStudentId())));
         }
         if (studentRepository.existsStudentByEmail(studentCreateRequestDto.getEmail())) {
-            var errorCode = ErrorCode.CONFLICT;
-            errorCode.setMessage(String.format("Student with email %s already existed", studentCreateRequestDto.getEmail()));
-            throw new ApplicationException(errorCode);
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with email %s already existed", studentCreateRequestDto.getEmail())));
         }
         if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone())) {
-            var errorCode = ErrorCode.CONFLICT;
-            errorCode.setMessage(String.format("Student with phone number %s already existed", studentCreateRequestDto.getPhone()));
-            throw new ApplicationException(errorCode);
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with phone number %s already existed", studentCreateRequestDto.getPhone())));
         }
 
         Student student = studentMapper.createStudent(studentCreateRequestDto);
@@ -73,20 +63,14 @@ public class StudentService {
 
     public void deleteStudentById(String id) {
         if (studentRepository.existsStudentByStudentId(id)) {
-            var errorCode = ErrorCode.NOT_FOUND;
-            errorCode.setMessage(String.format("Student with id %s not found", id));
-            throw new ApplicationException(errorCode);
+            throw new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id)));
         }
         studentRepository.deleteById(id);
     }
 
     public Student updateStudent(String id, StudentUpdateRequestDto studentUpdateRequestDto) {
         var student = studentRepository.findById(id)
-                .orElseThrow(() -> {
-                    var errorCode = ErrorCode.NOT_FOUND;
-                    errorCode.setMessage(String.format("Student with id %s not found", id));
-                    return new ApplicationException(errorCode);
-                });
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
 
         if (!student.getEmail().equals(studentUpdateRequestDto.getEmail())
                 && studentRepository.existsStudentByEmail(studentUpdateRequestDto.getEmail())) {
@@ -98,10 +82,8 @@ public class StudentService {
 
         if (!student.getPhone().equals(studentUpdateRequestDto.getPhone())
                 && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone())) {
-            var errorCode = ErrorCode.CONFLICT;
-            errorCode.setMessage(String.format("Student with phone number %s already existed",
-                    studentUpdateRequestDto.getPhone()));
-            throw new ApplicationException(errorCode);
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with phone number %s already existed",
+                    studentUpdateRequestDto.getPhone())));
         }
 
         studentMapper.updateStudent(student, studentUpdateRequestDto);
