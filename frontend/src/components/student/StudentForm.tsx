@@ -39,7 +39,7 @@ import {
   useGenders,
   useStudentStatuses,
 } from "@/hooks/useMetadata";
-import { FireExtinguisherIcon, Loader2, X } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { FormComponentProps } from "@/types/table";
 import LoadingButton from "../ui/loadingButton";
@@ -164,7 +164,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
   const isFormLoading = isLoading || (isEditing && isLoadingStudent);
 
   return (
-    <div className="fixed w-screen">
+    <div className="sticky inset-0">
       {/* Header */}
       <div className="border-b px-4 py-2 flex items-center justify-between">
         <h2 className="text-xl font-semibold">
@@ -182,7 +182,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 min-h-0">
+      <div className="flex-1/2 overflow-y-auto p-4 min-h-0">
         <div className="max-w-5xl mx-auto pb-20">
           <Form {...form}>
             {isFormLoading ? (
@@ -192,16 +192,12 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
             ) : (
               <form
                 onSubmit={form.handleSubmit(handleSubmit)}
-                // className="mx-auto w-full max-w-md space-y-4 p-6"
                 className="max-w-5xl max-auto"
                 autoComplete="off"
                 noValidate
               >
                 <FormSection title="Basic Information">
-                  <div
-                    className="grid grid-cols-2 gap-4"
-                    // className="grid grid-cols-1 md:grid-cols-3 gap-6"
-                  >
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                     <FormField
                       control={form.control}
                       name="studentId"
@@ -248,9 +244,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="dob"
@@ -338,13 +332,13 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name="address"
+                      name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Address</FormLabel>
+                          <FormLabel>Phone</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="123 Main St, City"
+                              placeholder="0123456789"
                               {...field}
                               autoComplete="off"
                               onKeyDown={(e) => {
@@ -361,13 +355,13 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name="phone"
+                      name="address"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone</FormLabel>
+                        <FormItem className="col-span-2 lg:col-span-3">
+                          <FormLabel>Address</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="0123456789"
+                              placeholder="123 Main St, City"
                               {...field}
                               autoComplete="off"
                               onKeyDown={(e) => {
@@ -455,69 +449,69 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="program"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Program</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="e.g. Computer Science"
-                            {...field}
-                            autoComplete="off"
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Status</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          defaultValue={field.value}
-                        >
+                    <FormField
+                      control={form.control}
+                      name="program"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Program</FormLabel>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select status" />
-                            </SelectTrigger>
+                            <Input
+                              placeholder="e.g. Computer Science"
+                              {...field}
+                              autoComplete="off"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
                           </FormControl>
-                          <SelectContent>
-                            {statusesQuery.isLoading ? (
-                              <div className="flex items-center justify-center p-2">
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              </div>
-                            ) : statusesQuery.data ? (
-                              statusesQuery.data.map((status) => (
-                                <SelectItem key={status} value={status}>
-                                  {status.replace(/_/g, " ")}
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {statusesQuery.isLoading ? (
+                                <div className="flex items-center justify-center p-2">
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                </div>
+                              ) : statusesQuery.data ? (
+                                statusesQuery.data.map((status) => (
+                                  <SelectItem key={status} value={status}>
+                                    {status.replace(/_/g, " ")}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="" disabled>
+                                  Failed to load statuses
                                 </SelectItem>
-                              ))
-                            ) : (
-                              <SelectItem value="" disabled>
-                                Failed to load statuses
-                              </SelectItem>
-                            )}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                              )}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </FormSection>
 
                 <div className="flex justify-end gap-2 pt-4">
