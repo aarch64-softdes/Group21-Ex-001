@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Builder
@@ -32,7 +33,7 @@ public class Student {
     @NotNull
     String name;
 
-    Date dob;
+    LocalDate dob;
 
     @Enumerated(EnumType.STRING)
     @Column (nullable = false)

@@ -1,0 +1,12 @@
+services:
+  student:
+    image: postgres:alpine
+    container_name: student-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: student-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
