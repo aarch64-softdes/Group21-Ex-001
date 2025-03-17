@@ -1,6 +1,6 @@
 package com.tkpm.sms.mapper;
 
-import com.tkpm.sms.dto.reponse.StudentDto;
+import com.tkpm.sms.dto.response.StudentDto;
 import com.tkpm.sms.dto.request.StudentRequest;
 import com.tkpm.sms.entity.Student;
 import org.mapstruct.Mapper;

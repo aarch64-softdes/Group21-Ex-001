@@ -1,4 +1,4 @@
-package com.tkpm.sms.dto.reponse.common;
+package com.tkpm.sms.dto.response.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;

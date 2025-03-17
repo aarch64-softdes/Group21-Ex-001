@@ -1,4 +1,4 @@
-package com.tkpm.sms.dto.reponse;
+package com.tkpm.sms.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tkpm.sms.enums.Status;

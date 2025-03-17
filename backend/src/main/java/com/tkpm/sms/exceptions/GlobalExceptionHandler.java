@@ -1,16 +1,11 @@
 package com.tkpm.sms.exceptions;
 
-import com.tkpm.sms.dto.reponse.common.ApplicationResponseDto;
-import jakarta.validation.ConstraintViolation;
+import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.Map;
 
 @Slf4j
 @ControllerAdvice

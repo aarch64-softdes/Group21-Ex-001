@@ -1,4 +1,4 @@
-package com.tkpm.sms.dto.reponse.common;
+package com.tkpm.sms.dto.response.common;
 
 import lombok.AccessLevel;
 import lombok.Builder;

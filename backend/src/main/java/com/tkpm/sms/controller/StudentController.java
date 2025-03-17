@@ -1,10 +1,10 @@
 package com.tkpm.sms.controller;
 
-import com.tkpm.sms.dto.reponse.StudentDto;
-import com.tkpm.sms.dto.reponse.common.ApplicationResponseDto;
-import com.tkpm.sms.dto.reponse.common.ListResponse;
-import com.tkpm.sms.dto.reponse.common.PageDto;
 import com.tkpm.sms.dto.request.StudentRequest;
+import com.tkpm.sms.dto.response.StudentDto;
+import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
+import com.tkpm.sms.dto.response.common.ListResponse;
+import com.tkpm.sms.dto.response.common.PageDto;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.service.StudentService;
 import jakarta.validation.Valid;
