@@ -265,7 +265,7 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-screen w-full h-screen">
+        <DialogContent className="max-w-screen w-[90%] h-[97%] p-4">
           <FormComponent
             id={currentEditItem?.id}
             onSubmit={handleEditSave}

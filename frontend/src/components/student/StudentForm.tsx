@@ -78,8 +78,8 @@ const FormSection = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <Card className="mb-6">
-    <CardHeader className="pb-3">
+  <Card className="mb-6 bg-gray-50">
+    <CardHeader>
       <CardTitle className="text-lg font-medium">{title}</CardTitle>
       <Separator />
     </CardHeader>
@@ -170,15 +170,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         <h2 className="text-xl font-semibold">
           {isEditing ? "Edit Student" : "Add New Student"}
         </h2>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={onCancel}
-            className="rounded-full"
-          />
-        </div>
       </div>
 
       {/* Content */}
@@ -392,7 +383,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                             defaultValue={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select faculty" />
                               </SelectTrigger>
                             </FormControl>
