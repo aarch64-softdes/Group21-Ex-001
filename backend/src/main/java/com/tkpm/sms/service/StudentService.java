@@ -88,6 +88,22 @@ public class StudentService {
                     return new ApplicationException(errorCode);
                 });
 
+        if (!student.getEmail().equals(studentUpdateRequestDto.getEmail())
+                && studentRepository.existsStudentByEmail(studentUpdateRequestDto.getEmail())) {
+            var errorCode = ErrorCode.CONFLICT;
+            errorCode.setMessage(String.format("Student with email %s already existed",
+                    studentUpdateRequestDto.getEmail()));
+            throw new ApplicationException(errorCode);
+        }
+
+        if (!student.getPhone().equals(studentUpdateRequestDto.getPhone())
+                && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone())) {
+            var errorCode = ErrorCode.CONFLICT;
+            errorCode.setMessage(String.format("Student with phone number %s already existed",
+                    studentUpdateRequestDto.getPhone()));
+            throw new ApplicationException(errorCode);
+        }
+
         studentMapper.updateStudent(student, studentUpdateRequestDto);
         student.setStatus(Status.valueOf(studentUpdateRequestDto.getStatus()));
         student.setFaculty(Faculty.fromString(studentUpdateRequestDto.getFaculty()));
