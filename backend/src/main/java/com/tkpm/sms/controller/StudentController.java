@@ -1,6 +1,7 @@
 package com.tkpm.sms.controller;
 
-import com.tkpm.sms.dto.request.StudentRequest;
+import com.tkpm.sms.dto.request.StudentCreateRequestDto;
+import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.StudentDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
@@ -62,7 +63,7 @@ public class StudentController {
 
     @PostMapping("/")
     public ResponseEntity<ApplicationResponseDto<StudentDto>> addNewStudent(
-            @Valid @RequestBody StudentRequest student,
+            @Valid @RequestBody StudentCreateRequestDto student,
             UriComponentsBuilder uriComponentsBuilder
     ) {
         var newStudent = studentService.addNewStudent(student);
@@ -75,13 +76,13 @@ public class StudentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteStudentById(@PathVariable String id) {
         studentService.deleteStudentById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApplicationResponseDto.success());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<StudentDto>> updateStudent(
             @PathVariable String id,
-            @Valid @RequestBody StudentRequest student) {
+            @Valid @RequestBody StudentUpdateRequestDto student) {
         var updatedStudent = studentService.updateStudent(id, student);
         var response = ApplicationResponseDto.success(studentMapper.toStudentDto(updatedStudent));
         return ResponseEntity.ok(response);

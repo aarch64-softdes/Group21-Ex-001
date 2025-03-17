@@ -1,7 +1,8 @@
 package com.tkpm.sms.mapper;
 
+import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.StudentDto;
-import com.tkpm.sms.dto.request.StudentRequest;
+import com.tkpm.sms.dto.request.StudentCreateRequestDto;
 import com.tkpm.sms.entity.Student;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,15 +13,13 @@ public interface StudentMapper {
     Student toStudent(StudentDto studentDto);
     StudentDto toStudentDto(Student student);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "studentId", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "faculty", ignore = true)
     @Mapping(target = "gender", ignore = true)
-    void updateStudent(@MappingTarget Student student, StudentRequest request);
+    void updateStudent(@MappingTarget Student student, StudentUpdateRequestDto request);
 
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "faculty", ignore = true)
     @Mapping(target = "gender", ignore = true)
-    Student createStudent(StudentRequest request);
+    Student createStudent(StudentCreateRequestDto request);
 }

@@ -1,6 +1,7 @@
 package com.tkpm.sms.service;
 
-import com.tkpm.sms.dto.request.StudentRequest;
+import com.tkpm.sms.dto.request.StudentCreateRequestDto;
+import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.enums.Faculty;
 import com.tkpm.sms.enums.Gender;
@@ -43,25 +44,30 @@ public class StudentService {
                 });
     }
 
-    public Student addNewStudent(StudentRequest studentRequest) {
-        if (studentRepository.existsStudentByStudentId(studentRequest.getStudentId())) {
+    public Student addNewStudent(StudentCreateRequestDto studentCreateRequestDto) {
+        if (studentRepository.existsStudentByStudentId(studentCreateRequestDto.getStudentId())) {
             var errorCode = ErrorCode.CONFLICT;
-            errorCode.setMessage(String.format("Student with id %s already existed", studentRequest.getStudentId()));
+            errorCode.setMessage(String.format("Student with id %s already existed", studentCreateRequestDto.getStudentId()));
             throw new ApplicationException(errorCode);
         }
-        if (studentRepository.existsStudentByEmail(studentRequest.getEmail())) {
+        if (studentRepository.existsStudentByEmail(studentCreateRequestDto.getEmail())) {
             var errorCode = ErrorCode.CONFLICT;
-            errorCode.setMessage(String.format("Student with email %s already existed", studentRequest.getEmail()));
+            errorCode.setMessage(String.format("Student with email %s already existed", studentCreateRequestDto.getEmail()));
+            throw new ApplicationException(errorCode);
+        }
+        if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone())) {
+            var errorCode = ErrorCode.CONFLICT;
+            errorCode.setMessage(String.format("Student with phone number %s already existed", studentCreateRequestDto.getPhone()));
             throw new ApplicationException(errorCode);
         }
 
-        Student student = studentMapper.createStudent(studentRequest);
+        Student student = studentMapper.createStudent(studentCreateRequestDto);
 
-        student.setStatus(Status.valueOf(studentRequest.getStatus()));
-        student.setFaculty(Faculty.fromString(studentRequest.getFaculty()));
-        student.setGender(Gender.valueOf(studentRequest.getGender()));
+        student.setStatus(Status.valueOf(studentCreateRequestDto.getStatus()));
+        student.setFaculty(Faculty.fromString(studentCreateRequestDto.getFaculty()));
+        student.setGender(Gender.valueOf(studentCreateRequestDto.getGender()));
 
-        studentRepository.save(student);
+        student = studentRepository.save(student);
         return student;
     }
 
@@ -74,7 +80,7 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 
-    public Student updateStudent(String id, StudentRequest studentRequest) {
+    public Student updateStudent(String id, StudentUpdateRequestDto studentUpdateRequestDto) {
         var student = studentRepository.findById(id)
                 .orElseThrow(() -> {
                     var errorCode = ErrorCode.NOT_FOUND;
@@ -82,12 +88,12 @@ public class StudentService {
                     return new ApplicationException(errorCode);
                 });
 
-        studentMapper.updateStudent(student, studentRequest);
-        student.setStatus(Status.valueOf(studentRequest.getStatus()));
-        student.setFaculty(Faculty.valueOf(studentRequest.getFaculty()));
-        student.setGender(Gender.valueOf(studentRequest.getGender()));
+        studentMapper.updateStudent(student, studentUpdateRequestDto);
+        student.setStatus(Status.valueOf(studentUpdateRequestDto.getStatus()));
+        student.setFaculty(Faculty.fromString(studentUpdateRequestDto.getFaculty()));
+        student.setGender(Gender.valueOf(studentUpdateRequestDto.getGender()));
 
-        studentRepository.save(student);
+        student = studentRepository.save(student);
 
         return student;
     }

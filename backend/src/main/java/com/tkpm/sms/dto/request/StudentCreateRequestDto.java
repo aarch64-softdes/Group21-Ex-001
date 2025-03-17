@@ -1,7 +1,5 @@
 package com.tkpm.sms.dto.request;
 
-import com.tkpm.sms.enums.Faculty;
-import com.tkpm.sms.enums.Gender;
 import com.tkpm.sms.enums.Status;
 import com.tkpm.sms.validator.StatusConstraint;
 import jakarta.validation.constraints.Email;
@@ -12,14 +10,13 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StudentRequest {
+public class StudentCreateRequestDto {
     @NotNull(message = "Student ID is required")
     String studentId;
 
