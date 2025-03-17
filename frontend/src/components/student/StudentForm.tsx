@@ -19,10 +19,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  // CardDescription,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+
 import Student, {
-  Gender,
-  Faculty,
-  Status,
+  // Gender,
+  // Faculty,
+  // Status,
   CreateStudentDTO,
 } from "@/types/student";
 import {
@@ -30,7 +39,7 @@ import {
   useGenders,
   useStudentStatuses,
 } from "@/hooks/useMetadata";
-import { Loader2 } from "lucide-react";
+import { FireExtinguisherIcon, Loader2, X } from "lucide-react";
 import { useEffect } from "react";
 import { FormComponentProps } from "@/types/table";
 import LoadingButton from "../ui/loadingButton";
@@ -61,6 +70,22 @@ export const StudentFormSchema = z.object({
 });
 
 export type StudentFormValues = z.infer<typeof StudentFormSchema>;
+
+const FormSection = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <Card className="mb-6">
+    <CardHeader className="pb-3">
+      <CardTitle className="text-lg font-medium">{title}</CardTitle>
+      <Separator />
+    </CardHeader>
+    <CardContent>{children}</CardContent>
+  </Card>
+);
 
 const StudentForm: React.FC<FormComponentProps<Student>> = ({
   onSubmit,
@@ -139,352 +164,383 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
   const isFormLoading = isLoading || (isEditing && isLoadingStudent);
 
   return (
-    <Form {...form}>
-      <h2 className="mb-4 text-xl font-semibold">
-        {isEditing ? "Edit Student" : "Add New Student"}
-      </h2>
-      {isFormLoading ? (
-        <div className="flex items-center justify-center p-6">
-          <Loader2 className="h-8 w-8 animate-spin" />
+    <div className="fixed w-screen">
+      {/* Header */}
+      <div className="border-b px-4 py-2 flex items-center justify-between">
+        <h2 className="text-xl font-semibold">
+          {isEditing ? "Edit Student" : "Add New Student"}
+        </h2>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onCancel}
+            className="rounded-full"
+          />
         </div>
-      ) : (
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="mx-auto w-full max-w-md space-y-4 p-6"
-          autoComplete="off"
-          noValidate
-        >
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="studentId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Student ID</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g. S12345"
-                      {...field}
-                      disabled={isEditing}
-                      autoComplete="off"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      </div>
 
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="John Doe"
-                      {...field}
-                      autoComplete="off"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="dob"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      {...field}
-                      autoComplete="off"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gender</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-4 min-h-0">
+        <div className="max-w-5xl mx-auto pb-20">
+          <Form {...form}>
+            {isFormLoading ? (
+              <div className="flex items-center justify-center p-6">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : (
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                // className="mx-auto w-full max-w-md space-y-4 p-6"
+                className="max-w-5xl max-auto"
+                autoComplete="off"
+                noValidate
+              >
+                <FormSection title="Basic Information">
+                  <div
+                    className="grid grid-cols-2 gap-4"
+                    // className="grid grid-cols-1 md:grid-cols-3 gap-6"
                   >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {gendersQuery.isLoading ? (
-                        <div className="flex items-center justify-center p-2">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        </div>
-                      ) : gendersQuery.data ? (
-                        gendersQuery.data.map((gender) => (
-                          <SelectItem key={gender} value={gender}>
-                            {gender.replace(/_/g, " ")}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="" disabled>
-                          Failed to load genders
-                        </SelectItem>
+                    <FormField
+                      control={form.control}
+                      name="studentId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Student ID</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="e.g. S12345"
+                              {...field}
+                              disabled={isEditing}
+                              autoComplete="off"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="faculty"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Faculty</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select faculty" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {facultiesQuery.isLoading ? (
-                        <div className="flex items-center justify-center p-2">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        </div>
-                      ) : facultiesQuery.data ? (
-                        facultiesQuery.data.map((faculty) => (
-                          <SelectItem key={faculty.value} value={faculty.value}>
-                            {faculty.value}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="" disabled>
-                          Failed to load faculties
-                        </SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="course"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Course Year</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min="1"
-                      max="6"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseInt(e.target.value, 10))
-                      }
-                      autoComplete="off"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                        }
-                      }}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
 
-          <FormField
-            control={form.control}
-            name="program"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Program</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="e.g. Computer Science"
-                    {...field}
-                    autoComplete="off"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="John Doe"
+                              {...field}
+                              autoComplete="off"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="example@email.com"
-                    {...field}
-                    autoComplete="off"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="dob"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Date of Birth</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="date"
+                              {...field}
+                              autoComplete="off"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Address</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="123 Main St, City"
-                    {...field}
-                    autoComplete="off"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <FormField
+                      control={form.control}
+                      name="gender"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Gender</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select gender" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {gendersQuery.isLoading ? (
+                                <div className="flex items-center justify-center p-2">
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                </div>
+                              ) : gendersQuery.data ? (
+                                gendersQuery.data.map((gender) => (
+                                  <SelectItem key={gender} value={gender}>
+                                    {gender.replace(/_/g, " ")}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="" disabled>
+                                  Failed to load genders
+                                </SelectItem>
+                              )}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="0123456789"
-                    {...field}
-                    autoComplete="off"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="example@email.com"
+                              {...field}
+                              autoComplete="off"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {statusesQuery.isLoading ? (
-                      <div className="flex items-center justify-center p-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      </div>
-                    ) : statusesQuery.data ? (
-                      statusesQuery.data.map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {status.replace(/_/g, " ")}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="" disabled>
-                        Failed to load statuses
-                      </SelectItem>
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Address</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="123 Main St, City"
+                              {...field}
+                              autoComplete="off"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="0123456789"
+                              {...field}
+                              autoComplete="off"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </FormSection>
+
+                <FormSection title="Academic Information">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="faculty"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Faculty</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select faculty" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {facultiesQuery.isLoading ? (
+                                <div className="flex items-center justify-center p-2">
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                </div>
+                              ) : facultiesQuery.data ? (
+                                facultiesQuery.data.map((faculty) => (
+                                  <SelectItem
+                                    key={faculty.value}
+                                    value={faculty.value}
+                                  >
+                                    {faculty.value}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="" disabled>
+                                  Failed to load faculties
+                                </SelectItem>
+                              )}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="course"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Course Year</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min="1"
+                              max="6"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(parseInt(e.target.value, 10))
+                              }
+                              autoComplete="off"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="program"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Program</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="e.g. Computer Science"
+                            {...field}
+                            autoComplete="off"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  />
 
-          <div className="flex justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                form.reset();
-                onCancel();
-              }}
-            >
-              Cancel
-            </Button>
-            <LoadingButton type="submit" isLoading={isLoading}>
-              {isEditing ? "Save Changes" : "Add Student"}
-            </LoadingButton>
-          </div>
-        </form>
-      )}
-    </Form>
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {statusesQuery.isLoading ? (
+                              <div className="flex items-center justify-center p-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              </div>
+                            ) : statusesQuery.data ? (
+                              statusesQuery.data.map((status) => (
+                                <SelectItem key={status} value={status}>
+                                  {status.replace(/_/g, " ")}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value="" disabled>
+                                Failed to load statuses
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FormSection>
+
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      form.reset();
+                      onCancel();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <LoadingButton type="submit" isLoading={isLoading}>
+                    {isEditing ? "Save Changes" : "Add Student"}
+                  </LoadingButton>
+                </div>
+              </form>
+            )}
+          </Form>
+        </div>
+      </div>
+    </div>
   );
 };
 
