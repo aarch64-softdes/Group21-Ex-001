@@ -11,14 +11,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<ApplicationResponseDto<Object>> handleApplicationException(ApplicationException e) {
-        ErrorCode errorCode = e.getErrorCode();
+    public ResponseEntity<ApplicationResponseDto<Object>> handleApplicationException(ApplicationException exception) {
+        log.error("Application error", exception);
+
+        ErrorCode errorCode = exception.getErrorCode();
         var response = ApplicationResponseDto.failure(errorCode);
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApplicationResponseDto<Object>> handleRuntimeException(RuntimeException e) {
+    public ResponseEntity<ApplicationResponseDto<Object>> handleRuntimeException(RuntimeException exception) {
+        log.error("Unexpected error", exception);
+
         var errorCode = ErrorCode.UNCATEGORIZED;
         var response = ApplicationResponseDto.failure(errorCode);
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
@@ -26,6 +30,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApplicationResponseDto<Object>> handleValidationException(MethodArgumentNotValidException exception) {
+        log.error("Validation error", exception);
+
         var enumKey = exception.getFieldError().getDefaultMessage();
         var error = ErrorCode.valueOf(enumKey);
 

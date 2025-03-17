@@ -24,4 +24,10 @@ public enum ErrorCode {
     @Setter
     private String message;
     private HttpStatus httpStatus;
+
+    public ErrorCode withMessage(String newMessage) {
+        ErrorCode copy = this;
+        copy.message = newMessage;
+        return copy;
+    }
 }
