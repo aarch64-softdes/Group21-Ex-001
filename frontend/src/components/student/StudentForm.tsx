@@ -51,7 +51,7 @@ export const StudentFormSchema = z.object({
   name: z
     .string()
     .min(1, "Name is required")
-    .regex(/^[a-zA-Z\s]*$/, "Name must contain only letters"),
+    .regex(/^[\p{L}\s]*$/u, "Name must contain only letters and spaces"),
   dob: z.string().refine((date) => {
     const today = new Date();
     const birthDate = new Date(date);
@@ -174,7 +174,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
       {/* Content */}
       <div className="flex-1/2 overflow-y-auto p-4 min-h-0">
-        <div className="max-w-5xl mx-auto pb-20">
+        <div className="max-w-5xl mx-auto pb-4">
           <Form {...form}>
             {isFormLoading ? (
               <div className="flex items-center justify-center p-6">

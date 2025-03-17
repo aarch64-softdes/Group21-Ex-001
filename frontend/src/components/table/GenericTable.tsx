@@ -255,7 +255,7 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Add Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-screen w-[90%] h-[97%] p-4">
           <FormComponent
             onSubmit={handleAdd}
             onCancel={() => setDialogOpen(false)}
@@ -278,7 +278,7 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Detail Dialog */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-screen w-[90%] h-[97%] p-4">
           <DetailComponent id={currentDetailItem?.id} />
         </DialogContent>
       </Dialog>
