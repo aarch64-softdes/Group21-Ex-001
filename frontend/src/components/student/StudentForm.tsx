@@ -74,6 +74,24 @@ export const StudentFormSchema = z.object({
     .string()
     .regex(/^0\d{9}$/, "Phone number must start with 0 and have 10 digits"),
   status: z.string().min(1, "Status is required").default("Studying"),
+  nationality: z.string().min(1, "Nationality is required").default("Việt Nam"),
+
+  // Identity documents section
+  idDocumentType: z.enum(["CMND", "CCCD", "Passport"]),
+
+  // Conditional fields based on document type
+  documentDetails: z.object({
+    documentNumber: z.string().min(1, "Document number is required"),
+    issueDate: z.string().min(1, "Issue date is required"),
+    issuePlace: z.string().min(1, "Issue place is required"),
+    expiryDate: z.string().min(1, "Expiry date is required"),
+    // CCCD specific
+    hasChip: z.boolean().optional(),
+    // Passport specific
+    issuingCountry: z.string().optional(),
+    notes: z.string().optional(),
+  }),
+
   permanentAddress: z.object({
     street: z.string(),
     ward: z.string(),
@@ -83,11 +101,11 @@ export const StudentFormSchema = z.object({
   }),
 
   temporaryAddress: z.object({
-    street: z.string(),
-    ward: z.string(),
-    district: z.string(),
-    province: z.string(),
-    country: z.string().default("Việt Nam"),
+    street: z.string().optional(),
+    ward: z.string().optional(),
+    district: z.string().optional(),
+    province: z.string().optional(),
+    country: z.string().optional().default("Việt Nam"),
   }),
 
   mailingAddress: z.object({
@@ -108,7 +126,7 @@ const FormSection = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <Card className="mb-6 bg-gray-50">
+  <Card className="mb-6 bg-zinc -50">
     <CardHeader>
       <CardTitle className="text-lg font-medium">{title}</CardTitle>
       <Separator />
@@ -144,6 +162,17 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       email: "",
       phone: "",
       status: "Studying",
+      nationality: "Việt Nam",
+      idDocumentType: "CMND",
+      documentDetails: {
+        documentNumber: "",
+        issueDate: "",
+        issuePlace: "",
+        expiryDate: "",
+        hasChip: false,
+        issuingCountry: "",
+        notes: "",
+      },
     },
   });
 
@@ -174,6 +203,14 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         email: studentData.email || "",
         phone: studentData.phone || "",
         status: studentData.status || "Studying",
+        nationality: studentData.nationality || "Việt Nam",
+        idDocumentType: studentData.idDocumentType || "CMND",
+        documentDetails: studentData.documentDetails || {
+          documentNumber: "",
+          issueDate: "",
+          issuePlace: "",
+          expiryDate: "",
+        },
       });
     }
   }, [studentData, id, form]);
@@ -191,6 +228,9 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
   // Determine if we should show loading state
   const isFormLoading = isLoading || (isEditing && isLoadingStudent);
+
+  // Get the current document type value
+  const documentType = form.watch("idDocumentType");
 
   return (
     <div className="sticky inset-0">
@@ -375,13 +415,13 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name="address"
+                      name="nationality"
                       render={({ field }) => (
-                        <FormItem className="col-span-2 lg:col-span-3">
-                          <FormLabel>Address</FormLabel>
+                        <FormItem>
+                          <FormLabel>Nationality</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="123 Main St, City"
+                              placeholder="e.g. Việt Nam"
                               {...field}
                               autoComplete="off"
                               onKeyDown={(e) => {
@@ -401,7 +441,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                     <Accordion type="single" collapsible className="w-full">
                       <AccordionItem value="detailed-addresses">
                         <AccordionTrigger className="font-medium text-base">
-                          Detailed Addresses
+                          Contact Addresses
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className="space-y-6 pt-2">
@@ -427,6 +467,175 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
+                  </div>
+                </FormSection>
+
+                {/* New section for ID Documents */}
+                <FormSection title="Identification Document">
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="idDocumentType"
+                      render={({ field }) => (
+                        <FormItem className="col-span-2 md:col-span-1">
+                          <FormLabel>Document Type</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select document type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="CMND">
+                                Chứng minh nhân dân (CMND)
+                              </SelectItem>
+                              <SelectItem value="CCCD">
+                                Căn cước công dân (CCCD)
+                              </SelectItem>
+                              <SelectItem value="Passport">
+                                Hộ chiếu (Passport)
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="documentDetails.documentNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {documentType === "CMND"
+                              ? "CMND Number"
+                              : documentType === "CCCD"
+                              ? "CCCD Number"
+                              : "Passport Number"}
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter document number"
+                              {...field}
+                              autoComplete="off"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="documentDetails.issueDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Issue Date</FormLabel>
+                          <FormControl>
+                            <Input type="date" {...field} autoComplete="off" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="documentDetails.issuePlace"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Issue Place</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="e.g. Cục Cảnh sát"
+                              {...field}
+                              autoComplete="off"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="documentDetails.expiryDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Expiry Date</FormLabel>
+                          <FormControl>
+                            <Input type="date" {...field} autoComplete="off" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {documentType === "CCCD" && (
+                      <FormField
+                        control={form.control}
+                        name="documentDetails.hasChip"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                              <input
+                                type="checkbox"
+                                checked={field.value}
+                                onChange={field.onChange}
+                                className="h-4 w-4"
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel>Has Chip</FormLabel>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {documentType === "Passport" && (
+                      <>
+                        <FormField
+                          control={form.control}
+                          name="documentDetails.issuingCountry"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Issuing Country</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="e.g. Việt Nam"
+                                  {...field}
+                                  autoComplete="off"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="documentDetails.notes"
+                          render={({ field }) => (
+                            <FormItem className="col-span-2">
+                              <FormLabel>Notes</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Additional notes (if any)"
+                                  {...field}
+                                  autoComplete="off"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </>
+                    )}
                   </div>
                 </FormSection>
 
