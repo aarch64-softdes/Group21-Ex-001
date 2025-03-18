@@ -32,7 +32,9 @@ public class StudentUpdateRequestDto {
     @NotNull(message = "Student email is required")
     String email;
 
-    String address;
+    AddressUpdateRequestDto permanentAddress;
+    AddressUpdateRequestDto temporaryAddress;
+    AddressUpdateRequestDto mailingAddress;
 
     @NotNull(message = "Student phone number is required")
     @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE")

@@ -35,7 +35,9 @@ public class StudentCreateRequestDto {
     @NotNull(message = "Student email is required")
     String email;
 
-    String address;
+    AddressCreateRequestDto permanentAddress;
+    AddressCreateRequestDto temporaryAddress;
+    AddressCreateRequestDto mailingAddress;
 
     @NotNull(message = "Student phone number is required")
     @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE")
