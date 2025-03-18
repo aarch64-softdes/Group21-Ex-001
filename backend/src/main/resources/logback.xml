@@ -21,12 +21,42 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="com.tkpm.sms.controller" level="DEBUG" additivity="false">
-        <appender-ref ref="CONSOLE" />
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/application.json</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/application-%d{yyyy-MM-dd}.json</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <level>level</level>
+                <logger>source</logger>
+                <message>message</message>
+            </fieldNames>
+            <includeMdc>true</includeMdc>
+            <includeContext>true</includeContext>
+        </encoder>
+    </appender>
+
+    <!-- Set specific logger levels -->
+    <logger name="com.tkpm.sms.logging.JsonLogger" level="DEBUG" additivity="false">
+        <appender-ref ref="JSON_FILE" />
     </logger>
 
+    <logger name="com.tkpm.sms.logging.FileLogger" level="DEBUG" additivity="false">
+        <appender-ref ref="JSON_FILE"/>
+    </logger>
+
+    <logger name="com.tkpm.sms.logging.ConsoleLogger" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Root logger configuration -->
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
     </root>
 </configuration>

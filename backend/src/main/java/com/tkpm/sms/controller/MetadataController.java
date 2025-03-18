@@ -1,6 +1,6 @@
 package com.tkpm.sms.controller;
 
-import com.tkpm.sms.enums.EnumUtils;
+import com.tkpm.sms.utils.EnumUtils;
 import com.tkpm.sms.enums.Faculty;
 import com.tkpm.sms.enums.Gender;
 import com.tkpm.sms.enums.Status;
