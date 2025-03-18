@@ -1,12 +1,11 @@
 package com.tkpm.sms.logging;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@Component
 public class ConsoleLogger extends AbstractLogger {
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_RED = "\u001B[31m";

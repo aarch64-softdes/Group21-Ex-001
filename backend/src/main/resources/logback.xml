@@ -48,7 +48,7 @@
     </logger>
 
     <logger name="com.tkpm.sms.logging.FileLogger" level="DEBUG" additivity="false">
-        <appender-ref ref="JSON_FILE"/>
+        <appender-ref ref="FILE"/>
     </logger>
 
     <logger name="com.tkpm.sms.logging.ConsoleLogger" level="DEBUG" additivity="false">

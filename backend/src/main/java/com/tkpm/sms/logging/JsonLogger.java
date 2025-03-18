@@ -2,10 +2,12 @@ package com.tkpm.sms.logging;
 
 import com.tkpm.sms.utils.JsonUtils;
 import org.springframework.boot.logging.LogLevel;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class JsonLogger extends AbstractLogger {
     public JsonLogger() {
         super("com.tkpm.sms.logging.JsonLogger");

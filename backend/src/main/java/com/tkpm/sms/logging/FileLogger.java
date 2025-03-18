@@ -1,9 +1,11 @@
 package com.tkpm.sms.logging;
 
 import org.springframework.boot.logging.LogLevel;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@Component
 public class FileLogger extends AbstractLogger {
     public FileLogger() {
         super("com.tkpm.sms.logging.FileLogger");
