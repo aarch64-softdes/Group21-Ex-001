@@ -27,6 +27,12 @@ import {
   // CardDescription,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 import Student, {
   // Gender,
@@ -67,6 +73,29 @@ export const StudentFormSchema = z.object({
     .string()
     .regex(/^0\d{9}$/, "Phone number must start with 0 and have 10 digits"),
   status: z.string().min(1, "Status is required").default("Studying"),
+  permanentAddress: z.object({
+    street: z.string(),
+    ward: z.string(),
+    district: z.string(),
+    province: z.string(),
+    country: z.string().default("Việt Nam"),
+  }),
+
+  temporaryAddress: z.object({
+    street: z.string(),
+    ward: z.string(),
+    district: z.string(),
+    province: z.string(),
+    country: z.string().default("Việt Nam"),
+  }),
+
+  mailingAddress: z.object({
+    street: z.string(),
+    ward: z.string(),
+    district: z.string(),
+    province: z.string(),
+    country: z.string().default("Việt Nam"),
+  }),
 });
 
 export type StudentFormValues = z.infer<typeof StudentFormSchema>;
@@ -143,7 +172,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         program: studentData.program || "",
         email: studentData.email || "",
         phone: studentData.phone || "",
-        address: studentData.address || "",
         status: studentData.status || "Studying",
       });
     }
@@ -366,6 +394,388 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                         </FormItem>
                       )}
                     />
+                  </div>
+
+                  <div className="mt-6">
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="detailed-addresses">
+                        <AccordionTrigger className="font-medium text-base">
+                          Detailed Addresses
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-6 pt-2">
+                            {/* Permanent Address */}
+                            <fieldset className="border rounded-md p-4">
+                              <legend className="px-2 font-medium">
+                                Permanent Address
+                              </legend>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <FormField
+                                  control={form.control}
+                                  name="permanentAddress.street"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Street Address</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Street name, house number"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="permanentAddress.ward"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Ward</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Ward/Commune"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="permanentAddress.district"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>District</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="District"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="permanentAddress.province"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>City/Province</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="City/Province"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="permanentAddress.country"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Country</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Country"
+                                          {...field}
+                                          value={field.value || "Việt Nam"}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                            </fieldset>
+
+                            {/* Temporary Address */}
+                            <fieldset className="border rounded-md p-4">
+                              <legend className="px-2 font-medium">
+                                Temporary Address
+                              </legend>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField
+                                  control={form.control}
+                                  name="temporaryAddress.street"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Street Address</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Street name, house number"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="temporaryAddress.ward"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Ward</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Ward/Commune"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="temporaryAddress.district"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>District</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="District"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="temporaryAddress.province"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>City/Province</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="City/Province"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="temporaryAddress.country"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Country</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Country"
+                                          {...field}
+                                          value={field.value || "Việt Nam"}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                            </fieldset>
+
+                            {/* Mailing Address */}
+                            <fieldset className="border rounded-md p-4">
+                              <legend className="px-2 font-medium">
+                                Mailing Address
+                              </legend>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField
+                                  control={form.control}
+                                  name="mailingAddress.street"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Street Address</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Street name, house number"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="mailingAddress.ward"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Ward</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Ward/Commune"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="mailingAddress.district"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>District</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="District"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="mailingAddress.province"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>City/Province</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="City/Province"
+                                          {...field}
+                                          value={field.value || ""}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                <FormField
+                                  control={form.control}
+                                  name="mailingAddress.country"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Country</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Country"
+                                          {...field}
+                                          value={field.value || "Việt Nam"}
+                                          autoComplete="off"
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter")
+                                              e.preventDefault();
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                            </fieldset>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                 </FormSection>
 
