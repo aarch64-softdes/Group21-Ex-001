@@ -135,6 +135,12 @@ const FormSection = ({
   </Card>
 );
 
+const addressTypes = [
+  { type: "permanentAddress", displayName: "Permanent Address" },
+  { type: "temporaryAddress", displayName: "Temporary Address" },
+  { type: "mailingAddress", displayName: "Mailing Address" },
+];
+
 const StudentForm: React.FC<FormComponentProps<Student>> = ({
   onSubmit,
   onCancel,
@@ -445,24 +451,19 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className="space-y-6 pt-2">
-                            {/* Permanent Address */}
-                            <AddressForm
-                              form={form}
-                              type="permanentAddress"
-                              title="Permanent Address"
-                            />
-
-                            <AddressForm
-                              form={form}
-                              type="temporaryAddress"
-                              title="Temporary Address"
-                            />
-
-                            <AddressForm
-                              form={form}
-                              type="mailingAddress"
-                              title="Mailing Address"
-                            />
+                            {addressTypes.map((addressType) => (
+                              <AddressForm
+                                key={addressType.type}
+                                form={form}
+                                type={
+                                  addressType.type as
+                                    | "permanentAddress"
+                                    | "temporaryAddress"
+                                    | "mailingAddress"
+                                }
+                                title={addressType.displayName}
+                              />
+                            ))}
                           </div>
                         </AccordionContent>
                       </AccordionItem>
@@ -470,7 +471,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                   </div>
                 </FormSection>
 
-                {/* New section for ID Documents */}
+                {/* ID Documents */}
                 <FormSection title="Identification Document">
                   <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                     <FormField
@@ -580,7 +581,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                         control={form.control}
                         name="documentDetails.hasChip"
                         render={({ field }) => (
-                          <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+                          <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md pt-6 pl-2  ">
                             <FormControl>
                               <input
                                 type="checkbox"
