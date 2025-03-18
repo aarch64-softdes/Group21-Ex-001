@@ -26,6 +26,8 @@ public class LoggerManager {
                 return applicationContext.getBean(FileLogger.class);
             case JSON:
                 return applicationContext.getBean(JsonLogger.class);
+            case ELASTICSEARCH:
+                return applicationContext.getBean(ElasticsearchLogger.class);
             case CONSOLE:
             default:
                 return applicationContext.getBean(ConsoleLogger.class);
@@ -37,6 +39,8 @@ public class LoggerManager {
             return applicationContext.getBean(FileLogger.class);
         } else if (clazz == JsonLogger.class) {
             return applicationContext.getBean(JsonLogger.class);
+        } else if (clazz == ElasticsearchLogger.class) {
+            return applicationContext.getBean(ElasticsearchLogger.class);
         } else {
             return applicationContext.getBean(ConsoleLogger.class);
         }

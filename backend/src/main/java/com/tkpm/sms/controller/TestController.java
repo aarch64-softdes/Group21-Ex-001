@@ -28,18 +28,21 @@ public class TestController {
         var consoleLogger = loggerManager.getDefaultLogger();
         var jsonLogger = loggerManager.getLogger(LoggerType.JSON);
         var fileLogger = loggerManager.getLogger(FileLogger.class);
+        var elasticLogger = loggerManager.getLogger(ElasticsearchLogger.class);
 
-        staticLogger.log("Processed text static: " + text, LogLevel.DEBUG);
+        elasticLogger.log("Processed text elastic: " + text, LogLevel.INFO);
 
-        consoleLogger.log("Processing text: " + text);
-        consoleLogger.log("Processed text debug: " + text, LogLevel.DEBUG);
-
-        jsonLogger.log("Processed text json: " + text, LogLevel.DEBUG);
-        jsonLogger.log("Processed text info: " + text, LogLevel.ERROR, Map.of("text", text));
-
-        fileLogger.log("Processed text file: " + text, LogLevel.DEBUG);
-        fileLogger.log("Processed text file: " + text, LogLevel.ERROR, Map.of("text", text));
-        fileLogger.log("Processed text file: " + text, LogLevel.WARN);
+//        staticLogger.log("Processed text static: " + text, LogLevel.DEBUG);
+//
+//        consoleLogger.log("Processing text: " + text);
+//        consoleLogger.log("Processed text debug: " + text, LogLevel.DEBUG);
+//
+//        jsonLogger.log("Processed text json: " + text, LogLevel.DEBUG);
+//        jsonLogger.log("Processed text info: " + text, LogLevel.ERROR, Map.of("text", text));
+//
+//        fileLogger.log("Processed text file: " + text, LogLevel.DEBUG);
+//        fileLogger.log("Processed text file: " + text, LogLevel.ERROR, Map.of("text", text));
+//        fileLogger.log("Processed text file: " + text, LogLevel.WARN);
 
         return ResponseEntity.ok("Processed: " + text);
     }

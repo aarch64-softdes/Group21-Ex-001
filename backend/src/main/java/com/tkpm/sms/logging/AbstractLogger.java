@@ -32,15 +32,13 @@ public abstract class AbstractLogger implements BaseLogger {
             case DEBUG:
                 if (logger.isDebugEnabled()) logger.debug(formattedMessage);
                 break;
-            case INFO:
-                if (logger.isInfoEnabled()) logger.info(formattedMessage);
-                break;
             case WARN:
                 if (logger.isWarnEnabled()) logger.warn(formattedMessage);
                 break;
             case ERROR:
                 if (logger.isErrorEnabled()) logger.error(formattedMessage);
                 break;
+            case INFO:
             default:
                 if (logger.isInfoEnabled()) logger.info(formattedMessage);
                 break;
@@ -49,9 +47,7 @@ public abstract class AbstractLogger implements BaseLogger {
 
     @Override
     public void log(String message, LogLevel level, Map<String, Object> metadata) {
-        if (level.ordinal() >= currentLevel.ordinal()) {
-            logWithLevel(message, level, metadata);
-        }
+        logWithLevel(message, level, metadata);
     }
 
     @Override

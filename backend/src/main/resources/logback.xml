@@ -55,6 +55,10 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
 
+    <logger name="com.tkpm.sms.logging.ElasticsearchLogger" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
     <!-- Root logger configuration -->
     <root level="INFO">
         <appender-ref ref="CONSOLE" />

@@ -1,5 +1,5 @@
 package com.tkpm.sms.enums;
 
 public enum LoggerType {
-    CONSOLE, FILE, JSON
+    CONSOLE, FILE, JSON, ELASTICSEARCH
 }
