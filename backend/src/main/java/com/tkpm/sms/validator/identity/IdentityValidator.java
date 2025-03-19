@@ -2,6 +2,7 @@ package com.tkpm.sms.validator.identity;
 
 import com.tkpm.sms.dto.request.IdentityCreateRequestDto;
 import com.tkpm.sms.dto.request.IdentityUpdateRequestDto;
+import com.tkpm.sms.enums.EnumUtils;
 import com.tkpm.sms.enums.IdentityType;
 import com.tkpm.sms.exceptions.ErrorCode;
 import jakarta.validation.ConstraintValidator;
@@ -50,19 +51,27 @@ public class IdentityValidator implements ConstraintValidator<IdentityConstraint
                 || Objects.isNull(issueDate) || Objects.isNull(expiryDate)) {
             return true;
         }
+
+        context.disableDefaultConstraintViolation();
         if (!isIdentityType(type)) {
-            context.buildConstraintViolationWithTemplate(ErrorCode.INVALID_IDENTITY_TYPE.name()).addConstraintViolation();
-            log.info("Invalid identity type: {}", type);
+            context.buildConstraintViolationWithTemplate(ErrorCode.INVALID_IDENTITY_TYPE.name())
+                    .addPropertyNode("type")
+                    .addConstraintViolation();
+            log.info("Invalid identity type: {}", context.getDefaultConstraintMessageTemplate());
             return false;
         }
         if (!isValidNumber(type, number)) {
-            context.buildConstraintViolationWithTemplate(ErrorCode.INVALID_IDENTITY_NUMBER.name()).addConstraintViolation();
-            log.info("Invalid identity number: {}", number);
+            context.buildConstraintViolationWithTemplate("INVALID_IDENTITY_NUMBER")
+                    .addPropertyNode("number")
+                    .addConstraintViolation();
+            log.info("Invalid identity number: {}", context.getDefaultConstraintMessageTemplate());
             return false;
         }
 
         if (issueDate.isAfter(expiryDate)) {
-            context.buildConstraintViolationWithTemplate(ErrorCode.INVALID_IDENTITY_ISSUED_DATE.name()).addConstraintViolation();
+            context.buildConstraintViolationWithTemplate("INVALID_IDENTITY_ISSUED_DATE")
+                    .addPropertyNode("issuedDate")
+                    .addConstraintViolation();
             log.info("Issue date must be before expiry date");
             return false;
         }
@@ -71,7 +80,7 @@ public class IdentityValidator implements ConstraintValidator<IdentityConstraint
     }
 
     private boolean isIdentityType(String value) {
-        return Arrays.asList(IdentityType.availableValues).contains(value);
+        return Arrays.asList(EnumUtils.getNames(IdentityType.class)).contains(value);
     }
 
     private boolean isValidNumber(String type, String number) {

@@ -13,8 +13,6 @@ public enum IdentityType {
 
     private final String displayName;
 
-    public static final String[] availableValues = {"Identity Card", "Chip-based Card", "Passport"};
-
     public boolean equals(String value) {
         return this.displayName.equalsIgnoreCase(value);
     }

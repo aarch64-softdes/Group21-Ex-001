@@ -19,7 +19,7 @@ public class MetadataController {
 
     @GetMapping("/identity-type")
     public List<String> getAllIdentityType() {
-        return Arrays.stream(IdentityType.availableValues).toList();
+        return Arrays.stream(EnumUtils.getNames(IdentityType.class)).toList();
     }
 
     @GetMapping("/student-status")
