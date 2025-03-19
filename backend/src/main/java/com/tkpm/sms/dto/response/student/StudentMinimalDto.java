@@ -1,12 +1,12 @@
-package com.tkpm.sms.dto.response;
+package com.tkpm.sms.dto.response.student;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tkpm.sms.enums.Status;
+import com.tkpm.sms.entity.Address;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.Date;
+
 
 @Builder
 @Getter
@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class StudentDto {
+public class StudentMinimalDto {
     String id;
     String studentId;
     String name;
@@ -25,7 +25,6 @@ public class StudentDto {
     Integer course;
     String program;
     String email;
-    String address;
     String phone;
     String status;
 }

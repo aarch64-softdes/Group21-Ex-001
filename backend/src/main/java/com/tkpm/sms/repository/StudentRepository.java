@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 
 
+
 @Repository
 public interface StudentRepository extends JpaRepository<Student, String> {
     @Query("SELECT s FROM Student s WHERE s.name LIKE %?1% OR s.studentId LIKE %?1%")
@@ -20,4 +21,6 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     boolean existsStudentByEmail(@Email @NotNull String email);
 
     boolean existsStudentByPhone(@NotNull @Pattern(regexp = "^0\\d{9}$", message = "Phone number must start with 0 and have 10 digits") String phone);
+
+    void deleteByStudentId(String studentId);
 }
