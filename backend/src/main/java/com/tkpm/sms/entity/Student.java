@@ -1,5 +1,6 @@
 package com.tkpm.sms.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tkpm.sms.enums.Faculty;
 import com.tkpm.sms.enums.Gender;
 import com.tkpm.sms.enums.Status;
@@ -10,7 +11,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Builder
 @Getter
@@ -32,14 +33,14 @@ public class Student {
     @NotNull
     String name;
 
-    Date dob;
+    LocalDate dob;
 
     @Enumerated(EnumType.STRING)
-    @Column (nullable = false)
+    @Column(nullable = false)
     Gender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column (nullable = false)
+    @Column(nullable = false)
     Faculty faculty;
 
     Integer course;
@@ -51,14 +52,27 @@ public class Student {
     @Column(unique = true)
     String email;
 
-    String address;
-
     @NotNull
     @Pattern(regexp = "^0\\d{9}$", message = "Phone number must start with 0 and have 10 digits")
     @Column(unique = true, length = 10)
     String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column (nullable = false)
+    @Column(nullable = false)
     Status status = Status.Studying;
+
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "permanent_address_id")
+    Address permanentAddress;
+
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "temporary_address_id")
+    Address temporaryAddress;
+
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "mailing_address_id")
+    Address mailingAddress;
 }

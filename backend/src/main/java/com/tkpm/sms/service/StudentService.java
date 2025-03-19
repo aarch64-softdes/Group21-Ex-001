@@ -1,103 +1,172 @@
 package com.tkpm.sms.service;
 
-import com.tkpm.sms.dto.StudentRequest;
-import com.tkpm.sms.dto.StudentResponse;
+import com.tkpm.sms.dto.request.StudentCreateRequestDto;
+import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.entity.Student;
+import com.tkpm.sms.enums.Faculty;
+import com.tkpm.sms.enums.Gender;
+import com.tkpm.sms.enums.Status;
+import com.tkpm.sms.exceptions.ApplicationException;
+import com.tkpm.sms.exceptions.ErrorCode;
+import com.tkpm.sms.mapper.AddressMapper;
+import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
+import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentService {
-    private final StudentRepository studentRepository;
-    private final int PAGE_SIZE = 5;
+    int PAGE_SIZE = 5;
 
-    public List<StudentResponse> getStudents(int page, String sortName, String sortType, String search) {
+    StudentRepository studentRepository;
+    StudentMapper studentMapper;
+    AddressService addressService;
+    AddressMapper addressMapper;
+
+    public Page<Student> findAll(int page, String sortName, String sortType, String search) {
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE,
-                                            Sort.by(sortType.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
-                                            sortName));
-        Page<Student> students = studentRepository.getStudents(search, pageable);
-        return students.stream().map(this::mapToResponse).toList();
+                Sort.by(sortType.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                        sortName));
+
+        return studentRepository.getStudents(search, pageable);
     }
 
-    public StudentResponse getStudentDetail(String id) {
-        var student = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-        return mapToResponse(student);
+    public Student getStudentDetail(String id) {
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
     }
 
-    public StudentResponse addNewStudent(StudentRequest studentRequest) {
-        if(studentRepository.existsStudentByStudentId(studentRequest.getStudentId())) {
-            throw new RuntimeException("Student ID already exists");
+    @Transactional
+    public Student createStudent(StudentCreateRequestDto studentCreateRequestDto) {
+        if (studentRepository.existsStudentByStudentId(studentCreateRequestDto.getStudentId())) {
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with id %s already existed", studentCreateRequestDto.getStudentId())));
         }
-        if(studentRepository.existsStudentByEmail(studentRequest.getEmail())) {
-            throw new RuntimeException("Email already exists");
+        if (studentRepository.existsStudentByEmail(studentCreateRequestDto.getEmail())) {
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with email %s already existed", studentCreateRequestDto.getEmail())));
         }
-        Student student = Student.builder()
-                    .studentId(studentRequest.getStudentId())
-                    .name(studentRequest.getName())
-                    .dob(studentRequest.getDob())
-                    .gender(studentRequest.getGender())
-                    .faculty(studentRequest.getFaculty())
-                    .course(studentRequest.getCourse())
-                    .program(studentRequest.getProgram())
-                    .email(studentRequest.getEmail())
-                    .address(studentRequest.getAddress())
-                    .phone(studentRequest.getPhone())
-                    .status(studentRequest.getStatus())
-                    .build();
+        if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone())) {
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with phone number %s already existed", studentCreateRequestDto.getPhone())));
+        }
 
-        studentRepository.save(student);
-        return mapToResponse(student);
+        Student student = studentMapper.createStudent(studentCreateRequestDto);
+
+        log.info("Student created with address: {}", student.getPermanentAddress());
+
+        //TODO: Refactor
+        if (studentCreateRequestDto.getMailingAddress() != null) {
+            var mailingAddress = addressService.createAddress(studentCreateRequestDto.getMailingAddress());
+            student.setMailingAddress(mailingAddress);
+        }
+        if (studentCreateRequestDto.getPermanentAddress() != null) {
+            var permanentAddress = addressService.createAddress(studentCreateRequestDto.getPermanentAddress());
+            student.setPermanentAddress(permanentAddress);
+        }
+        if (studentCreateRequestDto.getTemporaryAddress() != null) {
+            var temporaryAddress = addressService.createAddress(studentCreateRequestDto.getTemporaryAddress());
+            student.setTemporaryAddress(temporaryAddress);
+        }
+
+        student.setStatus(Status.valueOf(studentCreateRequestDto.getStatus()));
+        student.setFaculty(Faculty.fromString(studentCreateRequestDto.getFaculty()));
+        student.setGender(Gender.valueOf(studentCreateRequestDto.getGender()));
+
+        student = studentRepository.save(student);
+        return student;
     }
 
+    @Transactional
     public void deleteStudentById(String id) {
-        if(studentRepository.existsStudentByStudentId(id)) {
-            throw new RuntimeException("Student not found");
-        }
-        studentRepository.deleteById(id);
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
+
+        studentRepository.delete(student);
     }
 
-    public StudentResponse updateStudent(String id, StudentRequest studentRequest) {
+    @Transactional
+    public Student updateStudent(String id, StudentUpdateRequestDto studentUpdateRequestDto) {
         var student = studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
 
-        if (studentRequest.getName() != null) student.setName(studentRequest.getName());
-        if (studentRequest.getDob() != null) student.setDob(studentRequest.getDob());
-        if (studentRequest.getGender() != null) student.setGender(studentRequest.getGender());
-        if (studentRequest.getFaculty() != null) student.setFaculty(studentRequest.getFaculty());
-        if (studentRequest.getCourse() != null) student.setCourse(studentRequest.getCourse());
-        if (studentRequest.getProgram() != null) student.setProgram(studentRequest.getProgram());
-        if (studentRequest.getEmail() != null) student.setEmail(studentRequest.getEmail());
-        if (studentRequest.getAddress() != null) student.setAddress(studentRequest.getAddress());
-        if (studentRequest.getPhone() != null) student.setPhone(studentRequest.getPhone());
-        if (studentRequest.getStatus() != null) student.setStatus(studentRequest.getStatus());
+        if (!student.getEmail().equals(studentUpdateRequestDto.getEmail())
+                && studentRepository.existsStudentByEmail(studentUpdateRequestDto.getEmail())) {
+            var errorCode = ErrorCode.CONFLICT;
+            errorCode.setMessage(String.format("Student with email %s already existed",
+                    studentUpdateRequestDto.getEmail()));
+            throw new ApplicationException(errorCode);
+        }
 
-        studentRepository.save(student);
-        return mapToResponse(student);
-    }
+        if (!student.getPhone().equals(studentUpdateRequestDto.getPhone())
+                && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone())) {
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with phone number %s already existed",
+                    studentUpdateRequestDto.getPhone())));
+        }
 
-    private StudentResponse mapToResponse(Student student) {
-        return StudentResponse.builder()
-                .id(student.getId())
-                .studentId(student.getStudentId())
-                .name(student.getName())
-                .dob(student.getDob())
-                .gender(student.getGender().toString())
-                .faculty(student.getFaculty().toString())
-                .course(student.getCourse())
-                .program(student.getProgram())
-                .email(student.getEmail())
-                .address(student.getAddress())
-                .phone(student.getPhone())
-                .status(student.getStatus())
-                .build();
+        studentMapper.updateStudent(student, studentUpdateRequestDto);
+
+        student.setStatus(Status.valueOf(studentUpdateRequestDto.getStatus()));
+        student.setFaculty(Faculty.fromString(studentUpdateRequestDto.getFaculty()));
+        student.setGender(Gender.valueOf(studentUpdateRequestDto.getGender()));
+
+        //TODO: Refactor
+        if (studentUpdateRequestDto.getTemporaryAddress() != null) {
+            if (student.getTemporaryAddress() == null) {
+                student.setTemporaryAddress(
+                        addressService.createAddress(
+                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getTemporaryAddress())
+                        )
+                );
+            } else {
+                var newTemporaryAddress = addressService.updateAddress(
+                        studentUpdateRequestDto.getTemporaryAddress(),
+                        student.getTemporaryAddress().getId()
+                );
+                student.setTemporaryAddress(newTemporaryAddress);
+            }
+        }
+        if (studentUpdateRequestDto.getPermanentAddress() != null) {
+            if (student.getPermanentAddress() == null) {
+                student.setPermanentAddress(
+                        addressService.createAddress(
+                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getPermanentAddress())
+                        )
+                );
+            } else {
+                var newPermanentAddress = addressService.updateAddress(
+                        studentUpdateRequestDto.getPermanentAddress(),
+                        student.getPermanentAddress().getId()
+                );
+                student.setPermanentAddress(newPermanentAddress);
+            }
+        }
+        if (studentUpdateRequestDto.getMailingAddress() != null) {
+            if (student.getMailingAddress() == null) {
+                student.setMailingAddress(
+                        addressService.createAddress(
+                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getMailingAddress())
+                        )
+                );
+            } else {
+                var newMailingAddress = addressService.updateAddress(
+                        studentUpdateRequestDto.getMailingAddress(),
+                        student.getMailingAddress().getId()
+                );
+                student.setMailingAddress(newMailingAddress);
+            }
+        }
+
+        student = studentRepository.save(student);
+
+        return student;
     }
 }
