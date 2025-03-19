@@ -1,9 +1,6 @@
 package com.tkpm.sms.controller;
 
-import com.tkpm.sms.enums.EnumUtils;
-import com.tkpm.sms.enums.Faculty;
-import com.tkpm.sms.enums.Gender;
-import com.tkpm.sms.enums.Status;
+import com.tkpm.sms.enums.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -18,6 +15,11 @@ public class MetadataController {
     @GetMapping("/faculty")
     public List<Map<String, String>> getAllFaculty() {
         return EnumUtils.getNamesAndValues(Faculty.class);
+    }
+
+    @GetMapping("/identity-type")
+    public List<String> getAllIdentityType() {
+        return Arrays.stream(IdentityType.availableValues).toList();
     }
 
     @GetMapping("/student-status")
