@@ -1,5 +1,6 @@
 package com.tkpm.sms.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tkpm.sms.enums.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -33,7 +34,7 @@ public class Student {
     LocalDate dob;
 
     @Enumerated(EnumType.STRING)
-    @Column (nullable = false)
+    @Column(nullable = false)
     Gender gender;
 
     Integer course;
@@ -42,8 +43,6 @@ public class Student {
     @NotNull
     @Column(unique = true)
     String email;
-
-    String address;
 
     @NotNull
     @Pattern(regexp = "^0\\d{9}$", message = "Phone number must start with 0 and have 10 digits")
@@ -64,4 +63,24 @@ public class Student {
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     Faculty faculty;
+
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "permanent_address_id")
+    Address permanentAddress;
+
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "temporary_address_id")
+    Address temporaryAddress;
+
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "mailing_address_id")
+    Address mailingAddress;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    @JoinColumn(name = "identity_id")
+    Identity identity;
 }

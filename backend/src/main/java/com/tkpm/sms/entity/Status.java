@@ -14,6 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@Table(name = "statuses")
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

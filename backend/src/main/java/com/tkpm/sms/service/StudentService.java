@@ -3,22 +3,24 @@ package com.tkpm.sms.service;
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.entity.Student;
-import com.tkpm.sms.enums.Faculty;
-import com.tkpm.sms.enums.Gender;
-import com.tkpm.sms.enums.Status;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
+import com.tkpm.sms.mapper.AddressMapper;
+import com.tkpm.sms.mapper.IdentityMapper;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -30,7 +32,13 @@ public class StudentService {
     int PAGE_SIZE = 5;
     StudentMapper studentMapper;
 
-    public Page<Student> getStudents(int page, String sortName, String sortType, String search) {
+    AddressService addressService;
+    AddressMapper addressMapper;
+
+    IdentityService identityService;
+    IdentityMapper identityMapper;
+
+    public Page<Student> findAll(int page, String sortName, String sortType, String search) {
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE,
                 Sort.by(sortType.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
                         sortName));
@@ -43,7 +51,8 @@ public class StudentService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
     }
 
-    public Student addNewStudent(StudentCreateRequestDto studentCreateRequestDto) {
+    @Transactional
+    public Student createStudent(StudentCreateRequestDto studentCreateRequestDto) {
         if (studentRepository.existsStudentByStudentId(studentCreateRequestDto.getStudentId())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with id %s already existed", studentCreateRequestDto.getStudentId())));
         }
@@ -55,17 +64,40 @@ public class StudentService {
         }
 
         Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
+
+        log.info("Student created with address: {}", student.getPermanentAddress());
+
+        //TODO: Refactor
+        if (studentCreateRequestDto.getMailingAddress() != null) {
+            var mailingAddress = addressService.createAddress(studentCreateRequestDto.getMailingAddress());
+            student.setMailingAddress(mailingAddress);
+        }
+        if (studentCreateRequestDto.getPermanentAddress() != null) {
+            var permanentAddress = addressService.createAddress(studentCreateRequestDto.getPermanentAddress());
+            student.setPermanentAddress(permanentAddress);
+        }
+        if (studentCreateRequestDto.getTemporaryAddress() != null) {
+            var temporaryAddress = addressService.createAddress(studentCreateRequestDto.getTemporaryAddress());
+            student.setTemporaryAddress(temporaryAddress);
+        }
+
+        student.setIdentity(
+                identityService.createIdentity(studentCreateRequestDto.getIdentity())
+        );
+
         student = studentRepository.save(student);
         return student;
     }
 
+    @Transactional
     public void deleteStudentById(String id) {
-        if (studentRepository.existsStudentByStudentId(id)) {
-            throw new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id)));
-        }
-        studentRepository.deleteById(id);
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
+
+        studentRepository.delete(student);
     }
 
+    @Transactional
     public Student updateStudent(String id, StudentUpdateRequestDto studentUpdateRequestDto) {
         var student = studentRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
@@ -85,6 +117,69 @@ public class StudentService {
         }
 
         studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
+
+        //TODO: Refactor
+        if (studentUpdateRequestDto.getTemporaryAddress() != null) {
+            if (student.getTemporaryAddress() == null) {
+                student.setTemporaryAddress(
+                        addressService.createAddress(
+                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getTemporaryAddress())
+                        )
+                );
+            } else {
+                var newTemporaryAddress = addressService.updateAddress(
+                        studentUpdateRequestDto.getTemporaryAddress(),
+                        student.getTemporaryAddress().getId()
+                );
+                student.setTemporaryAddress(newTemporaryAddress);
+            }
+        }
+        if (studentUpdateRequestDto.getPermanentAddress() != null) {
+            if (student.getPermanentAddress() == null) {
+                student.setPermanentAddress(
+                        addressService.createAddress(
+                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getPermanentAddress())
+                        )
+                );
+            } else {
+                var newPermanentAddress = addressService.updateAddress(
+                        studentUpdateRequestDto.getPermanentAddress(),
+                        student.getPermanentAddress().getId()
+                );
+                student.setPermanentAddress(newPermanentAddress);
+            }
+        }
+        if (studentUpdateRequestDto.getMailingAddress() != null) {
+            if (student.getMailingAddress() == null) {
+                student.setMailingAddress(
+                        addressService.createAddress(
+                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getMailingAddress())
+                        )
+                );
+            } else {
+                var newMailingAddress = addressService.updateAddress(
+                        studentUpdateRequestDto.getMailingAddress(),
+                        student.getMailingAddress().getId()
+                );
+                student.setMailingAddress(newMailingAddress);
+            }
+        }
+
+        if (studentUpdateRequestDto.getIdentity() != null) {
+            if (student.getIdentity() != null) {
+                student.setIdentity(
+                        identityService.updateIdentity(studentUpdateRequestDto.getIdentity(),
+                                student.getIdentity().getId())
+                );
+            } else {
+                student.setIdentity(
+                        identityService.createIdentity(
+                                identityMapper.toIdentityCreateRequestDto(studentUpdateRequestDto.getIdentity())
+                        )
+                );
+            }
+        }
+
         student = studentRepository.save(student);
 
         return student;
