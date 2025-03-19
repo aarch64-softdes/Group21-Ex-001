@@ -1,8 +1,10 @@
 package com.tkpm.sms.logging.metadata;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,15 +15,16 @@ import java.util.Map;
 @Builder
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ExceptionMetadata extends BaseMetadata {
-    private String controller;
-    private String method;
-    private long executionTime;
-    private String endpoint;
-    private String path;
-    private String httpMethod;
-    private String exceptionClass;
-    private String exceptionMessage;
+    String controller;
+    String method;
+    long executionTime;
+    String endpoint;
+    String path;
+    String httpMethod;
+    String exceptionClass;
+    String exceptionMessage;
 
     @Override
     public Map<String, Object> toHashMap() {

@@ -1,8 +1,10 @@
 package com.tkpm.sms.logging.metadata;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,13 +15,14 @@ import java.util.Map;
 @Builder
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RequestMetadata extends BaseMetadata {
-    private String controller;
-    private String method;
-    private String endpoint;
-    private String path;
-    private String httpMethod;
-    private String parameters;
+    String controller;
+    String method;
+    String endpoint;
+    String path;
+    String httpMethod;
+    String parameters;
 
     @Override
     public Map<String, Object> toHashMap() {

@@ -4,6 +4,8 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import com.tkpm.sms.logging.LogEntry;
 import com.tkpm.sms.utils.JsonUtils;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,10 +17,11 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ElasticsearchLogger extends AbstractLogger {
-    private final ElasticsearchClient esClient;
-    private final String indexPrefix;
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    ElasticsearchClient esClient;
+    String indexPrefix;
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public ElasticsearchLogger(
             ElasticsearchClient esClient,

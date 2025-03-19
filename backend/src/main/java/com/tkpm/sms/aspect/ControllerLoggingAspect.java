@@ -8,6 +8,8 @@ import com.tkpm.sms.logging.metadata.ExceptionMetadata;
 import com.tkpm.sms.logging.metadata.RequestMetadata;
 import com.tkpm.sms.logging.metadata.ResponseMetadata;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -29,19 +31,21 @@ import java.util.UUID;
  */
 @Aspect
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ControllerLoggingAspect {
+    LoggerManager loggerManager;
+    ThreadLocal<Long> startTime = new ThreadLocal<>();
+    ThreadLocal<String> correlationId = new ThreadLocal<>();
+    BaseLogger consoleLogger;
+    String loggerType;
 
-    private final LoggerManager loggerManager;
-    private final ThreadLocal<Long> startTime = new ThreadLocal<>();
-    private final ThreadLocal<String> correlationId = new ThreadLocal<>();
-    private final BaseLogger consoleLogger;
 
-    @Value("${logging.controller.logger-type:JSON}")
-    private String loggerType;
-
-    public ControllerLoggingAspect(LoggerManager loggerManager) {
+    public ControllerLoggingAspect(LoggerManager loggerManager,
+                                   @Value("${logging.controller.logger-type:JSON}")
+                                   String loggerType) {
         this.loggerManager = loggerManager;
         this.consoleLogger = loggerManager.getLogger(LoggerType.CONSOLE);
+        this.loggerType = loggerType;
     }
 
     /**

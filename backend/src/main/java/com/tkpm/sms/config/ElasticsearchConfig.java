@@ -4,6 +4,8 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.message.BasicHeader;
@@ -17,16 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ElasticsearchConfig {
-
     @Value("${elasticsearch.host}")
-    private String host;
+    String host;
 
     @Value("${elasticsearch.port}")
-    private int port;
+    int port;
 
     @Value("${elasticsearch.api-key}")
-    private String apiKey;
+    String apiKey;
 
     @Bean
     public RestClient restClient() {

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.logging.LogLevel;
 
 /**
@@ -16,17 +17,18 @@ import org.springframework.boot.logging.LogLevel;
 @Getter
 @Setter
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class LogEntry {
-    private String timestamp;
-    private LogLevel level;
-    private String correlationId;
-    private String userId;
-    private String source;
-    private String message;
-    private Map<String, Object> metadata;
-    private Long duration;
-    private String userAgent;
-    private String ip;
+    String timestamp;
+    LogLevel level;
+    String correlationId;
+    String userId;
+    String source;
+    String message;
+    Map<String, Object> metadata;
+    Long duration;
+    String userAgent;
+    String ip;
 
     // For performance tracking
     private long startTimeMillis;
@@ -56,6 +58,7 @@ public class LogEntry {
 
     /**
      * Convert log entry to a map for easy serialization
+     *
      * @return Map of log entry fields
      */
     public Map<String, Object> toHashMap() {

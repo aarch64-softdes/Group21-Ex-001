@@ -1,19 +1,21 @@
 package com.tkpm.sms.logging.logger;
 
 import com.tkpm.sms.logging.LogEntry;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ConsoleLogger extends AbstractLogger {
-    private static final String ANSI_RESET = "\u001B[0m";
-    private static final String ANSI_RED = "\u001B[31m";
-    private static final String ANSI_GREEN = "\u001B[32m";
-    private static final String ANSI_YELLOW = "\u001B[33m";
-    private static final String ANSI_BLUE = "\u001B[34m";
-
+    static String ANSI_RESET = "\u001B[0m";
+    static String ANSI_RED = "\u001B[31m";
+    static String ANSI_GREEN = "\u001B[32m";
+    static String ANSI_YELLOW = "\u001B[33m";
+    static String ANSI_BLUE = "\u001B[34m";
 
     public ConsoleLogger() {
         super("com.tkpm.sms.logging.logger.ConsoleLogger");
