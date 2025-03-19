@@ -75,4 +75,9 @@ public class Student {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "mailing_address_id")
     Address mailingAddress;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    @JoinColumn(name = "identity_id")
+    Identity identity;
 }
