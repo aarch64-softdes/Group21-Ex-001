@@ -19,6 +19,10 @@ public enum ErrorCode {
 
     NOT_FOUND("Resource not found", HttpStatus.NOT_FOUND),
     CONFLICT("Resource already existed", HttpStatus.CONFLICT),
+
+    // File error
+    FAIL_TO_EXPORT_FILE("Fail to export file", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_FILE_FORMAT("Invalid file format", HttpStatus.BAD_REQUEST),
     ;
 
     @Setter
