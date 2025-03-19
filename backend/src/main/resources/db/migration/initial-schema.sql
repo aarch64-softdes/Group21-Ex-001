@@ -19,6 +19,13 @@ CREATE TABLE identities
     CONSTRAINT pk_identities PRIMARY KEY (id)
 );
 
+CREATE TABLE citizenships
+(
+    id           VARCHAR(255) NOT NULL,
+    country_name VARCHAR(255),
+    CONSTRAINT pk_citizenships PRIMARY KEY (id)
+);
+
 CREATE TABLE students
 (
     id                   VARCHAR(255) NOT NULL,
@@ -36,6 +43,7 @@ CREATE TABLE students
     temporary_address_id VARCHAR(255),
     mailing_address_id   VARCHAR(255),
     identity_id          VARCHAR(255),
+    citizenship_id       VARCHAR(255),
     CONSTRAINT pk_students PRIMARY KEY (id)
 );
 
@@ -59,6 +67,9 @@ ALTER TABLE students
 
 ALTER TABLE students
     ADD CONSTRAINT uc_students_temporary_address UNIQUE (temporary_address_id);
+
+ALTER TABLE students
+    ADD CONSTRAINT FK_STUDENTS_ON_CITIZENSHIP FOREIGN KEY (citizenship_id) REFERENCES citizenships (id);
 
 ALTER TABLE students
     ADD CONSTRAINT FK_STUDENTS_ON_IDENTITY FOREIGN KEY (identity_id) REFERENCES identities (id);
