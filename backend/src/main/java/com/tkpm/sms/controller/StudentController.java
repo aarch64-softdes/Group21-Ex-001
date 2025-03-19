@@ -2,10 +2,11 @@ package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
-import com.tkpm.sms.dto.response.StudentDto;
+import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
 import com.tkpm.sms.dto.response.common.PageDto;
+import com.tkpm.sms.dto.response.student.StudentMinimalDto;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.service.StudentService;
 import jakarta.validation.Valid;
@@ -28,15 +29,15 @@ public class StudentController {
     StudentMapper studentMapper;
 
     @GetMapping
-    public ResponseEntity<ApplicationResponseDto<ListResponse<StudentDto>>> getStudents(
+    public ResponseEntity<ApplicationResponseDto<ListResponse<StudentMinimalDto>>> getStudents(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "studentId") String sortName,
             @RequestParam(defaultValue = "asc") String sortType,
             @RequestParam(defaultValue = "") String search
     ) {
-        Page<StudentDto> pageResult =
-                studentService.getStudents(page, sortName, sortType, search)
-                        .map(studentMapper::toStudentDto);
+        Page<StudentMinimalDto> pageResult =
+                studentService.findAll(page, sortName, sortType, search)
+                        .map(studentMapper::toStudentMinimalDto);
 
         var pageDto = PageDto.builder()
                 .totalElements(pageResult.getTotalElements())
@@ -45,7 +46,7 @@ public class StudentController {
                 .totalPages(pageResult.getTotalPages())
                 .build();
 
-        var listResponse = ListResponse.<StudentDto>builder()
+        var listResponse = ListResponse.<StudentMinimalDto>builder()
                 .page(pageDto)
                 .data(pageResult.stream().toList())
                 .build();
@@ -62,14 +63,15 @@ public class StudentController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<ApplicationResponseDto<StudentDto>> addNewStudent(
+    public ResponseEntity<ApplicationResponseDto<StudentDto>> createStudent(
             @Valid @RequestBody StudentCreateRequestDto student,
             UriComponentsBuilder uriComponentsBuilder
     ) {
-        var newStudent = studentService.addNewStudent(student);
+        var newStudent = studentService.createStudent(student);
 
         var response = ApplicationResponseDto.success(studentMapper.toStudentDto(newStudent));
         var locationOfNewUser = uriComponentsBuilder.path("api/students/{id}").buildAndExpand(newStudent.getId()).toUri();
+
         return ResponseEntity.created(locationOfNewUser).body(response);
     }
 
