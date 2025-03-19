@@ -16,11 +16,12 @@ export default interface Student {
   program: string;
   email: string;
   permanentAddress: Address;
-  currentAddress: Address;
+  temporaryAddress: Address;
   mailingAddress: Address;
   phone: string;
   status: Status;
   nationality: string;
+  // idDocumentType: "CMND" | "CCCD" | "Passport";
 }
 
 export interface CreateStudentDTO {
@@ -33,7 +34,7 @@ export interface CreateStudentDTO {
   program: string;
   email: string;
   permanentAddress: Address;
-  currentAddress: Address;
+  temporaryAddress: Address;
   mailingAddress: Address;
   phone: string;
   status?: Status;
@@ -49,7 +50,7 @@ export interface UpdateStudentDTO {
   program?: string;
   email?: string;
   permanentAddress: Address;
-  currentAddress: Address;
+  temporaryAddress: Address;
   mailingAddress: Address;
   phone?: string;
   status?: Status;
@@ -67,7 +68,7 @@ export const mapToStudent = (data: any): Student => ({
   program: data.program,
   email: data.email,
   permanentAddress: data.permanentAddress,
-  currentAddress: data.currentAddress,
+  temporaryAddress: data.temporaryAddress,
   mailingAddress: data.mailingAddress,
   phone: data.phone,
   status: data.status,

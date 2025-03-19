@@ -47,7 +47,7 @@ import {
 } from "@/hooks/useMetadata";
 import AddressForm from "@/components/student/AddressForm";
 import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FormComponentProps } from "@/types/table";
 import LoadingButton from "../ui/loadingButton";
 import { useStudent } from "@/hooks/useStudentApi";
@@ -76,44 +76,57 @@ export const StudentFormSchema = z.object({
   status: z.string().min(1, "Status is required").default("Studying"),
   nationality: z.string().min(1, "Nationality is required").default("Việt Nam"),
 
-  // Identity documents section
-  idDocumentType: z.enum(["CMND", "CCCD", "Passport"]),
+  // // Identity documents section
+  // idDocumentType: z.enum(["CMND", "CCCD", "Passport"]),
 
-  // Conditional fields based on document type
-  documentDetails: z.object({
-    documentNumber: z.string().min(1, "Document number is required"),
-    issueDate: z.string().min(1, "Issue date is required"),
-    issuePlace: z.string().min(1, "Issue place is required"),
-    expiryDate: z.string().min(1, "Expiry date is required"),
-    // CCCD specific
-    hasChip: z.boolean().optional(),
-    // Passport specific
-    issuingCountry: z.string().optional(),
-    notes: z.string().optional(),
-  }),
+  // // Conditional fields based on document type
+  // documentDetails: z.object({
+  //   documentNumber: z.string().min(1, "Document number is required"),
+  //   issueDate: z.string().min(1, "Issue date is required"),
+  //   issuePlace: z.string().min(1, "Issue place is required"),
+  //   expiryDate: z.string().min(1, "Expiry date is required"),
+  //   // CCCD specific
+  //   hasChip: z.boolean().optional(),
+  //   // Passport specific
+  //   issuingCountry: z.string().optional(),
+  //   notes: z.string().optional(),
+  // }),
 
   permanentAddress: z.object({
-    street: z.string(),
-    ward: z.string(),
-    district: z.string(),
-    province: z.string(),
-    country: z.string().default("Việt Nam"),
+    street: z.string().min(1, "Street address is required"),
+    ward: z.string().min(1, "Ward is required"),
+    district: z.string().min(1, "District is required"),
+    province: z.string().min(1, "Province is required"),
+    country: z.string().min(1, "Country is required").default("Việt Nam"),
   }),
 
-  temporaryAddress: z.object({
-    street: z.string().optional(),
-    ward: z.string().optional(),
-    district: z.string().optional(),
-    province: z.string().optional(),
-    country: z.string().optional().default("Việt Nam"),
-  }),
+  temporaryAddress: z
+    .object({
+      street: z.string().optional(),
+      ward: z.string().optional(),
+      district: z.string().optional(),
+      province: z.string().optional(),
+      country: z.string().optional().default("Việt Nam"),
+    })
+    .optional()
+    .or(
+      z.object({
+        street: z
+          .string()
+          .min(1, "If providing temporary address, street is required"),
+        ward: z.string().min(1, "Ward is required"),
+        district: z.string().min(1, "District is required"),
+        province: z.string().min(1, "Province is required"),
+        country: z.string().min(1, "Country is required").default("Việt Nam"),
+      })
+    ),
 
   mailingAddress: z.object({
-    street: z.string(),
-    ward: z.string(),
-    district: z.string(),
-    province: z.string(),
-    country: z.string().default("Việt Nam"),
+    street: z.string().min(1, "Street address is required"),
+    ward: z.string().min(1, "Ward is required"),
+    district: z.string().min(1, "District is required"),
+    province: z.string().min(1, "Province is required"),
+    country: z.string().min(1, "Country is required").default("Việt Nam"),
   }),
 });
 
@@ -169,16 +182,37 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       phone: "",
       status: "Studying",
       nationality: "Việt Nam",
-      idDocumentType: "CMND",
-      documentDetails: {
-        documentNumber: "",
-        issueDate: "",
-        issuePlace: "",
-        expiryDate: "",
-        hasChip: false,
-        issuingCountry: "",
-        notes: "",
+      permanentAddress: {
+        street: "",
+        ward: "",
+        district: "",
+        province: "",
+        country: "Việt Nam",
       },
+      temporaryAddress: {
+        street: "",
+        ward: "",
+        district: "",
+        province: "",
+        country: "Việt Nam",
+      },
+      mailingAddress: {
+        street: "",
+        ward: "",
+        district: "",
+        province: "",
+        country: "Việt Nam",
+      },
+      // idDocumentType: "CMND",
+      // documentDetails: {
+      //   documentNumber: "",
+      //   issueDate: "",
+      //   issuePlace: "",
+      //   expiryDate: "",
+      //   hasChip: false,
+      //   issuingCountry: "",
+      //   notes: "",
+      // },
     },
   });
 
@@ -210,16 +244,54 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         phone: studentData.phone || "",
         status: studentData.status || "Studying",
         nationality: studentData.nationality || "Việt Nam",
-        idDocumentType: studentData.idDocumentType || "CMND",
-        documentDetails: studentData.documentDetails || {
-          documentNumber: "",
-          issueDate: "",
-          issuePlace: "",
-          expiryDate: "",
+        permanentAddress: studentData.permanentAddress || {
+          street: "",
+          ward: "",
+          district: "",
+          province: "",
+          country: "Việt Nam",
         },
+        temporaryAddress: studentData.temporaryAddress || {
+          street: "",
+          ward: "",
+          district: "",
+          province: "",
+          country: "Việt Nam",
+        },
+        mailingAddress: studentData.mailingAddress || {
+          street: "",
+          ward: "",
+          district: "",
+          province: "",
+          country: "Việt Nam",
+        },
+        // idDocumentType: studentData.idDocumentType || "CMND",
+        // documentDetails: studentData.documentDetails || {
+        //   documentNumber: "",
+        //   issueDate: "",
+        //   issuePlace: "",
+        //   expiryDate: "",
+        // },
       });
     }
   }, [studentData, id, form]);
+
+  const [addressAccordionOpen, setAddressAccordionOpen] = useState<
+    string | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const { errors } = form.formState;
+    console.log("Form errors:", errors);
+
+    if (
+      errors.permanentAddress ||
+      errors.temporaryAddress ||
+      errors.mailingAddress
+    ) {
+      setAddressAccordionOpen("detailed-addresses");
+    }
+  }, [form.formState.errors]);
 
   const handleSubmit = (values: StudentFormValues) => {
     console.log("Submitting form with values:", values);
@@ -230,6 +302,18 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
     };
 
     onSubmit(formattedValues as unknown as CreateStudentDTO);
+  };
+
+  const handleError = (errors: any) => {
+    console.error("Form submission failed with errors:", errors);
+
+    if (
+      errors.permanentAddress ||
+      errors.temporaryAddress ||
+      errors.mailingAddress
+    ) {
+      setAddressAccordionOpen("detailed-addresses");
+    }
   };
 
   // Determine if we should show loading state
@@ -256,7 +340,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
               </div>
             ) : (
               <form
-                onSubmit={form.handleSubmit(handleSubmit)}
+                onSubmit={form.handleSubmit(handleSubmit, handleError)}
                 className="max-w-5xl max-auto"
                 autoComplete="off"
                 noValidate
@@ -443,10 +527,21 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                   </div>
 
                   <div className="mt-6">
-                    <Accordion type="single" collapsible className="w-full">
+                    <Accordion
+                      type="single"
+                      collapsible
+                      className="w-full"
+                      value={addressAccordionOpen}
+                      onValueChange={setAddressAccordionOpen}
+                    >
                       <AccordionItem value="detailed-addresses">
                         <AccordionTrigger className="font-medium text-base">
                           Contact Addresses
+                          {(form.formState.errors.permanentAddress ||
+                            form.formState.errors.temporaryAddress ||
+                            form.formState.errors.mailingAddress) && (
+                            <span className="text-destructive ml-2">●</span>
+                          )}
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className="space-y-6 pt-2">
@@ -470,7 +565,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                   </div>
                 </FormSection>
 
-                {/* ID Documents */}
+                {/* ID Documents
                 <FormSection title="Identification Document">
                   <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                     <FormField
@@ -637,7 +732,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       </>
                     )}
                   </div>
-                </FormSection>
+                </FormSection> */}
 
                 <FormSection title="Academic Information">
                   <div className="grid grid-cols-2 gap-4">

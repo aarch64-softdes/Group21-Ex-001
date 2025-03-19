@@ -17,6 +17,8 @@ interface AddressFormProps {
 }
 
 const AddressForm: FC<AddressFormProps> = ({ form, type, title }) => {
+  console.log(`Rendering ${title} with value:`, form.getValues(type));
+
   return (
     <fieldset className="border rounded-md p-4">
       <legend className="px-2 font-medium">{title}</legend>

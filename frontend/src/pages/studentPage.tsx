@@ -16,7 +16,6 @@ import Student, { CreateStudentDTO, UpdateStudentDTO } from "@/types/student";
 import { Column } from "@/types/table";
 import { Search } from "lucide-react";
 import StudentDetail from "@/components/student/StudentDetail";
-import { Badge } from "@/components/ui/badge";
 
 const StudentPage: React.FC = () => {
   const createStudent = useCreateStudent();

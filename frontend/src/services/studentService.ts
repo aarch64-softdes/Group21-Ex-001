@@ -35,7 +35,7 @@ export default class StudentService {
 
     // Assuming the API returns a list of students
     return {
-      data: response.data.map(mapToStudent),
+      data: response.data.content.data.map(mapToStudent),
       totalItems: parseInt(
         response.headers["x-total-count"] || response.data.length
       ),
@@ -55,13 +55,37 @@ export default class StudentService {
         name: "",
         email: "",
         phone: "",
-        address: "",
         dob: new Date(),
         gender: "",
         faculty: "",
         status: "",
         program: "",
         course: 0,
+        nationality: "",
+        permanentAddress: {
+          id: "",
+          street: "",
+          ward: "",
+          district: "",
+          province: "",
+          country: "",
+        },
+        temporaryAddress: {
+          id: "",
+          street: "",
+          ward: "",
+          district: "",
+          province: "",
+          country: "",
+        },
+        mailingAddress: {
+          id: "",
+          street: "",
+          ward: "",
+          district: "",
+          province: "",
+          country: "",
+        },
       };
     }
 
