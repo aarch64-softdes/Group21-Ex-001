@@ -53,4 +53,42 @@ public class LogEntry {
     public void resetTracking() {
         this.startTimeMillis = System.currentTimeMillis();
     }
+
+    /**
+     * Convert log entry to a map for easy serialization
+     * @return Map of log entry fields
+     */
+    public Map<String, Object> toHashMap() {
+        Map<String, Object> document = new HashMap<>();
+
+        // Add standard fields with snake_case naming
+        document.put("timestamp", this.timestamp);
+        document.put("level", this.level.toString());
+        document.put("correlation_id", this.correlationId);
+        document.put("message", this.message);
+        document.put("source", this.source);
+
+        // Add optional fields if present
+        if (this.userId != null) {
+            document.put("user_id", this.userId);
+        }
+
+        if (this.duration != null) {
+            document.put("duration_ms", this.duration);
+        }
+
+        if (this.userAgent != null) {
+            document.put("user_agent", this.userAgent);
+        }
+
+        if (this.ip != null) {
+            document.put("client_ip", this.ip);
+        }
+
+        if (this.metadata != null) {
+            document.put("metadata", this.metadata);
+        }
+
+        return document;
+    }
 }

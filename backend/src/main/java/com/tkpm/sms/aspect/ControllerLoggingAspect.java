@@ -4,6 +4,9 @@ import com.tkpm.sms.enums.LoggerType;
 import com.tkpm.sms.logging.BaseLogger;
 import com.tkpm.sms.logging.LogEntry;
 import com.tkpm.sms.logging.LoggerManager;
+import com.tkpm.sms.logging.metadata.ExceptionMetadata;
+import com.tkpm.sms.logging.metadata.RequestMetadata;
+import com.tkpm.sms.logging.metadata.ResponseMetadata;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -18,8 +21,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -66,25 +67,17 @@ public class ControllerLoggingAspect {
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
 
-        StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            requestURL.append("?").append(queryString);
-        }
-        String fullPath = requestURL.toString();
+        String fullPath = getFullPath(request);
 
-        // Build metadata
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("controller", className);
-        metadata.put("method", methodName);
-        metadata.put("endpoint", request.getRequestURI());
-        metadata.put("path", fullPath);
-        metadata.put("httpMethod", request.getMethod());
-
-        // Add parameters if present
-        if (joinPoint.getArgs().length > 0) {
-            metadata.put("parameters", Arrays.toString(joinPoint.getArgs()));
-        }
+        // Build request metadata
+        RequestMetadata metadata = RequestMetadata.builder()
+                .controller(className)
+                .method(methodName)
+                .endpoint(request.getRequestURI())
+                .path(fullPath)
+                .httpMethod(request.getMethod())
+                .parameters(joinPoint.getArgs().length > 0 ? Arrays.toString(joinPoint.getArgs()) : null)
+                .build();
 
         // Create log entry
         LogEntry logEntry = LogEntry.builder()
@@ -92,7 +85,7 @@ public class ControllerLoggingAspect {
                 .source(className)
                 .level(LogLevel.INFO)
                 .message("API Request: " + request.getMethod() + " " + fullPath)
-                .metadata(metadata)
+                .metadata(metadata.toHashMap())
                 .build();
 
         if (request.getUserPrincipal() != null) {
@@ -106,7 +99,8 @@ public class ControllerLoggingAspect {
         getLogger().log(logEntry);
 
         // Also log simplified message to console
-        consoleLogger.log("API Request to: " + request.getMethod() + " " + fullPath, LogLevel.INFO);    }
+        consoleLogger.log("API Request to: " + request.getMethod() + " " + fullPath, LogLevel.INFO);
+    }
 
     /**
      * Log after controller method execution
@@ -122,21 +116,17 @@ public class ControllerLoggingAspect {
             return;
         }
 
-        StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            requestURL.append("?").append(queryString);
-        }
-        String fullPath = requestURL.toString();
+        String fullPath = getFullPath(request);
 
-        // Build metadata
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("controller", className);
-        metadata.put("method", methodName);
-        metadata.put("executionTime", executionTime);
-        metadata.put("endpoint", request.getRequestURI());
-        metadata.put("path", fullPath);
-        metadata.put("httpMethod", request.getMethod());
+        // Build response metadata
+        ResponseMetadata metadata = ResponseMetadata.builder()
+                .controller(className)
+                .method(methodName)
+                .executionTime(executionTime)
+                .endpoint(request.getRequestURI())
+                .path(fullPath)
+                .httpMethod(request.getMethod())
+                .build();
 
         // Create log entry
         LogEntry logEntry = LogEntry.builder()
@@ -144,7 +134,7 @@ public class ControllerLoggingAspect {
                 .source(className)
                 .level(LogLevel.INFO)
                 .message("API Response: " + request.getMethod() + " " + request.getRequestURI())
-                .metadata(metadata)
+                .metadata(metadata.toHashMap())
                 .duration(executionTime)
                 .build();
 
@@ -160,8 +150,7 @@ public class ControllerLoggingAspect {
                 " (took " + executionTime + "ms)", LogLevel.INFO);
 
         // Clean up thread local variables
-        startTime.remove();
-        correlationId.remove();
+        cleanupThreadLocals();
     }
 
     /**
@@ -174,12 +163,7 @@ public class ControllerLoggingAspect {
         if (request == null) {
             // No request context, so we'll let the GlobalExceptionHandler handle this
             // Just clean up our thread locals
-            if (startTime.get() != null) {
-                startTime.remove();
-            }
-            if (correlationId.get() != null) {
-                correlationId.remove();
-            }
+            cleanupThreadLocals();
             return;
         }
 
@@ -187,23 +171,19 @@ public class ControllerLoggingAspect {
         String methodName = joinPoint.getSignature().getName();
         String className = joinPoint.getSignature().getDeclaringTypeName();
 
-        StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            requestURL.append("?").append(queryString);
-        }
-        String fullPath = requestURL.toString();
+        String fullPath = getFullPath(request);
 
-        // Build metadata
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("controller", className);
-        metadata.put("method", methodName);
-        metadata.put("executionTime", executionTime);
-        metadata.put("endpoint", request.getRequestURI());
-        metadata.put("path", fullPath);
-        metadata.put("httpMethod", request.getMethod());
-        metadata.put("exceptionClass", exception.getClass().getName());
-        metadata.put("exceptionMessage", exception.getMessage());
+        // Build exception metadata
+        ExceptionMetadata metadata = ExceptionMetadata.builder()
+                .controller(className)
+                .method(methodName)
+                .executionTime(executionTime)
+                .endpoint(request.getRequestURI())
+                .path(fullPath)
+                .httpMethod(request.getMethod())
+                .exceptionClass(exception.getClass().getName())
+                .exceptionMessage(exception.getMessage())
+                .build();
 
         // Create log entry
         LogEntry logEntry = LogEntry.builder()
@@ -212,7 +192,7 @@ public class ControllerLoggingAspect {
                 .level(LogLevel.ERROR)
                 .message("API Exception: " + request.getMethod() + " " + request.getRequestURI() +
                         " - " + exception.getClass().getSimpleName() + ": " + exception.getMessage())
-                .metadata(metadata)
+                .metadata(metadata.toHashMap())
                 .duration(executionTime)
                 .build();
 
@@ -231,6 +211,25 @@ public class ControllerLoggingAspect {
                 " - " + exception.getClass().getSimpleName() + ": " + exception.getMessage(), LogLevel.ERROR);
 
         // Clean up thread local variables
+        cleanupThreadLocals();
+    }
+
+    /**
+     * Get full path from the request URL and query string
+     */
+    private String getFullPath(HttpServletRequest request) {
+        StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            requestURL.append("?").append(queryString);
+        }
+        return requestURL.toString();
+    }
+
+    /**
+     * Clean up thread local variables to prevent memory leaks
+     */
+    private void cleanupThreadLocals() {
         startTime.remove();
         correlationId.remove();
     }
@@ -247,6 +246,9 @@ public class ControllerLoggingAspect {
         }
     }
 
+    /**
+     * Get the configured logger or fall back to JSON logger
+     */
     private BaseLogger getLogger() {
         try {
             return loggerManager.getLogger(LoggerType.valueOf(loggerType));

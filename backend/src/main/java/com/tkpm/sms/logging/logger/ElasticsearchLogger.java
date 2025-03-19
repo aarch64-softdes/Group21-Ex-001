@@ -35,51 +35,23 @@ public class ElasticsearchLogger extends AbstractLogger {
         logData.put("timestamp", LocalDateTime.now().toString());
 
         if (metadata != null && !metadata.isEmpty()) {
-            // Convert metadata keys to snake_case and add directly to root
-            for (Map.Entry<String, Object> entry : metadata.entrySet()) {
-                String key = convertToSnakeCase(entry.getKey());
-                logData.put(key, entry.getValue());
-            }
+            logData.put("metadata", metadata);
         }
 
         return JsonUtils.toJson(logData);
     }
 
-    /**
-     * Convert camelCase to snake_case
-     */
-    private String convertToSnakeCase(String camelCase) {
-        if (camelCase == null || camelCase.isEmpty()) {
-            return camelCase;
-        }
-
-        StringBuilder result = new StringBuilder();
-        result.append(Character.toLowerCase(camelCase.charAt(0)));
-
-        for (int i = 1; i < camelCase.length(); i++) {
-            char ch = camelCase.charAt(i);
-            if (Character.isUpperCase(ch)) {
-                result.append('_');
-                result.append(Character.toLowerCase(ch));
-            } else {
-                result.append(ch);
-            }
-        }
-
-        return result.toString();
-    }
-
     @Override
     protected String formatLogEntry(LogEntry logEntry) {
         // Reuse the prepareElasticsearchDocument method to avoid code duplication
-        Map<String, Object> logData = prepareElasticsearchDocument(logEntry);
+        Map<String, Object> logData = logEntry.toHashMap();
         return JsonUtils.toJson(logData);
     }
 
     @Override
     public void log(LogEntry logEntry) {
         // Convert LogEntry to the expected format
-        Map<String, Object> esDocument = prepareElasticsearchDocument(logEntry);
+        Map<String, Object> esDocument = logEntry.toHashMap();
 
         try {
             String indexName = getIndexName();
@@ -99,43 +71,6 @@ public class ElasticsearchLogger extends AbstractLogger {
             // If ES logging fails, log the error through SLF4J
             logger.error("Failed to log to Elasticsearch: " + e.getMessage(), e);
         }
-    }
-
-    private Map<String, Object> prepareElasticsearchDocument(LogEntry logEntry) {
-        Map<String, Object> document = new HashMap<>();
-
-        // Add standard fields with snake_case naming
-        document.put("timestamp", logEntry.getTimestamp());
-        document.put("level", logEntry.getLevel().toString());
-        document.put("correlation_id", logEntry.getCorrelationId());
-        document.put("message", logEntry.getMessage());
-        document.put("source", logEntry.getSource());
-
-        // Add optional fields if present
-        if (logEntry.getUserId() != null) {
-            document.put("user_id", logEntry.getUserId());
-        }
-
-        if (logEntry.getDuration() != null) {
-            document.put("duration_ms", logEntry.getDuration());
-        }
-
-        if (logEntry.getUserAgent() != null) {
-            document.put("user_agent", logEntry.getUserAgent());
-        }
-
-        if (logEntry.getIp() != null) {
-            document.put("client_ip", logEntry.getIp());
-        }
-
-        // Add metadata as direct fields
-        if (logEntry.getMetadata() != null) {
-            for (Map.Entry<String, Object> entry : logEntry.getMetadata().entrySet()) {
-                document.put(convertToSnakeCase(entry.getKey()), entry.getValue());
-            }
-        }
-
-        return document;
     }
 
     private String getIndexName() {
