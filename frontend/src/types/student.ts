@@ -20,6 +20,7 @@ export default interface Student {
   mailingAddress: Address;
   phone: string;
   status: Status;
+  nationality: string;
 }
 
 export interface CreateStudentDTO {
@@ -36,6 +37,7 @@ export interface CreateStudentDTO {
   mailingAddress: Address;
   phone: string;
   status?: Status;
+  nationality: string;
 }
 
 export interface UpdateStudentDTO {
@@ -51,6 +53,7 @@ export interface UpdateStudentDTO {
   mailingAddress: Address;
   phone?: string;
   status?: Status;
+  nationality: string;
 }
 
 export const mapToStudent = (data: any): Student => ({
@@ -68,4 +71,5 @@ export const mapToStudent = (data: any): Student => ({
   mailingAddress: data.mailingAddress,
   phone: data.phone,
   status: data.status,
+  nationality: data.nationality,
 });

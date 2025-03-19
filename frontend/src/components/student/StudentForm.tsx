@@ -235,7 +235,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
   // Determine if we should show loading state
   const isFormLoading = isLoading || (isEditing && isLoadingStudent);
 
-  // Get the current document type value
   const documentType = form.watch("idDocumentType");
 
   return (

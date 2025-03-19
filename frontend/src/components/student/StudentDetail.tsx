@@ -15,6 +15,29 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
+interface DetailFieldProps {
+  label: string;
+  value: React.ReactNode;
+  colSpan?: "default" | "full";
+}
+
+const DetailField: React.FC<DetailFieldProps> = ({
+  label,
+  value,
+  colSpan = "default",
+}) => {
+  return (
+    <div
+      className={`flex flex-col ${
+        colSpan === "full" ? "col-span-1 md:col-span-2 lg:col-span-3" : ""
+      }`}
+    >
+      <dt className="text-sm font-medium text-muted-foreground">{label}</dt>
+      <dd className="mt-1">{value || "N/A"}</dd>
+    </div>
+  );
+};
+
 const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
   const { data: student, isLoading } = useStudent(studentId as string);
 
@@ -108,70 +131,68 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Academic Information */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <School className="h-5 w-5" />
-              Academic Information
-            </CardTitle>
-            <Separator />
-          </CardHeader>
-          <CardContent>
-            <dl className="space-y-4">
-              <div className="flex flex-col">
-                <dt className="text-sm font-medium text-muted-foreground">
-                  Faculty
-                </dt>
-                <dd className="mt-1">{student.faculty}</dd>
-              </div>
-              <div className="flex flex-col">
-                <dt className="text-sm font-medium text-muted-foreground">
-                  Program
-                </dt>
-                <dd className="mt-1">{student.program || "N/A"}</dd>
-              </div>
-              <div className="flex flex-col">
-                <dt className="text-sm font-medium text-muted-foreground">
-                  Course Year
-                </dt>
-                <dd className="mt-1">{student.course}</dd>
-              </div>
-            </dl>
-          </CardContent>
-        </Card>
-
+      <div className="space-y-6">
         {/* Personal Information */}
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="">
             <CardTitle className="text-lg flex items-center gap-2">
               <User className="h-5 w-5" />
               Personal Information
             </CardTitle>
             <Separator />
           </CardHeader>
-          <CardContent>
-            <dl className="space-y-4">
-              <div className="flex flex-col">
-                <dt className="text-sm font-medium text-muted-foreground">
-                  Gender
-                </dt>
-                <dd className="mt-1">{student.gender}</dd>
-              </div>
-              <div className="flex flex-col">
-                <dt className="text-sm font-medium text-muted-foreground">
-                  Nationality
-                </dt>
-                <dd className="mt-1">{student.nationality || "N/A"}</dd>
-              </div>
-              <div className="flex flex-col">
-                <dt className="text-sm font-medium text-muted-foreground">
-                  Address
-                </dt>
-                <dd className="mt-1">{student.address || "N/A"}</dd>
-              </div>
-            </dl>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <DetailField label="Gender" value={student.gender} />
+            <DetailField label="Nationality" value={student.nationality} />
+            <DetailField
+              label="Permanent Address"
+              // value={student.permanentAddress.toString() || "N/A"}
+              value="N/A"
+              colSpan="full"
+            />
+            <DetailField
+              label="Temporary Address"
+              // value={student.temporaryAddress.toString()}
+              value="N/A"
+              colSpan="full"
+            />
+            <DetailField
+              label="Mailing Address"
+              // value={student.mailingAddress.toString()}
+              value="N/A"
+              colSpan="full"
+            />
+          </CardContent>
+        </Card>
+
+        {/* Academic Information */}
+        <Card>
+          <CardHeader className="">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <School className="h-5 w-5" />
+              Academic Information
+            </CardTitle>
+            <Separator />
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex flex-col">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Faculty
+              </dt>
+              <dd className="mt-1">{student.faculty}</dd>
+            </div>
+            <div className="flex flex-col">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Program
+              </dt>
+              <dd className="mt-1">{student.program || "N/A"}</dd>
+            </div>
+            <div className="flex flex-col">
+              <dt className="text-sm font-medium text-muted-foreground">
+                Course Year
+              </dt>
+              <dd className="mt-1">{student.course}</dd>
+            </div>
           </CardContent>
         </Card>
       </div>

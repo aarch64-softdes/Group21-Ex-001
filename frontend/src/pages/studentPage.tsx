@@ -16,6 +16,7 @@ import Student, { CreateStudentDTO, UpdateStudentDTO } from "@/types/student";
 import { Column } from "@/types/table";
 import { Search } from "lucide-react";
 import StudentDetail from "@/components/student/StudentDetail";
+import { Badge } from "@/components/ui/badge";
 
 const StudentPage: React.FC = () => {
   const createStudent = useCreateStudent();
@@ -137,8 +138,36 @@ const StudentPage: React.FC = () => {
         sortable: true,
         editable: true,
         style: {
-          width: "120px",
+          width: "112px",
         },
+
+        // render: (value: string) => {
+        //   const getStatusStyles = (status: string): string => {
+        //     switch (status.toLowerCase()) {
+        //       case "studying":
+        //         return "bg-green-100 text-green-800 hover:bg-green-100";
+        //       case "graduated":
+        //         return "bg-blue-100 text-blue-800 hover:bg-blue-100";
+        //       case "suspended":
+        //         return "bg-amber-100 text-amber-800 hover:bg-amber-100";
+        //       case "expelled":
+        //         return "bg-red-100 text-red-800 hover:bg-red-100";
+        //       case "on leave":
+        //         return "bg-purple-100 text-purple-800 hover:bg-purple-100";
+        //       default:
+        //         return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+        //     }
+        //   };
+
+        //   return (
+        //     <Badge
+        //       className={`font-medium ${getStatusStyles(value)}`}
+        //       variant="outline"
+        //     >
+        //       {value}
+        //     </Badge>
+        //   );
+        // },
       },
     ],
     []
