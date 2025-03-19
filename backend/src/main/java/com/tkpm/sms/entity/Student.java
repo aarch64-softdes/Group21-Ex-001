@@ -1,8 +1,6 @@
 package com.tkpm.sms.entity;
 
-import com.tkpm.sms.enums.Faculty;
 import com.tkpm.sms.enums.Gender;
-import com.tkpm.sms.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +9,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Builder
 @Getter
@@ -39,13 +36,7 @@ public class Student {
     @Column (nullable = false)
     Gender gender;
 
-    @Enumerated(EnumType.STRING)
-    @Column (nullable = false)
-    Faculty faculty;
-
     Integer course;
-
-    String program;
 
     @Email
     @NotNull
@@ -59,7 +50,18 @@ public class Student {
     @Column(unique = true, length = 10)
     String phone;
 
-    @Enumerated(EnumType.STRING)
-    @Column (nullable = false)
-    Status status = Status.Studying;
+    // many-to-one relationship with status
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    Status status;
+
+    // many-to-one relationship with program
+    @ManyToOne
+    @JoinColumn(name = "program_id")
+    Program program;
+
+    // many-to-one relationship with faculty
+    @ManyToOne
+    @JoinColumn(name = "faculty_id")
+    Faculty faculty;
 }

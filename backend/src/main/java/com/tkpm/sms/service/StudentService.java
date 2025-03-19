@@ -24,6 +24,9 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentService {
     StudentRepository studentRepository;
+    StatusService statusService;
+    ProgramService programService;
+    FacultyService facultyService;
     int PAGE_SIZE = 5;
     StudentMapper studentMapper;
 
@@ -51,12 +54,7 @@ public class StudentService {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with phone number %s already existed", studentCreateRequestDto.getPhone())));
         }
 
-        Student student = studentMapper.createStudent(studentCreateRequestDto);
-
-        student.setStatus(Status.valueOf(studentCreateRequestDto.getStatus()));
-        student.setFaculty(Faculty.fromString(studentCreateRequestDto.getFaculty()));
-        student.setGender(Gender.valueOf(studentCreateRequestDto.getGender()));
-
+        Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
         student = studentRepository.save(student);
         return student;
     }
@@ -86,11 +84,7 @@ public class StudentService {
                     studentUpdateRequestDto.getPhone())));
         }
 
-        studentMapper.updateStudent(student, studentUpdateRequestDto);
-        student.setStatus(Status.valueOf(studentUpdateRequestDto.getStatus()));
-        student.setFaculty(Faculty.fromString(studentUpdateRequestDto.getFaculty()));
-        student.setGender(Gender.valueOf(studentUpdateRequestDto.getGender()));
-
+        studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
         student = studentRepository.save(student);
 
         return student;
