@@ -1,7 +1,9 @@
 package com.tkpm.sms.dto.request;
 
 import com.tkpm.sms.enums.Status;
-import com.tkpm.sms.validator.StatusConstraint;
+import com.tkpm.sms.validator.identity.IdentityConstraint;
+import com.tkpm.sms.validator.status.StatusConstraint;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -42,4 +44,9 @@ public class StudentUpdateRequestDto {
 
     @StatusConstraint(message = "INVALID_STATUS")
     String status = Status.Studying.name();
+
+    @NotNull(message = "Identity is required")
+    @IdentityConstraint(values = {"Identity Card", "Chip-based Card", "Passport"})
+    @Valid
+    IdentityUpdateRequestDto identity;
 }

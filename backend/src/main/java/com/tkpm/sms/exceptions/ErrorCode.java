@@ -16,9 +16,15 @@ public enum ErrorCode {
     INVALID_EMAIL("Invalid email format", HttpStatus.BAD_REQUEST),
     INVALID_PHONE("Invalid phone number", HttpStatus.BAD_REQUEST),
     INVALID_STATUS("Invalid status", HttpStatus.BAD_REQUEST),
+    NULL_VALUE("Value cannot be null", HttpStatus.BAD_REQUEST),
 
     NOT_FOUND("Resource not found", HttpStatus.NOT_FOUND),
     CONFLICT("Resource already existed", HttpStatus.CONFLICT),
+
+    //Identity
+    INVALID_IDENTITY_TYPE("Invalid identity type, available values are {values}", HttpStatus.BAD_REQUEST),
+    INVALID_IDENTITY_NUMBER("Invalid identity number", HttpStatus.BAD_REQUEST),
+    INVALID_IDENTITY_ISSUED_DATE("Identity issued date must be before expired date", HttpStatus.BAD_REQUEST),
     ;
 
     @Setter
