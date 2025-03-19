@@ -45,4 +45,7 @@ public class StudentCreateRequestDto {
 
     @StatusConstraint(message = "INVALID_STATUS")
     String status = Status.Studying.name();
+
+    @NotNull
+    String citizenship;
 }

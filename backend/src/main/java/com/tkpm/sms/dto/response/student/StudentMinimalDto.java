@@ -2,6 +2,7 @@ package com.tkpm.sms.dto.response.student;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tkpm.sms.entity.Address;
+import com.tkpm.sms.entity.Citizenship;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -27,4 +28,6 @@ public class StudentMinimalDto {
     String email;
     String phone;
     String status;
+
+    String citizenship;
 }
