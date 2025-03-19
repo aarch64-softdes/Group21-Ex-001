@@ -27,8 +27,4 @@ public class StudentMinimalDto {
     String email;
     String phone;
     String status;
-
-    String permanentAddress;
-    String temporaryAddress;
-    String mailingAddress;
 }

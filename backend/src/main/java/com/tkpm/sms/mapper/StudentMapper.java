@@ -12,12 +12,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface StudentMapper {
     StudentDto toStudentDto(Student student);
-
-    @Mapping(target = "permanentAddress", source = "permanentAddress.id")
-    @Mapping(target = "temporaryAddress", source = "temporaryAddress.id")
-    @Mapping(target = "mailingAddress", source = "mailingAddress.id")
     StudentMinimalDto toStudentMinimalDto(Student student);
-
     Student toStudent(StudentDto studentDto);
 
     @Mapping(target = "status", ignore = true)
