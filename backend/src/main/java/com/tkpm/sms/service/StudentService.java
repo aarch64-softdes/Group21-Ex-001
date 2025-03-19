@@ -31,8 +31,11 @@ public class StudentService {
 
     StudentRepository studentRepository;
     StudentMapper studentMapper;
+
     AddressService addressService;
     AddressMapper addressMapper;
+
+    IdentityService identityService;
 
     public Page<Student> findAll(int page, String sortName, String sortType, String search) {
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE,
@@ -80,6 +83,10 @@ public class StudentService {
         student.setStatus(Status.valueOf(studentCreateRequestDto.getStatus()));
         student.setFaculty(Faculty.fromString(studentCreateRequestDto.getFaculty()));
         student.setGender(Gender.valueOf(studentCreateRequestDto.getGender()));
+
+        student.setIdentity(
+                identityService.createIdentity(studentCreateRequestDto.getIdentity())
+        );
 
         student = studentRepository.save(student);
         return student;
@@ -164,6 +171,10 @@ public class StudentService {
                 student.setMailingAddress(newMailingAddress);
             }
         }
+
+        student.setIdentity(
+                identityService.updateIdentity(studentUpdateRequestDto.getIdentity(), student.getIdentity().getId())
+        );
 
         student = studentRepository.save(student);
 
