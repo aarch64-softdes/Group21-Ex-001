@@ -9,6 +9,7 @@ import com.tkpm.sms.enums.Status;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.mapper.AddressMapper;
+import com.tkpm.sms.mapper.IdentityMapper;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
 import jakarta.transaction.Transactional;
@@ -36,6 +37,7 @@ public class StudentService {
     AddressMapper addressMapper;
 
     IdentityService identityService;
+    IdentityMapper identityMapper;
 
     public Page<Student> findAll(int page, String sortName, String sortType, String search) {
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE,
@@ -172,9 +174,20 @@ public class StudentService {
             }
         }
 
-        student.setIdentity(
-                identityService.updateIdentity(studentUpdateRequestDto.getIdentity(), student.getIdentity().getId())
-        );
+        if (studentUpdateRequestDto.getIdentity() != null) {
+            if (student.getIdentity() != null) {
+                student.setIdentity(
+                        identityService.updateIdentity(studentUpdateRequestDto.getIdentity(),
+                                student.getIdentity().getId())
+                );
+            } else {
+                student.setIdentity(
+                        identityService.createIdentity(
+                                identityMapper.toIdentityCreateRequestDto(studentUpdateRequestDto.getIdentity())
+                        )
+                );
+            }
+        }
 
         student = studentRepository.save(student);
 

@@ -19,4 +19,7 @@ public interface IdentityMapper {
     void updateIdentity(@MappingTarget Identity identity, IdentityUpdateRequestDto identityUpdateRequestDto);
 
     IdentityDto toIdentityDto(Identity identity);
+
+    IdentityUpdateRequestDto toIdentityUpdateRequestDto(IdentityCreateRequestDto requestDto);
+    IdentityCreateRequestDto toIdentityCreateRequestDto(IdentityUpdateRequestDto requestDto);
 }
