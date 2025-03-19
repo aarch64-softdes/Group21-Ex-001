@@ -2,7 +2,9 @@ package com.tkpm.sms.controller;
 
 import com.tkpm.sms.enums.LoggerType;
 import com.tkpm.sms.logging.*;
-import org.slf4j.LoggerFactory;
+import com.tkpm.sms.logging.logger.ElasticsearchLogger;
+import com.tkpm.sms.logging.logger.FileLogger;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.ResponseEntity;
@@ -45,5 +47,50 @@ public class TestController {
 //        fileLogger.log("Processed text file: " + text, LogLevel.WARN);
 
         return ResponseEntity.ok("Processed: " + text);
+    }
+
+    @GetMapping("/structured")
+    public String structuredLogging(HttpServletRequest request) {
+        // Create structured log entries
+        BaseLogger logger = loggerManager.getLogger(LoggerType.ELASTICSEARCH);
+
+        // Start performance tracking
+        LogEntry logEntry = LogEntry.builder()
+                .message("Processing request")
+                .level(LogLevel.INFO)
+                .source(this.getClass().getName())
+                .correlationId(request.getHeader("X-Correlation-ID"))
+                .userAgent(request.getHeader("User-Agent"))
+                .ip(request.getRemoteAddr())
+                .build();
+
+        // Log the entry
+        logger.log(logEntry);
+
+        // Simulate some processing
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // End performance tracking and log completion
+        logEntry.endTracking();
+
+        // Create a new log entry for completion
+        LogEntry completionEntry = LogEntry.builder()
+                .message("Request processed")
+                .level(LogLevel.INFO)
+                .source(this.getClass().getSimpleName())
+                .correlationId(logEntry.getCorrelationId())
+                .userAgent(logEntry.getUserAgent())
+                .ip(logEntry.getIp())
+                .duration(logEntry.getDuration())
+                .metadata(Map.of("status", "success"))
+                .build();
+
+        logger.log(completionEntry);
+
+        return "Logged with structured approach";
     }
 }

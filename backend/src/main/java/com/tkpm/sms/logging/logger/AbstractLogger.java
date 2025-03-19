@@ -1,5 +1,7 @@
-package com.tkpm.sms.logging;
+package com.tkpm.sms.logging.logger;
 
+import com.tkpm.sms.logging.BaseLogger;
+import com.tkpm.sms.logging.LogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
@@ -9,10 +11,12 @@ import java.util.Map;
 public abstract class AbstractLogger implements BaseLogger {
     protected final Logger logger;
     private LogLevel currentLevel;
+    protected final String loggerName;
 
     protected AbstractLogger(String loggerName) {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.currentLevel = LogLevel.INFO; // Default level
+        this.loggerName = loggerName;
     }
 
     @Override
@@ -25,8 +29,21 @@ public abstract class AbstractLogger implements BaseLogger {
         return currentLevel;
     }
 
+    @Override
+    public void log(LogEntry logEntry) {
+        String formattedMessage = formatLogEntry(logEntry);
+        logWithLevel(formattedMessage, logEntry.getLevel());
+    }
+
     protected void logWithLevel(String message, LogLevel level, Map<String, Object> metadata) {
         String formattedMessage = formatMessage(message, metadata);
+        logWithLevel(formattedMessage, level);
+    }
+
+    protected void logWithLevel(String formattedMessage, LogLevel level) {
+        if (level.ordinal() < currentLevel.ordinal()) {
+            return; // Skip logging if below current level
+        }
 
         switch (level) {
             case DEBUG:
@@ -36,7 +53,9 @@ public abstract class AbstractLogger implements BaseLogger {
                 if (logger.isWarnEnabled()) logger.warn(formattedMessage);
                 break;
             case ERROR:
-                if (logger.isErrorEnabled()) logger.error(formattedMessage);
+                if (logger.isErrorEnabled()) {
+                    logger.error(formattedMessage);
+                }
                 break;
             case INFO:
             default:
@@ -47,7 +66,13 @@ public abstract class AbstractLogger implements BaseLogger {
 
     @Override
     public void log(String message, LogLevel level, Map<String, Object> metadata) {
-        logWithLevel(message, level, metadata);
+        LogEntry logEntry = LogEntry.builder()
+                .level(level)
+                .message(message)
+                .metadata(metadata)
+                .source(loggerName)
+                .build();
+        log(logEntry);
     }
 
     @Override
@@ -60,5 +85,13 @@ public abstract class AbstractLogger implements BaseLogger {
         log(message, LogLevel.INFO);
     }
 
+    /**
+     * Format a simple message with metadata
+     */
     protected abstract String formatMessage(String message, Map<String, Object> metadata);
+
+    /**
+     * Format a complete log entry
+     */
+    protected abstract String formatLogEntry(LogEntry logEntry);
 }

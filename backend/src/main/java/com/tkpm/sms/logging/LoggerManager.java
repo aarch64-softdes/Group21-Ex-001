@@ -1,6 +1,10 @@
 package com.tkpm.sms.logging;
 
 import com.tkpm.sms.enums.LoggerType;
+import com.tkpm.sms.logging.logger.ConsoleLogger;
+import com.tkpm.sms.logging.logger.ElasticsearchLogger;
+import com.tkpm.sms.logging.logger.FileLogger;
+import com.tkpm.sms.logging.logger.JsonLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -20,6 +24,9 @@ public class LoggerManager {
     @Value("${logging.default-type:CONSOLE}")
     private String defaultLoggerType;
 
+    /**
+     * Get a logger by type
+     */
     public BaseLogger getLogger(LoggerType type) {
         switch (type) {
             case FILE:
@@ -34,6 +41,9 @@ public class LoggerManager {
         }
     }
 
+    /**
+     * Get a logger by class
+     */
     public BaseLogger getLogger(Class<?> clazz) {
         if (clazz == FileLogger.class) {
             return applicationContext.getBean(FileLogger.class);
@@ -46,6 +56,9 @@ public class LoggerManager {
         }
     }
 
+    /**
+     * Get the default logger as configured
+     */
     public BaseLogger getDefaultLogger() {
         try {
             LoggerType type = LoggerType.valueOf(defaultLoggerType);
@@ -56,7 +69,17 @@ public class LoggerManager {
         }
     }
 
+    /**
+     * Static method to get a logger by type
+     */
     public static BaseLogger getLoggerStatic(LoggerType type) {
         return instance.getLogger(type);
+    }
+
+    /**
+     * Create a new LogEntry builder with source set to the caller class
+     */
+    public static LogEntry createLogEntry(String source) {
+        return LogEntry.builder().source(source).build();
     }
 }
