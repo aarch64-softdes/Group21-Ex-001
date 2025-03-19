@@ -75,4 +75,8 @@ public class Student {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "mailing_address_id")
     Address mailingAddress;
+
+    @ManyToOne
+    @JoinColumn(name = "citizenship_id")
+    Citizenship citizenship;
 }
