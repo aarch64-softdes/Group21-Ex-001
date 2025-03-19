@@ -9,6 +9,7 @@ import com.tkpm.sms.enums.Status;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.mapper.AddressMapper;
+import com.tkpm.sms.mapper.IdentityMapper;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
 import jakarta.transaction.Transactional;
@@ -31,8 +32,12 @@ public class StudentService {
 
     StudentRepository studentRepository;
     StudentMapper studentMapper;
+
     AddressService addressService;
     AddressMapper addressMapper;
+
+    IdentityService identityService;
+    IdentityMapper identityMapper;
 
     CitizenshipService citizenshipService;
 
@@ -82,6 +87,10 @@ public class StudentService {
         student.setStatus(Status.valueOf(studentCreateRequestDto.getStatus()));
         student.setFaculty(Faculty.fromString(studentCreateRequestDto.getFaculty()));
         student.setGender(Gender.valueOf(studentCreateRequestDto.getGender()));
+
+        student.setIdentity(
+                identityService.createIdentity(studentCreateRequestDto.getIdentity())
+        );
 
         student.setCitizenship(
                 citizenshipService.createOrGetCitizenship(studentCreateRequestDto.getCitizenship())
@@ -168,6 +177,21 @@ public class StudentService {
                         student.getMailingAddress().getId()
                 );
                 student.setMailingAddress(newMailingAddress);
+            }
+        }
+
+        if (studentUpdateRequestDto.getIdentity() != null) {
+            if (student.getIdentity() != null) {
+                student.setIdentity(
+                        identityService.updateIdentity(studentUpdateRequestDto.getIdentity(),
+                                student.getIdentity().getId())
+                );
+            } else {
+                student.setIdentity(
+                        identityService.createIdentity(
+                                identityMapper.toIdentityCreateRequestDto(studentUpdateRequestDto.getIdentity())
+                        )
+                );
             }
         }
 

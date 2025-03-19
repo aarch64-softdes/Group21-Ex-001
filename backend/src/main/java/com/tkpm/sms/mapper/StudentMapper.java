@@ -18,6 +18,7 @@ public interface StudentMapper {
     @Mapping(target = "citizenship", source = "citizenship.countryName")
     StudentMinimalDto toStudentMinimalDto(Student student);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "faculty", ignore = true)
     @Mapping(target = "gender", ignore = true)
@@ -27,9 +28,13 @@ public interface StudentMapper {
     @Mapping(target = "citizenship", ignore = true)
     void updateStudent(@MappingTarget Student student, StudentUpdateRequestDto request);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "faculty", ignore = true)
     @Mapping(target = "gender", ignore = true)
+    @Mapping(target = "mailingAddress", ignore = true)
+    @Mapping(target = "temporaryAddress", ignore = true)
+    @Mapping(target = "permanentAddress", ignore = true)
     @Mapping(target = "citizenship", ignore = true)
     Student createStudent(StudentCreateRequestDto request);
 }
