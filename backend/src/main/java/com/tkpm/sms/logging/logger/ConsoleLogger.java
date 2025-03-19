@@ -107,6 +107,16 @@ public class ConsoleLogger extends AbstractLogger {
         logWithLevel(coloredMessage, logEntry.getLevel());
     }
 
+    @Override
+    public void log(String message, LogLevel level) {
+        // Apply color formatting before passing to SLF4J
+        String formattedMessage = formatMessage(message, null);
+        String coloredMessage = applyColorForLevel(formattedMessage, level);
+
+        // Pass to underlying logger
+        logWithLevel(coloredMessage, level);
+    }
+
     private String applyColorForLevel(String message, LogLevel level) {
         switch (level) {
             case DEBUG:

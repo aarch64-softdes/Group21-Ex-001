@@ -10,6 +10,7 @@ import org.springframework.boot.logging.LogLevel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -49,48 +50,13 @@ public class TestController {
         return ResponseEntity.ok("Processed: " + text);
     }
 
+    @GetMapping("/error")
+    public String errorLogging(HttpServletRequest request) {
+        throw new RuntimeException("Error occurred");
+    }
+
     @GetMapping("/structured")
-    public String structuredLogging(HttpServletRequest request) {
-        // Create structured log entries
-        BaseLogger logger = loggerManager.getLogger(LoggerType.ELASTICSEARCH);
-
-        // Start performance tracking
-        LogEntry logEntry = LogEntry.builder()
-                .message("Processing request")
-                .level(LogLevel.INFO)
-                .source(this.getClass().getName())
-                .correlationId(request.getHeader("X-Correlation-ID"))
-                .userAgent(request.getHeader("User-Agent"))
-                .ip(request.getRemoteAddr())
-                .build();
-
-        // Log the entry
-        logger.log(logEntry);
-
-        // Simulate some processing
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        // End performance tracking and log completion
-        logEntry.endTracking();
-
-        // Create a new log entry for completion
-        LogEntry completionEntry = LogEntry.builder()
-                .message("Request processed")
-                .level(LogLevel.INFO)
-                .source(this.getClass().getSimpleName())
-                .correlationId(logEntry.getCorrelationId())
-                .userAgent(logEntry.getUserAgent())
-                .ip(logEntry.getIp())
-                .duration(logEntry.getDuration())
-                .metadata(Map.of("status", "success"))
-                .build();
-
-        logger.log(completionEntry);
-
+    public String structuredLogging(@RequestParam String abc) {
         return "Logged with structured approach";
     }
 }

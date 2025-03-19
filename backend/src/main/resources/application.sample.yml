@@ -18,3 +18,7 @@ elasticsearch:
   port: 9200
   index-prefix: logs
   api-key: your-api-key
+
+logging:
+  controller:
+    logger-type: ELASTICSEARCH
