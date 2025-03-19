@@ -30,15 +30,10 @@
             <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
 
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <fieldNames>
-                <timestamp>timestamp</timestamp>
-                <level>level</level>
-                <logger>source</logger>
-                <message>message</message>
-            </fieldNames>
-            <includeMdc>true</includeMdc>
-            <includeContext>true</includeContext>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>%msg%n</pattern>
+            </layout>
         </encoder>
     </appender>
 
