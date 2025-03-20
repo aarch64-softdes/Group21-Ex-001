@@ -5,15 +5,15 @@ import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.dto.response.student.StudentMinimalDto;
-import com.tkpm.sms.entity.Program;
-import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.entity.Faculty;
+import com.tkpm.sms.entity.Program;
 import com.tkpm.sms.entity.Status;
+import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.enums.Gender;
-import com.tkpm.sms.utils.ImportFileUtils;
 import com.tkpm.sms.service.FacultyService;
 import com.tkpm.sms.service.ProgramService;
 import com.tkpm.sms.service.StatusService;
+import com.tkpm.sms.utils.ImportFileUtils;
 import org.mapstruct.*;
 
 import java.util.Objects;
@@ -29,7 +29,6 @@ public interface StudentMapper {
     @Mapping(target = "status", source = "status.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
-
     StudentMinimalDto toStudentMinimalDto(Student student);
 
 
@@ -37,9 +36,9 @@ public interface StudentMapper {
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     Student toStudentCreateRequest(StudentDto studentDto,
-                      @Context FacultyService facultyService,
-                      @Context ProgramService programService,
-                      @Context StatusService statusService);
+                                   @Context FacultyService facultyService,
+                                   @Context ProgramService programService,
+                                   @Context StatusService statusService);
 
     @Mapping(target = "permanentAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getPermanentAddress()))")
     @Mapping(target = "temporaryAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getTemporaryAddress()))")
@@ -50,7 +49,9 @@ public interface StudentMapper {
                     "studentFileImportDto.getIdentityNumber(), " +
                     "studentFileImportDto.getIdentityIssuedBy(), " +
                     "studentFileImportDto.getIdentityIssuedDate(), " +
-                    "studentFileImportDto.getIdentityExpiryDate()))"
+                    "studentFileImportDto.getIdentityExpiryDate()," +
+                    "studentFileImportDto.getIdentityNotes()," +
+                    "studentFileImportDto.getIdentityCountry()))"
     )
     StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileImportDto);
 
@@ -111,6 +112,9 @@ public interface StudentMapper {
     @Mapping(target = "identityIssuedBy", source = "identity.issuedBy")
     @Mapping(target = "identityIssuedDate", source = "identity.issuedDate")
     @Mapping(target = "identityExpiryDate", source = "identity.expiryDate")
+    @Mapping(target = "identityHasChip", source = "identity.hasChip")
+    @Mapping(target = "identityNotes", source = "identity.notes")
+    @Mapping(target = "identityCountry", source = "identity.country")
     @Mapping(target = "faculty", source = "faculty.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "status", source = "status.name")
