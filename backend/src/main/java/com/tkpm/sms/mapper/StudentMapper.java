@@ -11,19 +11,35 @@ import com.tkpm.sms.enums.Faculty;
 import com.tkpm.sms.enums.Gender;
 import com.tkpm.sms.enums.Status;
 import com.tkpm.sms.utils.ImportFileUtils;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import com.tkpm.sms.service.FacultyService;
+import com.tkpm.sms.service.ProgramService;
+import com.tkpm.sms.service.StatusService;
+import org.mapstruct.*;
 
 import java.util.Objects;
 
 @Mapper(componentModel = "spring", imports = {ImportFileUtils.class, Gender.class, Faculty.class, Status.class, Objects.class})
 public interface StudentMapper {
+
+    @Mapping(target = "status", source = "status.name")
+    @Mapping(target = "program", source = "program.name")
+    @Mapping(target = "faculty", source = "faculty.name")
     StudentDto toStudentDto(Student student);
+
+    @Mapping(target = "status", source = "status.name")
+    @Mapping(target = "program", source = "program.name")
+    @Mapping(target = "faculty", source = "faculty.name")
 
     StudentMinimalDto toStudentMinimalDto(Student student);
 
-    Student toStudentCreateRequest(StudentDto studentDto);
+
+    @Mapping(target = "status", qualifiedByName = "toStatus")
+    @Mapping(target = "program", qualifiedByName = "toProgram")
+    @Mapping(target = "faculty", qualifiedByName = "toFaculty")
+    Student toStudentCreateRequest(StudentDto studentDto,
+                      @Context FacultyService facultyService,
+                      @Context ProgramService programService,
+                      @Context StatusService statusService);
 
     @Mapping(target = "permanentAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getPermanentAddress()))")
     @Mapping(target = "temporaryAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getTemporaryAddress()))")
@@ -39,22 +55,44 @@ public interface StudentMapper {
     StudentCreateRequestDto toStudentCreateRequest(StudentFileImportDto studentFileImportDto);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", ignore = true)
-    @Mapping(target = "faculty", ignore = true)
-    @Mapping(target = "gender", ignore = true)
+    @Mapping(target = "status", qualifiedByName = "toStatus")
+    @Mapping(target = "program", qualifiedByName = "toProgram")
+    @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
-    void updateStudent(@MappingTarget Student student, StudentUpdateRequestDto request);
+    void updateStudent(@MappingTarget Student student,
+                       StudentUpdateRequestDto request,
+                       @Context FacultyService facultyService,
+                       @Context ProgramService programService,
+                       @Context StatusService statusService);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", ignore = true)
-    @Mapping(target = "faculty", ignore = true)
-    @Mapping(target = "gender", ignore = true)
+    @Mapping(target = "status", qualifiedByName = "toStatus")
+    @Mapping(target = "program", qualifiedByName = "toProgram")
+    @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
-    Student createStudent(StudentCreateRequestDto request);
+    Student createStudent(StudentCreateRequestDto request,
+                          @Context FacultyService facultyService,
+                          @Context ProgramService programService,
+                          @Context StatusService statusService);
+
+    @Named("toFaculty")
+    default Faculty toFaculty(String name, @Context FacultyService facultyService) {
+        return facultyService.getFacultyByName(name);
+    }
+
+    @Named("toStatus")
+    default Status toStatus(String name, @Context StatusService statusService) {
+        return statusService.getStatusByName(name);
+    }
+
+    @Named("toProgram")
+    default Program toProgram(String name, @Context ProgramService programService) {
+        return programService.getProgramByName(name);
+    }
 
     @Mapping(
             target = "permanentAddress",

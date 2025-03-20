@@ -3,9 +3,6 @@ package com.tkpm.sms.service;
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.entity.Student;
-import com.tkpm.sms.enums.Faculty;
-import com.tkpm.sms.enums.Gender;
-import com.tkpm.sms.enums.Status;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.mapper.AddressMapper;
@@ -28,9 +25,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentService {
-    int PAGE_SIZE = 5;
-
     StudentRepository studentRepository;
+    StatusService statusService;
+    ProgramService programService;
+    FacultyService facultyService;
+    int PAGE_SIZE = 5;
     StudentMapper studentMapper;
 
     AddressService addressService;
@@ -64,7 +63,7 @@ public class StudentService {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with phone number %s already existed", studentCreateRequestDto.getPhone())));
         }
 
-        Student student = studentMapper.createStudent(studentCreateRequestDto);
+        Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
 
         log.info("Student created with address: {}", student.getPermanentAddress());
 
@@ -81,10 +80,6 @@ public class StudentService {
             var temporaryAddress = addressService.createAddress(studentCreateRequestDto.getTemporaryAddress());
             student.setTemporaryAddress(temporaryAddress);
         }
-
-        student.setStatus(Status.valueOf(studentCreateRequestDto.getStatus()));
-        student.setFaculty(Faculty.fromString(studentCreateRequestDto.getFaculty()));
-        student.setGender(Gender.valueOf(studentCreateRequestDto.getGender()));
 
         student.setIdentity(
                 identityService.createIdentity(studentCreateRequestDto.getIdentity())
@@ -121,11 +116,7 @@ public class StudentService {
                     studentUpdateRequestDto.getPhone())));
         }
 
-        studentMapper.updateStudent(student, studentUpdateRequestDto);
-
-        student.setStatus(Status.valueOf(studentUpdateRequestDto.getStatus()));
-        student.setFaculty(Faculty.fromString(studentUpdateRequestDto.getFaculty()));
-        student.setGender(Gender.valueOf(studentUpdateRequestDto.getGender()));
+        studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
 
         //TODO: Refactor
         if (studentUpdateRequestDto.getTemporaryAddress() != null) {
