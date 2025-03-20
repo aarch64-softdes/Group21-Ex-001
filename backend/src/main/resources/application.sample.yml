@@ -18,3 +18,11 @@ elasticsearch:
   port: 9200
   index-prefix: logs
   api-key: your-api-key
+
+filetype:
+  json: json
+  csv: csv
+
+mediatype:
+  json: application/json
+  csv: text/csv
