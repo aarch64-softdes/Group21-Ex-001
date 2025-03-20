@@ -1,15 +1,15 @@
 package com.tkpm.sms.mapper;
 
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
-import com.tkpm.sms.dto.request.StudentFileImportDto;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentDto;
-import com.tkpm.sms.dto.response.student.StudentFileExportDto;
+import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.dto.response.student.StudentMinimalDto;
+import com.tkpm.sms.entity.Program;
 import com.tkpm.sms.entity.Student;
-import com.tkpm.sms.enums.Faculty;
+import com.tkpm.sms.entity.Faculty;
+import com.tkpm.sms.entity.Status;
 import com.tkpm.sms.enums.Gender;
-import com.tkpm.sms.enums.Status;
 import com.tkpm.sms.utils.ImportFileUtils;
 import com.tkpm.sms.service.FacultyService;
 import com.tkpm.sms.service.ProgramService;
@@ -52,7 +52,7 @@ public interface StudentMapper {
                     "studentFileImportDto.getIdentityIssuedDate(), " +
                     "studentFileImportDto.getIdentityExpiryDate()))"
     )
-    StudentCreateRequestDto toStudentCreateRequest(StudentFileImportDto studentFileImportDto);
+    StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileImportDto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", qualifiedByName = "toStatus")
@@ -111,5 +111,8 @@ public interface StudentMapper {
     @Mapping(target = "identityIssuedBy", source = "identity.issuedBy")
     @Mapping(target = "identityIssuedDate", source = "identity.issuedDate")
     @Mapping(target = "identityExpiryDate", source = "identity.expiryDate")
-    StudentFileExportDto toStudentFileExportDto(Student student);
+    @Mapping(target = "faculty", source = "faculty.name")
+    @Mapping(target = "program", source = "program.name")
+    @Mapping(target = "status", source = "status.name")
+    StudentFileDto toStudentFileDto(Student student);
 }

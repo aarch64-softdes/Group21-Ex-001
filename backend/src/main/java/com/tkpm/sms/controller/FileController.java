@@ -38,7 +38,7 @@ public class FileController {
 
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportStudentsToFile(@RequestParam("format") String format) {
-        byte[] data = fileService.export(format);
+        byte[] data = fileService.exportStudentFile(format);
         String filename = generateFilename(format);
 
         return ResponseEntity.ok()
