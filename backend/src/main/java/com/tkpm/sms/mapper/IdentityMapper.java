@@ -4,11 +4,12 @@ import com.tkpm.sms.dto.request.IdentityCreateRequestDto;
 import com.tkpm.sms.dto.request.IdentityUpdateRequestDto;
 import com.tkpm.sms.dto.response.identity.IdentityDto;
 import com.tkpm.sms.entity.Identity;
+import com.tkpm.sms.enums.IdentityType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", imports = {IdentityType.class})
 public interface IdentityMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "student", ignore = true)
@@ -21,5 +22,6 @@ public interface IdentityMapper {
     IdentityDto toIdentityDto(Identity identity);
 
     IdentityUpdateRequestDto toIdentityUpdateRequestDto(IdentityCreateRequestDto requestDto);
+
     IdentityCreateRequestDto toIdentityCreateRequestDto(IdentityUpdateRequestDto requestDto);
 }
