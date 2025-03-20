@@ -1,6 +1,7 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
+import com.tkpm.sms.dto.request.StudentSearchRequest;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
@@ -30,13 +31,10 @@ public class StudentController {
 
     @GetMapping
     public ResponseEntity<ApplicationResponseDto<ListResponse<StudentMinimalDto>>> getStudents(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "studentId") String sortName,
-            @RequestParam(defaultValue = "asc") String sortType,
-            @RequestParam(defaultValue = "") String search
+            @ModelAttribute StudentSearchRequest search
     ) {
         Page<StudentMinimalDto> pageResult =
-                studentService.findAll(page, sortName, sortType, search)
+                studentService.findAll(search)
                         .map(studentMapper::toStudentMinimalDto);
 
         var pageDto = PageDto.builder()
