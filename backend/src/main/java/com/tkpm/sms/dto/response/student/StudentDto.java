@@ -33,5 +33,5 @@ public class StudentDto {
     Address temporaryAddress;
     Address mailingAddress;
 
-    Identity identity;
+    IdentityDto identity;
 }
