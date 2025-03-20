@@ -1,7 +1,6 @@
 package com.tkpm.sms.dto.response.student;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.tkpm.sms.entity.Address;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,8 +18,7 @@ import java.time.LocalDate;
         "temporaryStreet", "temporaryWard", "temporaryDistrict", "temporaryCountry",
         "mailingStreet", "mailingWard", "mailingDistrict", "mailingCountry"
 })
-public class StudentFileExportDto {
-    String id;
+public class StudentFileDto {
     String studentId;
     String name;
     LocalDate dob;
@@ -41,4 +39,7 @@ public class StudentFileExportDto {
     String identityIssuedBy;
     String identityIssuedDate;
     String identityExpiryDate;
+    String notes;
+    String country;
+    boolean hasChip;
 }
