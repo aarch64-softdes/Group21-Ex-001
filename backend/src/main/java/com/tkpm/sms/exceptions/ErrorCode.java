@@ -29,6 +29,7 @@ public enum ErrorCode {
     // File error
     FAIL_TO_EXPORT_FILE("Fail to export file", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_FILE_FORMAT("Invalid file format", HttpStatus.BAD_REQUEST),
+    FAIL_TO_IMPORT_FILE("Failed to import file", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     @Setter
