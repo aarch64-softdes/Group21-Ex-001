@@ -84,6 +84,7 @@ export interface GenericTableProps<T extends { id: string }> {
     filterOptions: FilterOption[];
     requireDeleteConfirmation?: boolean;
     additionalActions?: AdditionalAction[];
+    disablePagination?: boolean;
 }
 
 export interface ActionCellProps {

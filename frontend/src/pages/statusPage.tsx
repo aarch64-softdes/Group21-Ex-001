@@ -71,6 +71,7 @@ const StatusPage: React.FC = () => {
                 }}
                 requireDeleteConfirmation={true}
                 filterOptions={[]}
+                disablePagination={true}
             />
         </div>
     );

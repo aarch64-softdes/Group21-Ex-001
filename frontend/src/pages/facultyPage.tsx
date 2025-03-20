@@ -72,6 +72,7 @@ const FacultyPage: React.FC = () => {
                 }}
                 requireDeleteConfirmation={true}
                 filterOptions={[]}
+                disablePagination={true}
             />
         </div>
     );
