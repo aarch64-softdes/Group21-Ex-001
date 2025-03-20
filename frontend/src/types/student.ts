@@ -1,4 +1,5 @@
-import { Address } from "@/types/address";
+import { Address } from '@/types/address';
+import IdentityDocument from './identityDocument';
 
 // Using string types instead of enums since values come from the API
 export type Gender = string;
@@ -21,7 +22,7 @@ export default interface Student {
   phone: string;
   status: Status;
   citizenship: string;
-  // idDocumentType: "CMND" | "CCCD" | "Passport";
+  idDocument: IdentityDocument;
 }
 
 export interface CreateStudentDTO {
@@ -39,6 +40,7 @@ export interface CreateStudentDTO {
   phone: string;
   status?: Status;
   citizenship: string;
+  idDocument: IdentityDocument;
 }
 
 export interface UpdateStudentDTO {
@@ -55,6 +57,7 @@ export interface UpdateStudentDTO {
   phone?: string;
   status?: Status;
   citizenship: string;
+  idDocument: IdentityDocument;
 }
 
 export const mapToStudent = (data: any): Student => ({
@@ -73,4 +76,5 @@ export const mapToStudent = (data: any): Student => ({
   phone: data.phone,
   status: data.status,
   citizenship: data.citizenship,
+  idDocument: data.idDocument,
 });

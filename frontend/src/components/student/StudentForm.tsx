@@ -102,6 +102,51 @@ export const StudentFormSchema = z.object({
     province: z.string().min(1, 'Province is required'),
     country: z.string().min(1, 'Country is required').default('Việt Nam'),
   }),
+
+  idDocument: z.object({
+    type: z.enum(['Identity Card', 'Chip Card', 'Passport']),
+    number: z.string().min(1, 'ID number is required'),
+    issuedDate: z.string().min(1, 'Issue date is required'),
+    expiryDate: z.string().min(1, 'Expiration date is required'),
+    issuedBy: z.string().min(1, 'Issuing authority is required'),
+    // // hasChip is only required for Chip Card
+    // hasChip: z
+    //   .boolean()
+    //   .optional()
+    //   .superRefine((val, ctx) => {
+    //     if (ctx.path[0] === 'idDocument' && ctx.path[1] === 'hasChip') {
+    //       const type = (ctx.parent as any).type;
+    //       if (type === 'Chip Card' && val === undefined) {
+    //         ctx.addIssue({
+    //           code: z.ZodIssueCode.custom,
+    //           message: 'Please specify if this ID card has a chip',
+    //         });
+    //         return false;
+    //       }
+    //     }
+    //     return true;
+    //   }),
+    // // country is only required for Passport
+    // country: z
+    //   .string()
+    //   .optional()
+    //   .superRefine((val, ctx) => {
+    //     if (ctx.path[0] === 'idDocument' && ctx.path[1] === 'country') {
+    //       const parentObj = ctx.path.length >= 2 ? ctx.path : null;
+    //       const idType = parentObj && typeof parentObj === 'object' ? (parentObj as any).type : null;
+
+    //       if (idType === 'Chip Card' && val === undefined) {
+    //         ctx.addIssue({
+    //           code: z.ZodIssueCode.custom,
+    //           message: 'Please specify if this ID card has a chip',
+    //         });
+    //         return false;
+    //       }
+    //       return true;
+    //   }),
+
+    notes: z.string().optional(),
+  }),
 });
 
 export type StudentFormValues = z.infer<typeof StudentFormSchema>;
@@ -126,6 +171,12 @@ const addressTypes = [
   { type: 'permanentAddress', displayName: 'Permanent Address' },
   { type: 'temporaryAddress', displayName: 'Temporary Address' },
   { type: 'mailingAddress', displayName: 'Mailing Address' },
+];
+
+const identityTypes = [
+  { type: 'Identity Card', displayName: 'Identity Card (CMND)' },
+  { type: 'Chip Card', displayName: 'Chip Card (CCCD)' },
+  { type: 'Passport', displayName: 'Passport' },
 ];
 
 const StudentForm: React.FC<FormComponentProps<Student>> = ({
@@ -239,6 +290,13 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
           district: '',
           province: '',
           country: 'Việt Nam',
+        },
+        idDocument: studentData.idDocument || {
+          type: 'Identity Card',
+          number: '',
+          issuedDate: '',
+          expiryDate: '',
+          issuedBy: '',
         },
       };
 
@@ -557,6 +615,168 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                   </div>
                 </FormSection>
 
+                <FormSection title='Identity Information'>
+                  <div className='grid grid-cols-2 lg:grid-cols-3 gap-6'>
+                    <FormField
+                      control={form.control}
+                      name='idDocument.type'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Document Type</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value || undefined}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder='Select document type' />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {identityTypes.map((type) => (
+                                <SelectItem key={type.type} value={type.type}>
+                                  {type.displayName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name='idDocument.number'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Document Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder='e.g. 012345678912'
+                              {...field}
+                              autoComplete='off'
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name='idDocument.issuedDate'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Date of Issue</FormLabel>
+                          <FormControl>
+                            <Input type='date' {...field} autoComplete='off' />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name='idDocument.expiryDate'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Expiration Date</FormLabel>
+                          <FormControl>
+                            <Input type='date' {...field} autoComplete='off' />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name='idDocument.issuedBy'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Issued By</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder='e.g. Ministry of Public Security'
+                              {...field}
+                              autoComplete='off'
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Conditional fields based on document type */}
+                    {form.watch('idDocument.type') === 'Chip Card' && (
+                      <FormField
+                        control={form.control}
+                        name='idDocument.hasChip'
+                        render={({ field }) => (
+                          <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                            <FormControl>
+                              <input
+                                type='checkbox'
+                                checked={field.value}
+                                onChange={field.onChange}
+                                className='h-4 w-4 mt-1'
+                              />
+                            </FormControl>
+                            <div className='space-y-1 leading-none'>
+                              <FormLabel>Has Chip</FormLabel>
+                              <p className='text-sm text-muted-foreground'>
+                                Specify if this ID card contains a chip
+                              </p>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {form.watch('idDocument.type') === 'Passport' && (
+                      <>
+                        <FormField
+                          control={form.control}
+                          name='idDocument.country'
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Issuing Country</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder='e.g. Việt Nam'
+                                  {...field}
+                                  autoComplete='off'
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name='idDocument.notes'
+                          render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                              <FormLabel>Notes</FormLabel>
+                              <FormControl>
+                                <textarea
+                                  placeholder='Additional information about the passport'
+                                  {...field}
+                                  className='flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </>
+                    )}
+                  </div>
+                </FormSection>
                 <FormSection title='Academic Information'>
                   <div className='grid grid-cols-2 gap-4'>
                     <FormField

@@ -81,6 +81,13 @@ export default class StudentService {
           province: '',
           country: '',
         },
+        idDocument: {
+          type: 'Identity Card',
+          number: '',
+          issuedDate: new Date(),
+          expiryDate: new Date(),
+          issuedBy: '',
+        },
       };
     }
 
