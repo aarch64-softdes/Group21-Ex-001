@@ -2,6 +2,7 @@ package com.tkpm.sms.utils;
 
 import com.tkpm.sms.dto.request.AddressCreateRequestDto;
 import com.tkpm.sms.dto.request.IdentityCreateRequestDto;
+import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.entity.Address;
 import com.tkpm.sms.entity.Identity;
 import com.tkpm.sms.enums.IdentityType;
@@ -56,22 +57,16 @@ public class ImportFileUtils {
     }
 
     public static IdentityCreateRequestDto parseIdentityCreateRequestDto(
-            String identityType,
-            String identityNumber,
-            String identityIssuedBy,
-            String identityIssuedDate,
-            String identityExpiryDate,
-            String identityNotes,
-            String identityCountry) {
+            StudentFileDto studentFileImportDto) {
         return IdentityCreateRequestDto.builder()
-                .type(identityType)
-                .number(identityNumber)
-                .issuedBy(identityIssuedBy)
-                .issuedDate(LocalDate.parse(identityIssuedDate))
-                .expiryDate(LocalDate.parse(identityExpiryDate))
-                .notes(identityNotes)
-                .country(identityCountry)
-                .hasChip(IdentityType.Chip_Card.equals(identityType))
+                .type(studentFileImportDto.getIdentityType())
+                .number(studentFileImportDto.getIdentityNumber())
+                .issuedBy(studentFileImportDto.getIdentityIssuedBy())
+                .issuedDate(LocalDate.parse(studentFileImportDto.getIdentityIssuedDate()))
+                .expiryDate(LocalDate.parse(studentFileImportDto.getIdentityExpiryDate()))
+                .notes(studentFileImportDto.getIdentityNotes())
+                .country(studentFileImportDto.getIdentityCountry())
+                .hasChip(IdentityType.Chip_Card.equals(studentFileImportDto.getIdentityType()))
                 .build();
     }
 

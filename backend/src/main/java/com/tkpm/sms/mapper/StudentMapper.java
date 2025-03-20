@@ -5,10 +5,7 @@ import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.dto.response.student.StudentMinimalDto;
-import com.tkpm.sms.entity.Faculty;
-import com.tkpm.sms.entity.Program;
-import com.tkpm.sms.entity.Status;
-import com.tkpm.sms.entity.Student;
+import com.tkpm.sms.entity.*;
 import com.tkpm.sms.enums.Gender;
 import com.tkpm.sms.service.FacultyService;
 import com.tkpm.sms.service.ProgramService;
@@ -43,16 +40,7 @@ public interface StudentMapper {
     @Mapping(target = "permanentAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getPermanentAddress()))")
     @Mapping(target = "temporaryAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getTemporaryAddress()))")
     @Mapping(target = "mailingAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getMailingAddress()))")
-    @Mapping(target = "identity",
-            expression = "java(ImportFileUtils.parseIdentityCreateRequestDto(" +
-                    "studentFileImportDto.getIdentityType(), " +
-                    "studentFileImportDto.getIdentityNumber(), " +
-                    "studentFileImportDto.getIdentityIssuedBy(), " +
-                    "studentFileImportDto.getIdentityIssuedDate(), " +
-                    "studentFileImportDto.getIdentityExpiryDate()," +
-                    "studentFileImportDto.getIdentityNotes()," +
-                    "studentFileImportDto.getIdentityCountry()))"
-    )
+    @Mapping(target = "identity", expression = "java(ImportFileUtils.parseIdentityCreateRequestDto(studentFileImportDto))")
     StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileImportDto);
 
     @Mapping(target = "id", ignore = true)
@@ -95,18 +83,9 @@ public interface StudentMapper {
         return programService.getProgramByName(name);
     }
 
-    @Mapping(
-            target = "permanentAddress",
-            expression = "java(Objects.isNull(student.getPermanentAddress()) ? \"\" : student.getPermanentAddress().toString())"
-    )
-    @Mapping(
-            target = "temporaryAddress",
-            expression = "java(Objects.isNull(student.getTemporaryAddress()) ? \"\" : student.getTemporaryAddress().toString())"
-    )
-    @Mapping(
-            target = "mailingAddress",
-            expression = "java(Objects.isNull(student.getMailingAddress()) ? \"\" : student.getMailingAddress().toString())"
-    )
+    @Mapping(target = "permanentAddress", expression = "java(formatAddress(student.getPermanentAddress()))")
+    @Mapping(target = "temporaryAddress", expression = "java(formatAddress(student.getTemporaryAddress()))")
+    @Mapping(target = "mailingAddress", expression = "java(formatAddress(student.getMailingAddress()))")
     @Mapping(target = "identityType", source = "identity.type")
     @Mapping(target = "identityNumber", source = "identity.number")
     @Mapping(target = "identityIssuedBy", source = "identity.issuedBy")
@@ -119,4 +98,8 @@ public interface StudentMapper {
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "status", source = "status.name")
     StudentFileDto toStudentFileDto(Student student);
+
+    default String formatAddress(Address address) {
+        return Objects.isNull(address) ? "" : address.toString();
+    }
 }
