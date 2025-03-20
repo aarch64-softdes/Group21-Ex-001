@@ -1,6 +1,7 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
+import com.tkpm.sms.enums.SupportedFileType;
 import com.tkpm.sms.service.FileService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +25,6 @@ import java.util.Date;
 public class FileController {
     FileService fileService;
 
-    @NonFinal
-    @Value("${filetype.json}")
-    String FILE_TYPE_JSON;
-
-    @NonFinal
-    @Value("${mediatype.json}")
-    String MEDIA_TYPE_JSON;
-
-    @NonFinal
-    @Value("${mediatype.csv}")
-    String MEDIA_TYPE_CSV;
-
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportStudentsToFile(@RequestParam("format") String format) {
         byte[] data = fileService.exportStudentFile(format);
@@ -44,7 +33,7 @@ public class FileController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType(
-                        format.equals(FILE_TYPE_JSON) ? MEDIA_TYPE_JSON : MEDIA_TYPE_CSV
+                        format.equals(SupportedFileType.JSON.getExtension()) ? SupportedFileType.JSON.getMediaType() : SupportedFileType.CSV.getMediaType()
                 ))
                 .contentLength(data.length)
                 .body(data);
