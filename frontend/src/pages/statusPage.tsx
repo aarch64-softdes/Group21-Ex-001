@@ -21,8 +21,6 @@ const StatusPage: React.FC = () => {
             {
                 header: "ID",
                 key: "id",
-                editable: false,
-                sortable: false,
                 style: {
                     width: "80px",
                 },
@@ -30,8 +28,6 @@ const StatusPage: React.FC = () => {
             {
                 header: "Name",
                 key: "name",
-                editable: true,
-                sortable: false,
             },
         ],
         []

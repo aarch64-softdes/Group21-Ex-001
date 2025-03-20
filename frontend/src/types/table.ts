@@ -12,7 +12,6 @@ export type ColumnStyle = {
 export interface Column<T> {
     header: string;
     key: keyof T;
-    editable?: boolean;
     isDefaultSort?: boolean;
     sortable?: boolean;
     style?: ColumnStyle;

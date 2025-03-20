@@ -13,7 +13,6 @@ import SkeletonTable from "./SkeletonTable";
 
 import SearchFilter from "@/components/filter/SearchFilter";
 import TablePagination from "@/components/table/TablePagination";
-import { Accordion } from "@/components/ui/accordion";
 import LoadingButton from "@/components/ui/loadingButton";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -208,7 +207,7 @@ const GenericTable = <T extends { id: string }>({
                                 }
                                 {...filterOption}
                                 value={filters.value[filterOption.id] || ""}
-                                componentType="accordion"
+                                componentType="popover"
                             />
                         );
 
@@ -220,37 +219,32 @@ const GenericTable = <T extends { id: string }>({
     );
 
     return (
-        <>
-            <div className="flex h-full min-w-64 flex-col gap-4 rounded-md border-2 px-4">
-                <h2 className="pt-4 text-center text-2xl font-semibold">
+        <div className="flex flex-col gap-4 w-full">
+            {/* Table heading and actions */}
+            <div className="flex flex-col gap-2">
+                <h2 className="text-2xl font-semibold text-center">
                     {tableTitle}
                 </h2>
 
-                <LoadingButton
-                    variant="outline"
-                    className="w-full items-center gap-2"
-                    onClick={handleShowDialog}
-                    isLoading={isAdding}
-                >
-                    <PlusCircle className="h-5 w-5" />
-                    {addingTitle}
-                </LoadingButton>
-                <Separator />
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        {renderFilters}
+                    </div>
 
-                {filterOptions.length > 0 && (
-                    <>
-                        <p className="font-semibold text-gray-400">Filters</p>
-                        <Accordion
-                            type="multiple"
-                            className="flex w-full flex-col gap-2"
-                        >
-                            {renderFilters}
-                        </Accordion>
-                    </>
-                )}
+                    <LoadingButton
+                        variant="outline"
+                        className="flex items-center gap-2"
+                        onClick={handleShowDialog}
+                        isLoading={isAdding}
+                    >
+                        <PlusCircle className="h-5 w-5" />
+                        {addingTitle}
+                    </LoadingButton>
+                </div>
             </div>
 
-            <div className="flex-grow overflow-hidden">
+            {/* Table content */}
+            <div className="border rounded-md">
                 {state.isLoading ? (
                     <SkeletonTable
                         rows={pagination.pageSize}
@@ -260,16 +254,16 @@ const GenericTable = <T extends { id: string }>({
                     <div className="overflow-x-auto">
                         <Table>
                             {tableHeader}
-
                             {tableBody}
                         </Table>
-                        <Separator />
+
+                        {/* Conditionally render pagination */}
                         {!disablePagination && (
                             <>
                                 <Separator />
                                 <TablePagination {...pagination} />
                             </>
-                        )}{" "}
+                        )}
                     </div>
                 )}
             </div>
@@ -303,7 +297,7 @@ const GenericTable = <T extends { id: string }>({
                     <DetailComponent id={currentDetailItem?.id} />
                 </DialogContent>
             </Dialog>
-        </>
+        </div>
     );
 };
 

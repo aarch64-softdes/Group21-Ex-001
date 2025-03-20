@@ -21,8 +21,6 @@ const FacultyPage: React.FC = () => {
             {
                 header: "ID",
                 key: "id",
-                editable: false,
-                sortable: false,
                 style: {
                     width: "80px",
                 },
@@ -30,9 +28,6 @@ const FacultyPage: React.FC = () => {
             {
                 header: "Name",
                 key: "name",
-                editable: true,
-                isDefaultSort: true,
-                sortable: false,
             },
         ],
         []
