@@ -17,6 +17,11 @@ public enum ErrorCode {
     INVALID_PHONE("Invalid phone number", HttpStatus.BAD_REQUEST),
     INVALID_STATUS("Invalid status", HttpStatus.BAD_REQUEST),
     NULL_VALUE("Value cannot be null", HttpStatus.BAD_REQUEST),
+    IDENTITY_TYPE_REQUIRED("Identity type is required", HttpStatus.BAD_REQUEST),
+    IDENTITY_NUMBER_REQUIRED("Number is required", HttpStatus.BAD_REQUEST),
+    IDENTITY_ISSUED_BY_REQUIRED("Issued by is required", HttpStatus.BAD_REQUEST),
+    IDENTITY_ISSUED_DATE_REQUIRED("Issued date is required", HttpStatus.BAD_REQUEST),
+    IDENTITY_EXPIRY_DATE_REQUIRED("Expiry date is required", HttpStatus.BAD_REQUEST),
 
     NOT_FOUND("Resource not found", HttpStatus.NOT_FOUND),
     CONFLICT("Resource already existed", HttpStatus.CONFLICT),
