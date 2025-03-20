@@ -1,5 +1,5 @@
 export default interface Program {
-    id: number;
+    id: string;
     name: string;
 }
 

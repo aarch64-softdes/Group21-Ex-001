@@ -1,12 +1,12 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ProgramPage from "./pages/programPage";
+import StatusPage from "./pages/statusPage";
 
 const queryClient = new QueryClient();
 
 function App() {
     return (
         <QueryClientProvider client={queryClient}>
-            <ProgramPage />
+            <StatusPage />
         </QueryClientProvider>
     );
 }

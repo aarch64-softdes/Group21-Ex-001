@@ -14,15 +14,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useProgram } from "@/hooks/useProgramApi";
-import Program, { CreateProgramDTO } from "@/types/program";
+import { useStatus } from "@/hooks/useStatusApi";
+import Status, { CreateStatusDTO } from "@/types/status";
 import { FormComponentProps } from "@/types/table";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import LoadingButton from "../ui/loadingButton";
 
 // Define schema
-export const ProgramFormSchema = z.object({
+export const StatusFormSchema = z.object({
     name: z
         .string()
         .min(1, "Name is required")
@@ -30,48 +30,48 @@ export const ProgramFormSchema = z.object({
         .regex(/^[\p{L}\s]*$/u, "Name must contain only letters and spaces"),
 });
 
-export type ProgramFormValues = z.infer<typeof ProgramFormSchema>;
+export type StatusFormValues = z.infer<typeof StatusFormSchema>;
 
-const ProgramForm: React.FC<FormComponentProps<Program>> = ({
+const StatusForm: React.FC<FormComponentProps<Status>> = ({
     onSubmit,
     onCancel,
     id,
     isLoading = false,
     isEditing = false,
 }) => {
-    const { data: programData, isLoading: isLoadingProgram } = useProgram(
+    const { data: statusData, isLoading: isLoadingStatus } = useStatus(
         id ? parseInt(id, 10) : 0
     );
 
-    const form = useForm<ProgramFormValues>({
-        resolver: zodResolver(ProgramFormSchema),
+    const form = useForm<StatusFormValues>({
+        resolver: zodResolver(StatusFormSchema),
         defaultValues: {
             name: "",
         },
     });
 
-    // Reset form when program data is loaded
+    // Reset form when status data is loaded
     useEffect(() => {
-        if (programData && id) {
+        if (statusData && id) {
             form.reset({
-                name: programData.name || "",
+                name: statusData.name || "",
             });
         }
-    }, [programData, id, form]);
+    }, [statusData, id, form]);
 
-    const handleSubmit = (values: ProgramFormValues) => {
-        onSubmit(values as unknown as CreateProgramDTO);
+    const handleSubmit = (values: StatusFormValues) => {
+        onSubmit(values as unknown as CreateStatusDTO);
     };
 
     // Determine if we should show loading state
-    const isFormLoading = isLoading || (isEditing && isLoadingProgram);
+    const isFormLoading = isLoading || (isEditing && isLoadingStatus);
 
     return (
         <div className="sticky inset-0">
             {/* Header */}
             <div className="border-b px-4 py-2 flex items-center justify-between">
                 <h2 className="text-xl font-semibold">
-                    {isEditing ? "Edit Program" : "Add New Program"}
+                    {isEditing ? "Edit Status" : "Add New Status"}
                 </h2>
             </div>
 
@@ -92,7 +92,7 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
                                 <Card className="mb-6">
                                     <CardHeader>
                                         <CardTitle className="text-lg font-medium">
-                                            Program Information
+                                            Status Information
                                         </CardTitle>
                                         <Separator />
                                     </CardHeader>
@@ -105,7 +105,7 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
                                                     <FormLabel>Name</FormLabel>
                                                     <FormControl>
                                                         <Input
-                                                            placeholder="Enter program name"
+                                                            placeholder="Enter status name"
                                                             {...field}
                                                             autoComplete="off"
                                                             onKeyDown={(e) => {
@@ -142,7 +142,7 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
                                     >
                                         {isEditing
                                             ? "Save Changes"
-                                            : "Add Program"}
+                                            : "Add Status"}
                                     </LoadingButton>
                                 </div>
                             </form>
@@ -154,4 +154,4 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
     );
 };
 
-export default ProgramForm;
+export default StatusForm;

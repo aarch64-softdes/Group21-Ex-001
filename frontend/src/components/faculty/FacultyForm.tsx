@@ -26,7 +26,8 @@ export const FacultyFormSchema = z.object({
     name: z
         .string()
         .min(1, "Name is required")
-        .max(255, "Name must be less than 255 characters"),
+        .max(255, "Name must be less than 255 characters")
+        .regex(/^[\p{L}\s]*$/u, "Name must contain only letters and spaces"),
 });
 
 export type FacultyFormValues = z.infer<typeof FacultyFormSchema>;
