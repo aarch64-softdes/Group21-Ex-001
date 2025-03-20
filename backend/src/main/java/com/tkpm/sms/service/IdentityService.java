@@ -20,14 +20,23 @@ public class IdentityService {
     IdentityRepository identityRepository;
 
     public Identity createIdentity(IdentityCreateRequestDto identityCreateRequestDto) {
+        if (identityRepository.existsIdentityByNumberAndType(identityCreateRequestDto.getNumber(), identityCreateRequestDto.getType())) {
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with the %s and number %s already existed", identityCreateRequestDto.getType(), identityCreateRequestDto.getNumber())));
+        }
+
         Identity identity = identityMapper.createIdentity(identityCreateRequestDto);
         return identityRepository.save(identity);
     }
 
     public Identity updateIdentity(IdentityUpdateRequestDto identityUpdateRequestDto, String id) {
         Identity identity = identityRepository.findById(id).orElseThrow(
-            ()-> new ApplicationException(ErrorCode.NOT_FOUND.withMessage("Student identity information not found"))
+                () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage("Student identity information not found"))
         );
+
+        if (identityRepository.existsIdentityByNumberAndTypeAndIdNot(identityUpdateRequestDto.getNumber(), identityUpdateRequestDto.getType(), id)) {
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with the %s and number %s already existed", identityUpdateRequestDto.getType(), identityUpdateRequestDto.getNumber())));
+        }
+
         identityMapper.updateIdentity(identity, identityUpdateRequestDto);
         return identityRepository.save(identity);
     }

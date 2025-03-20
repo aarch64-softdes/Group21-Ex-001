@@ -42,7 +42,6 @@ public class StudentUpdateRequestDto {
     @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE")
     String phone;
 
-    @StatusConstraint(message = "INVALID_STATUS")
     String status = Status.Studying.name();
 
     @NotNull(message = "Identity is required")
