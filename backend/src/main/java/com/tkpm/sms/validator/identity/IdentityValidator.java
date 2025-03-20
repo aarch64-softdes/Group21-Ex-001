@@ -80,11 +80,15 @@ public class IdentityValidator implements ConstraintValidator<IdentityConstraint
     }
 
     private boolean isIdentityType(String value) {
+        log.info("value: {}", value);
+        log.info("getNames: {}", Arrays.asList(EnumUtils.getNames(IdentityType.class)));
+
         return Arrays.asList(EnumUtils.getNames(IdentityType.class)).contains(value);
     }
 
+
     private boolean isValidNumber(String type, String number) {
-        if (IdentityType.ChipBased_Card.equals(type)) {
+        if (IdentityType.Chip_Card.equals(type)) {
             return number.matches("[0-9]{12}$");
         } else if (IdentityType.Identity_Card.equals(type)) {
             return number.matches("[0-9]{9}$");
