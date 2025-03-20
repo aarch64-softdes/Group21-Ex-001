@@ -45,11 +45,11 @@ public class StudentCreateRequestDto {
     @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE")
     String phone;
 
-    @StatusConstraint(message = "INVALID_STATUS")
+    @NotNull
     String status = Status.Studying.name();
 
     @NotNull(message = "Identity is required")
-    @IdentityConstraint(values = {"Identity Card", "Chip-based Card", "Passport"})
+    @IdentityConstraint(values = {"Identity Card", "Chip Card", "Passport"})
     @Valid
     IdentityCreateRequestDto identity;
 }
