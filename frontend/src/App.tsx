@@ -1,14 +1,14 @@
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import StudentPage from "./pages/studentPage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import FacultyPage from "./pages/facultyPage";
 
 const queryClient = new QueryClient();
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <StudentPage />
-    </QueryClientProvider>
-  );
+    return (
+        <QueryClientProvider client={queryClient}>
+            <FacultyPage />
+        </QueryClientProvider>
+    );
 }
 
 export default App;
