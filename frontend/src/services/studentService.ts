@@ -90,7 +90,7 @@ export default class StudentService {
     }
 
     const response = await api.get(`/api/students/${id}`);
-    return mapToStudent(response.data);
+    return mapToStudent(response.data.content);
   };
 
   addNewStudent = async (data: CreateStudentDTO): Promise<void> => {

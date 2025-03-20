@@ -230,7 +230,8 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         studentData.dob instanceof Date
           ? formatDateForInput(studentData.dob)
           : formatDateForInput(studentData.dob as string);
-      console.log(studentData.dob, formattedDob);
+
+      console.log(studentData);
 
       form.reset({
         studentId: studentData.studentId || id,
