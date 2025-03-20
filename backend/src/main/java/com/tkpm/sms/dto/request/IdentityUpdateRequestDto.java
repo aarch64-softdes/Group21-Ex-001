@@ -1,6 +1,7 @@
 package com.tkpm.sms.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import jdk.jfr.BooleanFlag;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -26,4 +27,11 @@ public class IdentityUpdateRequestDto {
 
     @NotNull(message = "NULL_VALUE")
     LocalDate expiryDate;
+
+    @BooleanFlag
+    boolean hasChip = false;
+
+    // For passport
+    String country;
+    String notes;
 }
