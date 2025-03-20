@@ -13,19 +13,19 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class IdentityUpdateRequestDto {
-    @NotNull(message = "NULL_VALUE")
+    @NotNull(message = "IDENTITY_TYPE_REQUIRED")
     String type;
 
-    @NotNull(message = "NULL_VALUE")
+    @NotNull(message = "IDENTITY_NUMBER_REQUIRED")
     String number;
 
-    @NotNull(message = "NULL_VALUE")
+    @NotNull(message = "IDENTITY_ISSUED_BY_REQUIRED")
     String issuedBy;
 
-    @NotNull(message = "NULL_VALUE")
+    @NotNull(message = "IDENTITY_ISSUED_DATE_REQUIRED")
     LocalDate issuedDate;
 
-    @NotNull(message = "NULL_VALUE")
+    @NotNull(message = "IDENTITY_EXPIRY_DATE_REQUIRED")
     LocalDate expiryDate;
 
     @BooleanFlag

@@ -4,11 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import jdk.jfr.BooleanFlag;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 
-@Slf4j
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,16 +16,16 @@ public class IdentityCreateRequestDto {
     @NotNull(message = "IDENTITY_TYPE_REQUIRED")
     String type;
 
-    @NotNull(message = "NUMBER_REQUIRED")
+    @NotNull(message = "IDENTITY_NUMBER_REQUIRED")
     String number;
 
-    @NotNull(message = "ISSUED_BY_REQUIRED")
+    @NotNull(message = "IDENTITY_ISSUED_BY_REQUIRED")
     String issuedBy;
 
-    @NotNull(message = "ISSUED_DATE_REQUIRED")
+    @NotNull(message = "IDENTITY_ISSUED_DATE_REQUIRED")
     LocalDate issuedDate;
 
-    @NotNull(message = "EXPIRY_DATE_REQUIRED")
+    @NotNull(message = "IDENTITY_EXPIRY_DATE_REQUIRED")
     LocalDate expiryDate;
 
     // For chip-based
