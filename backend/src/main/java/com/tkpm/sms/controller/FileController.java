@@ -1,5 +1,6 @@
 package com.tkpm.sms.controller;
 
+import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.service.FileService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,18 +36,27 @@ public class FileController {
     @Value("${mediatype.csv}")
     String MEDIA_TYPE_CSV;
 
-    @GetMapping("/export/{fileType}")
-    public ResponseEntity<byte[]> exportStudentsToFile(@PathVariable String fileType) {
-        byte[] data = fileService.export(fileType);
-        String filename = generateFilename(fileType);
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportStudentsToFile(@RequestParam("format") String format) {
+        byte[] data = fileService.export(format);
+        String filename = generateFilename(format);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType(
-                        fileType.equals(FILE_TYPE_JSON) ? MEDIA_TYPE_JSON : MEDIA_TYPE_CSV
+                        format.equals(FILE_TYPE_JSON) ? MEDIA_TYPE_JSON : MEDIA_TYPE_CSV
                 ))
                 .contentLength(data.length)
                 .body(data);
+    }
+
+    @PostMapping("/import")
+    public ResponseEntity<ApplicationResponseDto<Void>> importStudentFile(
+            @RequestParam("format") String format,
+            @RequestParam("file") MultipartFile multipartFile
+    ) {
+        fileService.importStudentFile(format, multipartFile);
+        return ResponseEntity.ok().body(ApplicationResponseDto.success());
     }
 
     private String generateFilename(String extension) {
