@@ -8,6 +8,17 @@ CREATE TABLE addresses
     CONSTRAINT pk_addresses PRIMARY KEY (id)
 );
 
+CREATE TABLE identities
+(
+    id          VARCHAR(255) NOT NULL,
+    type        VARCHAR(255),
+    number      VARCHAR(255),
+    issued_by   VARCHAR(255),
+    issued_date date,
+    expiry_date date,
+    CONSTRAINT pk_identities PRIMARY KEY (id)
+);
+
 CREATE TABLE students
 (
     id                   VARCHAR(255) NOT NULL,
@@ -24,11 +35,15 @@ CREATE TABLE students
     permanent_address_id VARCHAR(255),
     temporary_address_id VARCHAR(255),
     mailing_address_id   VARCHAR(255),
+    identity_id          VARCHAR(255),
     CONSTRAINT pk_students PRIMARY KEY (id)
 );
 
 ALTER TABLE students
     ADD CONSTRAINT uc_students_email UNIQUE (email);
+
+ALTER TABLE students
+    ADD CONSTRAINT uc_students_identity UNIQUE (identity_id);
 
 ALTER TABLE students
     ADD CONSTRAINT uc_students_mailing_address UNIQUE (mailing_address_id);
@@ -44,6 +59,9 @@ ALTER TABLE students
 
 ALTER TABLE students
     ADD CONSTRAINT uc_students_temporary_address UNIQUE (temporary_address_id);
+
+ALTER TABLE students
+    ADD CONSTRAINT FK_STUDENTS_ON_IDENTITY FOREIGN KEY (identity_id) REFERENCES identities (id);
 
 ALTER TABLE students
     ADD CONSTRAINT FK_STUDENTS_ON_MAILING_ADDRESS FOREIGN KEY (mailing_address_id) REFERENCES addresses (id);

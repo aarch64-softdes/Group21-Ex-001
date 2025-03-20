@@ -1,4 +1,4 @@
-package com.tkpm.sms.validator;
+package com.tkpm.sms.validator.status;
 
 import com.tkpm.sms.enums.Status;
 import jakarta.validation.ConstraintValidator;
