@@ -9,8 +9,10 @@ import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.service.StudentService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,21 +22,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@Component
+@Component("csvStrategy")
+@RequiredArgsConstructor
 public class CsvStrategy implements FileStrategy {
+    @Qualifier("csvMapper")
+    private final CsvMapper csvMapper;
+    private final CsvSchema csvSchema;
     private final StudentService studentService;
-    private CsvMapper csvMapper;
-    private CsvSchema csvSchema;
 
-    @Autowired
-    public CsvStrategy(StudentService studentService) {
-        this.studentService = studentService;
-        this.csvMapper = new CsvMapper();
-        this.csvMapper.registerModule(new JavaTimeModule());
-        this.csvMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        this.csvMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
-        this.csvSchema = csvMapper.schemaFor(StudentFileDto.class).withHeader();
-    }
 
     @Override
     public byte[] export(Iterable<?> data) {

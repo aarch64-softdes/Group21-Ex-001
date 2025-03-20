@@ -1,14 +1,13 @@
 package com.tkpm.sms.strategies;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,13 +16,11 @@ import java.io.IOException;
 import java.util.List;
 
 @Slf4j
-@Component
+@Component("jsonStrategy")
 @RequiredArgsConstructor
 public class JsonStrategy implements FileStrategy {
-    private ObjectMapper jsonMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
+    @Qualifier("jsonMapper")
+    private final ObjectMapper jsonMapper;
     private final StudentService studentService;
 
     @Override
