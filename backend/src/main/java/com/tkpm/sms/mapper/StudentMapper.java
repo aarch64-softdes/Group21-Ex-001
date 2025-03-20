@@ -16,6 +16,7 @@ public interface StudentMapper {
     StudentMinimalDto toStudentMinimalDto(Student student);
     Student toStudent(StudentDto studentDto);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "faculty", ignore = true)
     @Mapping(target = "gender", ignore = true)
@@ -24,9 +25,13 @@ public interface StudentMapper {
     @Mapping(target = "permanentAddress", ignore = true)
     void updateStudent(@MappingTarget Student student, StudentUpdateRequestDto request);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "faculty", ignore = true)
     @Mapping(target = "gender", ignore = true)
+    @Mapping(target = "mailingAddress", ignore = true)
+    @Mapping(target = "temporaryAddress", ignore = true)
+    @Mapping(target = "permanentAddress", ignore = true)
     Student createStudent(StudentCreateRequestDto request);
 
     @Mapping(target = "permanentStreet", source = "permanentAddress.street", defaultValue = "")
