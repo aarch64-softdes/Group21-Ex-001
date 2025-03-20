@@ -42,7 +42,6 @@ import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import LoadingButton from '../ui/loadingButton';
 
-// Define schema based on the Java validation annotations
 export const StudentFormSchema = z.object({
   studentId: z.string().min(1, 'Student ID is required'),
   name: z
@@ -103,50 +102,46 @@ export const StudentFormSchema = z.object({
     country: z.string().min(1, 'Country is required').default('Việt Nam'),
   }),
 
-  idDocument: z.object({
-    type: z.enum(['Identity Card', 'Chip Card', 'Passport']),
-    number: z.string().min(1, 'ID number is required'),
-    issuedDate: z.string().min(1, 'Issue date is required'),
-    expiryDate: z.string().min(1, 'Expiration date is required'),
-    issuedBy: z.string().min(1, 'Issuing authority is required'),
-    // // hasChip is only required for Chip Card
-    // hasChip: z
-    //   .boolean()
-    //   .optional()
-    //   .superRefine((val, ctx) => {
-    //     if (ctx.path[0] === 'idDocument' && ctx.path[1] === 'hasChip') {
-    //       const type = (ctx.parent as any).type;
-    //       if (type === 'Chip Card' && val === undefined) {
-    //         ctx.addIssue({
-    //           code: z.ZodIssueCode.custom,
-    //           message: 'Please specify if this ID card has a chip',
-    //         });
-    //         return false;
-    //       }
-    //     }
-    //     return true;
-    //   }),
-    // // country is only required for Passport
-    // country: z
-    //   .string()
-    //   .optional()
-    //   .superRefine((val, ctx) => {
-    //     if (ctx.path[0] === 'idDocument' && ctx.path[1] === 'country') {
-    //       const parentObj = ctx.path.length >= 2 ? ctx.path : null;
-    //       const idType = parentObj && typeof parentObj === 'object' ? (parentObj as any).type : null;
-
-    //       if (idType === 'Chip Card' && val === undefined) {
-    //         ctx.addIssue({
-    //           code: z.ZodIssueCode.custom,
-    //           message: 'Please specify if this ID card has a chip',
-    //         });
-    //         return false;
-    //       }
-    //       return true;
-    //   }),
-
-    notes: z.string().optional(),
-  }),
+  idDocument: z
+    .object({
+      type: z.enum(['Identity Card', 'Chip Card', 'Passport']),
+    })
+    .and(
+      z.discriminatedUnion('type', [
+        z.object({
+          type: z.literal('Identity Card'),
+          number: z.string().min(1, 'ID number is required'),
+          issuedDate: z.string().min(1, 'Issue date is required'),
+          expiryDate: z.string().min(1, 'Expiration date is required'),
+          issuedBy: z.string().min(1, 'Issuing authority is required'),
+          hasChip: z.boolean().optional(),
+          country: z.string().optional(),
+          notes: z.string().optional(),
+        }),
+        z.object({
+          type: z.literal('Chip Card'),
+          number: z.string().min(1, 'ID number is required'),
+          issuedDate: z.string().min(1, 'Issue date is required'),
+          expiryDate: z.string().min(1, 'Expiration date is required'),
+          issuedBy: z.string().min(1, 'Issuing authority is required'),
+          hasChip: z.boolean({
+            required_error: 'Please specify if this ID card has a chip',
+          }),
+          country: z.string().optional(),
+          notes: z.string().optional(),
+        }),
+        z.object({
+          type: z.literal('Passport'),
+          number: z.string().min(1, 'ID number is required'),
+          issuedDate: z.string().min(1, 'Issue date is required'),
+          expiryDate: z.string().min(1, 'Expiration date is required'),
+          issuedBy: z.string().min(1, 'Issuing authority is required'),
+          hasChip: z.boolean().optional(),
+          country: z.string().min(1, 'Country is required for passport'),
+          notes: z.string().optional(),
+        }),
+      ]),
+    ),
 });
 
 export type StudentFormValues = z.infer<typeof StudentFormSchema>;
