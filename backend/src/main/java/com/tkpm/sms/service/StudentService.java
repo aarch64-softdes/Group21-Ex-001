@@ -2,6 +2,7 @@ package com.tkpm.sms.service;
 
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
+import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
@@ -19,6 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -87,6 +90,14 @@ public class StudentService {
 
         student = studentRepository.save(student);
         return student;
+    }
+
+    @Transactional
+    public void saveListStudentFromFile(List<StudentFileDto> students) {
+        var studentCreateRequests = students.stream().map(studentMapper::toStudentCreateRequest).toList();
+        for (var student : studentCreateRequests) {
+            createStudent(student);
+        }
     }
 
     @Transactional
