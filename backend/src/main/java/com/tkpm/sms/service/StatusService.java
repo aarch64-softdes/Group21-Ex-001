@@ -1,6 +1,7 @@
 package com.tkpm.sms.service;
 
 import com.tkpm.sms.dto.request.StatusRequestDto;
+import com.tkpm.sms.dto.request.common.SearchCommonRequest;
 import com.tkpm.sms.entity.Status;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
@@ -8,6 +9,10 @@ import com.tkpm.sms.repository.StatusRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,8 +24,16 @@ import java.util.List;
 public class StatusService {
     StatusRepository statusRepository;
 
-    public List<Status> getAllStatuses() {
-        return statusRepository.findAll();
+    public Page<Status> getAllStatuses(SearchCommonRequest search) {
+        Pageable pageable = PageRequest.of(
+                search.getPage() - 1,
+                search.getSize(),
+                Sort.by(
+                        search.getSortDirection().equalsIgnoreCase("desc")
+                                ? Sort.Direction.DESC : Sort.Direction.ASC,
+                        search.getSortBy()
+                ));
+        return statusRepository.findAll(pageable);
     }
 
     public Status getStatus(Integer id) {

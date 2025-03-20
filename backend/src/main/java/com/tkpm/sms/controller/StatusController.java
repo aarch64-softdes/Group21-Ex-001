@@ -1,9 +1,11 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.StatusRequestDto;
+import com.tkpm.sms.dto.request.common.SearchCommonRequest;
 import com.tkpm.sms.dto.response.StatusDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
+import com.tkpm.sms.dto.response.common.PageDto;
 import com.tkpm.sms.service.StatusService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -25,10 +27,24 @@ public class StatusController {
     StatusService statusService;
 
     @GetMapping
-    public ResponseEntity<ApplicationResponseDto<ListResponse<StatusDto>>> getAllStatuses() {
-        var statuses = statusService.getAllStatuses();
+    public ResponseEntity<ApplicationResponseDto<ListResponse<StatusDto>>> getAllStatuses(
+            @ModelAttribute SearchCommonRequest search
+            ) {
+        var statuses = statusService.getAllStatuses(search);
         var statusesDto = statuses.stream().map(status -> new StatusDto(status.getId(), status.getName())).collect(toList());
-        var listResponse = ListResponse.<StatusDto>builder().data(statusesDto).build();
+
+        var pageDto = PageDto.builder()
+                .totalElements(statuses.getTotalElements())
+                .pageSize(statuses.getSize())
+                .pageNumber(statuses.getNumber())
+                .totalPages(statuses.getTotalPages())
+                .build();
+
+        var listResponse = ListResponse.<StatusDto>builder().
+                page(pageDto).
+                data(statusesDto).
+                build();
+
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 

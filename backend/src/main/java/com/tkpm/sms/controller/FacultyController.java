@@ -1,9 +1,11 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.FacultyRequestDto;
+import com.tkpm.sms.dto.request.common.SearchCommonRequest;
 import com.tkpm.sms.dto.response.FacultyDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
+import com.tkpm.sms.dto.response.common.PageDto;
 import com.tkpm.sms.service.FacultyService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -25,10 +27,24 @@ public class FacultyController {
     FacultyService facultyService;
 
     @GetMapping
-    public ResponseEntity<ApplicationResponseDto<ListResponse<FacultyDto>>> getAllFaculties() {
-        var faculties = facultyService.getAllFaculties();
+    public ResponseEntity<ApplicationResponseDto<ListResponse<FacultyDto>>> getAllFaculties(
+            @ModelAttribute SearchCommonRequest search
+            ) {
+        var faculties = facultyService.getAllFaculties(search);
         var facultiesDto = faculties.stream().map(faculty -> new FacultyDto(faculty.getId(), faculty.getName())).collect(toList());
-        var listResponse = ListResponse.<FacultyDto>builder().data(facultiesDto).build();
+
+        var pageDto = PageDto.builder()
+                .totalElements(faculties.getTotalElements())
+                .pageSize(faculties.getSize())
+                .pageNumber(faculties.getNumber())
+                .totalPages(faculties.getTotalPages())
+                .build();
+
+        var listResponse = ListResponse.<FacultyDto>builder().
+                page(pageDto).
+                data(facultiesDto).
+                build();
+
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
