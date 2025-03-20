@@ -77,13 +77,6 @@ const StudentPage: React.FC = () => {
         },
       },
       {
-        header: 'Phone',
-        key: 'phone',
-        style: {
-          width: '120px',
-        },
-      },
-      {
         header: 'Status',
         key: 'status',
         style: {
@@ -146,7 +139,7 @@ const StudentPage: React.FC = () => {
   };
 
   return (
-    <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
+    <div className='min-h-3/4 m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Student Management'
         addingTitle='Add Student'

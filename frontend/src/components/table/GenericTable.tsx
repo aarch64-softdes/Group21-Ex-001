@@ -130,7 +130,7 @@ const GenericTable = <T extends { id: string }>({
                   : String(cell[column.key])}
               </TableCell>
             ))}
-            <TableCell className='min-w-40 py-1'>
+            <TableCell className='min-w-20 py-1'>
               <ActionCell
                 requireDeleteConfirmation={requireDeleteConfirmation}
                 isDeleting={deletingRow === cell.id && isDeleting}
