@@ -74,7 +74,7 @@ export const StudentFormSchema = z.object({
     .string()
     .regex(/^0\d{9}$/, "Phone number must start with 0 and have 10 digits"),
   status: z.string().min(1, "Status is required").default("Studying"),
-  nationality: z.string().min(1, "Nationality is required").default("Việt Nam"),
+  citizenship: z.string().min(1, "Citizenship is required").default("Việt Nam"),
 
   // // Identity documents section
   // idDocumentType: z.enum(["CMND", "CCCD", "Passport"]),
@@ -181,7 +181,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       email: "",
       phone: "",
       status: "Studying",
-      nationality: "Việt Nam",
+      citizenship: "Việt Nam",
       permanentAddress: {
         street: "",
         ward: "",
@@ -244,7 +244,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         email: studentData.email || "",
         phone: studentData.phone || "",
         status: studentData.status || "Studying",
-        nationality: studentData.nationality || "Việt Nam",
+        citizenship: studentData.citizenship || "Việt Nam",
         permanentAddress: studentData.permanentAddress || {
           street: "",
           ward: "",
@@ -505,10 +505,10 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name="nationality"
+                      name="citizenship"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nationality</FormLabel>
+                          <FormLabel>Citizenship</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="e.g. Việt Nam"

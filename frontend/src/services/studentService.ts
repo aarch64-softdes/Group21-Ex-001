@@ -61,7 +61,7 @@ export default class StudentService {
         status: "",
         program: "",
         course: 0,
-        nationality: "",
+        citizenship: "",
         permanentAddress: {
           id: "",
           street: "",
@@ -90,7 +90,7 @@ export default class StudentService {
     }
 
     const response = await api.get(`/api/students/${id}`);
-    return mapToStudent(response.data.content);
+    return mapToStudent(response.data.content); /// TODO: reformat the response
   };
 
   addNewStudent = async (data: CreateStudentDTO): Promise<void> => {
