@@ -420,14 +420,14 @@ Now you can use Discover to search and filter your logs, or create visualization
 - Search by name and faculty:
   ![search-faculty](./documents/assets/SD-search-name-faculty.png)
 
-### Import and Export with csv and json file format
+### Import and Export with CSV and JSON file format
 
 #### Exporting data
 
-**Step 1:** Select "Export" from Student Management page.
+**Step 1:** Select "Export" from Student Management page, choose the file format.
 ![s1-export](./documents/assets/SD-export-1.png)
 
-**Step 2:** Choose the file format (CSV or JSON) and click "Export".
+**Step 2:** See the file exported.
 ![s2-export-csv](./documents/assets/SD-export-csv.png)
 ![s2-export-json](./documents/assets/SD-export-json.png)
 
