@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -85,7 +87,7 @@ public class ControllerLoggingAspect {
 
         // Create log entry
         LogEntry logEntry = LogEntry.builder()
-                .timestamp(System.currentTimeMillis())
+                .timestamp(LocalDateTime.now().toString())
                 .correlationId(correlationId.get())
                 .source(className)
                 .level(LogLevel.INFO)
@@ -135,7 +137,7 @@ public class ControllerLoggingAspect {
 
         // Create log entry
         LogEntry logEntry = LogEntry.builder()
-                .timestamp(System.currentTimeMillis())
+                .timestamp(LocalDateTime.now().toString())
                 .correlationId(correlationId.get())
                 .source(className)
                 .level(LogLevel.INFO)
@@ -193,7 +195,7 @@ public class ControllerLoggingAspect {
 
         // Create log entry
         LogEntry logEntry = LogEntry.builder()
-                .timestamp(System.currentTimeMillis())
+                .timestamp(LocalDateTime.now().toString())
                 .correlationId(correlationId.get())
                 .source(className)
                 .level(LogLevel.ERROR)
