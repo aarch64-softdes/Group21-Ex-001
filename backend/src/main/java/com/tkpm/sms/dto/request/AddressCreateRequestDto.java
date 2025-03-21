@@ -11,7 +11,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddressCreateRequestDto {
     String street;
-    String district;
-    String country;
     String ward;
+    String district;
+    String province;
+    String country;
 }
