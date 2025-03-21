@@ -202,7 +202,7 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
         student.temporaryAddress ||
         student.mailingAddress) && (
         <Card className='mt-6'>
-          <CardHeader className='pb-2'>
+          <CardHeader className=''>
             <CardTitle className='text-lg flex items-center gap-2'>
               <MapPin className='h-5 w-5' />
               Addresses
@@ -255,38 +255,36 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
       )}
 
       {/* Document Information if available */}
-      {student.idDocumentType && (
+      {student.identity.type && (
         <Card className='mt-6'>
           <CardHeader className='pb-2'>
             <CardTitle className='text-lg'>Identification Document</CardTitle>
             <Separator />
           </CardHeader>
-          <CardContent className='pt-4'>
+          <CardContent className=''>
             <dl className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
               <div className='flex flex-col'>
                 <dt className='text-sm font-medium text-muted-foreground'>
                   Document Type
                 </dt>
-                <dd className='mt-1'>{student.idDocumentType}</dd>
+                <dd className='mt-1'>{student.identity.type}</dd>
               </div>
 
-              {student.documentDetails && (
+              {student.identity && (
                 <>
                   <div className='flex flex-col'>
                     <dt className='text-sm font-medium text-muted-foreground'>
                       Document Number
                     </dt>
-                    <dd className='mt-1'>
-                      {student.documentDetails.documentNumber}
-                    </dd>
+                    <dd className='mt-1'>{student.identity.number}</dd>
                   </div>
                   <div className='flex flex-col'>
                     <dt className='text-sm font-medium text-muted-foreground'>
                       Issue Date
                     </dt>
                     <dd className='mt-1'>
-                      {student.documentDetails.issueDate
-                        ? formatDate(student.documentDetails.issueDate)
+                      {student.identity.issuedDate
+                        ? formatDate(student.identity.issuedDate)
                         : 'N/A'}
                     </dd>
                   </div>
@@ -295,7 +293,7 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
                       Issue Place
                     </dt>
                     <dd className='mt-1'>
-                      {student.documentDetails.issuePlace || 'N/A'}
+                      {student.identity.issuedBy || 'N/A'}
                     </dd>
                   </div>
                   <div className='flex flex-col'>
@@ -303,11 +301,21 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
                       Expiry Date
                     </dt>
                     <dd className='mt-1'>
-                      {student.documentDetails.expiryDate
-                        ? formatDate(student.documentDetails.expiryDate)
+                      {student.identity.expiryDate
+                        ? formatDate(student.identity.expiryDate)
                         : 'N/A'}
                     </dd>
                   </div>
+                  {student.identity.type == 'Chip Card' && (
+                    <div className='flex flex-col'>
+                      <dt className='text-sm font-medium text-muted-foreground'>
+                        Has Chip
+                      </dt>
+                      <dd className='mt-1'>
+                        {student.identity.hasChip ? 'Yes' : 'No'}
+                      </dd>
+                    </div>
+                  )}
                 </>
               )}
             </dl>
