@@ -59,7 +59,6 @@ export default class StudentService {
         status: '',
         program: '',
         course: 0,
-        citizenship: '',
         permanentAddress: {
           id: '',
           street: '',
