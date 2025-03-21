@@ -27,7 +27,7 @@ public class Student {
     @Column(name = "student_Id", unique = true)
     String studentId;
 
-    @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "Name must contain only letters")
+    @Pattern(regexp = "^[\\p{L}\\s]*$", message = "Name must contain only letters and spaces")
     @NotNull
     String name;
 
