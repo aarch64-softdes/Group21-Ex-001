@@ -63,7 +63,6 @@ export const StudentFormSchema = z.object({
     .string()
     .regex(/^0\d{9}$/, 'Phone number must start with 0 and have 10 digits'),
   status: z.string().min(1, 'Status is required').default('Studying'),
-  citizenship: z.string().min(1, 'Citizenship is required').default('Việt Nam'),
 
   permanentAddress: z.object({
     street: z.string().min(1, 'Street address is required'),
@@ -205,7 +204,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       email: '',
       phone: '',
       status: 'Studying',
-      citizenship: 'Việt Nam',
       permanentAddress: {
         street: '',
         ward: '',
@@ -264,7 +262,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         email: studentData.email || '',
         phone: studentData.phone || '',
         status: studentData.status || 'Studying',
-        citizenship: studentData.citizenship || 'Việt Nam',
         permanentAddress: studentData.permanentAddress || {
           street: '',
           ward: '',
@@ -533,29 +530,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                           <FormControl>
                             <Input
                               placeholder='0123456789'
-                              {...field}
-                              autoComplete='off'
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name='citizenship'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Citizenship</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder='e.g. Việt Nam'
                               {...field}
                               autoComplete='off'
                               onKeyDown={(e) => {

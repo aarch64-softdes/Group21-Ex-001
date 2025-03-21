@@ -133,7 +133,6 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
           </CardHeader>
           <CardContent className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             <DetailField label='Gender' value={student.gender} />
-            <DetailField label='Citizenship' value={student.citizenship} />
             <DetailField label='Permanent Address' colSpan='full'>
               {student.permanentAddress.street}, {student.permanentAddress.ward}
               , {student.permanentAddress.district},{' '}
