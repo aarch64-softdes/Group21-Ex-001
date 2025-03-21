@@ -1,14 +1,18 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.StatusRequestDto;
+import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.dto.response.StatusDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
+import com.tkpm.sms.dto.response.common.PageDto;
+import com.tkpm.sms.mapper.StatusMapper;
 import com.tkpm.sms.service.StatusService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +27,26 @@ import static java.util.stream.Collectors.toList;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StatusController {
     StatusService statusService;
+    StatusMapper statusMapper;
 
     @GetMapping
-    public ResponseEntity<ApplicationResponseDto<ListResponse<StatusDto>>> getAllStatuses() {
-        var statuses = statusService.getAllStatuses();
-        var statusesDto = statuses.stream().map(status -> new StatusDto(status.getId(), status.getName())).collect(toList());
-        var listResponse = ListResponse.<StatusDto>builder().data(statusesDto).build();
+    public ResponseEntity<ApplicationResponseDto<ListResponse<StatusDto>>> getAllStatuses(
+            @ModelAttribute BaseCollectionRequest search
+            ) {
+        Page<StatusDto> statuses = statusService.getAllStatuses(search).map(statusMapper::toStatusDto);
+
+        var pageDto = PageDto.builder()
+                .totalElements(statuses.getTotalElements())
+                .pageSize(statuses.getSize())
+                .pageNumber(statuses.getNumber())
+                .totalPages(statuses.getTotalPages())
+                .build();
+
+        var listResponse = ListResponse.<StatusDto>builder().
+                page(pageDto).
+                data(statuses.stream().toList()).
+                build();
+
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 

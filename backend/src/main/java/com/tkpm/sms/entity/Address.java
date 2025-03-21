@@ -26,4 +26,9 @@ public class Address {
     @JsonBackReference
     @OneToOne(mappedBy = "permanentAddress")
     Student student;
+
+    @Override
+    public String toString() {
+        return street + ", " + ward + ", " + district + ", " + country;
+    }
 }

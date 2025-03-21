@@ -1,7 +1,9 @@
 package com.tkpm.sms.service;
 
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
+import com.tkpm.sms.dto.request.StudentCollectionRequest;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
+import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
@@ -9,6 +11,7 @@ import com.tkpm.sms.mapper.AddressMapper;
 import com.tkpm.sms.mapper.IdentityMapper;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
+import com.tkpm.sms.specification.StudentSpecifications;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,7 +34,6 @@ public class StudentService {
     StatusService statusService;
     ProgramService programService;
     FacultyService facultyService;
-    int PAGE_SIZE = 5;
     StudentMapper studentMapper;
 
     AddressService addressService;
@@ -38,12 +42,17 @@ public class StudentService {
     IdentityService identityService;
     IdentityMapper identityMapper;
 
-    public Page<Student> findAll(int page, String sortName, String sortType, String search) {
-        Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE,
-                Sort.by(sortType.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
-                        sortName));
+    public Page<Student> findAll(StudentCollectionRequest search) {
+        Pageable pageable = PageRequest.of(
+                search.getPage() - 1,
+                search.getSize(),
+                Sort.by(
+                        search.getSortDirection().equalsIgnoreCase("desc")
+                                ? Sort.Direction.DESC : Sort.Direction.ASC,
+                        search.getSortBy()
+                ));
 
-        return studentRepository.getStudents(search, pageable);
+        return studentRepository.findAll(StudentSpecifications.withFilters(search), pageable);
     }
 
     public Student getStudentDetail(String id) {
@@ -87,6 +96,14 @@ public class StudentService {
 
         student = studentRepository.save(student);
         return student;
+    }
+
+    @Transactional
+    public void saveListStudentFromFile(List<StudentFileDto> students) {
+        var studentCreateRequests = students.stream().map(studentMapper::toStudentCreateRequest).toList();
+        for (var student : studentCreateRequests) {
+            createStudent(student);
+        }
     }
 
     @Transactional

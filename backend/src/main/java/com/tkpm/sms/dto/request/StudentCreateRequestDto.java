@@ -1,17 +1,21 @@
 package com.tkpm.sms.dto.request;
 
-import com.tkpm.sms.enums.Status;
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.tkpm.sms.validator.identity.IdentityConstraint;
-import com.tkpm.sms.validator.status.StatusConstraint;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -46,7 +50,7 @@ public class StudentCreateRequestDto {
     String phone;
 
     @NotNull
-    String status = Status.Studying.name();
+    String status;
 
     @NotNull(message = "Identity is required")
     @IdentityConstraint(values = {"Identity Card", "Chip Card", "Passport"})
