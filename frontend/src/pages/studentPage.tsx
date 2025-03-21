@@ -11,9 +11,9 @@ import {
 
 import StudentDetail from '@/components/student/StudentDetail';
 import { SearchFilterOption } from '@/types/filter';
-import Student, { CreateStudentDTO, UpdateStudentDTO } from '@/types/student';
+import Student, { CreateStudentDTO } from '@/types/student';
 import { Column } from '@/types/table';
-import { Search } from 'lucide-react';
+import { FolderSearch, UserSearch } from 'lucide-react';
 import StudentService from '@/services/studentService';
 
 const StudentPage: React.FC = () => {
@@ -130,11 +130,19 @@ const StudentPage: React.FC = () => {
     [updateStudent, createStudent, deleteStudent],
   );
 
-  const searchFilterOption: SearchFilterOption = {
+  const searchNameFilterOption: SearchFilterOption = {
     id: 'search',
-    label: 'Search',
-    labelIcon: Search,
+    label: 'Search by name',
+    labelIcon: UserSearch,
     placeholder: 'Search by id, name',
+    type: 'search',
+  };
+
+  const searchFacultyFilterOption: SearchFilterOption = {
+    id: 'faculty',
+    label: 'Search by faculty',
+    labelIcon: FolderSearch,
+    placeholder: 'Search by faculty',
     type: 'search',
   };
 
@@ -164,7 +172,7 @@ const StudentPage: React.FC = () => {
           delete: false,
         }}
         requireDeleteConfirmation={true}
-        filterOptions={[searchFilterOption]}
+        filterOptions={[searchNameFilterOption, searchFacultyFilterOption]}
         fileOptions={{
           enableExport: true,
           onExport: handleExportStudents,

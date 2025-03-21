@@ -17,12 +17,14 @@ export default class StudentService {
     sortName = 'studentId',
     sortType = 'asc',
     search = '',
+    faculty = '',
   }: {
     page?: number;
     size?: number;
     sortName?: string;
     sortType?: string;
     search?: string;
+    faculty?: string;
   }): Promise<ApiResponse<Student>> => {
     const response = await api.get('/api/students', {
       params: {
@@ -30,6 +32,7 @@ export default class StudentService {
         sortName,
         sortType,
         search,
+        faculty,
       },
     });
 
