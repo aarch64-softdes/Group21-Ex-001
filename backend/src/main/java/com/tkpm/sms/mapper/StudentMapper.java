@@ -8,9 +8,6 @@ import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.student.StudentMinimalDto;
 import com.tkpm.sms.entity.Student;
-import com.tkpm.sms.enums.Gender;
-import com.tkpm.sms.exceptions.ApplicationException;
-import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.service.FacultyService;
 import com.tkpm.sms.service.ProgramService;
 import com.tkpm.sms.service.StatusService;
@@ -78,16 +75,5 @@ public interface StudentMapper {
     @Named("toProgram")
     default Program toProgram(String name, @Context ProgramService programService) {
         return programService.getProgramByName(name);
-    }
-
-    @Named("toGender")
-    default Gender toGender(String gender){
-        if(gender.equalsIgnoreCase("male")){
-            return Gender.Male;
-        } else if (gender.equalsIgnoreCase("female")) {
-            return Gender.Female;
-        }else{
-            throw new ApplicationException(ErrorCode.UNCATEGORIZED.withMessage("Gender not supported"));
-        }
     }
 }
