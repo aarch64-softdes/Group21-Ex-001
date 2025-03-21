@@ -7,13 +7,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum IdentityType {
     Identity_Card("Identity Card"),
-    ChipBased_Card("Chip-based Card"),
+    Chip_Card("Chip Card"),
     Passport("Passport"),
     ;
 
     private final String displayName;
 
     public boolean equals(String value) {
-        return this.displayName.equalsIgnoreCase(value);
+        return displayName.equalsIgnoreCase(value);
     }
 }

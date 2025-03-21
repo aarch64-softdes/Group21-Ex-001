@@ -45,7 +45,7 @@ public class StudentUpdateRequestDto {
     String status = Status.Studying.name();
 
     @NotNull(message = "Identity is required")
-    @IdentityConstraint(values = {"Identity Card", "Chip-based Card", "Passport"})
+    @IdentityConstraint(values = {"Identity Card", "Chip Card", "Passport"})
     @Valid
     IdentityUpdateRequestDto identity;
 }
