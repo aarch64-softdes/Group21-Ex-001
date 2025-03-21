@@ -378,3 +378,14 @@ After Elasticsearch is running and your application has generated some logs:
 7. Click "Save data view to Kibana"
 
 Now you can use Discover to search and filter your logs, or create visualizations and dashboards.
+
+## Feature Demonstrations
+### Udpate address and identity for Student
+
+### Allow user to manage Faulty, Status, Program
+
+### Saerch by name and faculty
+
+### Import and Export with csv and json file format
+
+### loggin mechanism
