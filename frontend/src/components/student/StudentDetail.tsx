@@ -1,15 +1,7 @@
 import React from 'react';
 import { DetailComponentProps } from '@/types/table';
 import { useStudent } from '@/hooks/useStudentApi';
-import {
-  Loader2,
-  User,
-  Mail,
-  Phone,
-  School,
-  Calendar,
-  MapPin,
-} from 'lucide-react';
+import { Loader2, User, Mail, Phone, School, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -17,23 +9,21 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface DetailFieldProps {
   label: string;
-  value: React.ReactNode;
+  value?: React.ReactNode;
+  children?: React.ReactNode;
   colSpan?: 'default' | 'full';
 }
 
 const DetailField: React.FC<DetailFieldProps> = ({
   label,
   value,
+  children,
   colSpan = 'default',
 }) => {
   return (
-    <div
-      className={`flex flex-col ${
-        colSpan === 'full' ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''
-      }`}
-    >
+    <div className={`flex flex-col ${colSpan === 'full' ? 'col-span-3' : ''}`}>
       <dt className='text-sm font-medium text-muted-foreground'>{label}</dt>
-      <dd className='mt-1'>{value || 'N/A'}</dd>
+      <dd className='mt-1'>{children || value || 'N/A'}</dd>
     </div>
   );
 };
@@ -144,24 +134,81 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
           <CardContent className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             <DetailField label='Gender' value={student.gender} />
             <DetailField label='Citizenship' value={student.citizenship} />
-            <DetailField
-              label='Permanent Address'
-              // value={student.permanentAddress.toString() || "N/A"}
-              value='N/A'
-              colSpan='full'
-            />
-            <DetailField
-              label='Temporary Address'
-              // value={student.temporaryAddress.toString()}
-              value='N/A'
-              colSpan='full'
-            />
-            <DetailField
-              label='Mailing Address'
-              // value={student.mailingAddress.toString()}
-              value='N/A'
-              colSpan='full'
-            />
+            <DetailField label='Permanent Address' colSpan='full'>
+              {student.permanentAddress.street}, {student.permanentAddress.ward}
+              , {student.permanentAddress.district},{' '}
+              {student.permanentAddress.province},{' '}
+              {student.permanentAddress.country}
+            </DetailField>
+            <DetailField label='Temporary Address' colSpan='full'>
+              {student.temporaryAddress.street}, {student.temporaryAddress.ward}
+              , {student.temporaryAddress.district},{' '}
+              {student.temporaryAddress.province},{' '}
+              {student.temporaryAddress.country}
+            </DetailField>
+            <DetailField label='Mailing Address' colSpan='full'>
+              {student.mailingAddress.street}, {student.mailingAddress.ward},{' '}
+              {student.mailingAddress.district},{' '}
+              {student.mailingAddress.province},{' '}
+              {student.mailingAddress.country}
+            </DetailField>
+            <Separator className='col-span-3' />
+
+            {student.identity && student.identity.type && (
+              <>
+                <DetailField
+                  label='Identity Document Type'
+                  value={student.identity.type}
+                />
+                <DetailField
+                  label='Document Number'
+                  value={student.identity.number}
+                />
+                <DetailField
+                  label='Issue Date'
+                  value={
+                    student.identity.issuedDate
+                      ? formatDate(student.identity.issuedDate)
+                      : 'N/A'
+                  }
+                />
+                <DetailField
+                  label='Issue Place'
+                  value={student.identity.issuedBy || 'N/A'}
+                />
+                <DetailField
+                  label='Expiry Date'
+                  value={
+                    student.identity.expiryDate
+                      ? formatDate(student.identity.expiryDate)
+                      : 'N/A'
+                  }
+                />
+
+                {student.identity.type.toLowerCase() === 'chip card' && (
+                  <DetailField
+                    label='Has Chip'
+                    value={student.identity.hasChip ? 'Yes' : 'No'}
+                  />
+                )}
+
+                {student.identity.type.toLowerCase() === 'passport' && (
+                  <DetailField
+                    label='Issued Country'
+                    value={student.identity.country || 'N/A'}
+                  />
+                )}
+
+                {student.identity.type.toLowerCase() === 'passport' &&
+                  student.identity.notes && (
+                    <DetailField
+                      label='Note'
+                      value={student.identity.notes}
+                      colSpan='full'
+                    />
+                  )}
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -196,154 +243,6 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
           </CardContent>
         </Card>
       </div>
-
-      {/* Show address information if available */}
-      {(student.permanentAddress ||
-        student.temporaryAddress ||
-        student.mailingAddress) && (
-        <Card className='mt-6'>
-          <CardHeader className=''>
-            <CardTitle className='text-lg flex items-center gap-2'>
-              <MapPin className='h-5 w-5' />
-              Addresses
-            </CardTitle>
-            <Separator />
-          </CardHeader>
-          <CardContent className='pt-4'>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-              {student.permanentAddress && (
-                <div>
-                  <h3 className='font-medium mb-2'>Permanent Address</h3>
-                  <p className='text-sm text-muted-foreground'>
-                    {student.permanentAddress.street},{' '}
-                    {student.permanentAddress.ward},{' '}
-                    {student.permanentAddress.district},{' '}
-                    {student.permanentAddress.province},{' '}
-                    {student.permanentAddress.country}
-                  </p>
-                </div>
-              )}
-
-              {student.temporaryAddress && student.temporaryAddress.street && (
-                <div>
-                  <h3 className='font-medium mb-2'>Temporary Address</h3>
-                  <p className='text-sm text-muted-foreground'>
-                    {student.temporaryAddress.street},{' '}
-                    {student.temporaryAddress.ward},{' '}
-                    {student.temporaryAddress.district},{' '}
-                    {student.temporaryAddress.province},{' '}
-                    {student.temporaryAddress.country}
-                  </p>
-                </div>
-              )}
-
-              {student.mailingAddress && (
-                <div>
-                  <h3 className='font-medium mb-2'>Mailing Address</h3>
-                  <p className='text-sm text-muted-foreground'>
-                    {student.mailingAddress.street},{' '}
-                    {student.mailingAddress.ward},{' '}
-                    {student.mailingAddress.district},{' '}
-                    {student.mailingAddress.province},{' '}
-                    {student.mailingAddress.country}
-                  </p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Document Information if available */}
-      {student.identity.type && (
-        <Card className='mt-6'>
-          <CardHeader className='pb-2'>
-            <CardTitle className='text-lg'>Identification Document</CardTitle>
-            <Separator />
-          </CardHeader>
-          <CardContent className=''>
-            <dl className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              <div className='flex flex-col'>
-                <dt className='text-sm font-medium text-muted-foreground'>
-                  Document Type
-                </dt>
-                <dd className='mt-1'>{student.identity.type}</dd>
-              </div>
-
-              {student.identity && (
-                <>
-                  <div className='flex flex-col'>
-                    <dt className='text-sm font-medium text-muted-foreground'>
-                      Document Number
-                    </dt>
-                    <dd className='mt-1'>{student.identity.number}</dd>
-                  </div>
-                  <div className='flex flex-col'>
-                    <dt className='text-sm font-medium text-muted-foreground'>
-                      Issue Date
-                    </dt>
-                    <dd className='mt-1'>
-                      {student.identity.issuedDate
-                        ? formatDate(student.identity.issuedDate)
-                        : 'N/A'}
-                    </dd>
-                  </div>
-                  <div className='flex flex-col'>
-                    <dt className='text-sm font-medium text-muted-foreground'>
-                      Issue Place
-                    </dt>
-                    <dd className='mt-1'>
-                      {student.identity.issuedBy || 'N/A'}
-                    </dd>
-                  </div>
-                  <div className='flex flex-col'>
-                    <dt className='text-sm font-medium text-muted-foreground'>
-                      Expiry Date
-                    </dt>
-                    <dd className='mt-1'>
-                      {student.identity.expiryDate
-                        ? formatDate(student.identity.expiryDate)
-                        : 'N/A'}
-                    </dd>
-                  </div>
-                  {student.identity.type.toLowerCase() == 'chip card' && (
-                    <div className='flex flex-col'>
-                      <dt className='text-sm font-medium text-muted-foreground'>
-                        Has Chip
-                      </dt>
-                      <dd className='mt-1'>
-                        {student.identity.hasChip ? 'Yes' : 'No'}
-                      </dd>
-                    </div>
-                  )}
-
-                  {student.identity.type.toLowerCase() == 'passport' && (
-                    <div className='flex flex-col'>
-                      <dt className='text-sm font-medium text-muted-foreground'>
-                        Issued Country
-                      </dt>
-                      <dd className='mt-1'>
-                        {student.identity.country || 'N/A'}
-                      </dd>
-                    </div>
-                  )}
-
-                  {student.identity.type.toLowerCase() == 'passport' && (
-                    <div className='flex flex-col'>
-                      <dt className='text-sm font-medium text-muted-foreground'>
-                        Note
-                      </dt>
-                      <dd className='mt-1'>
-                        {student.identity.notes || 'N/A'}
-                      </dd>
-                    </div>
-                  )}
-                </>
-              )}
-            </dl>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
