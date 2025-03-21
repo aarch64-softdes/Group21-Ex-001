@@ -306,13 +306,35 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
                         : 'N/A'}
                     </dd>
                   </div>
-                  {student.identity.type == 'Chip Card' && (
+                  {student.identity.type.toLowerCase() == 'chip card' && (
                     <div className='flex flex-col'>
                       <dt className='text-sm font-medium text-muted-foreground'>
                         Has Chip
                       </dt>
                       <dd className='mt-1'>
                         {student.identity.hasChip ? 'Yes' : 'No'}
+                      </dd>
+                    </div>
+                  )}
+
+                  {student.identity.type.toLowerCase() == 'passport' && (
+                    <div className='flex flex-col'>
+                      <dt className='text-sm font-medium text-muted-foreground'>
+                        Issued Country
+                      </dt>
+                      <dd className='mt-1'>
+                        {student.identity.country || 'N/A'}
+                      </dd>
+                    </div>
+                  )}
+
+                  {student.identity.type.toLowerCase() == 'passport' && (
+                    <div className='flex flex-col'>
+                      <dt className='text-sm font-medium text-muted-foreground'>
+                        Note
+                      </dt>
+                      <dd className='mt-1'>
+                        {student.identity.notes || 'N/A'}
                       </dd>
                     </div>
                   )}
