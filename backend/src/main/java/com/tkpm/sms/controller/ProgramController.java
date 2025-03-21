@@ -6,11 +6,13 @@ import com.tkpm.sms.dto.response.ProgramDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
 import com.tkpm.sms.dto.response.common.PageDto;
+import com.tkpm.sms.mapper.ProgramMapper;
 import com.tkpm.sms.service.ProgramService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +27,14 @@ import static java.util.stream.Collectors.toList;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProgramController {
     ProgramService programService;
+    ProgramMapper programMapper;
 
     @GetMapping
     public ResponseEntity<ApplicationResponseDto<ListResponse<ProgramDto>>> getAllPrograms(
             @ModelAttribute BaseCollectionRequest search
             ) {
-        var programs = programService.getAllPrograms(search);
-        var programsDto = programs.stream().map(program -> new ProgramDto(program.getId(), program.getName())).collect(toList());
+        Page<ProgramDto> programs = programService.getAllPrograms(search).
+                                        map(programMapper::toProgramDto);
 
         var pageDto = PageDto.builder()
                 .totalElements(programs.getTotalElements())
@@ -42,7 +45,7 @@ public class ProgramController {
 
         var listResponse = ListResponse.<ProgramDto>builder().
                 page(pageDto).
-                data(programsDto).
+                data(programs.stream().toList()).
                 build();
 
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
