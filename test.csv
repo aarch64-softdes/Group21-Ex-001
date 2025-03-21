@@ -1,4 +1,0 @@
-studentId,name,dob,gender,faculty,course,program,email,phone,status,permanentAddress,temporaryAddress,mailingAddress,identityType,identityNumber,identityIssuedBy,identityIssuedDate,identityExpiryDate,identityNotes,identityCountry,identityHasChip
-22121321,string,2004-02-12,Male,test,123,test,test321@gmail.com,0944552312,test,"test, test, test, test",,,Passport,AZ1234567,Postman,2022-12-05,2025-12-05,Nothing,Viet,false
-22121331,string,2004-02-12,Male,test,123,test,test213@gmail.com,0944552514,test,"test, test, test, test",,,"Chip Card",123123456127,Postman,2022-12-05,2025-12-05,,,true
-22121341,string,2004-02-12,Male,test,123,test,test413@gmail.com,0944552315,test,"test, test, test, test",,,"Identity Card",121234567,Postman,2022-12-05,2025-12-05,,,false
