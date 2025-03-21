@@ -1,16 +1,20 @@
 package com.tkpm.sms.service;
 
 import com.tkpm.sms.dto.request.FacultyRequestDto;
+import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.entity.Faculty;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.repository.FacultyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
@@ -18,8 +22,16 @@ import java.util.List;
 public class FacultyService {
     FacultyRepository facultyRepository;
     
-    public List<Faculty> getAllFaculties() {
-        return facultyRepository.findAll();
+    public Page<Faculty> getAllFaculties(BaseCollectionRequest search) {
+        Pageable pageable = PageRequest.of(
+                search.getPage() - 1,
+                search.getSize(),
+                Sort.by(
+                        search.getSortDirection().equalsIgnoreCase("desc")
+                                ? Sort.Direction.DESC : Sort.Direction.ASC,
+                        search.getSortBy()
+                ));
+        return facultyRepository.findAll(pageable);
     }
 
     public Faculty getFacultyById(Integer id) {

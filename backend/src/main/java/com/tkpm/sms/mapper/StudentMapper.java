@@ -1,19 +1,30 @@
 package com.tkpm.sms.mapper;
 
+import java.util.Objects;
+
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
+
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.dto.response.student.StudentMinimalDto;
-import com.tkpm.sms.entity.*;
+import com.tkpm.sms.entity.Address;
+import com.tkpm.sms.entity.Faculty;
+import com.tkpm.sms.entity.Program;
+import com.tkpm.sms.entity.Status;
+import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.enums.Gender;
+import com.tkpm.sms.exceptions.ApplicationException;
+import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.service.FacultyService;
 import com.tkpm.sms.service.ProgramService;
 import com.tkpm.sms.service.StatusService;
 import com.tkpm.sms.utils.ImportFileUtils;
-import org.mapstruct.*;
-
-import java.util.Objects;
 
 @Mapper(componentModel = "spring", imports = {ImportFileUtils.class, Gender.class, Faculty.class, Status.class, Objects.class})
 public interface StudentMapper {
@@ -32,10 +43,11 @@ public interface StudentMapper {
     @Mapping(target = "status", qualifiedByName = "toStatus")
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
-    Student toStudentCreateRequest(StudentDto studentDto,
-                                   @Context FacultyService facultyService,
-                                   @Context ProgramService programService,
-                                   @Context StatusService statusService);
+    @Mapping(target = "gender", qualifiedByName = "toGender")
+    Student toStudent(StudentDto studentDto,
+                      @Context FacultyService facultyService,
+                      @Context ProgramService programService,
+                      @Context StatusService statusService);
 
     @Mapping(target = "permanentAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getPermanentAddress()))")
     @Mapping(target = "temporaryAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getTemporaryAddress()))")
@@ -47,6 +59,7 @@ public interface StudentMapper {
     @Mapping(target = "status", qualifiedByName = "toStatus")
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
+    @Mapping(target = "gender", qualifiedByName = "toGender")
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
@@ -60,6 +73,7 @@ public interface StudentMapper {
     @Mapping(target = "status", qualifiedByName = "toStatus")
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
+    @Mapping(target = "gender", qualifiedByName = "toGender")
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
@@ -101,5 +115,16 @@ public interface StudentMapper {
 
     default String formatAddress(Address address) {
         return Objects.isNull(address) ? "" : address.toString();
+    }
+
+    @Named("toGender")
+    default Gender toGender(String gender){
+        if(gender.equalsIgnoreCase("male")){
+            return Gender.Male;
+        } else if (gender.equalsIgnoreCase("female")) {
+            return Gender.Female;
+        }else{
+            throw new ApplicationException(ErrorCode.UNCATEGORIZED.withMessage("Gender not supported"));
+        }
     }
 }

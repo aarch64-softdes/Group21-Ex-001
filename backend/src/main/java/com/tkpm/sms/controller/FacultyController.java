@@ -1,14 +1,18 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.FacultyRequestDto;
+import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.dto.response.FacultyDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
+import com.tkpm.sms.dto.response.common.PageDto;
+import com.tkpm.sms.mapper.FacultyMapper;
 import com.tkpm.sms.service.FacultyService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +27,27 @@ import static java.util.stream.Collectors.toList;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FacultyController {
     FacultyService facultyService;
+    FacultyMapper facultyMapper;
 
     @GetMapping
-    public ResponseEntity<ApplicationResponseDto<ListResponse<FacultyDto>>> getAllFaculties() {
-        var faculties = facultyService.getAllFaculties();
-        var facultiesDto = faculties.stream().map(faculty -> new FacultyDto(faculty.getId(), faculty.getName())).collect(toList());
-        var listResponse = ListResponse.<FacultyDto>builder().data(facultiesDto).build();
+    public ResponseEntity<ApplicationResponseDto<ListResponse<FacultyDto>>> getAllFaculties(
+            @ModelAttribute BaseCollectionRequest search
+            ) {
+        Page<FacultyDto> faculties = facultyService.getAllFaculties(search).
+                                        map(facultyMapper::toFacultyDto);
+
+        var pageDto = PageDto.builder()
+                .totalElements(faculties.getTotalElements())
+                .pageSize(faculties.getSize())
+                .pageNumber(faculties.getNumber())
+                .totalPages(faculties.getTotalPages())
+                .build();
+
+        var listResponse = ListResponse.<FacultyDto>builder().
+                page(pageDto).
+                data(faculties.stream().toList()).
+                build();
+
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 

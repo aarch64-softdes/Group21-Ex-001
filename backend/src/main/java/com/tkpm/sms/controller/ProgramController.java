@@ -1,14 +1,18 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.ProgramRequestDto;
+import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.dto.response.ProgramDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
+import com.tkpm.sms.dto.response.common.PageDto;
+import com.tkpm.sms.mapper.ProgramMapper;
 import com.tkpm.sms.service.ProgramService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +27,27 @@ import static java.util.stream.Collectors.toList;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProgramController {
     ProgramService programService;
+    ProgramMapper programMapper;
 
     @GetMapping
-    public ResponseEntity<ApplicationResponseDto<ListResponse<ProgramDto>>> getAllPrograms() {
-        var programs = programService.getAllPrograms();
-        var programsDto = programs.stream().map(program -> new ProgramDto(program.getId(), program.getName())).collect(toList());
-        var listResponse = ListResponse.<ProgramDto>builder().data(programsDto).build();
+    public ResponseEntity<ApplicationResponseDto<ListResponse<ProgramDto>>> getAllPrograms(
+            @ModelAttribute BaseCollectionRequest search
+            ) {
+        Page<ProgramDto> programs = programService.getAllPrograms(search).
+                                        map(programMapper::toProgramDto);
+
+        var pageDto = PageDto.builder()
+                .totalElements(programs.getTotalElements())
+                .pageSize(programs.getSize())
+                .pageNumber(programs.getNumber())
+                .totalPages(programs.getTotalPages())
+                .build();
+
+        var listResponse = ListResponse.<ProgramDto>builder().
+                page(pageDto).
+                data(programs.stream().toList()).
+                build();
+
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
