@@ -52,6 +52,7 @@
 
     <logger name="com.tkpm.sms.logging.logger.ElasticsearchLogger" level="DEBUG" additivity="false">
         <appender-ref ref="JSON_FILE"/>
+        <appender-ref ref="FILE"/>
     </logger>
 
     <!-- Root logger configuration -->

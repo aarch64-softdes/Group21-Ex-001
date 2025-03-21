@@ -85,6 +85,7 @@ public class ControllerLoggingAspect {
 
         // Create log entry
         LogEntry logEntry = LogEntry.builder()
+                .timestamp(System.currentTimeMillis())
                 .correlationId(correlationId.get())
                 .source(className)
                 .level(LogLevel.INFO)
@@ -134,6 +135,7 @@ public class ControllerLoggingAspect {
 
         // Create log entry
         LogEntry logEntry = LogEntry.builder()
+                .timestamp(System.currentTimeMillis())
                 .correlationId(correlationId.get())
                 .source(className)
                 .level(LogLevel.INFO)
@@ -191,6 +193,7 @@ public class ControllerLoggingAspect {
 
         // Create log entry
         LogEntry logEntry = LogEntry.builder()
+                .timestamp(System.currentTimeMillis())
                 .correlationId(correlationId.get())
                 .source(className)
                 .level(LogLevel.ERROR)
