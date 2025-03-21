@@ -1,10 +1,10 @@
-import { SortConfig } from "@/components/table/TableSort";
-import { FilterOption, FilterParams } from "@/types/filter";
-import { Column, QueryHook, TableActions } from "@/types/table";
-import { useCallback, useEffect, useState } from "react";
+import { SortConfig } from '@/components/table/TableSort';
+import { FilterOption, FilterParams } from '@/types/filter';
+import { QueryHook, TableActions } from '@/types/table';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useTableAdd = <T extends { id: string }>(
-  actions?: TableActions
+  actions?: TableActions,
 ) => {
   const [isAdding, setIsAdding] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -26,87 +26,6 @@ export const useTableAdd = <T extends { id: string }>(
   };
 
   return { isAdding, dialogOpen, setDialogOpen, handleAdd, handleShowDialog };
-};
-
-export const useTableEdit = <T extends { id: string }>(
-  initialData: T[],
-  columns: Column<T>[],
-  actions?: TableActions
-) => {
-  const [editingRow, setEditingRow] = useState<string | null>(null);
-  const [editedValues, setEditedValues] = useState<T | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [isSaving, setIsSaving] = useState(false);
-
-  const validateFields = () => {
-    const newErrors: Record<string, string> = {};
-    columns.forEach((column) => {
-      if (column.editable && column.validate) {
-        const error = column.validate(editedValues?.[column.key] as T[keyof T]);
-        if (error) {
-          newErrors[String(column.key)] = error;
-        }
-      }
-    });
-    setFieldErrors(newErrors);
-    return newErrors;
-  };
-
-  const handleEdit = (id: string) => {
-    setEditingRow(id);
-    const currentRow = initialData.find((row) => row.id === id);
-    if (currentRow) {
-      setEditedValues(currentRow);
-    }
-  };
-
-  const handleCancel = () => {
-    setEditingRow(null);
-    setEditedValues(null);
-    setFieldErrors({});
-  };
-
-  const handleSave = async (id: string) => {
-    try {
-      setIsSaving(true);
-      const errors = validateFields();
-      if (Object.keys(errors).length > 0) {
-        console.error("Validation failed", errors);
-        return;
-      }
-
-      await actions?.onSave?.(id, editedValues as T);
-      handleCancel();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleCellValueChange = (key: keyof T, value: string) => {
-    if (editedValues) {
-      setEditedValues({
-        ...editedValues,
-        [key]: value,
-      });
-      // Clear error when user starts typing
-      if (fieldErrors[String(key)]) {
-        setFieldErrors((prev) => ({ ...prev, [String(key)]: "" }));
-      }
-    }
-  };
-
-  return {
-    editingRow,
-    editedValues,
-    fieldErrors,
-    isSaving,
-    handleEdit,
-    handleCancel,
-    handleSave,
-    handleCellValueChange,
-  };
 };
 
 export const useTableDelete = (actions?: TableActions) => {
@@ -146,14 +65,14 @@ export function useGenericTableData<T>({
   const [pageSize, setPageSize] = useState(10);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: defaultSortColumn ?? null,
-    direction: "asc",
+    direction: 'asc',
   });
 
   const [filters, setFilters] = useState<Record<string, FilterParams>>(
     filterOptions.reduce((acc, option) => {
       switch (option.type) {
-        case "search":
-          acc[option.id] = option.value ?? "";
+        case 'search':
+          acc[option.id] = option.value ?? '';
           break;
 
         default:
@@ -161,18 +80,18 @@ export function useGenericTableData<T>({
       }
 
       return acc;
-    }, {} as Record<string, FilterParams>)
+    }, {} as Record<string, FilterParams>),
   );
 
   const handleSort = useCallback(
-    (key: string, forcedDirection?: "asc" | "desc" | null) => {
+    (key: string, forcedDirection?: 'asc' | 'desc' | null) => {
       if (forcedDirection) {
         setSortConfig({ key, direction: forcedDirection });
       } else {
-        setSortConfig({ key: defaultSortColumn ?? null, direction: "asc" });
+        setSortConfig({ key: defaultSortColumn ?? null, direction: 'asc' });
       }
     },
-    []
+    [],
   );
 
   const query = useQueryHook({
@@ -206,7 +125,7 @@ export function useGenericTableData<T>({
     },
     sort: {
       sortConfig: sortConfig,
-      onSort: (key: string, direction: "asc" | "desc" | null) => {
+      onSort: (key: string, direction: 'asc' | 'desc' | null) => {
         handleSort(key, direction);
         setPage(1);
       },
@@ -217,6 +136,9 @@ export function useGenericTableData<T>({
         setFilters((prev) => ({ ...prev, [key]: value }));
         setPage(1);
       },
+    },
+    refetch: () => {
+      query.refetch();
     },
   };
 }

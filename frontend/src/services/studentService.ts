@@ -92,7 +92,7 @@ export default class StudentService {
     }
 
     const response = await api.get(`/api/students/${id}`);
-    return mapToStudent(response.data.content); /// TODO: reformat the response
+    return mapToStudent(response.data.content);
   };
 
   addNewStudent = async (data: CreateStudentDTO): Promise<void> => {
@@ -105,5 +105,25 @@ export default class StudentService {
 
   deleteStudent = async (id: string): Promise<void> => {
     await api.delete(`/api/students/${id}`);
+  };
+
+  exportStudents = async (format: string): Promise<Blob> => {
+    const response = await api.get('/api/files/export', {
+      params: { format },
+      responseType: 'blob',
+    });
+    return response.data;
+  };
+
+  importStudents = async (format: string, file: File): Promise<void> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('format', format);
+
+    await api.post('/api/files/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   };
 }

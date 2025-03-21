@@ -1,6 +1,6 @@
 import StudentForm from '@/components/student/StudentForm';
 import GenericTable from '@/components/table/GenericTable';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import {
   useCreateStudent,
@@ -14,8 +14,11 @@ import { SearchFilterOption } from '@/types/filter';
 import Student, { CreateStudentDTO, UpdateStudentDTO } from '@/types/student';
 import { Column } from '@/types/table';
 import { Search } from 'lucide-react';
+import StudentService from '@/services/studentService';
 
 const StudentPage: React.FC = () => {
+  const studentService = new StudentService();
+
   const createStudent = useCreateStudent();
   const updateStudent = useUpdateStudent();
   const deleteStudent = useDeleteStudent();
@@ -117,9 +120,6 @@ const StudentPage: React.FC = () => {
 
   const actions = React.useMemo(
     () => ({
-      onSave: async (id: string, value: UpdateStudentDTO) => {
-        await updateStudent.mutateAsync({ id, data: value });
-      },
       onAdd: async (value: CreateStudentDTO) => {
         await createStudent.mutateAsync(value);
       },
@@ -138,6 +138,17 @@ const StudentPage: React.FC = () => {
     type: 'search',
   };
 
+  const handleExportStudents = useCallback(async (format: string) => {
+    return studentService.exportStudents(format);
+  }, []);
+
+  const handleImportStudents = useCallback(
+    async (format: string, file: File) => {
+      return studentService.importStudents(format, file);
+    },
+    [],
+  );
+
   return (
     <div className='min-h-3/4 m-auto flex flex-row gap-4 p-4'>
       <GenericTable
@@ -154,6 +165,12 @@ const StudentPage: React.FC = () => {
         }}
         requireDeleteConfirmation={true}
         filterOptions={[searchFilterOption]}
+        fileOptions={{
+          enableExport: true,
+          onExport: handleExportStudents,
+          enableImport: true,
+          onImport: handleImportStudents,
+        }}
       />
     </div>
   );
