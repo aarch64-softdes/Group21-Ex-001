@@ -1,170 +1,387 @@
--- Create students table
-CREATE TABLE students (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    student_id VARCHAR(255) UNIQUE,
-    name VARCHAR(255) NOT NULL CHECK (name ~ '^[a-zA-Z\s]*$'),
-    dob DATE,
-    gender VARCHAR(10) NOT NULL,
-    faculty VARCHAR(255) NOT NULL,
-    course INTEGER,
-    program VARCHAR(255),
-    email VARCHAR(255) NOT NULL UNIQUE,
-    address TEXT,
-    phone VARCHAR(10) NOT NULL UNIQUE CHECK (phone ~ '^0\d{9}$'),
-    status VARCHAR(20) NOT NULL DEFAULT 'Studying'
+-- Create identities table
+CREATE TABLE identities (
+    id VARCHAR(255) NOT NULL,
+    type VARCHAR(255) NOT NULL,
+    number VARCHAR(255) NOT NULL,
+    issued_by VARCHAR(255) NOT NULL,
+    issued_date DATE NOT NULL,
+    expiry_date DATE NOT NULL,
+    has_chip BOOLEAN,
+    country VARCHAR(255),
+    notes VARCHAR(255),
+    CONSTRAINT pk_identities PRIMARY KEY (id)
 );
 
--- Seed data
+-- Create addresses table
+CREATE TABLE addresses (
+    id VARCHAR(255) NOT NULL,
+    street VARCHAR(255),
+    ward VARCHAR(255),
+    district VARCHAR(255),
+    country VARCHAR(255),
+    CONSTRAINT pk_addresses PRIMARY KEY (id)
+);
+
+-- Create faculties table
+CREATE TABLE faculties (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    deleted_at DATE
+);
+
+-- Create programs table
+CREATE TABLE programs (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    deleted_at DATE
+);
+
+-- Create statuses table
+CREATE TABLE statuses (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    deleted_at DATE
+);
+
+-- Create students table
+CREATE TABLE students (
+    id VARCHAR(255) NOT NULL,
+    student_id VARCHAR(255),
+    name VARCHAR(255) NOT NULL,
+    dob DATE,
+    gender VARCHAR(255) NOT NULL,
+    faculty_id INTEGER NOT NULL,
+    course INTEGER,
+    program_id INTEGER NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(10) NOT NULL,
+    status_id INTEGER NOT NULL,
+    permanent_address_id VARCHAR(255),
+    temporary_address_id VARCHAR(255),
+    mailing_address_id VARCHAR(255),
+    identity_id VARCHAR(255),
+    CONSTRAINT pk_students PRIMARY KEY (id)
+);
+
+-- Add constraints to students table
+ALTER TABLE students
+    ADD CONSTRAINT uc_students_email UNIQUE (email);
+
+ALTER TABLE students
+    ADD CONSTRAINT uc_students_mailing_address UNIQUE (mailing_address_id);
+
+ALTER TABLE students
+    ADD CONSTRAINT uc_students_permanent_address UNIQUE (permanent_address_id);
+
+ALTER TABLE students
+    ADD CONSTRAINT uc_students_phone UNIQUE (phone);
+
+ALTER TABLE students
+    ADD CONSTRAINT uc_students_student UNIQUE (student_id);
+
+ALTER TABLE students
+    ADD CONSTRAINT uc_students_temporary_address UNIQUE (temporary_address_id);
+
+-- Add foreign key constraints
+ALTER TABLE students
+    ADD CONSTRAINT FK_STUDENTS_ON_FACULTY FOREIGN KEY (faculty_id) REFERENCES faculties (id);
+
+ALTER TABLE students
+    ADD CONSTRAINT FK_STUDENTS_ON_PROGRAM FOREIGN KEY (program_id) REFERENCES programs (id);
+
+ALTER TABLE students
+    ADD CONSTRAINT FK_STUDENTS_ON_STATUS FOREIGN KEY (status_id) REFERENCES statuses (id);
+
+ALTER TABLE students
+    ADD CONSTRAINT FK_STUDENTS_ON_MAILING_ADDRESS FOREIGN KEY (mailing_address_id) REFERENCES addresses (id);
+
+ALTER TABLE students
+    ADD CONSTRAINT FK_STUDENTS_ON_PERMANENT_ADDRESS FOREIGN KEY (permanent_address_id) REFERENCES addresses (id);
+
+ALTER TABLE students
+    ADD CONSTRAINT FK_STUDENTS_ON_TEMPORARY_ADDRESS FOREIGN KEY (temporary_address_id) REFERENCES addresses (id);
+    
+ALTER TABLE students
+    ADD CONSTRAINT FK_STUDENTS_ON_IDENTITY FOREIGN KEY (identity_id) REFERENCES identities (id);
+    
+ALTER TABLE students
+    ADD CONSTRAINT uc_students_identity UNIQUE (identity_id);
+
+-- Seed faculties data based on the existing student data (uppercase)
+INSERT INTO faculties (name) VALUES
+('Faculty of Business English'),
+('Faculty of Law'),
+('Faculty of Japanese'),
+('Faculty of French');
+
+-- Seed programs data based on the existing student data (uppercase)
+INSERT INTO programs (name) VALUES
+('Business Administration'),
+('Criminal Justice'),
+('Japanese Literature'),
+('French Studies'),
+('International Business'),
+('Japanese Culture'),
+('Corporate Law'),
+('French Language'),
+('Japanese Economics'),
+('Business Communication');
+
+-- Seed statuses data based on the existing student data (uppercase)
+INSERT INTO statuses (name) VALUES
+('Studying'),
+('Graduated'),
+('Suspended'),
+('Dropped');
+
+-- Insert sample identity data
+INSERT INTO identities (id, type, number, issued_by, issued_date, expiry_date, has_chip, country, notes)
+VALUES
+('ID001', 'national_id', 'NAT123456789', 'Government', '2018-05-10', '2028-05-10', true, 'Country', NULL),
+('ID002', 'passport', 'P987654321', 'Ministry of Foreign Affairs', '2019-08-15', '2029-08-15', true, 'Country', 'International travel document'),
+('ID003', 'drivers_license', 'DL456789123', 'Transport Department', '2020-03-22', '2025-03-22', false, NULL, NULL),
+('ID004', 'national_id', 'NAT234567891', 'Government', '2021-01-05', '2031-01-05', true, 'Country', NULL),
+('ID005', 'passport', 'P876543219', 'Ministry of Foreign Affairs', '2017-11-30', '2027-11-30', true, 'Country', 'Second passport'),
+('ID006', 'national_id', 'NAT345678912', 'Government', '2019-07-14', '2029-07-14', true, 'Country', NULL),
+('ID007', 'drivers_license', 'DL567891234', 'Transport Department', '2022-09-08', '2027-09-08', false, NULL, 'Commercial license'),
+('ID008', 'passport', 'P765432198', 'Ministry of Foreign Affairs', '2020-04-25', '2030-04-25', true, 'Country', NULL),
+('ID009', 'national_id', 'NAT456789123', 'Government', '2021-06-17', '2031-06-17', true, 'Country', NULL),
+('ID010', 'passport', 'P654321987', 'Ministry of Foreign Affairs', '2018-12-03', '2028-12-03', true, 'Country', 'Diplomatic passport');
+
+-- Insert addresses (converting the single address into three address types)
+INSERT INTO addresses (id, street, ward, district, country)
+VALUES
+-- Permanent addresses
+('PERM001', '123 Main Street', NULL, 'City', 'Country'),
+('PERM002', '456 Oak Avenue', NULL, 'Town', 'Country'),
+('PERM003', '789 Pine Road', NULL, 'Village', 'Country'),
+('PERM004', '321 Maple Lane', NULL, 'County', 'Country'),
+('PERM005', '654 Elm Street', NULL, 'District', 'Country'),
+('PERM006', '987 Cedar Avenue', NULL, 'Region', 'Country'),
+('PERM007', '246 Birch Boulevard', NULL, 'Zone', 'Country'),
+('PERM008', '135 Spruce Drive', NULL, 'Area', 'Country'),
+('PERM009', '864 Willow Way', NULL, 'Territory', 'Country'),
+('PERM010', '753 Aspen Place', NULL, 'Sector', 'Country'),
+
+-- Temporary addresses (using same as permanent for demo purposes)
+('TEMP001', '123 Main Street', NULL, 'City', 'Country'),
+('TEMP002', '456 Oak Avenue', NULL, 'Town', 'Country'),
+('TEMP003', '789 Pine Road', NULL, 'Village', 'Country'),
+('TEMP004', '321 Maple Lane', NULL, 'County', 'Country'),
+('TEMP005', '654 Elm Street', NULL, 'District', 'Country'),
+('TEMP006', '987 Cedar Avenue', NULL, 'Region', 'Country'),
+('TEMP007', '246 Birch Boulevard', NULL, 'Zone', 'Country'),
+('TEMP008', '135 Spruce Drive', NULL, 'Area', 'Country'),
+('TEMP009', '864 Willow Way', NULL, 'Territory', 'Country'),
+('TEMP010', '753 Aspen Place', NULL, 'Sector', 'Country'),
+
+-- Mailing addresses (using same as permanent for demo purposes)
+('MAIL001', '123 Main Street', NULL, 'City', 'Country'),
+('MAIL002', '456 Oak Avenue', NULL, 'Town', 'Country'),
+('MAIL003', '789 Pine Road', NULL, 'Village', 'Country'),
+('MAIL004', '321 Maple Lane', NULL, 'County', 'Country'),
+('MAIL005', '654 Elm Street', NULL, 'District', 'Country'),
+('MAIL006', '987 Cedar Avenue', NULL, 'Region', 'Country'),
+('MAIL007', '246 Birch Boulevard', NULL, 'Zone', 'Country'),
+('MAIL008', '135 Spruce Drive', NULL, 'Area', 'Country'),
+('MAIL009', '864 Willow Way', NULL, 'Territory', 'Country'),
+('MAIL010', '753 Aspen Place', NULL, 'Sector', 'Country');
+
+-- Seed student data with relationships to addresses, faculties, programs, and statuses
 INSERT INTO students (
+    id,
     student_id, 
     name, 
     dob, 
     gender, 
-    faculty, 
+    faculty_id, 
     course, 
-    program, 
+    program_id, 
     email, 
-    address, 
     phone, 
-    status
+    status_id,
+    permanent_address_id,
+    temporary_address_id,
+    mailing_address_id,
+    identity_id
 ) VALUES 
 -- Student 1
 (
+    'ST001_ID',
     'ST001',
     'John Smith',
     '2000-05-15',
     'Male',
-    'Faculty of Business English',
+    1, -- Faculty of Business English
     3,
-    'Business Administration',
+    1, -- Business Administration
     'john.smith@example.com',
-    '123 Main Street, City',
     '0123456789',
-    'Studying'
+    1, -- Studying
+    'PERM001',
+    'TEMP001',
+    'MAIL001',
+    'ID001'
 ),
 -- Student 2
 (
+    'ST002_ID',
     'ST002',
     'Emily Johnson',
     '2001-08-22',
     'Female',
-    'Faculty of Law',
+    2, -- Faculty of Law
     2,
-    'Criminal Justice',
+    2, -- Criminal Justice
     'emily.johnson@example.com',
-    '456 Oak Avenue, Town',
     '0987654321',
-    'Studying'
+    1, -- studying
+    'PERM002',
+    'TEMP002',
+    'MAIL002',
+    'ID002'
 ),
 -- Student 3
 (
+    'ST003_ID',
     'ST003',
     'Michael Brown',
     '1999-03-10',
     'Male',
-    'Faculty of Japanese',
+    3, -- Faculty of Japanese
     4,
-    'Japanese Literature',
+    3, -- Japanese Literature
     'michael.brown@example.com',
-    '789 Pine Road, Village',
     '0567891234',
-    'Graduated'
+    2, -- Graduated
+    'PERM003',
+    'TEMP003',
+    'MAIL003',
+    'ID003'
 ),
 -- Student 4
 (
+    'ST004_ID',
     'ST004',
     'Sarah Davis',
     '2002-01-30',
     'Female',
-    'Faculty of French',
+    4, -- Faculty of French
     1,
-    'French Studies',
+    4, -- French Studies
     'sarah.davis@example.com',
-    '321 Maple Lane, County',
     '0345678912',
-    'Studying'
+    1, -- studying
+    'PERM004',
+    'TEMP004',
+    'MAIL004',
+    'ID004'
 ),
 -- Student 5
 (
+    'ST005_ID',
     'ST005',
     'David Wilson',
     '2000-11-05',
     'Male',
-    'Faculty of Business English',
+    1, -- Faculty of Business English
     3,
-    'International Business',
+    5, -- International Business
     'david.wilson@example.com',
-    '654 Elm Street, District',
     '0678912345',
-    'Suspended'
+    3, -- Suspended
+    'PERM005',
+    'TEMP005',
+    'MAIL005',
+    'ID005'
 ),
 -- Student 6
 (
+    'ST006_ID',
     'ST006',
     'Jennifer Taylor',
     '2001-07-19',
     'Female',
-    'Faculty of Japanese',
+    3, -- Faculty of Japanese
     2,
-    'Japanese Culture',
+    6, -- Japanese Culture
     'jennifer.taylor@example.com',
-    '987 Cedar Avenue, Region',
     '0234567891',
-    'Studying'
+    1, -- studying
+    'PERM006',
+    'TEMP006',
+    'MAIL006',
+    'ID006'
 ),
 -- Student 7
 (
+    'ST007_ID',
     'ST007',
     'James Anderson',
     '1999-09-25',
     'Male',
-    'Faculty of Law',
+    2, -- Faculty of Law
     4,
-    'Corporate Law',
+    7, -- Corporate Law
     'james.anderson@example.com',
-    '246 Birch Boulevard, Zone',
     '0891234567',
-    'Studying'
+    1, -- studying
+    'PERM007',
+    'TEMP007',
+    'MAIL007',
+    'ID007'
 ),
 -- Student 8
 (
+    'ST008_ID',
     'ST008',
     'Linda Martinez',
     '2002-04-12',
     'Female',
-    'Faculty of French',
+    4, -- Faculty of French
     1,
-    'French Language',
+    8, -- French Language
     'linda.martinez@example.com',
-    '135 Spruce Drive, Area',
     '0456789123',
-    'Dropped'
+    4, -- Dropped
+    'PERM008',
+    'TEMP008',
+    'MAIL008',
+    'ID008'
 ),
 -- Student 9
 (
+    'ST009_ID',
     'ST009',
     'Robert Thompson',
     '2000-06-28',
     'Male',
-    'Faculty of Japanese',
+    3, -- Faculty of Japanese
     3,
-    'Japanese Economics',
+    9, -- Japanese Economics
     'robert.thompson@example.com',
-    '864 Willow Way, Territory',
     '0789123456',
-    'Studying'
+    1, -- studying
+    'PERM009',
+    'TEMP009',
+    'MAIL009',
+    'ID009'
 ),
 -- Student 10
 (
+    'ST010_ID',
     'ST010',
     'Elizabeth Garcia',
     '2001-12-07',
     'Female',
-    'Faculty of Business English',
+    1, -- Faculty of Business English
     2,
-    'Business Communication',
+    10, -- Business Communication
     'elizabeth.garcia@example.com',
-    '753 Aspen Place, Sector',
     '0912345678',
-    'Studying'
+    1, -- studying
+    'PERM010',
+    'TEMP010',
+    'MAIL010',
+    'ID010'
 );
