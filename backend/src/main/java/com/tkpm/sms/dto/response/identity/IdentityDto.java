@@ -24,6 +24,5 @@ public class IdentityDto {
     String country;
     String notes;
 
-    @JsonInclude(value = JsonInclude.Include.NON_DEFAULT)
     boolean hasChip;
 }

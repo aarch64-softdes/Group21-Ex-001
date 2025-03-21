@@ -29,7 +29,6 @@ public class IdentityCreateRequestDto {
     LocalDate expiryDate;
 
     // For chip-based
-    @BooleanFlag
     boolean hasChip = false;
 
     // For passport

@@ -38,7 +38,7 @@ public class Identity {
 
     // For chip-based
     @Column(name = "has_chip")
-    boolean hasChip = false;
+    boolean hasChip;
 
     // For passport
     String country;

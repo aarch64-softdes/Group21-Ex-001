@@ -28,7 +28,6 @@ public class IdentityUpdateRequestDto {
     @NotNull(message = "IDENTITY_EXPIRY_DATE_REQUIRED")
     LocalDate expiryDate;
 
-    @BooleanFlag
     boolean hasChip = false;
 
     // For passport
