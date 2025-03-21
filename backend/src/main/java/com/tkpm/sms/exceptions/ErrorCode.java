@@ -17,6 +17,11 @@ public enum ErrorCode {
     INVALID_PHONE("Invalid phone number", HttpStatus.BAD_REQUEST),
     INVALID_STATUS("Invalid status", HttpStatus.BAD_REQUEST),
     NULL_VALUE("Value cannot be null", HttpStatus.BAD_REQUEST),
+    IDENTITY_TYPE_REQUIRED("Identity type is required", HttpStatus.BAD_REQUEST),
+    IDENTITY_NUMBER_REQUIRED("Number is required", HttpStatus.BAD_REQUEST),
+    IDENTITY_ISSUED_BY_REQUIRED("Issued by is required", HttpStatus.BAD_REQUEST),
+    IDENTITY_ISSUED_DATE_REQUIRED("Issued date is required", HttpStatus.BAD_REQUEST),
+    IDENTITY_EXPIRY_DATE_REQUIRED("Expiry date is required", HttpStatus.BAD_REQUEST),
 
     NOT_FOUND("Resource not found", HttpStatus.NOT_FOUND),
     CONFLICT("Resource already existed", HttpStatus.CONFLICT),
@@ -25,6 +30,11 @@ public enum ErrorCode {
     INVALID_IDENTITY_TYPE("Invalid identity type, available values are {values}", HttpStatus.BAD_REQUEST),
     INVALID_IDENTITY_NUMBER("Invalid identity number", HttpStatus.BAD_REQUEST),
     INVALID_IDENTITY_ISSUED_DATE("Identity issued date must be before expired date", HttpStatus.BAD_REQUEST),
+
+    // File error
+    FAIL_TO_EXPORT_FILE("Fail to export file", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_FILE_FORMAT("Invalid file format", HttpStatus.BAD_REQUEST),
+    FAIL_TO_IMPORT_FILE("Failed to import file", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     @Setter

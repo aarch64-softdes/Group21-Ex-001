@@ -1,22 +1,17 @@
 package com.tkpm.sms.dto.response.student;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tkpm.sms.entity.Address;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-
-@Builder
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-//@JsonInclude(JsonInclude.Include.NON_NULL)
-public class StudentMinimalDto {
-    String id;
+public class StudentFileDto {
     String studentId;
     String name;
     LocalDate dob;
@@ -27,4 +22,18 @@ public class StudentMinimalDto {
     String email;
     String phone;
     String status;
+
+    String permanentAddress;
+    String temporaryAddress;
+    String mailingAddress;
+
+    String identityType;
+    String identityNumber;
+    String identityIssuedBy;
+    String identityIssuedDate;
+    String identityExpiryDate;
+
+    String identityNotes;
+    String identityCountry;
+    boolean identityHasChip;
 }
