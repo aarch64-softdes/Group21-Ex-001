@@ -1,16 +1,21 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { QueryHookParams } from "@/types/table";
-import StudentService from "@/services/studentService";
-import { CreateStudentDTO, UpdateStudentDTO } from "@/types/student";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { QueryHookParams } from '@/types/table';
+import StudentService from '@/services/studentService';
+import { CreateStudentDTO, UpdateStudentDTO } from '@/types/student';
 
 const studentService = new StudentService();
 
 export const useStudents = (params: QueryHookParams) => {
   let { page, pageSize, filters, sort } = params;
 
-  let search = "";
-  if (filters.search && typeof filters.search === "string") {
+  let search = '';
+  let faculty = '';
+  if (filters.search && typeof filters.search === 'string') {
     search = filters.search;
+  }
+
+  if (filters.faculty && typeof filters.faculty === 'string') {
+    faculty = filters.faculty;
   }
 
   if (page < 1) {
@@ -19,10 +24,10 @@ export const useStudents = (params: QueryHookParams) => {
 
   // Map sort config to API parameters
   const sortName = mapSortKeyToEntityProperty(sort.key);
-  const sortType = sort.direction || "asc";
+  const sortType = sort.direction || 'asc';
 
   return useQuery({
-    queryKey: ["students", page, pageSize, search, sortName, sortType],
+    queryKey: ['students', page, pageSize, search, faculty, sortName, sortType],
     queryFn: () =>
       studentService.getStudents({
         page,
@@ -30,13 +35,14 @@ export const useStudents = (params: QueryHookParams) => {
         sortName,
         sortType,
         search,
+        faculty,
       }),
   });
 };
 
 export const useStudent = (id: string) => {
   return useQuery({
-    queryKey: ["student", id],
+    queryKey: ['student', id],
     queryFn: () => studentService.getStudent(id),
   });
 };
@@ -76,20 +82,20 @@ export const useDeleteStudent = () => {
 };
 
 function mapSortKeyToEntityProperty(key: string | null): string {
-  if (!key) return "id";
+  if (!key) return 'id';
 
   const sortKeyMap: Record<string, string> = {
-    id: "id",
-    name: "name",
-    dob: "dob",
-    gender: "gender",
-    faculty: "faculty",
-    course: "course",
-    program: "program",
-    email: "email",
-    address: "address",
-    phone: "phone",
-    status: "status",
+    id: 'id',
+    name: 'name',
+    dob: 'dob',
+    gender: 'gender',
+    faculty: 'faculty',
+    course: 'course',
+    program: 'program',
+    email: 'email',
+    address: 'address',
+    phone: 'phone',
+    status: 'status',
   };
 
   return sortKeyMap[key] || key.toLowerCase();

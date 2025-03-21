@@ -21,6 +21,7 @@ public class Address {
     String street;
     String ward;
     String district;
+    String province;
     String country;
 
     @JsonBackReference
@@ -29,6 +30,6 @@ public class Address {
 
     @Override
     public String toString() {
-        return street + ", " + ward + ", " + district + ", " + country;
+        return street + ", " + ward + ", " + district + ", "  + province + ", " + country;
     }
 }

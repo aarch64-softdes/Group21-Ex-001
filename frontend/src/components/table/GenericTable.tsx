@@ -24,6 +24,8 @@ import { GenericTableProps } from '@/types/table';
 import { PlusCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import TableSort from './TableSort';
+import FileImportButton from './FileImportButton';
+import FileExportButton from './FileExportButton';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
@@ -38,6 +40,7 @@ const GenericTable = <T extends { id: string }>({
   requireDeleteConfirmation,
   additionalActions = [],
   disablePagination = false,
+  fileOptions,
 }: GenericTableProps<T>) => {
   const defaultSortColumn = columns.find(
     (column) => column.isDefaultSort,
@@ -215,16 +218,31 @@ const GenericTable = <T extends { id: string }>({
 
         <div className='flex justify-between items-center'>
           <div className='flex items-center gap-2'>{renderFilters}</div>
+          <div className='flex items-center gap-2'>
+            {fileOptions?.enableImport && fileOptions.onImport && (
+              <FileImportButton
+                onImport={fileOptions.onImport}
+                disabled={state.isLoading || state.isFetching}
+              />
+            )}
 
-          <LoadingButton
-            variant='outline'
-            className='flex items-center gap-2'
-            onClick={handleShowDialog}
-            isLoading={isAdding}
-          >
-            <PlusCircle className='h-5 w-5' />
-            {addingTitle}
-          </LoadingButton>
+            {fileOptions?.enableExport && fileOptions.onExport && (
+              <FileExportButton
+                onExport={fileOptions.onExport}
+                disabled={state.isLoading || data.length === 0}
+              />
+            )}
+
+            <LoadingButton
+              variant='outline'
+              className='flex items-center gap-2'
+              onClick={handleShowDialog}
+              isLoading={isAdding}
+            >
+              <PlusCircle className='h-5 w-5' />
+              {addingTitle}
+            </LoadingButton>
+          </div>
         </div>
       </div>
 

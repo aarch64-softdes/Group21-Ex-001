@@ -39,7 +39,7 @@ public class StudentSpecifications {
                 return null;
             }
             Join<Student, Faculty> studentFacultyJoin = root.join("faculty");
-            return criteriaBuilder.like(studentFacultyJoin.get("name"),"%" + faculty.toLowerCase() + "%");
+            return criteriaBuilder.like(criteriaBuilder.lower(studentFacultyJoin.get("name")),"%" + faculty.toLowerCase() + "%");
         };
     }
 }
