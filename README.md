@@ -380,12 +380,86 @@ After Elasticsearch is running and your application has generated some logs:
 Now you can use Discover to search and filter your logs, or create visualizations and dashboards.
 
 ## Feature Demonstrations
-### Udpate address and identity for Student
 
-### Allow user to manage Faulty, Status, Program
+### Update address and identity for Student
 
-### Saerch by name and faculty
+![update-student-1](./documents/assets/SD-update-student-1.png)
+![update-student-2](./documents/assets/SD-update-student-2.png)
+
+### Allow user to manage Faculty, Status, Program
+
+#### Faculty
+
+- Add a new faculty:
+  ![faculty-add](./documents/assets/SD-faculty-add.png)
+
+- Edit an existing faculty:
+  ![faculty-edit](./documents/assets/SD-faculty-edit.png)
+
+#### Program
+
+- Add a new program:
+  ![program-add](./documents/assets/SD-program-add.png)
+
+- Edit an existing program:
+  ![program-edit](./documents/assets/SD-program-update.png)
+
+#### Status
+
+- Add a new status:
+  ![status-add](./documents/assets/SD-status-add.png)
+
+- Edit an existing status:
+  ![status-edit](./documents/assets/SD-status-update.png)
+
+### Search by name and faculty
+
+- Search by name:
+  ![search-by-name](./documents/assets/SD-search-name.png)
+
+- Search by name and faculty:
+  ![search-faculty](./documents/assets/SD-search-name-faculty.png)
 
 ### Import and Export with csv and json file format
 
-### loggin mechanism
+#### Exporting data
+
+**Step 1:** Select "Export" from Student Management page.
+![s1-export](./documents/assets/SD-export-1.png)
+
+**Step 2:** Choose the file format (CSV or JSON) and click "Export".
+![s2-export-csv](./documents/assets/SD-export-csv.png)
+![s2-export-json](./documents/assets/SD-export-json.png)
+
+#### Importing data (using CSV file)
+
+**Step 1:** Select "Import" from Student Management page.
+![s1-import-csv](./documents/assets/SD-import-csv-1.png)
+
+**Step 2:** Choose the CSV file.
+![s2-import-csv](./documents/assets/SD-import-csv-2.png)
+
+**Step 3:** Click "Import" to upload the file and see the data is imported.
+![s3-import-csv](./documents/assets/SD-import-csv-3.png)
+![s4-import-csv](./documents/assets/SD-import-csv-4.png)
+
+#### Importing data (using JSON file)
+
+**Step 1:** Select "Import" from Student Management page.
+![s1-import-json](./documents/assets/SD-import-json-1.png)
+
+**Step 2:** Choose the JSON file.
+![s2-import-json](./documents/assets/SD-import-json-2.png)
+
+**Step 3:** Click "Import" to upload the file and see the data is imported.
+![s3-import-json](./documents/assets/SD-import-json-3.png)
+
+### Logging mechanism
+
+#### See logs in ElasticSearch
+
+![logging-elasticsearch](./documents/assets/SD-logging-elastic-search.png)
+
+#### See logs in JSON
+
+![logging-json](./documents/assets/SD-logging-json.png)
