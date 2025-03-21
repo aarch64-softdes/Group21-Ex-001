@@ -22,7 +22,7 @@ export default interface Student {
   phone: string;
   status: Status;
   citizenship: string;
-  idDocument: IdentityDocument;
+  identity: IdentityDocument;
 }
 
 export interface CreateStudentDTO {
@@ -40,7 +40,7 @@ export interface CreateStudentDTO {
   phone: string;
   status?: Status;
   citizenship: string;
-  idDocument: IdentityDocument;
+  identity: IdentityDocument;
 }
 
 export interface UpdateStudentDTO {
@@ -57,7 +57,7 @@ export interface UpdateStudentDTO {
   phone?: string;
   status?: Status;
   citizenship: string;
-  idDocument: IdentityDocument;
+  identity: IdentityDocument;
 }
 
 export const mapToStudent = (data: any): Student => ({
@@ -76,5 +76,5 @@ export const mapToStudent = (data: any): Student => ({
   phone: data.phone,
   status: data.status,
   citizenship: data.citizenship,
-  idDocument: data.idDocument,
+  identity: data.identity,
 });

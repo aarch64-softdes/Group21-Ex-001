@@ -102,7 +102,7 @@ export const StudentFormSchema = z.object({
     country: z.string().min(1, 'Country is required').default('Việt Nam'),
   }),
 
-  idDocument: z
+  identity: z
     .object({
       type: z.enum(['Identity Card', 'Chip Card', 'Passport']),
     })
@@ -286,7 +286,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
           province: '',
           country: 'Việt Nam',
         },
-        idDocument: studentData.idDocument || {
+        identity: studentData.identity || {
           type: 'Identity Card',
           number: '',
           issuedDate: '',
@@ -614,7 +614,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                   <div className='grid grid-cols-2 lg:grid-cols-3 gap-6'>
                     <FormField
                       control={form.control}
-                      name='idDocument.type'
+                      name='identity.type'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Document Type</FormLabel>
@@ -642,7 +642,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name='idDocument.number'
+                      name='identity.number'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Document Number</FormLabel>
@@ -660,7 +660,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name='idDocument.issuedDate'
+                      name='identity.issuedDate'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Date of Issue</FormLabel>
@@ -674,7 +674,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name='idDocument.expiryDate'
+                      name='identity.expiryDate'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Expiration Date</FormLabel>
@@ -688,7 +688,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name='idDocument.issuedBy'
+                      name='identity.issuedBy'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Issued By</FormLabel>
@@ -705,10 +705,10 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                     />
 
                     {/* Conditional fields based on document type */}
-                    {form.watch('idDocument.type') === 'Chip Card' && (
+                    {form.watch('identity.type') === 'Chip Card' && (
                       <FormField
                         control={form.control}
-                        name='idDocument.hasChip'
+                        name='identity.hasChip'
                         render={({ field }) => (
                           <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                             <FormControl>
@@ -731,11 +731,11 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       />
                     )}
 
-                    {form.watch('idDocument.type') === 'Passport' && (
+                    {form.watch('identity.type') === 'Passport' && (
                       <>
                         <FormField
                           control={form.control}
-                          name='idDocument.country'
+                          name='identity.country'
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Issuing Country</FormLabel>
@@ -753,7 +753,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                         <FormField
                           control={form.control}
-                          name='idDocument.notes'
+                          name='identity.notes'
                           render={({ field }) => (
                             <FormItem className='col-span-2'>
                               <FormLabel>Notes</FormLabel>
