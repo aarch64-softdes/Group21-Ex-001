@@ -120,6 +120,9 @@ const StudentPage: React.FC = () => {
 
   const actions = React.useMemo(
     () => ({
+      onSave: async (id: string, value: CreateStudentDTO) => {
+        await updateStudent.mutateAsync({ id, data: value });
+      },
       onAdd: async (value: CreateStudentDTO) => {
         await createStudent.mutateAsync(value);
       },
