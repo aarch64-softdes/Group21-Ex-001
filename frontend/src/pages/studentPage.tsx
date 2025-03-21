@@ -1,21 +1,19 @@
-import React from "react";
-import GenericTable from "@/components/table/GenericTable";
-import StudentForm, {
-  StudentFormSchema,
-} from "@/components/student/StudentForm";
+import StudentForm from '@/components/student/StudentForm';
+import GenericTable from '@/components/table/GenericTable';
+import React from 'react';
 
 import {
-  useStudents,
   useCreateStudent,
-  useUpdateStudent,
   useDeleteStudent,
-} from "@/hooks/useStudentApi";
+  useStudents,
+  useUpdateStudent,
+} from '@/hooks/useStudentApi';
 
-import { SearchFilterOption } from "@/types/filter";
-import Student, { CreateStudentDTO, UpdateStudentDTO } from "@/types/student";
-import { Column } from "@/types/table";
-import { Search } from "lucide-react";
-import StudentDetail from "@/components/student/StudentDetail";
+import StudentDetail from '@/components/student/StudentDetail';
+import { SearchFilterOption } from '@/types/filter';
+import Student, { CreateStudentDTO, UpdateStudentDTO } from '@/types/student';
+import { Column } from '@/types/table';
+import { Search } from 'lucide-react';
 
 const StudentPage: React.FC = () => {
   const createStudent = useCreateStudent();
@@ -25,123 +23,96 @@ const StudentPage: React.FC = () => {
   const columns: Column<Student>[] = React.useMemo(
     () => [
       {
-        header: "Student ID",
-        key: "studentId",
-        editable: false,
-        sortable: true,
+        header: 'Student ID',
+        key: 'studentId',
         style: {
-          width: "120px",
+          width: '120px',
         },
       },
       {
-        header: "Name",
-        key: "name",
-        editable: true,
+        header: 'Name',
+        key: 'name',
         isDefaultSort: true,
-        sortable: true,
+        sortable: false,
         style: {
-          maxWidth: "200px",
-        },
-        validate: (value: string) => {
-          const result = StudentFormSchema.shape.name.safeParse(value);
-          return result.success ? null : result.error.errors[0].message;
+          maxWidth: '200px',
         },
       },
       {
-        header: "Date of Birth",
-        key: "dob",
-        sortable: true,
-        editable: true,
+        header: 'Date of Birth',
+        key: 'dob',
         style: {
-          width: "150px",
-        },
-        validate: (value: string) => {
-          const result = StudentFormSchema.shape.dob.safeParse(value);
-          return result.success ? null : result.error.errors[0].message;
+          width: '150px',
         },
         transform: (value: string) => {
           return new Date(value).toLocaleDateString();
         },
       },
       {
-        header: "Gender",
-        key: "gender",
-        sortable: true,
-        editable: true,
+        header: 'Gender',
+        key: 'gender',
         style: {
-          width: "100px",
+          width: '100px',
         },
       },
       {
-        header: "Faculty",
-        key: "faculty",
-        sortable: true,
-        editable: true,
+        header: 'Faculty',
+        key: 'faculty',
         style: {
-          width: "150px",
+          width: '150px',
         },
       },
       {
-        header: "Course",
-        key: "course",
-        sortable: true,
-        editable: true,
+        header: 'Course',
+        key: 'course',
         style: {
-          width: "80px",
-        },
-        validate: (value: number) => {
-          const result = StudentFormSchema.shape.course.safeParse(
-            parseInt(String(value), 10)
-          );
-          return result.success ? null : result.error.errors[0].message;
+          width: '80px',
         },
       },
       {
-        header: "Program",
-        key: "program",
-        sortable: true,
-        editable: true,
+        header: 'Program',
+        key: 'program',
         style: {
-          width: "150px",
+          width: '150px',
         },
       },
       {
-        header: "Email",
-        key: "email",
-        sortable: true,
-        editable: true,
+        header: 'Status',
+        key: 'status',
         style: {
-          width: "200px",
+          width: '112px',
         },
-        validate: (value: string) => {
-          const result = StudentFormSchema.shape.email.safeParse(value);
-          return result.success ? null : result.error.errors[0].message;
-        },
-      },
-      {
-        header: "Phone",
-        key: "phone",
-        sortable: true,
-        editable: true,
-        style: {
-          width: "120px",
-        },
-        validate: (value: string) => {
-          const result = StudentFormSchema.shape.phone.safeParse(value);
-          return result.success ? null : result.error.errors[0].message;
-        },
-      },
-      {
-        header: "Status",
-        key: "status",
-        sortable: true,
-        editable: true,
-        style: {
-          width: "120px",
-        },
+
+        // render: (value: string) => {
+        //   const getStatusStyles = (status: string): string => {
+        //     switch (status.toLowerCase()) {
+        //       case "studying":
+        //         return "bg-green-100 text-green-800 hover:bg-green-100";
+        //       case "graduated":
+        //         return "bg-blue-100 text-blue-800 hover:bg-blue-100";
+        //       case "suspended":
+        //         return "bg-amber-100 text-amber-800 hover:bg-amber-100";
+        //       case "expelled":
+        //         return "bg-red-100 text-red-800 hover:bg-red-100";
+        //       case "on leave":
+        //         return "bg-purple-100 text-purple-800 hover:bg-purple-100";
+        //       default:
+        //         return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+        //     }
+        //   };
+
+        //   return (
+        //     <Badge
+        //       className={`font-medium ${getStatusStyles(value)}`}
+        //       variant="outline"
+        //     >
+        //       {value}
+        //     </Badge>
+        //   );
+        // },
       },
     ],
-    []
+    [],
   );
 
   const actions = React.useMemo(
@@ -156,22 +127,22 @@ const StudentPage: React.FC = () => {
         await deleteStudent.mutateAsync(id);
       },
     }),
-    [updateStudent, createStudent, deleteStudent]
+    [updateStudent, createStudent, deleteStudent],
   );
 
   const searchFilterOption: SearchFilterOption = {
-    id: "search",
-    label: "Search",
+    id: 'search',
+    label: 'Search',
     labelIcon: Search,
-    placeholder: "Search by id, name",
-    type: "search",
+    placeholder: 'Search by id, name',
+    type: 'search',
   };
 
   return (
-    <div className="min-h-3/4 w-full m-auto flex flex-row gap-4 p-4">
+    <div className='min-h-3/4 m-auto flex flex-row gap-4 p-4'>
       <GenericTable
-        tableTitle="Student Management"
-        addingTitle="Add Student"
+        tableTitle='Student Management'
+        addingTitle='Add Student'
         queryHook={useStudents}
         columns={columns}
         actions={actions}

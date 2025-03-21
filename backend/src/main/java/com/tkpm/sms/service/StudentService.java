@@ -1,16 +1,17 @@
 package com.tkpm.sms.service;
 
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
+import com.tkpm.sms.dto.request.StudentCollectionRequest;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
+import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.entity.Student;
-import com.tkpm.sms.enums.Faculty;
-import com.tkpm.sms.enums.Gender;
-import com.tkpm.sms.enums.Status;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.mapper.AddressMapper;
+import com.tkpm.sms.mapper.IdentityMapper;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
+import com.tkpm.sms.specification.StudentSpecifications;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,24 +23,36 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentService {
-    int PAGE_SIZE = 5;
-
     StudentRepository studentRepository;
+    StatusService statusService;
+    ProgramService programService;
+    FacultyService facultyService;
     StudentMapper studentMapper;
+
     AddressService addressService;
     AddressMapper addressMapper;
 
-    public Page<Student> findAll(int page, String sortName, String sortType, String search) {
-        Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE,
-                Sort.by(sortType.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
-                        sortName));
+    IdentityService identityService;
+    IdentityMapper identityMapper;
 
-        return studentRepository.getStudents(search, pageable);
+    public Page<Student> findAll(StudentCollectionRequest search) {
+        Pageable pageable = PageRequest.of(
+                search.getPage() - 1,
+                search.getSize(),
+                Sort.by(
+                        search.getSortDirection().equalsIgnoreCase("desc")
+                                ? Sort.Direction.DESC : Sort.Direction.ASC,
+                        search.getSortBy()
+                ));
+
+        return studentRepository.findAll(StudentSpecifications.withFilters(search), pageable);
     }
 
     public Student getStudentDetail(String id) {
@@ -59,7 +72,7 @@ public class StudentService {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with phone number %s already existed", studentCreateRequestDto.getPhone())));
         }
 
-        Student student = studentMapper.createStudent(studentCreateRequestDto);
+        Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
 
         log.info("Student created with address: {}", student.getPermanentAddress());
 
@@ -77,12 +90,20 @@ public class StudentService {
             student.setTemporaryAddress(temporaryAddress);
         }
 
-        student.setStatus(Status.valueOf(studentCreateRequestDto.getStatus()));
-        student.setFaculty(Faculty.fromString(studentCreateRequestDto.getFaculty()));
-        student.setGender(Gender.valueOf(studentCreateRequestDto.getGender()));
+        student.setIdentity(
+                identityService.createIdentity(studentCreateRequestDto.getIdentity())
+        );
 
         student = studentRepository.save(student);
         return student;
+    }
+
+    @Transactional
+    public void saveListStudentFromFile(List<StudentFileDto> students) {
+        var studentCreateRequests = students.stream().map(studentMapper::toStudentCreateRequest).toList();
+        for (var student : studentCreateRequests) {
+            createStudent(student);
+        }
     }
 
     @Transactional
@@ -112,11 +133,7 @@ public class StudentService {
                     studentUpdateRequestDto.getPhone())));
         }
 
-        studentMapper.updateStudent(student, studentUpdateRequestDto);
-
-        student.setStatus(Status.valueOf(studentUpdateRequestDto.getStatus()));
-        student.setFaculty(Faculty.fromString(studentUpdateRequestDto.getFaculty()));
-        student.setGender(Gender.valueOf(studentUpdateRequestDto.getGender()));
+        studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
 
         //TODO: Refactor
         if (studentUpdateRequestDto.getTemporaryAddress() != null) {
@@ -162,6 +179,21 @@ public class StudentService {
                         student.getMailingAddress().getId()
                 );
                 student.setMailingAddress(newMailingAddress);
+            }
+        }
+
+        if (studentUpdateRequestDto.getIdentity() != null) {
+            if (student.getIdentity() != null) {
+                student.setIdentity(
+                        identityService.updateIdentity(studentUpdateRequestDto.getIdentity(),
+                                student.getIdentity().getId())
+                );
+            } else {
+                student.setIdentity(
+                        identityService.createIdentity(
+                                identityMapper.toIdentityCreateRequestDto(studentUpdateRequestDto.getIdentity())
+                        )
+                );
             }
         }
 

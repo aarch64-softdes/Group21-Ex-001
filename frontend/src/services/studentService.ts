@@ -1,22 +1,22 @@
-import { ApiResponse } from "@/types/apiResponse";
+import { ApiResponse } from '@/types/apiResponse';
 import Student, {
   CreateStudentDTO,
   UpdateStudentDTO,
   mapToStudent,
-} from "@/types/student";
-import axios from "axios";
+} from '@/types/student';
+import axios from 'axios';
 
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: 'http://localhost:8080',
 });
 
 export default class StudentService {
   getStudents = async ({
     page = 1,
     size = 10,
-    sortName = "studentId",
-    sortType = "asc",
-    search = "",
+    sortName = 'studentId',
+    sortType = 'asc',
+    search = '',
   }: {
     page?: number;
     size?: number;
@@ -24,7 +24,7 @@ export default class StudentService {
     sortType?: string;
     search?: string;
   }): Promise<ApiResponse<Student>> => {
-    const response = await api.get("/api/students", {
+    const response = await api.get('/api/students', {
       params: {
         page,
         sortName,
@@ -35,42 +35,67 @@ export default class StudentService {
 
     // Assuming the API returns a list of students
     return {
-      data: response.data.map(mapToStudent),
-      totalItems: parseInt(
-        response.headers["x-total-count"] || response.data.length
-      ),
-      totalPages: parseInt(
-        response.headers["x-total-pages"] ||
-          Math.ceil(response.data.length / size)
-      ),
+      data: response.data.content.data.map(mapToStudent),
+      totalItems: response.data.content.page.totalElements,
+      totalPages: response.data.content.page.totalPages,
       currentPage: page,
     };
   };
 
   getStudent = async (id: string): Promise<Student> => {
-    if (id == "") {
+    if (id == '') {
       return {
-        id: "",
-        studentId: "",
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
+        id: '',
+        studentId: '',
+        name: '',
+        email: '',
+        phone: '',
         dob: new Date(),
-        gender: "",
-        faculty: "",
-        status: "",
-        program: "",
+        gender: '',
+        faculty: '',
+        status: '',
+        program: '',
         course: 0,
+        permanentAddress: {
+          id: '',
+          street: '',
+          ward: '',
+          district: '',
+          province: '',
+          country: '',
+        },
+        temporaryAddress: {
+          id: '',
+          street: '',
+          ward: '',
+          district: '',
+          province: '',
+          country: '',
+        },
+        mailingAddress: {
+          id: '',
+          street: '',
+          ward: '',
+          district: '',
+          province: '',
+          country: '',
+        },
+        identity: {
+          type: 'Identity Card',
+          number: '',
+          issuedDate: new Date(),
+          expiryDate: new Date(),
+          issuedBy: '',
+        },
       };
     }
 
     const response = await api.get(`/api/students/${id}`);
-    return mapToStudent(response.data);
+    return mapToStudent(response.data.content); /// TODO: reformat the response
   };
 
   addNewStudent = async (data: CreateStudentDTO): Promise<void> => {
-    await api.post("/api/students/", data);
+    await api.post('/api/students/', data);
   };
 
   updateStudent = async (id: string, data: UpdateStudentDTO): Promise<void> => {

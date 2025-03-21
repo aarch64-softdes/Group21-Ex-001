@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,11 +6,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ActionCellProps } from "@/types/table";
+} from '@/components/ui/dropdown-menu';
+import { ActionCellProps } from '@/types/table';
 
-import { EllipsisVertical, Loader2 } from "lucide-react";
-import React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +18,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
+import { EllipsisVertical, Loader2 } from 'lucide-react';
+import React from 'react';
 
 const ActionCell: React.FC<ActionCellProps> = ({
   requireDeleteConfirmation = true,
@@ -47,8 +47,8 @@ const ActionCell: React.FC<ActionCellProps> = ({
 
   if (isDeleting) {
     return (
-      <div className="flex p-1">
-        <Loader2 className="h-6 w-6 animate-spin" />
+      <div className='flex p-1'>
+        <Loader2 className='h-6 w-6 animate-spin' />
       </div>
     );
   }
@@ -58,15 +58,15 @@ const ActionCell: React.FC<ActionCellProps> = ({
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
-            className="h-8 w-8 rounded-full border-0 p-1 hover:bg-gray-200 data-[state=open]:bg-gray-200"
-            variant={"outline"}
+            className='h-8 w-8 rounded-full border-0 p-1 hover:bg-gray-200 data-[state=open]:bg-gray-200'
+            variant={'outline'}
           >
             <EllipsisVertical />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          align="start"
-          side="right"
+          align='start'
+          side='left'
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -95,7 +95,7 @@ const ActionCell: React.FC<ActionCellProps> = ({
                   action.handler();
                 }}
               >
-                <span className="flex items-center gap-2">{action.label}</span>
+                <span className='flex items-center gap-2'>{action.label}</span>
               </DropdownMenuItem>
             </React.Fragment>
           ))}
@@ -118,7 +118,7 @@ const ActionCell: React.FC<ActionCellProps> = ({
                 setShowDeleteDialog(false);
                 onDelete?.();
               }}
-              className="bg-red-600 hover:bg-red-700"
+              className='bg-red-600 hover:bg-red-700'
             >
               Delete
             </AlertDialogAction>

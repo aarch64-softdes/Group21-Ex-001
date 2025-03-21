@@ -1,9 +1,7 @@
 package com.tkpm.sms.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.tkpm.sms.enums.Faculty;
 import com.tkpm.sms.enums.Gender;
-import com.tkpm.sms.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -39,13 +37,7 @@ public class Student {
     @Column(nullable = false)
     Gender gender;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    Faculty faculty;
-
     Integer course;
-
-    String program;
 
     @Email
     @NotNull
@@ -57,9 +49,20 @@ public class Student {
     @Column(unique = true, length = 10)
     String phone;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    Status status = Status.Studying;
+    // many-to-one relationship with status
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    Status status;
+
+    // many-to-one relationship with program
+    @ManyToOne
+    @JoinColumn(name = "program_id")
+    Program program;
+
+    // many-to-one relationship with faculty
+    @ManyToOne
+    @JoinColumn(name = "faculty_id")
+    Faculty faculty;
 
     @JsonBackReference
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -75,4 +78,9 @@ public class Student {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "mailing_address_id")
     Address mailingAddress;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    @JoinColumn(name = "identity_id")
+    Identity identity;
 }
