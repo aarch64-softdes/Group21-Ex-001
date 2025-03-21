@@ -109,7 +109,7 @@ export const StudentFormSchema = z.object({
       z.discriminatedUnion('type', [
         z.object({
           type: z.literal('Identity Card'),
-          number: z.string().min(1, 'ID number is required'),
+          number: z.string().min(9, 'ID number must include 9 digits'),
           issuedDate: z.string().min(1, 'Issue date is required'),
           expiryDate: z.string().min(1, 'Expiration date is required'),
           issuedBy: z.string().min(1, 'Issuing authority is required'),
@@ -119,7 +119,7 @@ export const StudentFormSchema = z.object({
         }),
         z.object({
           type: z.literal('Chip Card'),
-          number: z.string().min(1, 'ID number is required'),
+          number: z.string().min(12, 'ID number must include 12 digits'),
           issuedDate: z.string().min(1, 'Issue date is required'),
           expiryDate: z.string().min(1, 'Expiration date is required'),
           issuedBy: z.string().min(1, 'Issuing authority is required'),
@@ -131,7 +131,14 @@ export const StudentFormSchema = z.object({
         }),
         z.object({
           type: z.literal('Passport'),
-          number: z.string().min(1, 'ID number is required'),
+          number: z
+            .string()
+            .min(9, 'Passport number must be 9 characters')
+            .max(9, 'Passport number must be 9 characters')
+            .regex(
+              /^[A-Z]{2}[0-9]{7}$/,
+              'Passport number must be 2 uppercase letters followed by 7 digits',
+            ),
           issuedDate: z.string().min(1, 'Issue date is required'),
           expiryDate: z.string().min(1, 'Expiration date is required'),
           issuedBy: z.string().min(1, 'Issuing authority is required'),
