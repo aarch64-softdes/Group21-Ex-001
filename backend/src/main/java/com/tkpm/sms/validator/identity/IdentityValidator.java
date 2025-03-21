@@ -2,7 +2,7 @@ package com.tkpm.sms.validator.identity;
 
 import com.tkpm.sms.dto.request.IdentityCreateRequestDto;
 import com.tkpm.sms.dto.request.IdentityUpdateRequestDto;
-import com.tkpm.sms.enums.EnumUtils;
+import com.tkpm.sms.utils.EnumUtils;
 import com.tkpm.sms.enums.IdentityType;
 import com.tkpm.sms.exceptions.ErrorCode;
 import jakarta.validation.ConstraintValidator;

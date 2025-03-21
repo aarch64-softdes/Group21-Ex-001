@@ -27,7 +27,7 @@ public class StudentCreateRequestDto {
     String studentId;
 
     @NotNull(message = "Student name is required")
-    @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "INVALID_NAME")
+    @Pattern(regexp = "^[\\p{L}\\s]*$", message = "INVALID_NAME")
     String name;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")

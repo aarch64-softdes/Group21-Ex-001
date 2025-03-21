@@ -3,10 +3,10 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://localhost:5432/student-db
+    url: jdbc:postgresql://localhost:5432/student-db ## Change this
     driver-class-name: org.postgresql.Driver
-    username: root
-    password: root
+    username: root ## Change this
+    password: root ## Change this
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -17,4 +17,8 @@ elasticsearch:
   host: localhost
   port: 9200
   index-prefix: logs
-  api-key: your-api-key
+  api-key: your-api-key ## Change this
+
+logging:
+  controller:
+    logger-type: ELASTICSEARCH

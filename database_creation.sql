@@ -137,16 +137,21 @@ INSERT INTO statuses (name) VALUES
 -- Insert sample identity data
 INSERT INTO identities (id, type, number, issued_by, issued_date, expiry_date, has_chip, country, notes)
 VALUES
-('ID001', 'national_id', 'NAT123456789', 'Government', '2018-05-10', '2028-05-10', true, 'Country', NULL),
-('ID002', 'passport', 'P987654321', 'Ministry of Foreign Affairs', '2019-08-15', '2029-08-15', true, 'Country', 'International travel document'),
-('ID003', 'drivers_license', 'DL456789123', 'Transport Department', '2020-03-22', '2025-03-22', false, NULL, NULL),
-('ID004', 'national_id', 'NAT234567891', 'Government', '2021-01-05', '2031-01-05', true, 'Country', NULL),
-('ID005', 'passport', 'P876543219', 'Ministry of Foreign Affairs', '2017-11-30', '2027-11-30', true, 'Country', 'Second passport'),
-('ID006', 'national_id', 'NAT345678912', 'Government', '2019-07-14', '2029-07-14', true, 'Country', NULL),
-('ID007', 'drivers_license', 'DL567891234', 'Transport Department', '2022-09-08', '2027-09-08', false, NULL, 'Commercial license'),
-('ID008', 'passport', 'P765432198', 'Ministry of Foreign Affairs', '2020-04-25', '2030-04-25', true, 'Country', NULL),
-('ID009', 'national_id', 'NAT456789123', 'Government', '2021-06-17', '2031-06-17', true, 'Country', NULL),
-('ID010', 'passport', 'P654321987', 'Ministry of Foreign Affairs', '2018-12-03', '2028-12-03', true, 'Country', 'Diplomatic passport');
+-- Chip_Card (CCCD) examples - 12 digits
+('ID001', 'Chip_Card', '123456789012', 'Ministry of Public Security', '2018-05-10', '2028-05-10', true, 'Vietnam', 'Citizen Identity Card with Chip'),
+('ID004', 'Chip_Card', '234567891023', 'Ministry of Public Security', '2021-01-05', '2031-01-05', true, 'Vietnam', NULL),
+('ID006', 'Chip_Card', '345678912034', 'Ministry of Public Security', '2019-07-14', '2029-07-14', true, 'Vietnam', NULL),
+('ID009', 'Chip_Card', '456789123045', 'Ministry of Public Security', '2021-06-17', '2031-06-17', true, 'Vietnam', NULL),
+
+-- Identity_Card (CMND) examples - 9 digits
+('ID003', 'Identity_Card', '456789123', 'Police Department', '2020-03-22', '2025-03-22', false, 'Vietnam', 'Old ID card'),
+('ID005', 'Identity_Card', '567891234', 'Police Department', '2017-11-30', '2027-11-30', false, 'Vietnam', NULL),
+('ID007', 'Identity_Card', '678912345', 'Police Department', '2022-09-08', '2027-09-08', false, 'Vietnam', NULL),
+
+-- Passport examples - 2 uppercase letters followed by 7 digits
+('ID002', 'Passport', 'AB1234567', 'Immigration Department', '2019-08-15', '2029-08-15', false, 'Vietnam', 'International travel document'),
+('ID008', 'Passport', 'CD2345678', 'Immigration Department', '2020-04-25', '2030-04-25', false, 'Vietnam', NULL),
+('ID010', 'Passport', 'EF3456789', 'Immigration Department', '2018-12-03', '2028-12-03', false, 'Vietnam', 'Diplomatic passport');
 
 -- Insert addresses (converting the single address into three address types)
 INSERT INTO addresses (id, street, ward, district, country)
