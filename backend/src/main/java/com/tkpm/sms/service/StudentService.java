@@ -1,7 +1,7 @@
 package com.tkpm.sms.service;
 
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
-import com.tkpm.sms.dto.request.StudentSearchRequest;
+import com.tkpm.sms.dto.request.StudentCollectionRequest;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.exceptions.ApplicationException;
@@ -39,7 +39,7 @@ public class StudentService {
     IdentityService identityService;
     IdentityMapper identityMapper;
 
-    public Page<Student> findAll(StudentSearchRequest search) {
+    public Page<Student> findAll(StudentCollectionRequest search) {
         Pageable pageable = PageRequest.of(
                 search.getPage() - 1,
                 search.getSize(),

@@ -1,6 +1,6 @@
 package com.tkpm.sms.specification;
 
-import com.tkpm.sms.dto.request.StudentSearchRequest;
+import com.tkpm.sms.dto.request.StudentCollectionRequest;
 import com.tkpm.sms.entity.Faculty;
 import com.tkpm.sms.entity.Student;
 import jakarta.persistence.criteria.Join;
@@ -8,10 +8,10 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class StudentSpecifications {
 
-    public static Specification<Student> withFilters(StudentSearchRequest studentSearchRequest) {
-        return Specification.where(hasStudentId(studentSearchRequest.getSearch()))
-                                    .or(hasName(studentSearchRequest.getSearch()))
-                                    .and(belongToFaculty(studentSearchRequest.getFaculty()));
+    public static Specification<Student> withFilters(StudentCollectionRequest request) {
+        return Specification.where((hasStudentId(request.getSearch()))
+                                    .or(hasName(request.getSearch())))
+                                    .and(belongToFaculty(request.getFaculty()));
     }
 
     private static Specification<Student> hasName(String name) {

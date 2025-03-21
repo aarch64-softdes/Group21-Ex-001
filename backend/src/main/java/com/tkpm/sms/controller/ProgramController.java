@@ -1,7 +1,7 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.ProgramRequestDto;
-import com.tkpm.sms.dto.request.common.SearchCommonRequest;
+import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.dto.response.ProgramDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
@@ -28,7 +28,7 @@ public class ProgramController {
 
     @GetMapping
     public ResponseEntity<ApplicationResponseDto<ListResponse<ProgramDto>>> getAllPrograms(
-            @ModelAttribute SearchCommonRequest search
+            @ModelAttribute BaseCollectionRequest search
             ) {
         var programs = programService.getAllPrograms(search);
         var programsDto = programs.stream().map(program -> new ProgramDto(program.getId(), program.getName())).collect(toList());

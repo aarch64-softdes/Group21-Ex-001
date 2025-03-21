@@ -1,7 +1,7 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.FacultyRequestDto;
-import com.tkpm.sms.dto.request.common.SearchCommonRequest;
+import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.dto.response.FacultyDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
@@ -28,7 +28,7 @@ public class FacultyController {
 
     @GetMapping
     public ResponseEntity<ApplicationResponseDto<ListResponse<FacultyDto>>> getAllFaculties(
-            @ModelAttribute SearchCommonRequest search
+            @ModelAttribute BaseCollectionRequest search
             ) {
         var faculties = facultyService.getAllFaculties(search);
         var facultiesDto = faculties.stream().map(faculty -> new FacultyDto(faculty.getId(), faculty.getName())).collect(toList());

@@ -1,7 +1,7 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.StatusRequestDto;
-import com.tkpm.sms.dto.request.common.SearchCommonRequest;
+import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.dto.response.StatusDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
@@ -28,7 +28,7 @@ public class StatusController {
 
     @GetMapping
     public ResponseEntity<ApplicationResponseDto<ListResponse<StatusDto>>> getAllStatuses(
-            @ModelAttribute SearchCommonRequest search
+            @ModelAttribute BaseCollectionRequest search
             ) {
         var statuses = statusService.getAllStatuses(search);
         var statusesDto = statuses.stream().map(status -> new StatusDto(status.getId(), status.getName())).collect(toList());

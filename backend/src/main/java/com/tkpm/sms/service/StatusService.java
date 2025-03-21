@@ -1,7 +1,7 @@
 package com.tkpm.sms.service;
 
 import com.tkpm.sms.dto.request.StatusRequestDto;
-import com.tkpm.sms.dto.request.common.SearchCommonRequest;
+import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.entity.Status;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -24,7 +23,7 @@ import java.util.List;
 public class StatusService {
     StatusRepository statusRepository;
 
-    public Page<Status> getAllStatuses(SearchCommonRequest search) {
+    public Page<Status> getAllStatuses(BaseCollectionRequest search) {
         Pageable pageable = PageRequest.of(
                 search.getPage() - 1,
                 search.getSize(),

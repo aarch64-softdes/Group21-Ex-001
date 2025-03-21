@@ -1,7 +1,7 @@
 package com.tkpm.sms.controller;
 
 import com.tkpm.sms.dto.request.StudentCreateRequestDto;
-import com.tkpm.sms.dto.request.StudentSearchRequest;
+import com.tkpm.sms.dto.request.StudentCollectionRequest;
 import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
@@ -31,7 +31,7 @@ public class StudentController {
 
     @GetMapping
     public ResponseEntity<ApplicationResponseDto<ListResponse<StudentMinimalDto>>> getStudents(
-            @ModelAttribute StudentSearchRequest search
+            @ModelAttribute StudentCollectionRequest search
     ) {
         Page<StudentMinimalDto> pageResult =
                 studentService.findAll(search)

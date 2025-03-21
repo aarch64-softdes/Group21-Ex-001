@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SearchCommonRequest {
+public class BaseCollectionRequest {
     private int page = 1;
     private int size = 5;
     private String sortBy = "name";
