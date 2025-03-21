@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search } from 'lucide-react';
+import { Activity, BookOpen, GraduationCap, Users } from 'lucide-react';
 
 import {
   Sidebar,
@@ -16,22 +16,22 @@ const items = [
   {
     title: 'Student',
     url: 'student',
-    icon: Home,
+    icon: GraduationCap,
   },
   {
     title: 'Faculty',
     url: 'faculty',
-    icon: Inbox,
+    icon: Users,
   },
   {
     title: 'Program',
     url: 'program',
-    icon: Calendar,
+    icon: BookOpen,
   },
   {
     title: 'Status',
     url: 'status',
-    icon: Search,
+    icon: Activity,
   },
 ];
 
