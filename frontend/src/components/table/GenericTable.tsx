@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -6,26 +6,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
-import ActionCell from "./ActionCell";
-import SkeletonTable from "./SkeletonTable";
+import ActionCell from './ActionCell';
+import SkeletonTable from './SkeletonTable';
 
-import TablePagination from "@/components/table/TablePagination";
+import SearchFilter from '@/components/filter/SearchFilter';
+import TablePagination from '@/components/table/TablePagination';
+import LoadingButton from '@/components/ui/loadingButton';
+import { Separator } from '@/components/ui/separator';
 import {
   useGenericTableData,
   useTableAdd,
   useTableDelete,
-  useTableEdit,
-} from "@/hooks/useTableDataOperation";
-import { GenericTableProps } from "@/types/table";
-import { PlusCircle } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import SearchFilter from "@/components/filter/SearchFilter";
-import { Accordion } from "@/components/ui/accordion";
-import LoadingButton from "@/components/ui/loadingButton";
-import { Separator } from "@/components/ui/separator";
-import TableSort from "./TableSort";
+} from '@/hooks/useTableDataOperation';
+import { GenericTableProps } from '@/types/table';
+import { PlusCircle } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import TableSort from './TableSort';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
@@ -39,9 +37,10 @@ const GenericTable = <T extends { id: string }>({
   filterOptions,
   requireDeleteConfirmation,
   additionalActions = [],
+  disablePagination = false,
 }: GenericTableProps<T>) => {
   const defaultSortColumn = columns.find(
-    (column) => column.isDefaultSort
+    (column) => column.isDefaultSort,
   )?.header;
 
   const { data, pagination, state, sort, filters } = useGenericTableData({
@@ -78,7 +77,7 @@ const GenericTable = <T extends { id: string }>({
       setEditDialogOpen(false);
       setCurrentEditItem(null);
     } catch (error) {
-      console.error("Error saving edit:", error);
+      console.error('Error saving edit:', error);
     } finally {
       setIsEditSaving(false);
     }
@@ -90,7 +89,7 @@ const GenericTable = <T extends { id: string }>({
 
   const tableBody = useMemo(() => {
     if (state.isFetching) {
-      return <SkeletonTable rows={pagination.pageSize} variant="body" />;
+      return <SkeletonTable rows={pagination.pageSize} variant='body' />;
     }
 
     if (data.length === 0 || state.isError) {
@@ -102,7 +101,7 @@ const GenericTable = <T extends { id: string }>({
         <TableBody>
           <TableRow>
             <TableCell
-              className="text-center text-red-500"
+              className='text-center text-red-500'
               colSpan={columns.length + 1}
             >
               No data found
@@ -115,11 +114,11 @@ const GenericTable = <T extends { id: string }>({
     return (
       <TableBody>
         {data.map((cell: T) => (
-          <TableRow className="p-0" key={cell.id}>
+          <TableRow className='p-0' key={cell.id}>
             {columns.map((column) => (
               <TableCell
                 key={column.key.toString()}
-                className="py-1"
+                className='py-1'
                 style={{
                   minWidth: column.style?.minWidth,
                   maxWidth: column.style?.maxWidth,
@@ -131,7 +130,7 @@ const GenericTable = <T extends { id: string }>({
                   : String(cell[column.key])}
               </TableCell>
             ))}
-            <TableCell className="min-w-40 py-1">
+            <TableCell className='min-w-20 py-1'>
               <ActionCell
                 requireDeleteConfirmation={requireDeleteConfirmation}
                 isDeleting={deletingRow === cell.id && isDeleting}
@@ -169,7 +168,7 @@ const GenericTable = <T extends { id: string }>({
       <TableHeader>
         <TableRow>
           {columns.map((column) => (
-            <TableHead key={column.header} className="text-blue-500">
+            <TableHead key={column.header} className='text-blue-500'>
               <TableSort
                 columnKey={String(column.key)}
                 columnHeader={column.header}
@@ -179,25 +178,25 @@ const GenericTable = <T extends { id: string }>({
               />
             </TableHead>
           ))}
-          <TableHead className="w-4 text-blue-500">Action</TableHead>
+          <TableHead className='w-4 text-blue-500'>Action</TableHead>
         </TableRow>
       </TableHeader>
     ),
-    [columns, sort.sortConfig, sort.onSort]
+    [columns, sort.sortConfig, sort.onSort],
   );
 
   const renderFilters = useMemo(
     () =>
       filterOptions.map((filterOption) => {
         switch (filterOption.type) {
-          case "search":
+          case 'search':
             return (
               <SearchFilter
                 key={filterOption.id}
                 onChange={(value) => filters.onChange(filterOption.id, value)}
                 {...filterOption}
-                value={filters.value[filterOption.id] || ""}
-                componentType="accordion"
+                value={filters.value[filterOption.id] || ''}
+                componentType='popover'
               />
             );
 
@@ -205,57 +204,55 @@ const GenericTable = <T extends { id: string }>({
             return null;
         }
       }),
-    [filterOptions, filters.onChange, filters.value]
+    [filterOptions, filters.onChange, filters.value],
   );
 
   return (
-    <>
-      <div className="flex h-full min-w-64 flex-col gap-4 rounded-md border-2 px-4">
-        <h2 className="pt-4 text-center text-2xl font-semibold">
-          {tableTitle}
-        </h2>
+    <div className='flex flex-col gap-4 w-full'>
+      {/* Table heading and actions */}
+      <div className='flex flex-col gap-2'>
+        <h2 className='text-2xl font-semibold text-center'>{tableTitle}</h2>
 
-        <LoadingButton
-          variant="outline"
-          className="w-full items-center gap-2"
-          onClick={handleShowDialog}
-          isLoading={isAdding}
-        >
-          <PlusCircle className="h-5 w-5" />
-          {addingTitle}
-        </LoadingButton>
-        <Separator />
+        <div className='flex justify-between items-center'>
+          <div className='flex items-center gap-2'>{renderFilters}</div>
 
-        {filterOptions.length > 0 && (
-          <>
-            <p className="font-semibold text-gray-400">Filters</p>
-            <Accordion type="multiple" className="flex w-full flex-col gap-2">
-              {renderFilters}
-            </Accordion>
-          </>
-        )}
+          <LoadingButton
+            variant='outline'
+            className='flex items-center gap-2'
+            onClick={handleShowDialog}
+            isLoading={isAdding}
+          >
+            <PlusCircle className='h-5 w-5' />
+            {addingTitle}
+          </LoadingButton>
+        </div>
       </div>
 
-      <div className="flex-grow overflow-hidden">
+      {/* Table content */}
+      <div className='border rounded-md'>
         {state.isLoading ? (
           <SkeletonTable rows={pagination.pageSize} columns={columns.length} />
         ) : (
-          <div className="overflow-x-auto">
+          <div className='overflow-x-auto'>
             <Table>
               {tableHeader}
-
               {tableBody}
             </Table>
 
-            <Separator />
-            <TablePagination {...pagination} />
+            {/* Conditionally render pagination */}
+            {!disablePagination && (
+              <>
+                <Separator />
+                <TablePagination {...pagination} />
+              </>
+            )}
           </div>
         )}
       </div>
 
       {/* Add Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-screen w-[90%] h-[97%] p-4">
+        <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
           <FormComponent
             onSubmit={handleAdd}
             onCancel={() => setDialogOpen(false)}
@@ -265,7 +262,7 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-screen w-[90%] h-[97%] p-4">
+        <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
           <FormComponent
             id={currentEditItem?.id}
             onSubmit={handleEditSave}
@@ -278,11 +275,11 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Detail Dialog */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className="max-w-screen w-[90%] h-[97%] p-4">
+        <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
           <DetailComponent id={currentDetailItem?.id} />
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 

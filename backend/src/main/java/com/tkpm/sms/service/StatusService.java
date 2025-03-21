@@ -6,6 +6,7 @@ import com.tkpm.sms.entity.Status;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.repository.StatusRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -41,19 +42,22 @@ public class StatusService {
     }
 
     public Status getStatusByName(String name) {
-        return statusRepository.findStatusByName(name.toLowerCase()).orElseThrow(
+        return statusRepository.findStatusByName(name).orElseThrow(
                 () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Status with name %s not found", name))));
     }
 
+
+    @Transactional
     public Status createStatus(StatusRequestDto status) {
         if(statusRepository.existsStatusByName(status.getName())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Status with name %s already existed", status.getName())));
         }
-        var newStatus = Status.builder().name(status.getName().toLowerCase()).build();
+        var newStatus = Status.builder().name(status.getName()).build();
 
         return statusRepository.save(newStatus);
     }
 
+    @Transactional
     public Status updateStatus(Integer id, StatusRequestDto status) {
         if(statusRepository.existsStatusByName(status.getName())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Status with name %s already existed", status.getName())));
@@ -61,10 +65,11 @@ public class StatusService {
 
         Status statusToUpdate = statusRepository.findById(id).orElseThrow(
                 () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Status with id %s not found", id))));
-        statusToUpdate.setName(status.getName().toLowerCase());
+        statusToUpdate.setName(status.getName());
         return statusRepository.save(statusToUpdate);
     }
 
+    @Transactional
     public void deleteStatus(Integer id) {
         Status status = statusRepository.findById(id).orElseThrow(
                 () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Status with id %s not found", id))));

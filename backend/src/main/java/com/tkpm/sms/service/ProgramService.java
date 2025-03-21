@@ -6,6 +6,7 @@ import com.tkpm.sms.entity.Program;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.repository.ProgramRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
@@ -40,19 +41,21 @@ public class ProgramService {
     }
 
     public Program getProgramByName(String name) {
-        return programRepository.findProgramByName(name.toLowerCase()).orElseThrow(
+        return programRepository.findProgramByName(name).orElseThrow(
                 () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Program with name %s not found", name))));
     }
 
+    @Transactional
     public Program createProgram(ProgramRequestDto program) {
         if(programRepository.existsProgramByName(program.getName())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Program with name %s already existed", program.getName())));
         }
 
-        var newProgram = Program.builder().name(program.getName().toLowerCase()).build();
+        var newProgram = Program.builder().name(program.getName()).build();
         return programRepository.save(newProgram);
     }
 
+    @Transactional
     public Program updateProgram(Integer id, ProgramRequestDto program) {
         if(programRepository.existsProgramByName(program.getName())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Program with name %s already existed", program.getName())));
@@ -60,10 +63,11 @@ public class ProgramService {
 
         Program programToUpdate = programRepository.findById(id).orElseThrow(
                 () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Program with id %s not found", id))));
-        programToUpdate.setName(program.getName().toLowerCase());
+        programToUpdate.setName(program.getName());
         return programRepository.save(programToUpdate);
     }
 
+    @Transactional
     public void deleteProgram(Integer id) {
         var program = programRepository.findById(id).orElseThrow(
                 () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Program with id %s not found", id))));

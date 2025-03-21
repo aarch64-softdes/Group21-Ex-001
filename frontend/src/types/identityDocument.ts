@@ -1,22 +1,14 @@
-interface BaseIdentityDocument {
-  documentNumber: string;
-  issueDate: string;
-  issuePlace: string;
-  expiryDate: string;
+interface IdentityDocument {
+  type: 'Identity Card' | 'Chip Card' | 'Passport';
+  number: string;
+  issuedDate: Date;
+  expiryDate: Date;
+  issuedBy: string;
+
+  hasChip?: boolean;
+
+  country?: string;
+  notes?: string;
 }
 
-interface CMND extends BaseIdentityDocument {
-  type: "CMND";
-}
-
-interface CCCD extends BaseIdentityDocument {
-  type: "CCCD";
-  hasChip: boolean;
-}
-
-interface Passport extends BaseIdentityDocument {
-  type: "Passport";
-  issueCountry: string;
-}
-
-export type IdentityDocument = CMND | CCCD | Passport;
+export default IdentityDocument;
