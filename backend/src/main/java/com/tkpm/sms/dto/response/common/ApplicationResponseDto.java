@@ -15,6 +15,7 @@ public class ApplicationResponseDto<T> {
     @Builder.Default
     int code = 200;
     String message;
+    String errorCode;
     T content;
 
     public static <T> ApplicationResponseDto<T> success(T content, String message) {
@@ -48,6 +49,7 @@ public class ApplicationResponseDto<T> {
         return ApplicationResponseDto.<T>builder()
                 .code(exception.getHttpStatus().value())
                 .message(exception.getMessage())
+                .errorCode(exception.name())
                 .build();
     }
 }

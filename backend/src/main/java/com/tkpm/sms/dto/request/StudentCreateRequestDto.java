@@ -34,8 +34,12 @@ public class StudentCreateRequestDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     LocalDate dob;
     String gender;
+
+    @NotEmpty(message = "NOT_NULL;Faculty is required")
     String faculty;
+    @NotNull(message = "NOT_NULL;Course is required")
     Integer course;
+    @NotEmpty(message = "NOT_NULL;Program is required")
     String program;
 
     @Email(message = "INVALID_EMAIL")
@@ -50,7 +54,7 @@ public class StudentCreateRequestDto {
     @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE")
     String phone;
 
-    @NotNull
+    @NotEmpty(message = "NOT_NULL;Status is required")
     String status;
 
     @NotNull(message = "NOT_NULL;Identity is required")

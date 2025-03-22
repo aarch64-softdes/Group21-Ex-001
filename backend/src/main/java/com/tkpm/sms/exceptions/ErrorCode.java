@@ -15,7 +15,7 @@ public enum ErrorCode {
     INVALID_ERROR_KEY("Invalid error key", HttpStatus.INTERNAL_SERVER_ERROR),
 
     //Validate
-    INVALID_NAME("Invalid name", HttpStatus.BAD_REQUEST),
+    INVALID_NAME("Invalid name, this field should only contain letter", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL("Invalid email format", HttpStatus.BAD_REQUEST),
     INVALID_PHONE("Invalid phone number", HttpStatus.BAD_REQUEST),
     INVALID_STATUS("Invalid status", HttpStatus.BAD_REQUEST),
