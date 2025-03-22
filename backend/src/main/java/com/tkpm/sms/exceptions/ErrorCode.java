@@ -1,6 +1,9 @@
 package com.tkpm.sms.exceptions;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -16,19 +19,17 @@ public enum ErrorCode {
     INVALID_EMAIL("Invalid email format", HttpStatus.BAD_REQUEST),
     INVALID_PHONE("Invalid phone number", HttpStatus.BAD_REQUEST),
     INVALID_STATUS("Invalid status", HttpStatus.BAD_REQUEST),
-    NULL_VALUE("Value cannot be null", HttpStatus.BAD_REQUEST),
-    IDENTITY_TYPE_REQUIRED("Identity type is required", HttpStatus.BAD_REQUEST),
-    IDENTITY_NUMBER_REQUIRED("Number is required", HttpStatus.BAD_REQUEST),
-    IDENTITY_ISSUED_BY_REQUIRED("Issued by is required", HttpStatus.BAD_REQUEST),
-    IDENTITY_ISSUED_DATE_REQUIRED("Issued date is required", HttpStatus.BAD_REQUEST),
-    IDENTITY_EXPIRY_DATE_REQUIRED("Expiry date is required", HttpStatus.BAD_REQUEST),
+    NOT_NULL("Value cannot be null", HttpStatus.BAD_REQUEST),
 
+    // Resource
     NOT_FOUND("Resource not found", HttpStatus.NOT_FOUND),
     CONFLICT("Resource already existed", HttpStatus.CONFLICT),
 
-    //Identity
+    // Identity
     INVALID_IDENTITY_TYPE("Invalid identity type, available values are {values}", HttpStatus.BAD_REQUEST),
-    INVALID_IDENTITY_NUMBER("Invalid identity number", HttpStatus.BAD_REQUEST),
+    INVALID_IDENTITY_CARD_NUMBER("Invalid identity number, with Identity Card the number should contain 9 digits", HttpStatus.BAD_REQUEST),
+    INVALID_CHIP_BASE_NUMBER("Invalid identity number, with Chip Base the number should contain 12 digits", HttpStatus.BAD_REQUEST),
+    INVALID_PASSPORT_NUMBER("Invalid identity number, with Passport the number should contain first 2 uppercase letter and 7 digits", HttpStatus.BAD_REQUEST),
     INVALID_IDENTITY_ISSUED_DATE("Identity issued date must be before expired date", HttpStatus.BAD_REQUEST),
 
     // File error

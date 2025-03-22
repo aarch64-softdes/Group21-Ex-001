@@ -1,6 +1,6 @@
 package com.tkpm.sms.dto.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatusRequestDto {
-    @NotNull(message = "Status's name is required")
+    @NotEmpty(message = "NOT_NULL;Status's name is required")
     String name;
 }
 

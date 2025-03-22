@@ -1,5 +1,6 @@
 package com.tkpm.sms.dto.request;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jdk.jfr.BooleanFlag;
 import lombok.*;
@@ -14,19 +15,19 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class IdentityCreateRequestDto {
-    @NotNull(message = "IDENTITY_TYPE_REQUIRED")
+    @NotEmpty(message = "NOT_NULL;Identity type is required")
     String type;
 
-    @NotNull(message = "IDENTITY_NUMBER_REQUIRED")
+    @NotEmpty(message = "NOT_NULL;Identity number is required")
     String number;
 
-    @NotNull(message = "IDENTITY_ISSUED_BY_REQUIRED")
+    @NotEmpty(message = "NOT_NULL;Identity issued agency is required")
     String issuedBy;
 
-    @NotNull(message = "IDENTITY_ISSUED_DATE_REQUIRED")
+    @NotNull(message = "NOT_NULL;Identity issued date is required")
     LocalDate issuedDate;
 
-    @NotNull(message = "IDENTITY_EXPIRY_DATE_REQUIRED")
+    @NotNull(message = "NOT_NULL;Identity expiry date is required")
     LocalDate expiryDate;
 
     // For chip-based

@@ -38,15 +38,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApplicationResponseDto<Object>> handleValidationException(MethodArgumentNotValidException exception) {
         log.error("Validation error", exception);
 
-        var enumKey = exception.getFieldError().getDefaultMessage();
+        var defaultMessage = exception.getFieldError().getDefaultMessage();
         var error = ErrorCode.INVALID_ERROR_KEY;
-        log.info("Enum key: {}", enumKey);
+        log.info("Default message: {}", defaultMessage);
         try {
-            error = ErrorCode.valueOf(enumKey);
+            if (defaultMessage != null && defaultMessage.contains(";")) {
+                var enumKey = defaultMessage.split(";")[0];
+                var message = defaultMessage.split(";")[1];
+                log.info("Enum key: {}", enumKey);
+                error = ErrorCode.valueOf(enumKey);
+
+                if (message != null && !message.isEmpty()) {
+                    error.setMessage(message);
+                }
+            } else {
+                error = ErrorCode.valueOf(defaultMessage);
+            }
 
             var constrainViolation = exception.getBindingResult().getAllErrors().get(0).unwrap(ConstraintViolation.class);
             var attributes = constrainViolation.getConstraintDescriptor().getAttributes();
-                log.info("Attributes: {}", attributes);
+            log.info("Attributes: {}", attributes);
             if (attributes.containsKey(VALUES_ATTRIBUTE)) {
                 error.setMessage(mapEnumAttribute(error.getMessage(), attributes));
             }
