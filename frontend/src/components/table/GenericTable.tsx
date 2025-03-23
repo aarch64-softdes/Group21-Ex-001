@@ -97,7 +97,18 @@ const GenericTable = <T extends { id: string }>({
 
     if (data.length === 0 || state.isError) {
       if (state.isError) {
-        throw state.error;
+        return (
+          <TableBody>
+            <TableRow>
+              <TableCell
+                className='text-center text-red-500'
+                colSpan={columns.length + 1}
+              >
+                Error fetching data
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        );
       }
 
       return (

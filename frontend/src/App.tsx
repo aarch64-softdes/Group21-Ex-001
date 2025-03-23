@@ -1,5 +1,9 @@
 // App.tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import { Suspense } from 'react';
 import {
   Navigate,
@@ -15,13 +19,22 @@ import ProgramPage from './pages/programPage';
 import StatusPage from './pages/statusPage';
 import StudentPage from './pages/studentPage';
 import ErrorBoundary from './components/error/ErrorBoundary';
+import { ApiError } from './lib/errors';
+import { showErrorToast } from './lib/toast-utils';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
+      retry: 1,
     },
+    mutations: {},
   },
+  queryCache: new QueryCache({
+    onError: (error: ApiError) => {
+      showErrorToast(error.message);
+    },
+  }),
 });
 
 function App() {

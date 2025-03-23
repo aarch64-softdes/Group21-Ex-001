@@ -1,33 +1,41 @@
-export class AppError extends Error {
+export class ApiError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'AppError';
+    this.name = 'ApiError';
   }
 }
 
-export class ResourceNotFoundError extends AppError {
-  constructor(resource: string, id?: string) {
-    super(`${resource}${id ? ` with ID ${id}` : ''} not found`);
+export class ResourceNotFoundError extends ApiError {
+  constructor(message = 'Resource not found') {
+    super(message);
     this.name = 'ResourceNotFoundError';
   }
 }
 
-export class PathNotFoundError extends AppError {
-  constructor(path?: string) {
-    super(`Path${path ? ` "${path}"` : ''} not found`);
-    this.name = 'PathNotFoundError';
+export class ValidationError extends ApiError {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
   }
 }
 
-// Helper to extract error message from various error types
-export function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
+export class AuthenticationError extends ApiError {
+  constructor(message = 'Authentication failed') {
+    super(message);
+    this.name = 'AuthenticationError';
   }
+}
 
-  if (typeof error === 'string') {
-    return error;
+export class AuthorizationError extends ApiError {
+  constructor(message = 'You do not have permission to perform this action') {
+    super(message);
+    this.name = 'AuthorizationError';
   }
+}
 
-  return 'An unknown error occurred';
+export class ServerError extends ApiError {
+  constructor(message = 'Internal server error') {
+    super(message);
+    this.name = 'ServerError';
+  }
 }
