@@ -15,6 +15,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private final String VALUES_ATTRIBUTE = "values";
+    private final String FIELD_ATTRIBUTE = "field";
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ApplicationResponseDto<Object>> handleApplicationException(ApplicationException exception) {
@@ -37,27 +38,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApplicationResponseDto<Object>> handleValidationException(MethodArgumentNotValidException exception) {
         log.error("Validation error", exception);
-
-        var defaultMessage = exception.getFieldError().getDefaultMessage();
+        var enumKey = exception.getFieldError().getDefaultMessage();
         var error = ErrorCode.INVALID_ERROR_KEY;
-        log.info("Default message: {}", defaultMessage);
         try {
-            if (defaultMessage != null && defaultMessage.contains(";")) {
-                var enumKey = defaultMessage.split(";")[0];
-                var message = defaultMessage.split(";")[1];
-                log.info("Enum key: {}", enumKey);
-                error = ErrorCode.valueOf(enumKey);
-
-                if (message != null && !message.isEmpty()) {
-                    error.setMessage(message);
-                }
-            } else {
-                error = ErrorCode.valueOf(defaultMessage);
-            }
-
             var constrainViolation = exception.getBindingResult().getAllErrors().get(0).unwrap(ConstraintViolation.class);
             var attributes = constrainViolation.getConstraintDescriptor().getAttributes();
-            log.info("Attributes: {}", attributes);
+
+            String requiredMessage = getRequiredMessage(attributes.get(FIELD_ATTRIBUTE).toString());
+            error = ErrorCode.valueOf(enumKey);
+            error.setMessage(requiredMessage);
+
             if (attributes.containsKey(VALUES_ATTRIBUTE)) {
                 error.setMessage(mapEnumAttribute(error.getMessage(), attributes));
             }
@@ -73,6 +63,10 @@ public class GlobalExceptionHandler {
         String[] values = (String[]) params.get(VALUES_ATTRIBUTE);
 
         return message.replace("{" + "values" + "}", Arrays.toString(values));
+    }
+
+    private String getRequiredMessage(String requiredField) {
+        return String.format("%s is required", requiredField);
     }
 }
 

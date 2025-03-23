@@ -23,8 +23,6 @@ public enum IdentityType {
 
     public static IdentityType fromString(String value) {
         for (IdentityType type : IdentityType.values()) {
-            log.info("value = {}", value);
-            log.info("type = {}", type.displayName);
             if (type.displayName.equalsIgnoreCase(value)) {
                 return type;
             }

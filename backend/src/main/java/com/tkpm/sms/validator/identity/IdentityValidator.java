@@ -61,12 +61,12 @@ public class IdentityValidator implements ConstraintValidator<IdentityConstraint
         var identity = IdentityType.fromString(type);
         log.info("Identity type: {}", identity);
         if (identity == null) {
-            addValidationError(ErrorCode.INVALID_IDENTITY_TYPE, context);
+            addValidationError(ErrorCode.INVALID_IDENTITY_TYPE, "type", context);
             return false;
         }
-        log.info("Contain key: {}", identityTypeErrorCodeMap.containsKey(identity));
+
         if (!number.matches(identity.getPattern())) {
-            addValidationError(identityTypeErrorCodeMap.get(identity), context);
+            addValidationError(identityTypeErrorCodeMap.get(identity), "number", context);
             return false;
         }
 
@@ -80,9 +80,9 @@ public class IdentityValidator implements ConstraintValidator<IdentityConstraint
         return true;
     }
 
-    private void addValidationError(ErrorCode errorCode, ConstraintValidatorContext context) {
+    private void addValidationError(ErrorCode errorCode, String propertyType, ConstraintValidatorContext context) {
         context.buildConstraintViolationWithTemplate(errorCode.name())
-                .addPropertyNode("type")
+                .addPropertyNode(propertyType)
                 .addConstraintViolation();
     }
 }

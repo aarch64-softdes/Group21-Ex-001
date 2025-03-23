@@ -1,22 +1,15 @@
 package com.tkpm.sms.dto.request;
 
-import java.time.LocalDate;
-
-import jakarta.validation.constraints.NotEmpty;
-import org.springframework.format.annotation.DateTimeFormat;
-
+import com.tkpm.sms.validator.RequiredConstraint;
 import com.tkpm.sms.validator.identity.IdentityConstraint;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -24,10 +17,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentCreateRequestDto {
-    @NotEmpty(message = "NOT_NULL;Student ID is required")
+    @RequiredConstraint(field = "Student ID")
     String studentId;
 
-    @NotEmpty(message = "NOT_NULL;Student name is required")
+    @RequiredConstraint(field = "Student name")
     @Pattern(regexp = "^[\\p{L}\\s]*$", message = "INVALID_NAME")
     String name;
 
@@ -35,29 +28,31 @@ public class StudentCreateRequestDto {
     LocalDate dob;
     String gender;
 
-    @NotEmpty(message = "NOT_NULL;Faculty is required")
+    @RequiredConstraint(field = "Faculty")
     String faculty;
-    @NotNull(message = "NOT_NULL;Course is required")
+
+    @RequiredConstraint(field = "Course")
     Integer course;
-    @NotEmpty(message = "NOT_NULL;Program is required")
+
+    @RequiredConstraint(field = "Program")
     String program;
 
     @Email(message = "INVALID_EMAIL")
-    @NotEmpty(message = "NOT_NULL;Student email is required")
+    @RequiredConstraint(field = "Student email")
     String email;
 
     AddressCreateRequestDto permanentAddress;
     AddressCreateRequestDto temporaryAddress;
     AddressCreateRequestDto mailingAddress;
 
-    @NotEmpty(message = "NOT_NULL;Student phone number is required")
-    @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE")
+    @RequiredConstraint(field = "Phone number")
+    @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE_NUMBER")
     String phone;
 
-    @NotEmpty(message = "NOT_NULL;Status is required")
+    @RequiredConstraint(field = "Status")
     String status;
 
-    @NotNull(message = "NOT_NULL;Identity is required")
+    @RequiredConstraint(field = "Identity")
     @IdentityConstraint(values = {"Identity Card", "Chip Card", "Passport"})
     @Valid
     IdentityCreateRequestDto identity;
