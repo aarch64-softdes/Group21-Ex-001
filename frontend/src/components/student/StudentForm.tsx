@@ -34,8 +34,8 @@ import {
   useEntityPrograms,
   useEntityStatuses,
   useGenders,
-} from '@/hooks/useMetadata';
-import { useStudent } from '@/hooks/useStudentApi';
+} from '@/hooks/api/useMetadata';
+import { useStudent } from '@/hooks/api/useStudentApi';
 import Student, { CreateStudentDTO } from '@/types/student';
 import { FormComponentProps } from '@/types/table';
 import { Loader2 } from 'lucide-react';

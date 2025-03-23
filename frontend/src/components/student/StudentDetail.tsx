@@ -1,6 +1,6 @@
 import React from 'react';
 import { DetailComponentProps } from '@/types/table';
-import { useStudent } from '@/hooks/useStudentApi';
+import { useStudent } from '@/hooks/api/useStudentApi';
 import { Loader2, User, Mail, Phone, School, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QueryHookParams } from '@/types/table';
 import StudentService from '@/services/studentService';
 import { CreateStudentDTO, UpdateStudentDTO } from '@/types/student';
+import { showSuccessToast } from '@/lib/toast-utils';
 
 const studentService = new StudentService();
 
@@ -54,6 +55,7 @@ export const useCreateStudent = () => {
     mutationFn: (data: CreateStudentDTO) => studentService.addNewStudent(data),
     onSuccess: () => {
       queryClient.invalidateQueries();
+      showSuccessToast('Student added successfully');
     },
   });
 };
@@ -66,6 +68,7 @@ export const useUpdateStudent = () => {
       studentService.updateStudent(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries();
+      showSuccessToast('Student updated successfully');
     },
   });
 };
@@ -77,6 +80,7 @@ export const useDeleteStudent = () => {
     mutationFn: (id: string) => studentService.deleteStudent(id),
     onSuccess: () => {
       queryClient.invalidateQueries();
+      showSuccessToast('Student deleted successfully');
     },
   });
 };

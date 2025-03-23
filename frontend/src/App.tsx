@@ -16,7 +16,13 @@ import StatusPage from './pages/statusPage';
 import StudentPage from './pages/studentPage';
 import ErrorBoundary from './components/error/ErrorBoundary';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   return (
