@@ -20,9 +20,7 @@ public class IdentityDto {
     String issuedBy;
     LocalDate issuedDate;
     LocalDate expiryDate;
-
     String country;
     String notes;
-
     boolean hasChip;
 }

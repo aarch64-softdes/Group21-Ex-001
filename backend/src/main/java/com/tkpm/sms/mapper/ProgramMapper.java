@@ -7,6 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface ProgramMapper {
     ProgramDto toProgramDto(Program program);
-
+    
     Program toProgram(ProgramDto programDto);
 }

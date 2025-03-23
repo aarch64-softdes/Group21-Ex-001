@@ -1,9 +1,6 @@
-package com.tkpm.sms.dto.request;
+package com.tkpm.sms.dto.request.identity;
 
-import com.tkpm.sms.validator.RequiredConstraint;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jdk.jfr.BooleanFlag;
+import com.tkpm.sms.validator.required.RequiredConstraint;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -36,5 +33,6 @@ public class IdentityCreateRequestDto {
 
     // For passport
     String country;
+
     String notes;
 }

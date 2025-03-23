@@ -1,4 +1,4 @@
-package com.tkpm.sms.validator;
+package com.tkpm.sms.validator.required;
 
 import com.tkpm.sms.exceptions.ErrorCode;
 import jakarta.validation.ConstraintValidator;
@@ -17,6 +17,7 @@ public class RequiredValidator implements ConstraintValidator<RequiredConstraint
         if (Objects.isNull(value)) {
             return false;
         }
+
         if (value instanceof String && ((String) value).isBlank()) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(ErrorCode.FIELD_REQUIRED.name())

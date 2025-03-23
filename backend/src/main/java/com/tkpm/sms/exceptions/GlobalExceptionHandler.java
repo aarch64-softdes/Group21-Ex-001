@@ -2,8 +2,11 @@ package com.tkpm.sms.exceptions;
 
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import jakarta.validation.ConstraintViolation;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,9 +16,10 @@ import java.util.Map;
 
 @Slf4j
 @ControllerAdvice
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GlobalExceptionHandler {
-    private final String VALUES_ATTRIBUTE = "values";
-    private final String FIELD_ATTRIBUTE = "field";
+    static String VALUES_ATTRIBUTE = "values";
+    static String FIELD_ATTRIBUTE = "field";
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ApplicationResponseDto<Object>> handleApplicationException(ApplicationException exception) {
@@ -23,7 +27,10 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = exception.getErrorCode();
         var response = ApplicationResponseDto.failure(errorCode);
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
+
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -32,40 +39,74 @@ public class GlobalExceptionHandler {
 
         var errorCode = ErrorCode.UNCATEGORIZED;
         var response = ApplicationResponseDto.failure(errorCode);
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
+
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApplicationResponseDto<Object>> handleValidationException(MethodArgumentNotValidException exception) {
         log.error("Validation error", exception);
-        var enumKey = exception.getFieldError().getDefaultMessage();
-        var error = ErrorCode.INVALID_ERROR_KEY;
-        try {
-            var constrainViolation = exception.getBindingResult().getAllErrors().get(0).unwrap(ConstraintViolation.class);
-            var attributes = constrainViolation.getConstraintDescriptor().getAttributes();
 
-            String requiredMessage = getRequiredMessage(attributes.get(FIELD_ATTRIBUTE).toString());
-            error = ErrorCode.valueOf(enumKey);
-            error.setMessage(requiredMessage);
-
-            if (attributes.containsKey(VALUES_ATTRIBUTE)) {
-                error.setMessage(mapEnumAttribute(error.getMessage(), attributes));
-            }
-
-        } catch (Exception e) {
-            // Ignore
+        FieldError fieldError = exception.getFieldError();
+        if (fieldError == null) {
+            return handleInvalidErrorKey();
         }
-        var response = ApplicationResponseDto.failure(error);
-        return ResponseEntity.badRequest().body(response);
+
+        String enumKey = fieldError.getDefaultMessage();
+        ErrorCode error = processValidationError(exception, enumKey);
+
+        return ResponseEntity
+                .badRequest()
+                .body(ApplicationResponseDto.failure(error));
     }
 
-    private String mapEnumAttribute(String message, Map<String, Object> params) {
-        String[] values = (String[]) params.get(VALUES_ATTRIBUTE);
+    private ErrorCode processValidationError(
+            MethodArgumentNotValidException exception,
+            String enumKey
+    ) {
+        try {
+            ConstraintViolation<?> constraintViolation = exception
+                    .getBindingResult()
+                    .getAllErrors()
+                    .get(0)
+                    .unwrap(ConstraintViolation.class);
 
+            Map<String, Object> attributes =
+                    constraintViolation.getConstraintDescriptor().getAttributes();
+
+            ErrorCode error = ErrorCode.valueOf(enumKey);
+
+            if (attributes.containsKey(FIELD_ATTRIBUTE)) {
+                String requiredField = attributes.get(FIELD_ATTRIBUTE).toString();
+                error.setMessage(formatRequiredMessage(requiredField));
+            }
+
+            if (attributes.containsKey(VALUES_ATTRIBUTE)) {
+                error.setMessage(formatEnumValues(error.getMessage(), attributes));
+            }
+
+            return error;
+        } catch (Exception e) {
+            log.debug("Error processing validation error", e);
+            return ErrorCode.INVALID_ERROR_KEY;
+        }
+    }
+
+    private ResponseEntity<ApplicationResponseDto<Object>> handleInvalidErrorKey() {
+        ErrorCode errorCode = ErrorCode.INVALID_ERROR_KEY;
+        return ResponseEntity
+                .badRequest()
+                .body(ApplicationResponseDto.failure(errorCode));
+    }
+
+    private String formatEnumValues(String message, Map<String, Object> params) {
+        String[] values = (String[]) params.get(VALUES_ATTRIBUTE);
         return message.replace("{" + "values" + "}", Arrays.toString(values));
     }
 
-    private String getRequiredMessage(String requiredField) {
+    private String formatRequiredMessage(String requiredField) {
         return String.format("%s is required", requiredField);
     }
 }

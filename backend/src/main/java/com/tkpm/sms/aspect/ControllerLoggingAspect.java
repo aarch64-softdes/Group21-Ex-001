@@ -11,20 +11,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -41,10 +37,10 @@ public class ControllerLoggingAspect {
     BaseLogger consoleLogger;
     String loggerType;
 
-
-    public ControllerLoggingAspect(LoggerManager loggerManager,
-                                   @Value("${logging.controller.logger-type:JSON}")
-                                   String loggerType) {
+    public ControllerLoggingAspect(
+            LoggerManager loggerManager,
+            @Value("${logging.controller.logger-type:JSON}") String loggerType
+    ) {
         this.loggerManager = loggerManager;
         this.consoleLogger = loggerManager.getLogger(LoggerType.CONSOLE);
         this.loggerType = loggerType;
@@ -67,9 +63,10 @@ public class ControllerLoggingAspect {
         correlationId.set(UUID.randomUUID().toString()); // TODO: get correlation ID from request header after updating frontend
 
         HttpServletRequest request = getCurrentRequest();
-        if (request == null) {
+        if (Objects.isNull(request)) {
             return;
         }
+
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
 

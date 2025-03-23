@@ -31,6 +31,7 @@ public class JsonStrategy implements FileStrategy {
             jsonMapper.writerWithDefaultPrettyPrinter().writeValue(outputStream, data);
         } catch (IOException e) {
             log.error("Failed to export file with Json format", e);
+
             throw new ApplicationException(ErrorCode.FAIL_TO_EXPORT_FILE.withMessage("Failed to export file with Json format"));
         }
 
@@ -40,11 +41,15 @@ public class JsonStrategy implements FileStrategy {
     @Override
     public void importFile(MultipartFile file) {
         List<StudentFileDto> students;
+
         try {
-            students = jsonMapper.readValue(file.getInputStream(),
-                    jsonMapper.getTypeFactory().constructCollectionType(List.class, StudentFileDto.class));
+            students = jsonMapper.readValue(
+                    file.getInputStream(),
+                    jsonMapper.getTypeFactory()
+                            .constructCollectionType(List.class, StudentFileDto.class));
         } catch (IOException e) {
             log.info("Error reading file", e);
+
             throw new ApplicationException(ErrorCode.FAIL_TO_IMPORT_FILE.withMessage("Fail to import students data from JSON"));
         }
 

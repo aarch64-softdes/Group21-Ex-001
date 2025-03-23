@@ -1,12 +1,12 @@
 package com.tkpm.sms.controller;
 
-import com.tkpm.sms.dto.request.StudentCreateRequestDto;
-import com.tkpm.sms.dto.request.StudentCollectionRequest;
-import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
-import com.tkpm.sms.dto.response.student.StudentDto;
+import com.tkpm.sms.dto.request.student.StudentCollectionRequest;
+import com.tkpm.sms.dto.request.student.StudentCreateRequestDto;
+import com.tkpm.sms.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
 import com.tkpm.sms.dto.response.common.PageDto;
+import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.student.StudentMinimalDto;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.service.StudentService;
@@ -57,6 +57,7 @@ public class StudentController {
         var student = studentService.getStudentDetail(id);
         var response = ApplicationResponseDto.success(
                 studentMapper.toStudentDto(student));
+
         return ResponseEntity.ok(response);
     }
 
@@ -66,7 +67,6 @@ public class StudentController {
             UriComponentsBuilder uriComponentsBuilder
     ) {
         var newStudent = studentService.createStudent(student);
-
         var response = ApplicationResponseDto.success(studentMapper.toStudentDto(newStudent));
         var locationOfNewUser = uriComponentsBuilder.path("api/students/{id}").buildAndExpand(newStudent.getId()).toUri();
 
@@ -76,15 +76,18 @@ public class StudentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteStudentById(@PathVariable String id) {
         studentService.deleteStudentById(id);
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<StudentDto>> updateStudent(
             @PathVariable String id,
-            @Valid @RequestBody StudentUpdateRequestDto student) {
+            @Valid @RequestBody StudentUpdateRequestDto student
+    ) {
         var updatedStudent = studentService.updateStudent(id, student);
         var response = ApplicationResponseDto.success(studentMapper.toStudentDto(updatedStudent));
+
         return ResponseEntity.ok(response);
     }
 }

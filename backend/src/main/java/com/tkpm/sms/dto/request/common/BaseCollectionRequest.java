@@ -1,13 +1,19 @@
 package com.tkpm.sms.dto.request.common;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BaseCollectionRequest {
-    private int page = 1;
-    private int size = 5;
-    private String sortBy = "name";
-    private String sortDirection = "asc";
+    int page = 1;
+
+    int size = 5;
+    
+    String sortBy = "name";
+
+    String sortDirection = "asc";
 }

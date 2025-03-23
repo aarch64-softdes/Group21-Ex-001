@@ -45,11 +45,13 @@ public class FileController {
             @RequestParam("file") MultipartFile multipartFile
     ) {
         fileService.importStudentFile(format, multipartFile);
+
         return ResponseEntity.ok().body(ApplicationResponseDto.success());
     }
 
     private String generateFilename(String extension) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
+
         return "students" + "_" + timestamp + "." + extension;
     }
 }

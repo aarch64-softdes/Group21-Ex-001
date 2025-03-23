@@ -30,6 +30,7 @@ public class FileMapperConfig {
         csvMapper.registerModule(new JavaTimeModule());
         csvMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         csvMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+
         return csvMapper;
     }
 

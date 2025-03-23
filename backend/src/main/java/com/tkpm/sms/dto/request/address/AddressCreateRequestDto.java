@@ -1,14 +1,15 @@
-package com.tkpm.sms.dto.request;
+package com.tkpm.sms.dto.request.address;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AddressUpdateRequestDto {
+public class AddressCreateRequestDto {
     String street;
     String ward;
     String district;

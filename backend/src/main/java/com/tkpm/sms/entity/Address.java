@@ -5,11 +5,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Entity
+@Table(name = "addresses")
 @Builder
 @Getter
 @Setter
-@Entity
-@Table(name = "addresses")
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

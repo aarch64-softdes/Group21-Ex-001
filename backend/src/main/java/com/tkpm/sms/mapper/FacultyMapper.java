@@ -7,7 +7,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface FacultyMapper {
-    FacultyDto toFacultyDto(Faculty faculty);
 
+    FacultyDto toFacultyDto(Faculty faculty);
+    
     Faculty toFaculty(FacultyDto facultyDto);
 }

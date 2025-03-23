@@ -1,6 +1,8 @@
-package com.tkpm.sms.dto.request;
+package com.tkpm.sms.dto.request.student;
 
-import com.tkpm.sms.validator.RequiredConstraint;
+import com.tkpm.sms.dto.request.address.AddressCreateRequestDto;
+import com.tkpm.sms.dto.request.identity.IdentityCreateRequestDto;
+import com.tkpm.sms.validator.required.RequiredConstraint;
 import com.tkpm.sms.validator.identity.IdentityConstraint;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -42,7 +44,9 @@ public class StudentCreateRequestDto {
     String email;
 
     AddressCreateRequestDto permanentAddress;
+
     AddressCreateRequestDto temporaryAddress;
+    
     AddressCreateRequestDto mailingAddress;
 
     @RequiredConstraint(field = "Phone number")

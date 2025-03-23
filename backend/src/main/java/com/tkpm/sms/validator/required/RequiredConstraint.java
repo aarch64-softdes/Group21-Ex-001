@@ -1,4 +1,4 @@
-package com.tkpm.sms.validator;
+package com.tkpm.sms.validator.required;
 
 import jakarta.validation.Constraint;
 
