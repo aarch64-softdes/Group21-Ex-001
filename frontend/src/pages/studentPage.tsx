@@ -15,8 +15,6 @@ import Student, { CreateStudentDTO } from '@/types/student';
 import { Column } from '@/types/table';
 import { FolderSearch, UserSearch } from 'lucide-react';
 import StudentService from '@/services/studentService';
-import { toast } from 'sonner';
-import { ResourceNotFoundError } from '@/lib/errors';
 
 const StudentPage: React.FC = () => {
   const studentService = new StudentService();

@@ -1,4 +1,3 @@
-// App.tsx
 import {
   QueryCache,
   QueryClient,

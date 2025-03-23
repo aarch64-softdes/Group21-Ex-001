@@ -26,6 +26,7 @@ import { useMemo, useState } from 'react';
 import TableSort from './TableSort';
 import FileImportButton from './FileImportButton';
 import FileExportButton from './FileExportButton';
+import { showErrorToast } from '@/lib/toast-utils';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,

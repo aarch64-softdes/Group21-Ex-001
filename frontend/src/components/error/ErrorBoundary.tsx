@@ -1,8 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { ResourceNotFoundError } from '@/lib/errors';
 import ErrorPage from './ErrorPage';
-import { toast } from 'sonner';
-import { showErrorToast } from '@/lib/toast-utils';
 
 interface Props {
   children: ReactNode;
@@ -24,21 +21,16 @@ class ErrorBoundary extends Component<Props, State> {
   };
 
   public static getDerivedStateFromError(error: Error): State {
-    // Only show ErrorPage for ResourceNotFoundError
-    if (error instanceof ResourceNotFoundError) {
-      return {
-        hasError: true,
-        error,
-        status: 404,
-        title: 'Resource Not Found',
-      };
-    }
-
-    throw error;
+    return {
+      hasError: true,
+      error,
+      status: 500,
+      title: 'An error occurred',
+    };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    showErrorToast(error.message || 'An unexpected error occurred');
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
   public resetError = () => {
