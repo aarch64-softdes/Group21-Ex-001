@@ -14,6 +14,7 @@ import FacultyPage from './pages/facultyPage';
 import ProgramPage from './pages/programPage';
 import StatusPage from './pages/statusPage';
 import StudentPage from './pages/studentPage';
+import ErrorBoundary from './components/error/ErrorBoundary';
 
 const queryClient = new QueryClient();
 
@@ -21,18 +22,20 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <Layout>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Routes>
-              <Route path='/' element={<Navigate to='/student' replace />} />
-              <Route path='/student' element={<StudentPage />} />
-              <Route path='/faculty' element={<FacultyPage />} />
-              <Route path='/program' element={<ProgramPage />} />
-              <Route path='/status' element={<StatusPage />} />
-              <Route path='*' element={<Navigate to='/' replace />} />
-            </Routes>
-          </Suspense>
-        </Layout>
+        <ErrorBoundary>
+          <Layout>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Routes>
+                <Route path='/' element={<Navigate to='/student' replace />} />
+                <Route path='/student' element={<StudentPage />} />
+                <Route path='/faculty' element={<FacultyPage />} />
+                <Route path='/program' element={<ProgramPage />} />
+                <Route path='/status' element={<StatusPage />} />
+                <Route path='*' element={<Navigate to='/' replace />} />
+              </Routes>
+            </Suspense>
+          </Layout>
+        </ErrorBoundary>
       </Router>
     </QueryClientProvider>
   );

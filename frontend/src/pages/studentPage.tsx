@@ -16,6 +16,7 @@ import { Column } from '@/types/table';
 import { FolderSearch, UserSearch } from 'lucide-react';
 import StudentService from '@/services/studentService';
 import { toast } from 'sonner';
+import { ResourceNotFoundError } from '@/lib/errors';
 
 const StudentPage: React.FC = () => {
   const studentService = new StudentService();
@@ -160,8 +161,6 @@ const StudentPage: React.FC = () => {
     },
     [],
   );
-
-  toast.error('Hello abc!');
 
   return (
     <div className='min-h-3/4 m-auto flex flex-row gap-4 p-4'>
