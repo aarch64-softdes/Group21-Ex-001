@@ -1,6 +1,6 @@
 package com.tkpm.sms.controller;
 
-import com.tkpm.sms.dto.request.ProgramRequestDto;
+import com.tkpm.sms.dto.request.program.ProgramRequestDto;
 import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.dto.response.ProgramDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
@@ -18,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import static java.util.stream.Collectors.toList;
-
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/programs")
@@ -32,9 +30,10 @@ public class ProgramController {
     @GetMapping
     public ResponseEntity<ApplicationResponseDto<ListResponse<ProgramDto>>> getAllPrograms(
             @ModelAttribute BaseCollectionRequest search
-            ) {
-        Page<ProgramDto> programs = programService.getAllPrograms(search).
-                                        map(programMapper::toProgramDto);
+    ) {
+        Page<ProgramDto> programs = programService
+                .getAllPrograms(search).
+                map(programMapper::toProgramDto);
 
         var pageDto = PageDto.builder()
                 .totalElements(programs.getTotalElements())
@@ -55,16 +54,18 @@ public class ProgramController {
     public ResponseEntity<ApplicationResponseDto<ProgramDto>> getProgram(@PathVariable Integer id) {
         var program = programService.getProgramById(id);
         var programDto = new ProgramDto(program.getId(), program.getName());
+
         return ResponseEntity.ok(ApplicationResponseDto.success(programDto));
     }
 
     @PostMapping
     public ResponseEntity<ApplicationResponseDto<ProgramDto>> createProgram(
             @Valid @RequestBody ProgramRequestDto program,
-            UriComponentsBuilder uriComponentsBuilder) {
-
+            UriComponentsBuilder uriComponentsBuilder
+    ) {
         var newProgram = programService.createProgram(program);
         var programDto = new ProgramDto(newProgram.getId(), newProgram.getName());
+
         return ResponseEntity.created(uriComponentsBuilder.path("/api/programs/{id}").buildAndExpand(newProgram.getId()).toUri())
                 .body(ApplicationResponseDto.success(programDto));
     }
@@ -72,16 +73,18 @@ public class ProgramController {
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<ProgramDto>> updateProgram(
             @PathVariable Integer id,
-            @Valid @RequestBody ProgramRequestDto program) {
-
+            @Valid @RequestBody ProgramRequestDto program
+    ) {
         var updatedProgram = programService.updateProgram(id, program);
         var programDto = new ProgramDto(updatedProgram.getId(), updatedProgram.getName());
+
         return ResponseEntity.ok(ApplicationResponseDto.success(programDto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<Void>> deleteProgram(@PathVariable Integer id) {
         programService.deleteProgram(id);
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

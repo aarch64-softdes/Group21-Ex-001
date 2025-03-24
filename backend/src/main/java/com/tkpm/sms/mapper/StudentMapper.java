@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-import com.tkpm.sms.dto.request.StudentCreateRequestDto;
-import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
+import com.tkpm.sms.dto.request.student.StudentCreateRequestDto;
+import com.tkpm.sms.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.dto.response.student.StudentMinimalDto;

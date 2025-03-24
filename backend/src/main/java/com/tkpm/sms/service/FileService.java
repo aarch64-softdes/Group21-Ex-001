@@ -32,13 +32,20 @@ public class FileService {
         int pageSize = 100;
         int currentPage = 0;
         Page<Student> studentPage;
+
         do {
             studentPage = studentRepository.findAll(
-                    PageRequest.of(currentPage, pageSize, Sort.by("studentId"))
-            );
-            students.addAll(studentPage.getContent().stream()
+                    PageRequest.of(
+                            currentPage,
+                            pageSize,
+                            Sort.by("studentId")));
+
+            students.addAll(studentPage
+                    .getContent()
+                    .stream()
                     .map(studentMapper::toStudentFileDto)
                     .toList());
+
             currentPage++;
         } while (currentPage < studentPage.getTotalPages());
 

@@ -1,8 +1,8 @@
 package com.tkpm.sms.service;
 
-import com.tkpm.sms.dto.request.StudentCreateRequestDto;
-import com.tkpm.sms.dto.request.StudentCollectionRequest;
-import com.tkpm.sms.dto.request.StudentUpdateRequestDto;
+import com.tkpm.sms.dto.request.student.StudentCollectionRequest;
+import com.tkpm.sms.dto.request.student.StudentCreateRequestDto;
+import com.tkpm.sms.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.exceptions.ApplicationException;
@@ -63,13 +63,24 @@ public class StudentService {
     @Transactional
     public Student createStudent(StudentCreateRequestDto studentCreateRequestDto) {
         if (studentRepository.existsStudentByStudentId(studentCreateRequestDto.getStudentId())) {
-            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with id %s already existed", studentCreateRequestDto.getStudentId())));
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
+                    String.format(
+                            "Student with id %s already existed",
+                            studentCreateRequestDto.getStudentId())));
         }
+
         if (studentRepository.existsStudentByEmail(studentCreateRequestDto.getEmail())) {
-            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with email %s already existed", studentCreateRequestDto.getEmail())));
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
+                    String.format(
+                            "Student with email %s already existed",
+                            studentCreateRequestDto.getEmail())));
         }
+
         if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone())) {
-            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with phone number %s already existed", studentCreateRequestDto.getPhone())));
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
+                    String.format(
+                            "Student with phone number %s already existed",
+                            studentCreateRequestDto.getPhone())));
         }
 
         Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
@@ -81,18 +92,19 @@ public class StudentService {
             var mailingAddress = addressService.createAddress(studentCreateRequestDto.getMailingAddress());
             student.setMailingAddress(mailingAddress);
         }
+
         if (studentCreateRequestDto.getPermanentAddress() != null) {
             var permanentAddress = addressService.createAddress(studentCreateRequestDto.getPermanentAddress());
             student.setPermanentAddress(permanentAddress);
         }
+
         if (studentCreateRequestDto.getTemporaryAddress() != null) {
             var temporaryAddress = addressService.createAddress(studentCreateRequestDto.getTemporaryAddress());
             student.setTemporaryAddress(temporaryAddress);
         }
 
         student.setIdentity(
-                identityService.createIdentity(studentCreateRequestDto.getIdentity())
-        );
+                identityService.createIdentity(studentCreateRequestDto.getIdentity()));
 
         student = studentRepository.save(student);
         return student;
@@ -101,6 +113,7 @@ public class StudentService {
     @Transactional
     public void saveListStudentFromFile(List<StudentFileDto> students) {
         var studentCreateRequests = students.stream().map(studentMapper::toStudentCreateRequest).toList();
+
         for (var student : studentCreateRequests) {
             createStudent(student);
         }
@@ -121,16 +134,22 @@ public class StudentService {
 
         if (!student.getEmail().equals(studentUpdateRequestDto.getEmail())
                 && studentRepository.existsStudentByEmail(studentUpdateRequestDto.getEmail())) {
+
             var errorCode = ErrorCode.CONFLICT;
-            errorCode.setMessage(String.format("Student with email %s already existed",
-                    studentUpdateRequestDto.getEmail()));
+            errorCode.setMessage(
+                    String.format("Student with email %s already existed",
+                            studentUpdateRequestDto.getEmail()));
+
             throw new ApplicationException(errorCode);
         }
 
         if (!student.getPhone().equals(studentUpdateRequestDto.getPhone())
                 && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone())) {
-            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Student with phone number %s already existed",
-                    studentUpdateRequestDto.getPhone())));
+            throw new ApplicationException(
+                    ErrorCode.CONFLICT.withMessage(
+                            String.format(
+                                    "Student with phone number %s already existed",
+                                    studentUpdateRequestDto.getPhone())));
         }
 
         studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
@@ -140,44 +159,37 @@ public class StudentService {
             if (student.getTemporaryAddress() == null) {
                 student.setTemporaryAddress(
                         addressService.createAddress(
-                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getTemporaryAddress())
-                        )
-                );
+                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getTemporaryAddress())));
             } else {
                 var newTemporaryAddress = addressService.updateAddress(
                         studentUpdateRequestDto.getTemporaryAddress(),
-                        student.getTemporaryAddress().getId()
-                );
+                        student.getTemporaryAddress().getId());
                 student.setTemporaryAddress(newTemporaryAddress);
             }
         }
+
         if (studentUpdateRequestDto.getPermanentAddress() != null) {
             if (student.getPermanentAddress() == null) {
                 student.setPermanentAddress(
                         addressService.createAddress(
-                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getPermanentAddress())
-                        )
-                );
+                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getPermanentAddress())));
             } else {
                 var newPermanentAddress = addressService.updateAddress(
                         studentUpdateRequestDto.getPermanentAddress(),
-                        student.getPermanentAddress().getId()
-                );
+                        student.getPermanentAddress().getId());
                 student.setPermanentAddress(newPermanentAddress);
             }
         }
+
         if (studentUpdateRequestDto.getMailingAddress() != null) {
             if (student.getMailingAddress() == null) {
                 student.setMailingAddress(
                         addressService.createAddress(
-                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getMailingAddress())
-                        )
-                );
+                                addressMapper.updateToCreateRequest(studentUpdateRequestDto.getMailingAddress())));
             } else {
                 var newMailingAddress = addressService.updateAddress(
                         studentUpdateRequestDto.getMailingAddress(),
-                        student.getMailingAddress().getId()
-                );
+                        student.getMailingAddress().getId());
                 student.setMailingAddress(newMailingAddress);
             }
         }
@@ -185,15 +197,13 @@ public class StudentService {
         if (studentUpdateRequestDto.getIdentity() != null) {
             if (student.getIdentity() != null) {
                 student.setIdentity(
-                        identityService.updateIdentity(studentUpdateRequestDto.getIdentity(),
-                                student.getIdentity().getId())
-                );
+                        identityService.updateIdentity(
+                                studentUpdateRequestDto.getIdentity(),
+                                student.getIdentity().getId()));
             } else {
                 student.setIdentity(
                         identityService.createIdentity(
-                                identityMapper.toIdentityCreateRequestDto(studentUpdateRequestDto.getIdentity())
-                        )
-                );
+                                identityMapper.toIdentityCreateRequestDto(studentUpdateRequestDto.getIdentity())));
             }
         }
 

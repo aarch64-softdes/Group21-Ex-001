@@ -7,6 +7,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
 public class StatusValidator implements ConstraintValidator<StatusConstraint, String> {
+
     @Override
     public void initialize(StatusConstraint constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);

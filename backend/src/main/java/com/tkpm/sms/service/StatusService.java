@@ -1,6 +1,6 @@
 package com.tkpm.sms.service;
 
-import com.tkpm.sms.dto.request.StatusRequestDto;
+import com.tkpm.sms.dto.request.status.StatusRequestDto;
 import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.entity.Status;
 import com.tkpm.sms.exceptions.ApplicationException;
@@ -30,27 +30,35 @@ public class StatusService {
                 search.getSize(),
                 Sort.by(
                         search.getSortDirection().equalsIgnoreCase("desc")
-                                ? Sort.Direction.DESC : Sort.Direction.ASC,
+                                ? Sort.Direction.DESC
+                                : Sort.Direction.ASC,
                         search.getSortBy()
                 ));
+
         return statusRepository.findAll(pageable);
     }
 
     public Status getStatus(Integer id) {
         return statusRepository.findById(id).orElseThrow(
-                () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Status with id %s not found", id))));
+                () -> new ApplicationException(
+                        ErrorCode.NOT_FOUND.withMessage(
+                                String.format("Status with id %s not found", id))));
     }
 
     public Status getStatusByName(String name) {
         return statusRepository.findStatusByName(name).orElseThrow(
-                () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Status with name %s not found", name))));
+                () -> new ApplicationException(
+                        ErrorCode.NOT_FOUND.withMessage(
+                                String.format("Status with name %s not found", name))));
     }
 
 
     @Transactional
     public Status createStatus(StatusRequestDto status) {
-        if(statusRepository.existsStatusByName(status.getName())) {
-            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Status with name %s already existed", status.getName())));
+        if (statusRepository.existsStatusByName(status.getName())) {
+            throw new ApplicationException(
+                    ErrorCode.CONFLICT.withMessage(
+                            String.format("Status with name %s already existed", status.getName())));
         }
         var newStatus = Status.builder().name(status.getName()).build();
 
@@ -59,21 +67,29 @@ public class StatusService {
 
     @Transactional
     public Status updateStatus(Integer id, StatusRequestDto status) {
-        if(statusRepository.existsStatusByName(status.getName())) {
-            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(String.format("Status with name %s already existed", status.getName())));
+        if (statusRepository.existsStatusByName(status.getName())) {
+            throw new ApplicationException(
+                    ErrorCode.CONFLICT.withMessage(
+                            String.format("Status with name %s already existed", status.getName())));
         }
 
         Status statusToUpdate = statusRepository.findById(id).orElseThrow(
-                () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Status with id %s not found", id))));
+                () -> new ApplicationException(
+                        ErrorCode.NOT_FOUND.withMessage(
+                                String.format("Status with id %s not found", id))));
         statusToUpdate.setName(status.getName());
+
         return statusRepository.save(statusToUpdate);
     }
 
     @Transactional
     public void deleteStatus(Integer id) {
         Status status = statusRepository.findById(id).orElseThrow(
-                () -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Status with id %s not found", id))));
+                () -> new ApplicationException(
+                        ErrorCode.NOT_FOUND.withMessage(
+                                String.format("Status with id %s not found", id))));
         status.setDeletedAt(LocalDate.now());
+
         statusRepository.save(status);
     }
 }

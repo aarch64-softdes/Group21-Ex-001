@@ -30,7 +30,6 @@ public class CsvStrategy implements FileStrategy {
     private final CsvSchema csvSchema;
     private final StudentService studentService;
 
-
     @Override
     public byte[] export(Iterable<?> data) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -39,6 +38,7 @@ public class CsvStrategy implements FileStrategy {
             csvMapper.writer(csvSchema).writeValue(outputStream, data);
         } catch (IOException e) {
             log.error("Failed to export with csv format", e);
+
             throw new ApplicationException(ErrorCode.FAIL_TO_EXPORT_FILE.withMessage("Failed to export file with CSV format"));
         }
 
@@ -56,8 +56,10 @@ public class CsvStrategy implements FileStrategy {
 
         } catch (IOException e) {
             log.info("Error reading file", e);
+
             throw new ApplicationException(ErrorCode.FAIL_TO_IMPORT_FILE.withMessage("Fail to import students data from CSV"));
         }
+
         studentService.saveListStudentFromFile(students);
     }
 

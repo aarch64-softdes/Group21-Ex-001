@@ -10,11 +10,11 @@ import org.hibernate.annotations.SQLRestriction;
 import java.time.LocalDate;
 import java.util.Set;
 
+@Entity
+@Table(name = "statuses")
 @Builder
 @Getter
 @Setter
-@Entity
-@Table(name = "statuses")
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

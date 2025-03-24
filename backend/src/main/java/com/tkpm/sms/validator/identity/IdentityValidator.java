@@ -1,20 +1,28 @@
 package com.tkpm.sms.validator.identity;
 
-import com.tkpm.sms.dto.request.IdentityCreateRequestDto;
-import com.tkpm.sms.dto.request.IdentityUpdateRequestDto;
-import com.tkpm.sms.utils.EnumUtils;
+import com.tkpm.sms.dto.request.identity.IdentityCreateRequestDto;
+import com.tkpm.sms.dto.request.identity.IdentityUpdateRequestDto;
 import com.tkpm.sms.enums.IdentityType;
 import com.tkpm.sms.exceptions.ErrorCode;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
 public class IdentityValidator implements ConstraintValidator<IdentityConstraint, Object> {
+
+    private final Map<IdentityType, ErrorCode> identityTypeErrorCodeMap =
+            Map.of(
+                    IdentityType.Chip_Card, ErrorCode.INVALID_CHIP_BASE_NUMBER,
+                    IdentityType.Identity_Card, ErrorCode.INVALID_IDENTITY_CARD_NUMBER,
+                    IdentityType.Passport, ErrorCode.INVALID_PASSPORT_NUMBER
+            );
+
     @Override
     public void initialize(IdentityConstraint constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
@@ -43,59 +51,47 @@ public class IdentityValidator implements ConstraintValidator<IdentityConstraint
             issueDate = identity.getIssuedDate();
             expiryDate = identity.getExpiryDate();
         } else {
-            log.error("Invalid object type: {}", value.getClass().getName());
             return false;
         }
 
-        if (Objects.isNull(type) || Objects.isNull(number)
+        if (Strings.isEmpty(type) || Strings.isEmpty(number)
                 || Objects.isNull(issueDate) || Objects.isNull(expiryDate)) {
             return true;
         }
 
+        var identity = IdentityType.fromString(type);
         context.disableDefaultConstraintViolation();
-        if (!isIdentityType(type)) {
-            context.buildConstraintViolationWithTemplate(ErrorCode.INVALID_IDENTITY_TYPE.name())
-                    .addPropertyNode("type")
-                    .addConstraintViolation();
-            log.info("Invalid identity type: {}", context.getDefaultConstraintMessageTemplate());
+        
+        if (Objects.isNull(identity)) {
+            addValidationError(
+                    ErrorCode.INVALID_IDENTITY_TYPE,
+                    "type", context);
+
             return false;
         }
-        if (!isValidNumber(type, number)) {
-            context.buildConstraintViolationWithTemplate("INVALID_IDENTITY_NUMBER")
-                    .addPropertyNode("number")
-                    .addConstraintViolation();
-            log.info("Invalid identity number: {}", context.getDefaultConstraintMessageTemplate());
+
+        if (!number.matches(identity.getPattern())) {
+            addValidationError(
+                    identityTypeErrorCodeMap.get(identity),
+                    "number", context);
+
             return false;
         }
 
         if (issueDate.isAfter(expiryDate)) {
-            context.buildConstraintViolationWithTemplate("INVALID_IDENTITY_ISSUED_DATE")
+            context.buildConstraintViolationWithTemplate(ErrorCode.INVALID_IDENTITY_ISSUED_DATE.name())
                     .addPropertyNode("issuedDate")
                     .addConstraintViolation();
-            log.info("Issue date must be before expiry date");
+
             return false;
         }
 
         return true;
     }
 
-    private boolean isIdentityType(String value) {
-        log.info("value: {}", value);
-        log.info("getNames: {}", Arrays.asList(EnumUtils.getNames(IdentityType.class)));
-
-        return Arrays.asList(EnumUtils.getNames(IdentityType.class)).contains(value);
-    }
-
-
-    private boolean isValidNumber(String type, String number) {
-        if (IdentityType.Chip_Card.equals(type)) {
-            return number.matches("[0-9]{12}$");
-        } else if (IdentityType.Identity_Card.equals(type)) {
-            return number.matches("[0-9]{9}$");
-        } else if (IdentityType.Passport.equals(type)) {
-            return number.matches("[A-Z]{2}[0-9]{7}$");
-        }
-
-        return false;
+    private void addValidationError(ErrorCode errorCode, String propertyType, ConstraintValidatorContext context) {
+        context.buildConstraintViolationWithTemplate(errorCode.name())
+                .addPropertyNode(propertyType)
+                .addConstraintViolation();
     }
 }

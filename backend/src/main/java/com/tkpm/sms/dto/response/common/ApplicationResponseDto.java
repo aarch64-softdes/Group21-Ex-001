@@ -1,5 +1,7 @@
 package com.tkpm.sms.dto.response.common;
 
+import org.apache.http.HttpStatus;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tkpm.sms.exceptions.ErrorCode;
 import lombok.AccessLevel;
@@ -13,8 +15,10 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApplicationResponseDto<T> {
     @Builder.Default
-    int code = 200;
+    int code = HttpStatus.OK.value();
+
     String message;
+    String errorCode;
     T content;
 
     public static <T> ApplicationResponseDto<T> success(T content, String message) {
@@ -48,6 +52,7 @@ public class ApplicationResponseDto<T> {
         return ApplicationResponseDto.<T>builder()
                 .code(exception.getHttpStatus().value())
                 .message(exception.getMessage())
+                .errorCode(exception.name())
                 .build();
     }
 }

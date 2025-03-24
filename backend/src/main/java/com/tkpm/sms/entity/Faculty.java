@@ -10,12 +10,12 @@ import org.hibernate.annotations.SQLRestriction;
 import java.time.LocalDate;
 import java.util.Set;
 
+@Entity
+@Table(name = "faculties")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "faculties")
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SQLDelete(sql = "UPDATE status SET deleted_at = NOW() WHERE id = ?")

@@ -1,16 +1,16 @@
 package com.tkpm.sms.utils;
 
-import com.tkpm.sms.dto.request.AddressCreateRequestDto;
-import com.tkpm.sms.dto.request.IdentityCreateRequestDto;
+import com.tkpm.sms.dto.request.address.AddressCreateRequestDto;
+import com.tkpm.sms.dto.request.identity.IdentityCreateRequestDto;
 import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.entity.Address;
 import com.tkpm.sms.entity.Identity;
 import com.tkpm.sms.enums.IdentityType;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Slf4j
 public class ImportFileUtils {
@@ -40,7 +40,7 @@ public class ImportFileUtils {
     }
 
     public static AddressCreateRequestDto parseAddressCreateRequestDto(String address) {
-        if (address == null || address.isEmpty()) {
+        if (Objects.isNull(address) || address.isEmpty()) {
             return null;
         }
 

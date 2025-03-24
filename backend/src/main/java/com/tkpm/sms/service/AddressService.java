@@ -1,7 +1,7 @@
 package com.tkpm.sms.service;
 
-import com.tkpm.sms.dto.request.AddressCreateRequestDto;
-import com.tkpm.sms.dto.request.AddressUpdateRequestDto;
+import com.tkpm.sms.dto.request.address.AddressCreateRequestDto;
+import com.tkpm.sms.dto.request.address.AddressUpdateRequestDto;
 import com.tkpm.sms.entity.Address;
 import com.tkpm.sms.mapper.AddressMapper;
 import com.tkpm.sms.repository.AddressRepository;

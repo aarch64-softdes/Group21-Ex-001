@@ -1,6 +1,6 @@
-package com.tkpm.sms.dto.request;
+package com.tkpm.sms.dto.request.faculty;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,6 +10,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FacultyRequestDto {
-    @NotNull(message = "Faculty's name is required")
+    @NotEmpty(message = "NOT_NULL;Faculty's name is required")
     String name;
 }
