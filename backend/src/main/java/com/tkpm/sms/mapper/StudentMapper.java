@@ -2,6 +2,8 @@ package com.tkpm.sms.mapper;
 
 import java.util.Objects;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -60,6 +62,7 @@ public interface StudentMapper {
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "gender", qualifiedByName = "toGender")
+    @Mapping(target = "phone", source = "request", qualifiedByName = "parsePhoneFromUpdateRequest")
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
@@ -74,6 +77,7 @@ public interface StudentMapper {
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "gender", qualifiedByName = "toGender")
+    @Mapping(target = "phone", source = "request", qualifiedByName = "parsePhoneFromCreateRequest")
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
@@ -81,6 +85,22 @@ public interface StudentMapper {
                           @Context FacultyService facultyService,
                           @Context ProgramService programService,
                           @Context StatusService statusService);
+
+    @Named("parsePhoneFromCreateRequest")
+    default String parsePhone(StudentCreateRequestDto request) {
+        if (request == null) {
+            return null;
+        }
+        return parsePhone(request.getPhone(), request.getCountryCode());
+    }
+
+    @Named("parsePhoneFromUpdateRequest")
+    default String parsePhone(StudentUpdateRequestDto request) {
+        if (request == null) {
+            return null;
+        }
+        return parsePhone(request.getPhone(), request.getCountryCode());
+    }
 
     @Named("toFaculty")
     default Faculty toFaculty(String name, @Context FacultyService facultyService) {
@@ -126,5 +146,25 @@ public interface StudentMapper {
         }else{
             throw new ApplicationException(ErrorCode.UNCATEGORIZED.withMessage("Gender not supported"));
         }
+    }
+
+
+    default String parsePhone(String phone, String countryCode){
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+        try{
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
+                    phone, countryCode);
+            boolean isValidPhoneNumber = phoneNumberUtil.isValidNumber(phoneNumber);
+            if(isValidPhoneNumber){
+                return phoneNumberUtil.format(
+                        phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL).
+                        replaceAll(" ", "");
+            }
+        }catch (Exception e){
+            throw new ApplicationException(ErrorCode.INVALID_PHONE.withMessage(
+                    String.format("Invalid phone number: %s", phone)));
+        }
+
+        return null;
     }
 }
