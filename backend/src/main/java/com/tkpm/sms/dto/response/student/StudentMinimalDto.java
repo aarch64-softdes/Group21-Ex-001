@@ -30,4 +30,5 @@ public class StudentMinimalDto {
     // Contact Information
     String email;
     String phone;
+    String countryCode;
 }

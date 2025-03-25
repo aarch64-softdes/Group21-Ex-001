@@ -53,6 +53,8 @@ public class StudentCreateRequestDto {
     @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE_NUMBER")
     String phone;
 
+    String countryCode;
+
     @RequiredConstraint(field = "Status")
     String status;
 

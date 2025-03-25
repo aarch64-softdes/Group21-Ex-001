@@ -32,6 +32,7 @@ public class StudentDto {
     // Contact Information
     String email;
     String phone;
+    String countryCode;
     
     // Address Information
     Address permanentAddress;
