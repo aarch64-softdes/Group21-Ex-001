@@ -16,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -45,18 +43,20 @@ public class SettingService {
     }
 
     public Setting getSettingByName(String name) {
-        return settingRepository.findSettingByName(name).orElseThrow(() -> new ApplicationException(
-                ErrorCode.NOT_FOUND.withMessage(
-                        String.format("Setting with name %s not found", name))));
+        return settingRepository.findSettingByName(name).orElseThrow(
+                () -> new ApplicationException(
+                        ErrorCode.NOT_FOUND.withMessage(
+                                String.format("Setting with name %s not found", name))));
     }
 
     @Transactional
-    public Setting updateSetting(String id, SettingRequestDto settingRequestDto) {
-        var setting = settingRepository.findById(id).orElseThrow(
+    public Setting updateSetting(String name, SettingRequestDto settingRequestDto) {
+        var setting = settingRepository.findSettingByName(name).orElseThrow(
                 () -> new ApplicationException(
                         ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Setting with id %s not found", id))));
+                                String.format("Setting with name %s not found", name))));
 
+        // TODO: create map method from List<String> to String
         settingMapper.updateSetting(setting, settingRequestDto);
         setting.setDetails(settingRequestDto.getDetails());
         return settingRepository.save(setting);

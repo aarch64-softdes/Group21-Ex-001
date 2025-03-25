@@ -1,6 +1,7 @@
 package com.tkpm.sms.dto.request.setting;
 
-import jakarta.validation.constraints.NotEmpty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.tkpm.sms.validator.required.RequiredConstraint;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,8 +14,13 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SettingRequestDto {
-    @NotEmpty(message = "NOT_NULL; Setting's name is required")
+    @RequiredConstraint(field = "Setting's name")
     String name;
-    @NotEmpty(message = "NOT_NULL; Setting's details is required")
+    @RequiredConstraint(field = "Setting's details")
     List<String> details;
+
+    @JsonSetter
+    public void setName(String name){
+        this.name = (name != null) ? name.toLowerCase() : null;
+    }
 }

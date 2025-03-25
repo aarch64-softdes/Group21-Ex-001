@@ -47,20 +47,20 @@ public class SettingController {
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApplicationResponseDto<SettingDto>> getSettingById(@PathVariable String id){
-        var setting = settingService.getSettingById(id);
+    @GetMapping("/{name}")
+    public ResponseEntity<ApplicationResponseDto<SettingDto>> getSettingById(@PathVariable String name){
+        var setting = settingService.getSettingByName(name.toLowerCase());
         var response = ApplicationResponseDto.success(
                 settingMapper.toSettingDto(setting));
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{name}")
     public ResponseEntity<ApplicationResponseDto<SettingDto>> updateSetting(
-            @PathVariable String id,
+            @PathVariable String name,
             @RequestBody SettingRequestDto settingRequestDto
     ){
-        var updatedSetting = settingService.updateSetting(id, settingRequestDto);
+        var updatedSetting = settingService.updateSetting(name.toLowerCase(), settingRequestDto);
         var response = ApplicationResponseDto.success(settingMapper.toSettingDto(updatedSetting));
         return ResponseEntity.ok(response);
     }
