@@ -1,6 +1,7 @@
 package com.tkpm.sms.dto.response.student;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tkpm.sms.dto.response.PhoneDto;
 import com.tkpm.sms.dto.response.identity.IdentityDto;
 import com.tkpm.sms.entity.Address;
 import lombok.*;
@@ -31,8 +32,7 @@ public class StudentDto {
     
     // Contact Information
     String email;
-    String phone;
-    String countryCode;
+    PhoneDto phone;
     
     // Address Information
     Address permanentAddress;

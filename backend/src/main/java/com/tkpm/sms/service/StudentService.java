@@ -79,7 +79,7 @@ public class StudentService {
                             studentCreateRequestDto.getEmail())));
         }
 
-        if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone())) {
+        if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone().getPhoneNumber())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
                     String.format(
                             "Student with phone number %s already existed",
@@ -146,8 +146,8 @@ public class StudentService {
             throw new ApplicationException(errorCode);
         }
 
-        if (!student.getPhone().equals(studentUpdateRequestDto.getPhone())
-                && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone())) {
+        if (!student.getPhone().equals(studentUpdateRequestDto.getPhone().getPhoneNumber())
+                && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone().getPhoneNumber())) {
             throw new ApplicationException(
                     ErrorCode.CONFLICT.withMessage(
                             String.format(

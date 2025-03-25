@@ -2,6 +2,7 @@ package com.tkpm.sms.dto.request.student;
 
 import com.tkpm.sms.dto.request.address.AddressCreateRequestDto;
 import com.tkpm.sms.dto.request.identity.IdentityCreateRequestDto;
+import com.tkpm.sms.dto.request.phone.PhoneRequestDto;
 import com.tkpm.sms.validator.required.RequiredConstraint;
 import com.tkpm.sms.validator.identity.IdentityConstraint;
 import jakarta.validation.Valid;
@@ -49,11 +50,7 @@ public class StudentCreateRequestDto {
     
     AddressCreateRequestDto mailingAddress;
 
-    @RequiredConstraint(field = "Phone number")
-    @Pattern(regexp = "^0\\d{9}$", message = "INVALID_PHONE_NUMBER")
-    String phone;
-
-    String countryCode;
+    PhoneRequestDto phone;
 
     @RequiredConstraint(field = "Status")
     String status;
