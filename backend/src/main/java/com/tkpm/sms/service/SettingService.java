@@ -75,4 +75,16 @@ public class SettingService {
         setting.setDetails(settingRequestDto.getDetails());
         return settingRepository.save(setting);
     }
+
+    @Transactional
+    public Setting updatePhoneSetting(SettingRequestDto settingRequestDto) {
+        var setting = settingRepository.findSettingByName("phonenumber").orElseThrow(
+                () -> new ApplicationException(
+                        ErrorCode.NOT_FOUND.withMessage("Phone setting not found")));
+
+        // TODO: create map method from List<String> to String
+        settingMapper.updateSetting(setting, settingRequestDto);
+        setting.setDetails(settingRequestDto.getDetails());
+        return settingRepository.save(setting);
+    }
 }
