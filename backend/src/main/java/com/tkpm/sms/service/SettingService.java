@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class SettingService {
+
+    static String PHONE_NUMBER_SETTING = "phonenumber";
     SettingRepository settingRepository;
     SettingMapper settingMapper;
 
@@ -50,21 +52,8 @@ public class SettingService {
     }
 
     @Transactional
-    public Setting updateSetting(String name, SettingRequestDto settingRequestDto) {
-        var setting = settingRepository.findSettingByName(name).orElseThrow(
-                () -> new ApplicationException(
-                        ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Setting with name %s not found", name))));
-
-        // TODO: create map method from List<String> to String
-        settingMapper.updateSetting(setting, settingRequestDto);
-        setting.setDetails(settingRequestDto.getDetails());
-        return settingRepository.save(setting);
-    }
-
-    @Transactional
     public Setting updatePhoneSetting(SettingRequestDto settingRequestDto) {
-        var setting = settingRepository.findSettingByName("phonenumber").orElseThrow(
+        var setting = settingRepository.findSettingByName(PHONE_NUMBER_SETTING).orElseThrow(
                 () -> new ApplicationException(
                         ErrorCode.NOT_FOUND.withMessage("Phone setting not found")));
 
