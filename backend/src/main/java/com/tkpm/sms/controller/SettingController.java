@@ -64,4 +64,13 @@ public class SettingController {
         var response = ApplicationResponseDto.success(settingMapper.toSettingDto(updatedSetting));
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/phone-number")
+    public ResponseEntity<ApplicationResponseDto<SettingDto>> updatePhoneSetting(
+            @RequestBody SettingRequestDto settingRequestDto
+    ){
+        var updatedSetting = settingService.updatePhoneSetting(settingRequestDto);
+        var response = ApplicationResponseDto.success(settingMapper.toSettingDto(updatedSetting));
+        return ResponseEntity.ok(response);
+    }
 }
