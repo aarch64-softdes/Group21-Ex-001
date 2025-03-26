@@ -35,4 +35,10 @@ public class Status {
     // one-to-many relationship with student
     @OneToMany(mappedBy = "status")
     Set<Student> students;
+
+    @OneToMany(mappedBy = "fromStatus")
+    Set<StatusTransition> allowedTransitionsFrom;
+    
+    @OneToMany(mappedBy = "toStatus")
+    Set<StatusTransition> allowedTransitionsTo;
 }
