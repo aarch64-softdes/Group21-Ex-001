@@ -42,6 +42,7 @@ public interface StudentMapper {
     @Mapping(target = "status", source = "status.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
+    @Mapping(target = "phone", qualifiedByName = "parsePhoneToPhoneDto")
     StudentMinimalDto toStudentMinimalDto(Student student);
 
 

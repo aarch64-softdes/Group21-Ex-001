@@ -1,5 +1,6 @@
 package com.tkpm.sms.dto.response.student;
 
+import com.tkpm.sms.dto.response.PhoneDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -29,6 +30,5 @@ public class StudentMinimalDto {
 
     // Contact Information
     String email;
-    String phone;
-    String countryCode;
+    PhoneDto phone;
 }
