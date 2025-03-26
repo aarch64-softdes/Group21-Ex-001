@@ -1,4 +1,5 @@
 import { SortConfig } from '@/components/table/TableSort';
+import { showErrorToast, showSuccessToast } from '@/lib/toast-utils';
 import { FilterOption, FilterParams } from '@/types/filter';
 import { QueryHook, TableActions } from '@/types/table';
 import { useCallback, useEffect, useState } from 'react';
@@ -14,8 +15,10 @@ export const useTableAdd = <T extends { id: string }>(
       setIsAdding(true);
       setDialogOpen(false);
       await actions?.onAdd?.(value);
+      showSuccessToast('Successfully added!');
     } catch (error) {
       console.error(error);
+      showErrorToast('Failed to add!');
     } finally {
       setIsAdding(false);
     }
@@ -38,8 +41,10 @@ export const useTableDelete = (actions?: TableActions) => {
       setDeletingRow(id);
       await actions?.onDelete?.(id);
       setDeletingRow(null);
+      showSuccessToast('Successfully deleted!');
     } catch (error) {
       console.error(error);
+      showErrorToast('Failed to delete');
     } finally {
       setIsDeleting(false);
     }

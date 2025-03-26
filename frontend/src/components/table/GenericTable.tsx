@@ -26,7 +26,7 @@ import { useMemo, useState } from 'react';
 import TableSort from './TableSort';
 import FileImportButton from './FileImportButton';
 import FileExportButton from './FileExportButton';
-import { showErrorToast } from '@/lib/toast-utils';
+import { showErrorToast, showSuccessToast } from '@/lib/toast-utils';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
@@ -80,8 +80,10 @@ const GenericTable = <T extends { id: string }>({
       await actions?.onSave?.(currentEditItem.id, updatedData as T);
       setEditDialogOpen(false);
       setCurrentEditItem(null);
+      showSuccessToast('Edit saved successfully');
     } catch (error) {
       console.error('Error saving edit:', error);
+      showErrorToast('Error saving edit');
     } finally {
       setIsEditSaving(false);
     }

@@ -49,8 +49,9 @@ api.interceptors.response.use(
       case 401:
         return Promise.reject(new AuthenticationError(responseData.message));
       case 403:
-      case 409:
         return Promise.reject(new AuthorizationError(responseData.message));
+      case 409:
+        return Promise.reject(new ApiError(responseData.message));
       case 404:
         return Promise.reject(new ResourceNotFoundError(responseData.message));
 
