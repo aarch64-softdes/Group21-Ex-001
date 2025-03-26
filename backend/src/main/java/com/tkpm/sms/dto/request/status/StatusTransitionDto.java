@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StatusTransitionDTO {
+public class StatusTransitionDto {
     Integer id;
     
     @NotNull(message = "From status ID is required")
