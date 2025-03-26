@@ -1,8 +1,5 @@
 package com.tkpm.sms.service;
 
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
 import com.tkpm.sms.dto.request.student.StudentCollectionRequest;
 import com.tkpm.sms.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.dto.request.student.StudentUpdateRequestDto;
@@ -34,15 +31,16 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentService {
     StudentRepository studentRepository;
+
     StatusService statusService;
     ProgramService programService;
+    SettingService settingService;
     FacultyService facultyService;
-    StudentMapper studentMapper;
-
     AddressService addressService;
-    AddressMapper addressMapper;
-
     IdentityService identityService;
+
+    StudentMapper studentMapper;
+    AddressMapper addressMapper;
     IdentityMapper identityMapper;
 
     public Page<Student> findAll(StudentCollectionRequest search) {
@@ -64,7 +62,7 @@ public class StudentService {
     }
 
     @Transactional
-    public Student createStudent(StudentCreateRequestDto studentCreateRequestDto){
+    public Student createStudent(StudentCreateRequestDto studentCreateRequestDto) {
         if (studentRepository.existsStudentByStudentId(studentCreateRequestDto.getStudentId())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
                     String.format(
@@ -78,6 +76,8 @@ public class StudentService {
                             "Student with email %s already existed",
                             studentCreateRequestDto.getEmail())));
         }
+
+        validateEmailDomain(studentCreateRequestDto.getEmail());
 
         if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone().getPhoneNumber())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
@@ -134,6 +134,14 @@ public class StudentService {
     public Student updateStudent(String id, StudentUpdateRequestDto studentUpdateRequestDto) {
         var student = studentRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
+
+        validateEmailDomain(studentUpdateRequestDto.getEmail());
+
+        var existedStudent = studentRepository.findStudentByStudentId(studentUpdateRequestDto.getStudentId());
+        if (existedStudent.isPresent() && !existedStudent.get().getId().equals(student.getId())) {
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
+                    String.format("Student with id %s already exists", studentUpdateRequestDto.getStudentId())));
+        }
 
         if (!student.getEmail().equals(studentUpdateRequestDto.getEmail())
                 && studentRepository.existsStudentByEmail(studentUpdateRequestDto.getEmail())) {
@@ -213,5 +221,17 @@ public class StudentService {
         student = studentRepository.save(student);
 
         return student;
+    }
+
+    private void validateEmailDomain(String studentEmail) {
+        var getStudentDomain = studentEmail.split("@")[1];
+        var validDomain = settingService.getSettingByName(SettingService.EMAIL_SETTING).getDetails().getFirst();
+        if (validDomain.isEmpty()) {
+            throw new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with email %s not found", studentEmail)));
+        }
+
+        if (!validDomain.equals(getStudentDomain)) {
+            throw new ApplicationException(ErrorCode.FORBIDDEN.withMessage("Email domain is not supported"));
+        }
     }
 }

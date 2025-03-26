@@ -64,4 +64,13 @@ public class SettingController {
         var response = ApplicationResponseDto.success(settingMapper.toSettingDto(updatedSetting));
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/email")
+    public ResponseEntity<ApplicationResponseDto<SettingDto>> updateEmaiSetting(
+            @RequestBody SettingRequestDto settingRequestDto
+    ){
+        var updatedSetting = settingService.updateEmailSetting(settingRequestDto);
+        var response = ApplicationResponseDto.success(settingMapper.toSettingDto(updatedSetting));
+        return ResponseEntity.ok(response);
+    }
 }

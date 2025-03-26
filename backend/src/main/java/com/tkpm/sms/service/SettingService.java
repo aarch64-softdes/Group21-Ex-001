@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class SettingService {
+    static String EMAIL_SETTING = "email";
+
     SettingRepository settingRepository;
     SettingMapper settingMapper;
 
@@ -57,6 +59,18 @@ public class SettingService {
                                 String.format("Setting with name %s not found", name))));
 
         // TODO: create map method from List<String> to String
+        settingMapper.updateSetting(setting, settingRequestDto);
+        setting.setDetails(settingRequestDto.getDetails());
+        return settingRepository.save(setting);
+    }
+
+    @Transactional
+    public Setting updateEmailSetting(SettingRequestDto settingRequestDto) {
+        var setting = settingRepository.findSettingByName(EMAIL_SETTING).orElseThrow(
+                () -> new ApplicationException(
+                        ErrorCode.NOT_FOUND.withMessage(
+                                String.format("Setting with name %s not found", EMAIL_SETTING))));
+
         settingMapper.updateSetting(setting, settingRequestDto);
         setting.setDetails(settingRequestDto.getDetails());
         return settingRepository.save(setting);

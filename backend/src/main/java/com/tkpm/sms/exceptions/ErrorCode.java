@@ -48,6 +48,7 @@ public enum ErrorCode {
     // Resource Errors (4xx)
     NOT_FOUND("Resource not found", HttpStatus.NOT_FOUND),
     CONFLICT("Resource already existed", HttpStatus.CONFLICT),
+    FORBIDDEN("Action is forbidden", HttpStatus.FORBIDDEN),
     INVALID_FILE_FORMAT("Invalid file format", HttpStatus.BAD_REQUEST),
     ;
 
