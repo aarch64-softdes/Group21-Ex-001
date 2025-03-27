@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.data.domain.Page;
 
+import java.util.Optional;
 
 
 @Repository
@@ -25,5 +26,5 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
 
     boolean existsStudentByPhone(@NotNull @Pattern(regexp = "^0\\d{9}$", message = "Phone number must start with 0 and have 10 digits") String phone);
 
-    void deleteByStudentId(String studentId);
+    Optional<Student> findStudentByStudentId(String studentId);
 }
