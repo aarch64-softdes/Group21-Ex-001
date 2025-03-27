@@ -28,6 +28,7 @@ public enum ErrorCode {
     INVALID_PHONE("Invalid phone number", HttpStatus.BAD_REQUEST),
     INVALID_STATUS("Invalid status", HttpStatus.BAD_REQUEST),
     INVALID_SETTING_NAME("Invalid setting name", HttpStatus.BAD_REQUEST),
+    INVALID_PHONE_SETTING_DETAILS("Invalid phone setting details", HttpStatus.BAD_REQUEST),
     
     // Identity Validation Errors (400)
     INVALID_IDENTITY_TYPE(

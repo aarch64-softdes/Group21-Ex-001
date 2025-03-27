@@ -1,19 +1,20 @@
 package com.tkpm.sms.controller;
 
-import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
-import com.tkpm.sms.dto.request.setting.SettingRequestDto;
-import com.tkpm.sms.dto.response.SettingDto;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tkpm.sms.dto.request.setting.PhoneSettingRequestDto;
+import com.tkpm.sms.dto.response.setting.PhoneSettingDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.dto.response.common.ListResponse;
-import com.tkpm.sms.dto.response.common.PageDto;
-import com.tkpm.sms.mapper.SettingMapper;
+import com.tkpm.sms.exceptions.ApplicationException;
+import com.tkpm.sms.exceptions.ErrorCode;
 import com.tkpm.sms.service.SettingService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -22,37 +23,23 @@ import org.springframework.web.bind.annotation.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SettingController {
     SettingService settingService;
-    SettingMapper settingMapper;
 
-    @GetMapping
-    public ResponseEntity<ApplicationResponseDto<ListResponse<SettingDto>>> getAllSettings(
-            @ModelAttribute BaseCollectionRequest search
-    ) {
-        Page<SettingDto> settings = settingService
-                .getAllSettings(search).
-                map(settingMapper::toSettingDto);
 
-        var pageDto = PageDto.builder()
-                .totalElements(settings.getTotalElements())
-                .pageSize(settings.getSize())
-                .pageNumber(settings.getNumber())
-                .totalPages(settings.getTotalPages())
-                .build();
+    @GetMapping("/phone-number")
+    public ResponseEntity<ApplicationResponseDto<PhoneSettingDto>> getPhoneSetting(){
+        var setting = settingService.getPhoneSetting();
 
-        var listResponse = ListResponse.<SettingDto>builder().
-                page(pageDto).
-                data(settings.stream().toList()).
-                build();
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+            List<String> details = mapper.readValue(setting.getDetails(), new TypeReference<List<String>>(){});
+            var response = ApplicationResponseDto.success(new PhoneSettingDto(details));
+            return ResponseEntity.ok(response);
+        }catch(Exception e){
+            throw new ApplicationException(
+                    ErrorCode.INVALID_PHONE_SETTING_DETAILS.
+                            withMessage("Invalid phone setting details"));
+        }
 
-        return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
-    }
-
-    @GetMapping("/{name}")
-    public ResponseEntity<ApplicationResponseDto<SettingDto>> getSettingByName(@PathVariable String name){
-        var setting = settingService.getSettingByName(name.toLowerCase());
-        var response = ApplicationResponseDto.success(
-                settingMapper.toSettingDto(setting));
-        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/email")
@@ -65,11 +52,20 @@ public class SettingController {
     }
 
     @PutMapping("/phone-number")
-    public ResponseEntity<ApplicationResponseDto<SettingDto>> updatePhoneSetting(
-            @RequestBody SettingRequestDto settingRequestDto
+    public ResponseEntity<ApplicationResponseDto<PhoneSettingDto>> updatePhoneSetting(
+            @RequestBody PhoneSettingRequestDto phoneSettingRequestDto
     ){
-        var updatedSetting = settingService.updatePhoneSetting(settingRequestDto);
-        var response = ApplicationResponseDto.success(settingMapper.toSettingDto(updatedSetting));
-        return ResponseEntity.ok(response);
+        var updatedSetting = settingService.updatePhoneSetting(phoneSettingRequestDto);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+            List<String> details = mapper.readValue(updatedSetting.getDetails(), new TypeReference<List<String>>(){});
+            var response = ApplicationResponseDto.success(new PhoneSettingDto(details));
+            return ResponseEntity.ok(response);
+        }catch(Exception e){
+            throw new ApplicationException(
+                    ErrorCode.INVALID_PHONE_SETTING_DETAILS.
+                            withMessage("Invalid phone setting details"));
+        }
     }
 }
