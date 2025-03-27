@@ -56,8 +56,7 @@ const PhoneField = ({ form }: PhoneFieldProps) => {
   // Get current country code value
   const countryCode = form.watch('phone.countryCode') || 'VN';
   const selectedCountry =
-    findCountryByCode(countryCode) ||
-    countries.find((c) => c.dialCode === 'VN');
+    findCountryByCode(countryCode) || countries.find((c) => c.code === 'VN');
 
   return (
     <div className='space-y-2'>
@@ -95,14 +94,14 @@ const PhoneField = ({ form }: PhoneFieldProps) => {
                         key={country.code}
                         value={`${country.name}${country.dialCode}`}
                         onSelect={() => {
-                          form.setValue('phone.countryCode', country.dialCode);
+                          form.setValue('phone.countryCode', country.code);
                           setOpen(false);
                         }}
                         className='flex items-center gap-2'
                       >
                         <span className='mr-1'>{country.flag}</span>
                         {country.name} ({country.dialCode})
-                        {country.dialCode === countryCode && (
+                        {country.code === countryCode && (
                           <Check className='ml-auto h-4 w-4' />
                         )}
                       </CommandItem>

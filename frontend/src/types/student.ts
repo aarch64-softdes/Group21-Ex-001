@@ -81,20 +81,5 @@ export const mapToStudent = (data: any): Student => {
     identity: data.identity,
   };
 
-  if (res.identity) res.identity.type = mapToIdentityType(data.identity.type);
-
   return res;
-};
-
-const mapToIdentityType = (data: string): string | null => {
-  switch (data) {
-    case 'Identity_Card':
-      return 'Identity Card';
-    case 'Chip_Card':
-      return 'Chip Card';
-    case 'Passport':
-      return 'Passport';
-    default:
-      return null;
-  }
 };

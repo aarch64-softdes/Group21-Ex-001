@@ -49,7 +49,10 @@ export default class StudentService {
         studentId: '',
         name: '',
         email: '',
-        phone: '',
+        phone: {
+          countryCode: '',
+          phoneNumber: '',
+        },
         dob: new Date(),
         gender: '',
         faculty: '',

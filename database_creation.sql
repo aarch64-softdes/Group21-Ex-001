@@ -152,15 +152,15 @@ INSERT INTO statuses (name) VALUES
 INSERT INTO identities (id, type, number, issued_by, issued_date, expiry_date, has_chip, country, notes)
 VALUES
 -- Chip_Card (CCCD) examples - 12 digits
-('ID001', 'Chip_Card', '123456789012', 'Ministry of Public Security', '2018-05-10', '2028-05-10', true, 'Vietnam', 'Citizen Identity Card with Chip'),
-('ID004', 'Chip_Card', '234567891023', 'Ministry of Public Security', '2021-01-05', '2031-01-05', true, 'Vietnam', NULL),
-('ID006', 'Chip_Card', '345678912034', 'Ministry of Public Security', '2019-07-14', '2029-07-14', true, 'Vietnam', NULL),
-('ID009', 'Chip_Card', '456789123045', 'Ministry of Public Security', '2021-06-17', '2031-06-17', true, 'Vietnam', NULL),
+('ID001', 'Chip Card', '123456789012', 'Ministry of Public Security', '2018-05-10', '2028-05-10', true, 'Vietnam', 'Citizen Identity Card with Chip'),
+('ID004', 'Chip Card', '234567891023', 'Ministry of Public Security', '2021-01-05', '2031-01-05', true, 'Vietnam', NULL),
+('ID006', 'Chip Card', '345678912034', 'Ministry of Public Security', '2019-07-14', '2029-07-14', true, 'Vietnam', NULL),
+('ID009', 'Chip Card', '456789123045', 'Ministry of Public Security', '2021-06-17', '2031-06-17', true, 'Vietnam', NULL),
 
 -- Identity_Card (CMND) examples - 9 digits
-('ID003', 'Identity_Card', '456789123', 'Police Department', '2020-03-22', '2025-03-22', false, 'Vietnam', 'Old ID card'),
-('ID005', 'Identity_Card', '567891234', 'Police Department', '2017-11-30', '2027-11-30', false, 'Vietnam', NULL),
-('ID007', 'Identity_Card', '678912345', 'Police Department', '2022-09-08', '2027-09-08', false, 'Vietnam', NULL),
+('ID003', 'Identity Card', '456789123', 'Police Department', '2020-03-22', '2025-03-22', false, 'Vietnam', 'Old ID card'),
+('ID005', 'Identity Card', '567891234', 'Police Department', '2017-11-30', '2027-11-30', false, 'Vietnam', NULL),
+('ID007', 'Identity Card', '678912345', 'Police Department', '2022-09-08', '2027-09-08', false, 'Vietnam', NULL),
 
 -- Passport examples - 2 uppercase letters followed by 7 digits
 ('ID002', 'Passport', 'AB1234567', 'Immigration Department', '2019-08-15', '2029-08-15', false, 'Vietnam', 'International travel document'),
