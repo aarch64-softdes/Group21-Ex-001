@@ -19,6 +19,7 @@ import {
   useGenericTableData,
   useTableAdd,
   useTableDelete,
+  useTableEdit,
 } from '@/hooks/useTableDataOperation';
 import { GenericTableProps } from '@/types/table';
 import { PlusCircle } from 'lucide-react';
@@ -26,7 +27,6 @@ import { useMemo, useState } from 'react';
 import TableSort from './TableSort';
 import FileImportButton from './FileImportButton';
 import FileExportButton from './FileExportButton';
-import { showErrorToast, showSuccessToast } from '@/lib/toast-utils';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
@@ -57,37 +57,15 @@ const GenericTable = <T extends { id: string }>({
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [currentDetailItem, setCurrentDetailItem] = useState<T | null>(null);
 
-  // State for editing dialog
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [currentEditItem, setCurrentEditItem] = useState<T | null>(null);
-  const [isEditSaving, setIsEditSaving] = useState(false);
-
-  // Handle edit button click
-  const handleEditClick = (id: string) => {
-    const itemToEdit = data.find((item) => item.id === id);
-    if (itemToEdit) {
-      setCurrentEditItem(itemToEdit);
-      setEditDialogOpen(true);
-    }
-  };
-
-  // Handle save after editing
-  const handleEditSave = async (updatedData: Partial<T>) => {
-    if (!currentEditItem) return;
-
-    try {
-      setIsEditSaving(true);
-      await actions?.onSave?.(currentEditItem.id, updatedData as T);
-      setEditDialogOpen(false);
-      setCurrentEditItem(null);
-      showSuccessToast('Edit saved successfully');
-    } catch (error) {
-      console.error('Error saving edit:', error);
-      showErrorToast('Error saving edit');
-    } finally {
-      setIsEditSaving(false);
-    }
-  };
+  // Use the edit hook instead of managing state directly
+  const {
+    editDialogOpen,
+    setEditDialogOpen,
+    currentEditItem,
+    isEditSaving,
+    handleEditClick,
+    handleEditSave,
+  } = useTableEdit<T>(actions);
 
   const { isDeleting, deletingRow, handleDelete } = useTableDelete(actions);
   const { isAdding, dialogOpen, setDialogOpen, handleAdd, handleShowDialog } =
@@ -155,7 +133,7 @@ const GenericTable = <T extends { id: string }>({
                   setCurrentDetailItem(cell);
                   setDetailDialogOpen(true);
                 }}
-                onEdit={() => handleEditClick(cell.id)}
+                onEdit={() => handleEditClick(cell.id, data)}
                 onDelete={() => handleDelete(cell.id)}
                 disabledActions={disabledActions}
                 additionalActions={additionalActions.map((action) => ({
@@ -177,6 +155,7 @@ const GenericTable = <T extends { id: string }>({
     isDeleting,
     pagination.pageSize,
     handleDelete,
+    handleEditClick,
     disabledActions,
   ]);
 

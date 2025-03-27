@@ -1,5 +1,6 @@
 import { SortConfig } from '@/components/table/TableSort';
 import { showErrorToast, showSuccessToast } from '@/lib/toast-utils';
+import { getErrorMessage } from '@/lib/utils';
 import { FilterOption, FilterParams } from '@/types/filter';
 import { QueryHook, TableActions } from '@/types/table';
 import { useCallback, useEffect, useState } from 'react';
@@ -18,7 +19,7 @@ export const useTableAdd = <T extends { id: string }>(
       showSuccessToast('Successfully added!');
     } catch (error) {
       console.error(error);
-      showErrorToast('Failed to add!');
+      showErrorToast('Failed to add: ' + getErrorMessage(error));
     } finally {
       setIsAdding(false);
     }
@@ -29,6 +30,51 @@ export const useTableAdd = <T extends { id: string }>(
   };
 
   return { isAdding, dialogOpen, setDialogOpen, handleAdd, handleShowDialog };
+};
+
+export const useTableEdit = <T extends { id: string }>(
+  actions?: TableActions,
+) => {
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [currentEditItem, setCurrentEditItem] = useState<T | null>(null);
+  const [isEditSaving, setIsEditSaving] = useState(false);
+
+  // Handle edit button click
+  const handleEditClick = useCallback((id: string, data: T[]) => {
+    const itemToEdit = data.find((item) => item.id === id);
+    if (itemToEdit) {
+      setCurrentEditItem(itemToEdit);
+      setEditDialogOpen(true);
+    }
+  }, []);
+
+  // Handle save after editing
+  const handleEditSave = async (updatedData: Partial<T>) => {
+    if (!currentEditItem) return;
+
+    try {
+      setIsEditSaving(true);
+      await actions?.onSave?.(currentEditItem.id, updatedData as T);
+      setEditDialogOpen(false);
+      setCurrentEditItem(null);
+      showSuccessToast('Edit saved successfully');
+    } catch (error) {
+      console.error('Error saving edit:', error);
+      showErrorToast('Error editing: ' + getErrorMessage(error));
+    } finally {
+      setIsEditSaving(false);
+    }
+  };
+
+  return {
+    editDialogOpen,
+    setEditDialogOpen,
+    currentEditItem,
+    setCurrentEditItem,
+    isEditSaving,
+    handleEditClick,
+    handleEditSave,
+  };
 };
 
 export const useTableDelete = (actions?: TableActions) => {
@@ -44,7 +90,7 @@ export const useTableDelete = (actions?: TableActions) => {
       showSuccessToast('Successfully deleted!');
     } catch (error) {
       console.error(error);
-      showErrorToast('Failed to delete');
+      showErrorToast('Failed to delete: ' + getErrorMessage(error));
     } finally {
       setIsDeleting(false);
     }
