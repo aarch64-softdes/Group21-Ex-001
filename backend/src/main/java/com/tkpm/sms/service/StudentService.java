@@ -83,7 +83,7 @@ public class StudentService {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
                     String.format(
                             "Student with phone number %s already existed",
-                            studentCreateRequestDto.getPhone())));
+                            studentCreateRequestDto.getPhone().getPhoneNumber())));
         }
 
         Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
@@ -152,7 +152,7 @@ public class StudentService {
                     ErrorCode.CONFLICT.withMessage(
                             String.format(
                                     "Student with phone number %s already existed",
-                                    studentUpdateRequestDto.getPhone())));
+                                    studentUpdateRequestDto.getPhone().getPhoneNumber())));
         }
 
         studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
