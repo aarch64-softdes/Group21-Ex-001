@@ -34,13 +34,14 @@ import {
   useEntityPrograms,
   useEntityStatuses,
   useGenders,
-} from '@/hooks/useMetadata';
-import { useStudent } from '@/hooks/useStudentApi';
+} from '@/hooks/api/useMetadata';
+import { useStudent } from '@/hooks/api/useStudentApi';
 import Student, { CreateStudentDTO } from '@/types/student';
 import { FormComponentProps } from '@/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import LoadingButton from '../ui/loadingButton';
+import { cn } from '@/lib/utils';
 
 export const StudentFormSchema = z.object({
   studentId: z.string().min(1, 'Student ID is required'),
@@ -562,12 +563,21 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                     >
                       <AccordionItem value='detailed-addresses'>
                         <AccordionTrigger className='font-medium text-base'>
-                          Contact Addresses
-                          {(form.formState.errors.permanentAddress ||
-                            form.formState.errors.temporaryAddress ||
-                            form.formState.errors.mailingAddress) && (
-                            <span className='text-destructive ml-2'>●</span>
-                          )}
+                          <div
+                            className={cn(
+                              (form.formState.errors.permanentAddress ||
+                                form.formState.errors.temporaryAddress ||
+                                form.formState.errors.mailingAddress) &&
+                                'text-destructive',
+                            )}
+                          >
+                            Contact Addresses
+                            {(form.formState.errors.permanentAddress ||
+                              form.formState.errors.temporaryAddress ||
+                              form.formState.errors.mailingAddress) && (
+                              <span className='text-destructive ml-2'>●</span>
+                            )}
+                          </div>
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className='space-y-6 pt-2'>

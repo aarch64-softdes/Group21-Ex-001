@@ -1,6 +1,6 @@
 import React from 'react';
 import { DetailComponentProps } from '@/types/table';
-import { useStudent } from '@/hooks/useStudentApi';
+import { useStudent } from '@/hooks/api/useStudentApi';
 import { Loader2, User, Mail, Phone, School, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -134,22 +134,43 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
           <CardContent className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             <DetailField label='Gender' value={student.gender} />
             <DetailField label='Permanent Address' colSpan='full'>
-              {student.permanentAddress.street}, {student.permanentAddress.ward}
-              , {student.permanentAddress.district},{' '}
-              {student.permanentAddress.province},{' '}
-              {student.permanentAddress.country}
+              {student.permanentAddress
+                ? [
+                    student.permanentAddress.street,
+                    student.permanentAddress.ward,
+                    student.permanentAddress.district,
+                    student.permanentAddress.province,
+                    student.permanentAddress.country,
+                  ]
+                    .filter(Boolean)
+                    .join(', ') || 'No permanent address provided'
+                : 'No permanent address provided'}
             </DetailField>
             <DetailField label='Temporary Address' colSpan='full'>
-              {student.temporaryAddress.street}, {student.temporaryAddress.ward}
-              , {student.temporaryAddress.district},{' '}
-              {student.temporaryAddress.province},{' '}
-              {student.temporaryAddress.country}
+              {student.temporaryAddress
+                ? [
+                    student.temporaryAddress.street,
+                    student.temporaryAddress.ward,
+                    student.temporaryAddress.district,
+                    student.temporaryAddress.province,
+                    student.temporaryAddress.country,
+                  ]
+                    .filter(Boolean)
+                    .join(', ') || 'No temporary address provided'
+                : 'No temporary address provided'}
             </DetailField>
             <DetailField label='Mailing Address' colSpan='full'>
-              {student.mailingAddress.street}, {student.mailingAddress.ward},{' '}
-              {student.mailingAddress.district},{' '}
-              {student.mailingAddress.province},{' '}
-              {student.mailingAddress.country}
+              {student.mailingAddress
+                ? [
+                    student.mailingAddress.street,
+                    student.mailingAddress.ward,
+                    student.mailingAddress.district,
+                    student.mailingAddress.province,
+                    student.mailingAddress.country,
+                  ]
+                    .filter(Boolean)
+                    .join(', ') || 'No mailing address provided'
+                : 'No mailing address provided'}
             </DetailField>
             <Separator className='col-span-3' />
 
