@@ -21,6 +21,8 @@ public class SettingService {
 
     SettingRepository settingRepository;
 
+    ObjectMapper objectMapper;
+
     public Setting getPhoneSetting(){
         return settingRepository.findSettingByName(PHONE_NUMBER_SETTING).orElseThrow(
                 () -> new ApplicationException(
@@ -45,10 +47,8 @@ public class SettingService {
         var setting = settingRepository.findSettingByName(PHONE_NUMBER_SETTING).orElseThrow(
                 () -> new ApplicationException(
                         ErrorCode.NOT_FOUND.withMessage("Phone setting not found")));
-
-        ObjectMapper objectMapper = new ObjectMapper();
         try{
-            String details = objectMapper.writeValueAsString(phoneSettingRequestDto.getDetails());
+            String details = objectMapper.writeValueAsString(phoneSettingRequestDto.getSupportedCountryCodes());
             setting.setDetails(details);
             return settingRepository.save(setting);
 
