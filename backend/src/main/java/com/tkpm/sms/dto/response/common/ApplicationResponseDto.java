@@ -1,6 +1,5 @@
 package com.tkpm.sms.dto.response.common;
 
-import org.apache.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tkpm.sms.exceptions.ErrorCode;
@@ -8,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 
 @Data
 @Builder(toBuilder = true)
@@ -16,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 public class ApplicationResponseDto<T> {
     @Builder.Default
     int code = HttpStatus.OK.value();
+
     String message;
     String errorCode;
     T content;

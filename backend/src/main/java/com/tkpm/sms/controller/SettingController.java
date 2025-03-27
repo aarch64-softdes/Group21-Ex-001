@@ -52,6 +52,20 @@ public class SettingController {
 
     }
 
+    @GetMapping("/email")
+    public ResponseEntity<ApplicationResponseDto<EmailDomainSettingDto>> getEmailSetting() {
+        var setting = settingService.getEmailSetting();
+
+        var emailDomainSettingDto = EmailDomainSettingDto.builder()
+                .settingName(setting.getName())
+                .domain(setting.getDetails())
+                .build();
+
+        var response = ApplicationResponseDto.success(emailDomainSettingDto);
+
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/email")
     public ResponseEntity<ApplicationResponseDto<EmailDomainSettingDto>> updateEmailDomainSetting(
             @RequestBody EmailDomainSettingRequestDto emailSettingRequestDto
