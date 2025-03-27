@@ -25,6 +25,7 @@ export default class StudentService {
     const response = await api.get('/api/students', {
       params: {
         page,
+        size,
         sortName,
         sortType,
         search,

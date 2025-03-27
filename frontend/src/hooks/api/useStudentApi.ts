@@ -55,7 +55,6 @@ export const useCreateStudent = () => {
     mutationFn: (data: CreateStudentDTO) => studentService.addNewStudent(data),
     onSuccess: () => {
       queryClient.invalidateQueries();
-      showSuccessToast('Student added successfully');
     },
   });
 };
@@ -68,7 +67,6 @@ export const useUpdateStudent = () => {
       studentService.updateStudent(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries();
-      showSuccessToast('Student updated successfully');
     },
   });
 };
@@ -80,7 +78,6 @@ export const useDeleteStudent = () => {
     mutationFn: (id: string) => studentService.deleteStudent(id),
     onSuccess: () => {
       queryClient.invalidateQueries();
-      showSuccessToast('Student deleted successfully');
     },
   });
 };

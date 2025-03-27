@@ -12,12 +12,12 @@ CREATE TABLE identities (
     CONSTRAINT pk_identities PRIMARY KEY (id)
 );
 
--- Create addresses table
 CREATE TABLE addresses (
     id VARCHAR(255) NOT NULL,
     street VARCHAR(255),
     ward VARCHAR(255),
     district VARCHAR(255),
+    province VARCHAR(255),
     country VARCHAR(255),
     CONSTRAINT pk_addresses PRIMARY KEY (id)
 );
@@ -153,44 +153,44 @@ VALUES
 ('ID008', 'Passport', 'CD2345678', 'Immigration Department', '2020-04-25', '2030-04-25', false, 'Vietnam', NULL),
 ('ID010', 'Passport', 'EF3456789', 'Immigration Department', '2018-12-03', '2028-12-03', false, 'Vietnam', 'Diplomatic passport');
 
--- Insert addresses (converting the single address into three address types)
-INSERT INTO addresses (id, street, ward, district, country)
+-- Insert addresses with Ward and Province data
+INSERT INTO addresses (id, street, ward, district, province, country)
 VALUES
 -- Permanent addresses
-('PERM001', '123 Main Street', NULL, 'City', 'Country'),
-('PERM002', '456 Oak Avenue', NULL, 'Town', 'Country'),
-('PERM003', '789 Pine Road', NULL, 'Village', 'Country'),
-('PERM004', '321 Maple Lane', NULL, 'County', 'Country'),
-('PERM005', '654 Elm Street', NULL, 'District', 'Country'),
-('PERM006', '987 Cedar Avenue', NULL, 'Region', 'Country'),
-('PERM007', '246 Birch Boulevard', NULL, 'Zone', 'Country'),
-('PERM008', '135 Spruce Drive', NULL, 'Area', 'Country'),
-('PERM009', '864 Willow Way', NULL, 'Territory', 'Country'),
-('PERM010', '753 Aspen Place', NULL, 'Sector', 'Country'),
+('PERM001', '123 Main Street', 'Thanh Cong', 'Ba Dinh', 'Hanoi', 'Vietnam'),
+('PERM002', '456 Oak Avenue', 'Ben Nghe', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('PERM003', '789 Pine Road', 'Hai Chau', 'Hai Chau', 'Da Nang', 'Vietnam'),
+('PERM004', '321 Maple Lane', 'Thac Gian', 'Thanh Khe', 'Da Nang', 'Vietnam'),
+('PERM005', '654 Elm Street', 'Phuoc My', 'Son Tra', 'Da Nang', 'Vietnam'),
+('PERM006', '987 Cedar Avenue', 'Tan Dinh', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('PERM007', '246 Birch Boulevard', 'Truc Bach', 'Ba Dinh', 'Hanoi', 'Vietnam'),
+('PERM008', '135 Spruce Drive', 'Pham Ngu Lao', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('PERM009', '864 Willow Way', 'Cau Giay', 'Cau Giay', 'Hanoi', 'Vietnam'),
+('PERM010', '753 Aspen Place', 'Vinh Trung', 'Thanh Khe', 'Da Nang', 'Vietnam'),
 
--- Temporary addresses (using same as permanent for demo purposes)
-('TEMP001', '123 Main Street', NULL, 'City', 'Country'),
-('TEMP002', '456 Oak Avenue', NULL, 'Town', 'Country'),
-('TEMP003', '789 Pine Road', NULL, 'Village', 'Country'),
-('TEMP004', '321 Maple Lane', NULL, 'County', 'Country'),
-('TEMP005', '654 Elm Street', NULL, 'District', 'Country'),
-('TEMP006', '987 Cedar Avenue', NULL, 'Region', 'Country'),
-('TEMP007', '246 Birch Boulevard', NULL, 'Zone', 'Country'),
-('TEMP008', '135 Spruce Drive', NULL, 'Area', 'Country'),
-('TEMP009', '864 Willow Way', NULL, 'Territory', 'Country'),
-('TEMP010', '753 Aspen Place', NULL, 'Sector', 'Country'),
+-- Temporary addresses
+('TEMP001', '123 Main Street', 'Thanh Cong', 'Ba Dinh', 'Hanoi', 'Vietnam'),
+('TEMP002', '456 Oak Avenue', 'Ben Nghe', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('TEMP003', '789 Pine Road', 'An Hai Bac', 'Son Tra', 'Da Nang', 'Vietnam'),
+('TEMP004', '321 Maple Lane', 'Thao Dien', 'District 2', 'Ho Chi Minh City', 'Vietnam'),
+('TEMP005', '654 Elm Street', 'Lang Ha', 'Dong Da', 'Hanoi', 'Vietnam'),
+('TEMP006', '987 Cedar Avenue', 'Tan Dinh', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('TEMP007', '246 Birch Boulevard', 'Nguyen Thai Binh', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('TEMP008', '135 Spruce Drive', 'Pham Ngu Lao', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('TEMP009', '864 Willow Way', 'Linh Trung', 'Thu Duc', 'Ho Chi Minh City', 'Vietnam'),
+('TEMP010', '753 Aspen Place', 'My An', 'Ngu Hanh Son', 'Da Nang', 'Vietnam'),
 
--- Mailing addresses (using same as permanent for demo purposes)
-('MAIL001', '123 Main Street', NULL, 'City', 'Country'),
-('MAIL002', '456 Oak Avenue', NULL, 'Town', 'Country'),
-('MAIL003', '789 Pine Road', NULL, 'Village', 'Country'),
-('MAIL004', '321 Maple Lane', NULL, 'County', 'Country'),
-('MAIL005', '654 Elm Street', NULL, 'District', 'Country'),
-('MAIL006', '987 Cedar Avenue', NULL, 'Region', 'Country'),
-('MAIL007', '246 Birch Boulevard', NULL, 'Zone', 'Country'),
-('MAIL008', '135 Spruce Drive', NULL, 'Area', 'Country'),
-('MAIL009', '864 Willow Way', NULL, 'Territory', 'Country'),
-('MAIL010', '753 Aspen Place', NULL, 'Sector', 'Country');
+-- Mailing addresses
+('MAIL001', '123 Main Street', 'Thanh Cong', 'Ba Dinh', 'Hanoi', 'Vietnam'),
+('MAIL002', '456 Oak Avenue', 'Ben Nghe', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('MAIL003', '789 Pine Road', 'Hai Chau', 'Hai Chau', 'Da Nang', 'Vietnam'),
+('MAIL004', '321 Maple Lane', 'Thao Dien', 'District 2', 'Ho Chi Minh City', 'Vietnam'),
+('MAIL005', '654 Elm Street', 'Lang Ha', 'Dong Da', 'Hanoi', 'Vietnam'),
+('MAIL006', '987 Cedar Avenue', 'Tan Dinh', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('MAIL007', '246 Birch Boulevard', 'Truc Bach', 'Ba Dinh', 'Hanoi', 'Vietnam'),
+('MAIL008', '135 Spruce Drive', 'Pham Ngu Lao', 'District 1', 'Ho Chi Minh City', 'Vietnam'),
+('MAIL009', '864 Willow Way', 'Cau Giay', 'Cau Giay', 'Hanoi', 'Vietnam'),
+('MAIL010', '753 Aspen Place', 'My An', 'Ngu Hanh Son', 'Da Nang', 'Vietnam');
 
 -- Seed student data with relationships to addresses, faculties, programs, and statuses
 INSERT INTO students (

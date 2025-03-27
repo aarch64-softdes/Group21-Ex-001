@@ -57,20 +57,39 @@ export interface UpdateStudentDTO {
   identity: IdentityDocument;
 }
 
-export const mapToStudent = (data: any): Student => ({
-  id: data.id,
-  studentId: data.studentId,
-  name: data.name,
-  dob: data.dob ? new Date(data.dob) : new Date(),
-  gender: data.gender,
-  faculty: data.faculty,
-  course: data.course,
-  program: data.program,
-  email: data.email,
-  permanentAddress: data.permanentAddress,
-  temporaryAddress: data.temporaryAddress,
-  mailingAddress: data.mailingAddress,
-  phone: data.phone,
-  status: data.status,
-  identity: data.identity,
-});
+export const mapToStudent = (data: any): Student => {
+  const res = {
+    id: data.id,
+    studentId: data.studentId,
+    name: data.name,
+    dob: data.dob ? new Date(data.dob) : new Date(),
+    gender: data.gender,
+    faculty: data.faculty,
+    course: data.course,
+    program: data.program,
+    email: data.email,
+    permanentAddress: data.permanentAddress,
+    temporaryAddress: data.temporaryAddress,
+    mailingAddress: data.mailingAddress,
+    phone: data.phone,
+    status: data.status,
+    identity: data.identity,
+  };
+
+  if (res.identity) res.identity.type = mapToIdentityType(data.identity.type);
+
+  return res;
+};
+
+const mapToIdentityType = (data: string): string | null => {
+  switch (data) {
+    case 'Identity_Card':
+      return 'Identity Card';
+    case 'Chip_Card':
+      return 'Chip Card';
+    case 'Passport':
+      return 'Passport';
+    default:
+      return null;
+  }
+};

@@ -9,7 +9,7 @@ import Program, {
 export default class ProgramService {
   getPrograms = async ({
     page = 1,
-    size = 10,
+    size = 20,
     sortName = 'name',
     sortType = 'asc',
     search = '',
@@ -23,6 +23,7 @@ export default class ProgramService {
     const response = await api.get('/api/programs', {
       params: {
         page,
+        size,
         sortName,
         sortType,
         search,
