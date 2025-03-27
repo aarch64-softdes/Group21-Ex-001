@@ -2,6 +2,10 @@ package com.tkpm.sms.mapper;
 
 import java.util.Objects;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import com.tkpm.sms.dto.request.phone.PhoneRequestDto;
+import com.tkpm.sms.dto.response.PhoneDto;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -32,11 +36,13 @@ public interface StudentMapper {
     @Mapping(target = "status", source = "status.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
+    @Mapping(target = "phone", qualifiedByName = "parsePhoneToPhoneDto")
     StudentDto toStudentDto(Student student);
 
     @Mapping(target = "status", source = "status.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
+    @Mapping(target = "phone", qualifiedByName = "parsePhoneToPhoneDto")
     StudentMinimalDto toStudentMinimalDto(Student student);
 
 
@@ -44,6 +50,7 @@ public interface StudentMapper {
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "gender", qualifiedByName = "toGender")
+    @Mapping(target = "phone", ignore = true)
     Student toStudent(StudentDto studentDto,
                       @Context FacultyService facultyService,
                       @Context ProgramService programService,
@@ -53,6 +60,7 @@ public interface StudentMapper {
     @Mapping(target = "temporaryAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getTemporaryAddress()))")
     @Mapping(target = "mailingAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getMailingAddress()))")
     @Mapping(target = "identity", expression = "java(ImportFileUtils.parseIdentityCreateRequestDto(studentFileImportDto))")
+    @Mapping(target = "phone", qualifiedByName = "parsePhoneToPhoneRequestDto")
     StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileImportDto);
 
     @Mapping(target = "id", ignore = true)
@@ -60,6 +68,7 @@ public interface StudentMapper {
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "gender", qualifiedByName = "toGender")
+    @Mapping(target = "phone", source = "request.phone", qualifiedByName = "parsePhone")
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
@@ -74,6 +83,7 @@ public interface StudentMapper {
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "gender", qualifiedByName = "toGender")
+    @Mapping(target = "phone", source = "request.phone", qualifiedByName = "parsePhone")
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
@@ -81,6 +91,14 @@ public interface StudentMapper {
                           @Context FacultyService facultyService,
                           @Context ProgramService programService,
                           @Context StatusService statusService);
+
+    @Named("parsePhone")
+    default String parsePhone(PhoneRequestDto request) {
+        if (request == null) {
+            return null;
+        }
+        return parsePhone(request.getPhoneNumber(), request.getCountryCode());
+    }
 
     @Named("toFaculty")
     default Faculty toFaculty(String name, @Context FacultyService facultyService) {
@@ -126,5 +144,56 @@ public interface StudentMapper {
         }else{
             throw new ApplicationException(ErrorCode.UNCATEGORIZED.withMessage("Gender not supported"));
         }
+    }
+
+    @Named("parsePhoneToPhoneDto")
+    default PhoneDto parsePhoneToPhoneDto(String phone){
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+        try{
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
+                    phone, null);
+            return new PhoneDto(
+                    phone, phoneNumberUtil.getRegionCodeForNumber(phoneNumber)
+            );
+
+        }catch (Exception e){
+            throw new ApplicationException(ErrorCode.INVALID_PHONE.withMessage(
+                    String.format("Invalid phone number: %s", phone)));
+        }
+    }
+
+    @Named("parsePhoneToPhoneRequestDto")
+    default PhoneRequestDto parsePhoneToPhoneRequestDto(String phone){
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+        try{
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
+                    phone, null);
+            return new PhoneRequestDto(
+                    phone, phoneNumberUtil.getRegionCodeForNumber(phoneNumber)
+            );
+
+        }catch (Exception e){
+            throw new ApplicationException(ErrorCode.INVALID_PHONE.withMessage(
+                    String.format("Invalid phone number: %s", phone)));
+        }
+    }
+
+    default String parsePhone(String phone, String countryCode){
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+        try{
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
+                    phone, countryCode);
+            boolean isValidPhoneNumber = phoneNumberUtil.isValidNumber(phoneNumber);
+            if(isValidPhoneNumber){
+                return phoneNumberUtil.format(
+                        phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL).
+                        replaceAll(" ", "");
+            }
+        }catch (Exception e){
+            throw new ApplicationException(ErrorCode.INVALID_PHONE.withMessage(
+                    String.format("Invalid phone number: %s", phone)));
+        }
+
+        return null;
     }
 }

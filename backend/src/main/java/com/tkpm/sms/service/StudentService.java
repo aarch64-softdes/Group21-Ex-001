@@ -1,5 +1,8 @@
 package com.tkpm.sms.service;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import com.tkpm.sms.dto.request.student.StudentCollectionRequest;
 import com.tkpm.sms.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.dto.request.student.StudentUpdateRequestDto;
@@ -61,7 +64,7 @@ public class StudentService {
     }
 
     @Transactional
-    public Student createStudent(StudentCreateRequestDto studentCreateRequestDto) {
+    public Student createStudent(StudentCreateRequestDto studentCreateRequestDto){
         if (studentRepository.existsStudentByStudentId(studentCreateRequestDto.getStudentId())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
                     String.format(
@@ -76,11 +79,11 @@ public class StudentService {
                             studentCreateRequestDto.getEmail())));
         }
 
-        if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone())) {
+        if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone().getPhoneNumber())) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
                     String.format(
                             "Student with phone number %s already existed",
-                            studentCreateRequestDto.getPhone())));
+                            studentCreateRequestDto.getPhone().getPhoneNumber())));
         }
 
         Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
@@ -143,13 +146,13 @@ public class StudentService {
             throw new ApplicationException(errorCode);
         }
 
-        if (!student.getPhone().equals(studentUpdateRequestDto.getPhone())
-                && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone())) {
+        if (!student.getPhone().equals(studentUpdateRequestDto.getPhone().getPhoneNumber())
+                && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone().getPhoneNumber())) {
             throw new ApplicationException(
                     ErrorCode.CONFLICT.withMessage(
                             String.format(
                                     "Student with phone number %s already existed",
-                                    studentUpdateRequestDto.getPhone())));
+                                    studentUpdateRequestDto.getPhone().getPhoneNumber())));
         }
 
         studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
