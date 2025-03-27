@@ -1,4 +1,4 @@
-package com.tkpm.sms.dto.response;
+package com.tkpm.sms.dto.response.setting;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,8 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SettingDto {
-    String id;
-    String name;
+public class PhoneSettingDto {
     List<String> details;
 }

@@ -30,22 +30,4 @@ public class Setting {
     //@Lob
     @Column(columnDefinition = "TEXT")
     String details;
-
-    public void setDetails(List<String> detailsList) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            this.details = objectMapper.writeValueAsString(detailsList);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error serializing details", e);
-        }
-    }
-
-    public List<String> getDetails() {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(this.details, List.class);
-        } catch (IOException e) {
-            throw new RuntimeException("Error deserializing details", e);
-        }
-    }
 }
