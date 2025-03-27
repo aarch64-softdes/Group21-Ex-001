@@ -1,5 +1,9 @@
 import api from '@/lib/api';
-import { EmailDomainSetting, PhoneSetting } from '@/types/setting';
+import {
+  EmailDomainSetting,
+  PhoneSetting,
+  PhoneSettingRequest,
+} from '@/types/setting';
 
 export default class SettingsService {
   // Email domain settings
@@ -20,11 +24,13 @@ export default class SettingsService {
   // Phone settings
   getPhoneSetting = async (): Promise<PhoneSetting> => {
     const response = await api.get('/api/settings/phone-number');
-    return response.data.content;
+    return response.data.content.supportedCountryCodes;
   };
 
-  updatePhoneSetting = async (data: PhoneSetting): Promise<PhoneSetting> => {
+  updatePhoneSetting = async (
+    data: PhoneSettingRequest,
+  ): Promise<PhoneSetting> => {
     const response = await api.put('/api/settings/phone-number', data);
-    return response.data.content;
+    return response.data.content.supportedCountryCodes;
   };
 }

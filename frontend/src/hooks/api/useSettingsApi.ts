@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import SettingsService from '@/services/settingService';
-import { EmailDomainSetting, PhoneSetting } from '@/types/setting';
+import {
+  EmailDomainSetting,
+  PhoneSetting,
+  PhoneSettingRequest,
+} from '@/types/setting';
 
 const settingsService = new SettingsService();
 
@@ -36,7 +40,7 @@ export const useUpdatePhoneSetting = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: PhoneSetting) =>
+    mutationFn: (data: PhoneSettingRequest) =>
       settingsService.updatePhoneSetting(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['phoneSetting'] });

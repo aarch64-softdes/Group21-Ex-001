@@ -2,6 +2,8 @@ export interface EmailDomainSetting {
   domain: string;
 }
 
-export interface PhoneSetting {
+export type PhoneSetting = string[];
+
+export type PhoneSettingRequest = {
   supportedCountryCodes: string[];
-}
+};

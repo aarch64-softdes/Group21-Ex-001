@@ -22,7 +22,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, getErrorMessage } from '@/lib/utils';
+import { showErrorToast, showSuccessToast } from '@/lib/toast-utils';
 
 const validateEmailDomain = (domain: string): string | null => {
   if (!domain.startsWith('@')) {
@@ -74,8 +75,10 @@ const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
       await updateEmailDomain.mutateAsync({ domain: tempDomain });
       setIsEditing(false);
       setError(null);
+      showSuccessToast('Email domain updated successfully');
     } catch (err) {
       console.error('Failed to update email domain:', err);
+      showErrorToast('Failed to update email domain: ' + getErrorMessage(err));
     }
   };
 
