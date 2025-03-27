@@ -225,13 +225,13 @@ public class StudentService {
 
     private void validateEmailDomain(String studentEmail) {
         var getStudentDomain = studentEmail.split("@")[1];
-        var validDomain = settingService.getSettingByName(SettingService.EMAIL_SETTING).getDetails().getFirst();
+        var validDomain = settingService.getEmailSetting().getDetails();
         if (validDomain.isEmpty()) {
             throw new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with email %s not found", studentEmail)));
         }
 
         if (!validDomain.equals(getStudentDomain)) {
-            throw new ApplicationException(ErrorCode.FORBIDDEN.withMessage("Email domain is not supported"));
+            throw new ApplicationException(ErrorCode.UNSUPPORTED_EMAIL_DOMAIN.withMessage("Email domain is not supported, only " + validDomain + " is allowed"));
         }
     }
 }

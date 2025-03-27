@@ -2,6 +2,7 @@ package com.tkpm.sms.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tkpm.sms.dto.request.setting.EmailDomainSettingRequestDto;
 import com.tkpm.sms.dto.request.setting.PhoneSettingRequestDto;
 import com.tkpm.sms.entity.Setting;
 import com.tkpm.sms.exceptions.ApplicationException;
@@ -19,26 +20,32 @@ public class SettingService {
     static String EMAIL_SETTING = "email";
     static String PHONE_NUMBER_SETTING = "phonenumber";
 
+    ObjectMapper objectMapper;
     SettingRepository settingRepository;
 
-    ObjectMapper objectMapper;
-
-    public Setting getPhoneSetting(){
+    public Setting getPhoneSetting() {
         return settingRepository.findSettingByName(PHONE_NUMBER_SETTING).orElseThrow(
                 () -> new ApplicationException(
                         ErrorCode.NOT_FOUND.withMessage("Phone setting not found")));
 
     }
 
+    public Setting getEmailSetting() {
+        return settingRepository.findSettingByName(EMAIL_SETTING).orElseThrow(
+                () -> new ApplicationException(
+                        ErrorCode.NOT_FOUND.withMessage("Phone setting not found")));
+
+    }
+
     @Transactional
-    public Setting updateEmailSetting(SettingRequestDto settingRequestDto) {
+    public Setting updateEmailSetting(EmailDomainSettingRequestDto settingRequestDto) {
         var setting = settingRepository.findSettingByName(EMAIL_SETTING).orElseThrow(
                 () -> new ApplicationException(
                         ErrorCode.NOT_FOUND.withMessage(
                                 String.format("Setting with name %s not found", EMAIL_SETTING))));
 
-        settingMapper.updateSetting(setting, settingRequestDto);
-        setting.setDetails(settingRequestDto.getDetails());
+        setting.setDetails(settingRequestDto.getDomain());
+
         return settingRepository.save(setting);
     }
 
@@ -47,7 +54,7 @@ public class SettingService {
         var setting = settingRepository.findSettingByName(PHONE_NUMBER_SETTING).orElseThrow(
                 () -> new ApplicationException(
                         ErrorCode.NOT_FOUND.withMessage("Phone setting not found")));
-        try{
+        try {
             String details = objectMapper.writeValueAsString(phoneSettingRequestDto.getSupportedCountryCodes());
             setting.setDetails(details);
             return settingRepository.save(setting);
@@ -57,6 +64,5 @@ public class SettingService {
                     ErrorCode.INVALID_PHONE_SETTING_DETAILS.
                             withMessage("Invalid phone setting details"));
         }
-
     }
 }
