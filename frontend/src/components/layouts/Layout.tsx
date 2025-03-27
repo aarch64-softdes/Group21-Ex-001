@@ -6,11 +6,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider
       style={{
-        '--sidebar-width': '200px',
+        '--sidebar-width': '240px',
       }}
     >
       <AppSidebar />
-      <main>{children}</main>
+      <main className='flex-grow'>{children}</main>
       <Toaster richColors />
     </SidebarProvider>
   );

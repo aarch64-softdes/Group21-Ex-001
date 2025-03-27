@@ -1,4 +1,10 @@
-import { Activity, BookOpen, GraduationCap, Users } from 'lucide-react';
+import {
+  Activity,
+  BookOpen,
+  GraduationCap,
+  Settings,
+  Users,
+} from 'lucide-react';
 
 import {
   Sidebar,
@@ -32,6 +38,11 @@ const items = [
     title: 'Status',
     url: 'status',
     icon: Activity,
+  },
+  {
+    title: 'Setting',
+    url: 'setting',
+    icon: Settings,
   },
 ];
 
