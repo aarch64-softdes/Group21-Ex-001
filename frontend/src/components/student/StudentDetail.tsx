@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DetailComponentProps } from '@/types/table';
 import { useStudent } from '@/hooks/api/useStudentApi';
 import { Loader2, User, Mail, Phone, School, Calendar } from 'lucide-react';
@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Country, findCountryByCode } from '@/data/countryData';
 
 interface DetailFieldProps {
   label: string;
@@ -30,6 +31,19 @@ const DetailField: React.FC<DetailFieldProps> = ({
 
 const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
   const { data: student, isLoading } = useStudent(studentId as string);
+
+  let [country, setCountry] = useState<Country>({
+    name: '',
+    code: '',
+    dialCode: '',
+    flag: '',
+  });
+
+  useEffect(() => {
+    if (student) {
+      setCountry(findCountryByCode(student.phone.countryCode));
+    }
+  }, [student]);
 
   if (isLoading) {
     return (
@@ -111,7 +125,9 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
             </div>
             <div className='flex items-center gap-2 text-sm text-muted-foreground'>
               <Phone className='h-4 w-4' />
-              <span>{student.phone}</span>
+              <span className='mr-1'>
+                {country.flag} {student.phone.phoneNumber}
+              </span>
             </div>
             <div className='flex items-center gap-2 text-sm text-muted-foreground'>
               <Calendar className='h-4 w-4' />

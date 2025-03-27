@@ -19,7 +19,7 @@ export default interface Student {
   permanentAddress: Address;
   temporaryAddress: Address;
   mailingAddress: Address;
-  phone: string;
+  phone: Phone;
   status: Status;
   identity: IdentityDocument;
 }
@@ -36,7 +36,7 @@ export interface CreateStudentDTO {
   permanentAddress: Address;
   temporaryAddress: Address;
   mailingAddress: Address;
-  phone: string;
+  phone: Phone;
   status?: Status;
   identity: IdentityDocument;
 }
@@ -52,9 +52,14 @@ export interface UpdateStudentDTO {
   permanentAddress: Address;
   temporaryAddress: Address;
   mailingAddress: Address;
-  phone?: string;
+  phone?: Phone;
   status?: Status;
   identity: IdentityDocument;
+}
+
+export interface Phone {
+  phoneNumber: string;
+  countryCode: string;
 }
 
 export const mapToStudent = (data: any): Student => {

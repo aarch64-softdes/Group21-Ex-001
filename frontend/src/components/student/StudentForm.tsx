@@ -29,6 +29,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 
 import AddressForm from '@/components/student/AddressForm';
+import PhoneField from '@/components/student/PhoneField';
 import {
   useEntityFaculties,
   useEntityPrograms,
@@ -60,9 +61,11 @@ export const StudentFormSchema = z.object({
   program: z.string(),
   email: z.string().email('Invalid email address'),
   address: z.string().optional(),
-  phone: z
-    .string()
-    .regex(/^0\d{9}$/, 'Phone number must start with 0 and have 10 digits'),
+  phone: z.object({
+    phoneNumber: z.string(),
+    countryCode: z.string(),
+  }),
+
   status: z.string().min(1, 'Status is required').default('Studying'),
 
   permanentAddress: z.object({
@@ -210,7 +213,10 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       course: 1,
       program: '',
       email: '',
-      phone: '',
+      phone: {
+        phoneNumber: '',
+        countryCode: 'VN',
+      },
       status: 'Studying',
       permanentAddress: {
         street: '',
@@ -268,7 +274,10 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         course: parseInt(studentData.course?.toString() || '1', 10),
         program: studentData.program || '',
         email: studentData.email || '',
-        phone: studentData.phone || '',
+        phone: {
+          phoneNumber: studentData.phone?.phoneNumber || '',
+          countryCode: studentData.phone?.countryCode || 'VN',
+        },
         status: studentData.status || 'Studying',
         permanentAddress: studentData.permanentAddress || {
           street: '',
@@ -359,6 +368,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
     faculty: form.watch('faculty'),
     program: form.watch('program'),
     status: form.watch('status'),
+    phone: form.watch('phone'),
   };
 
   // Log watched values for debugging
@@ -369,6 +379,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
     watchedValues.faculty,
     watchedValues.program,
     watchedValues.status,
+    watchedValues.phone,
   ]);
 
   return (
@@ -529,28 +540,9 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name='phone'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder='0123456789'
-                              {...field}
-                              autoComplete='off'
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className='lg:col-span-1'>
+                      <PhoneField form={form} />
+                    </div>
                   </div>
 
                   <div className='mt-6'>

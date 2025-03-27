@@ -183,8 +183,26 @@ export const countries: Country[] = [
   { name: 'Zimbabwe', code: 'ZW', dialCode: '+263', flag: '🇿🇼' },
 ];
 
-export const findCountryByCode = (code: string): Country | undefined => {
-  return countries.find((country) => country.code === code);
+export const findCountryByCode = (code: string): Country => {
+  return (
+    countries.find((country) => country.code === code) || {
+      name: '',
+      code: '',
+      dialCode: '',
+      flag: '',
+    }
+  );
+};
+
+export const findCountryByDialCode = (dialCode: string): Country => {
+  return (
+    countries.find((country) => country.dialCode === dialCode) || {
+      name: '',
+      code: '',
+      dialCode: '',
+      flag: '',
+    }
+  );
 };
 
 export const getDialCodesFromCodes = (codes: string[]): string[] => {

@@ -63,7 +63,7 @@ CREATE TABLE students (
     course INTEGER,
     program_id INTEGER NOT NULL,
     email VARCHAR(255) NOT NULL,
-    phone VARCHAR(10) NOT NULL,
+    phone VARCHAR(12) NOT NULL,
     status_id INTEGER NOT NULL,
     permanent_address_id VARCHAR(255),
     temporary_address_id VARCHAR(255),
@@ -236,7 +236,7 @@ INSERT INTO students (
     3,
     1, -- Business Administration
     'john.smith@student.hcmus.edu.vn',
-    '0903456789',
+    '+84903456789',
     1, -- Studying
     'PERM001',
     'TEMP001',
@@ -254,7 +254,7 @@ INSERT INTO students (
     2,
     2, -- Criminal Justice
     'emily.johnson@student.hcmus.edu.vn',
-    '0987654321',
+    '+84987654321',
     1, -- studying
     'PERM002',
     'TEMP002',
@@ -272,7 +272,7 @@ INSERT INTO students (
     4,
     3, -- Japanese Literature
     'michael.brown@student.hcmus.edu.vn',
-    '0367891234',
+    '+84367891234',
     2, -- Graduated
     'PERM003',
     'TEMP003',
@@ -290,7 +290,7 @@ INSERT INTO students (
     1,
     4, -- French Studies
     'sarah.davis@student.hcmus.edu.vn',
-    '0345678912',
+    '+84345678912',
     1, -- studying
     'PERM004',
     'TEMP004',
@@ -308,7 +308,7 @@ INSERT INTO students (
     3,
     5, -- International Business
     'david.wilson@student.hcmus.edu.vn',
-    '0778912345',
+    '+84778912345',
     3, -- Suspended
     'PERM005',
     'TEMP005',
@@ -326,7 +326,7 @@ INSERT INTO students (
     2,
     6, -- Japanese Culture
     'jennifer.taylor@student.hcmus.edu.vn',
-    '0934567891',
+    '+84934567891',
     1, -- studying
     'PERM006',
     'TEMP006',
@@ -344,7 +344,7 @@ INSERT INTO students (
     4,
     7, -- Corporate Law
     'james.anderson@student.hcmus.edu.vn',
-    '0891234567',
+    '+84891234567',
     1, -- studying
     'PERM007',
     'TEMP007',
@@ -362,7 +362,7 @@ INSERT INTO students (
     1,
     8, -- French Language
     'linda.martinez@student.hcmus.edu.vn',
-    '0796789123',
+    '+84796789123',
     4, -- Dropped
     'PERM008',
     'TEMP008',
@@ -380,7 +380,7 @@ INSERT INTO students (
     3,
     9, -- Japanese Economics
     'robert.thompson@student.hcmus.edu.vn',
-    '0789123456',
+    '+84789123456',
     1, -- studying
     'PERM009',
     'TEMP009',
@@ -398,7 +398,7 @@ INSERT INTO students (
     2,
     10, -- Business Communication
     'elizabeth.garcia@student.hcmus.edu.vn',
-    '0912345678',
+    '+84912345678',
     1, -- studying
     'PERM010',
     'TEMP010',

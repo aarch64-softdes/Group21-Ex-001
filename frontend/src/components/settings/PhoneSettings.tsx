@@ -251,7 +251,7 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
 
         {/* Confirmation Dialog */}
         <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-          <DialogContent>
+          <DialogContent className='w-160 p-8'>
             <DialogHeader>
               <DialogTitle>Confirm Country Code Changes</DialogTitle>
               <DialogDescription>
