@@ -230,8 +230,11 @@ public class StudentService {
     }
 
     private void validateEmailDomain(String studentEmail) {
-        var getStudentDomain = studentEmail.split("@")[1];
+        var getStudentDomain = studentEmail.substring(studentEmail.indexOf(SettingService.AT_SIGN));
         var validDomain = settingService.getEmailSetting().getDetails();
+        log.info("Valid domain: {}", validDomain);
+        log.info("Student domain: {}", getStudentDomain);
+
         if (validDomain.isEmpty()) {
             throw new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with email %s not found", studentEmail)));
         }
