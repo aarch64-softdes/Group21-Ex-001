@@ -23,16 +23,20 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SettingController {
     SettingService settingService;
-
+    ObjectMapper objectMapper;
+    static String PHONE_NUMBER_SETTING = "phone number";
 
     @GetMapping("/phone-number")
     public ResponseEntity<ApplicationResponseDto<PhoneSettingDto>> getPhoneSetting(){
         var setting = settingService.getPhoneSetting();
 
-        ObjectMapper mapper = new ObjectMapper();
         try{
-            List<String> details = mapper.readValue(setting.getDetails(), new TypeReference<List<String>>(){});
-            var response = ApplicationResponseDto.success(new PhoneSettingDto(details));
+            List<String> details = objectMapper.readValue(setting.getDetails(), new TypeReference<List<String>>(){});
+
+            var phoneSettingDto = new PhoneSettingDto(details);
+            phoneSettingDto.setSettingName(PHONE_NUMBER_SETTING);
+            var response = ApplicationResponseDto.success(phoneSettingDto);
+
             return ResponseEntity.ok(response);
         }catch(Exception e){
             throw new ApplicationException(
@@ -48,10 +52,13 @@ public class SettingController {
     ){
         var updatedSetting = settingService.updatePhoneSetting(phoneSettingRequestDto);
 
-        ObjectMapper mapper = new ObjectMapper();
         try{
-            List<String> details = mapper.readValue(updatedSetting.getDetails(), new TypeReference<List<String>>(){});
-            var response = ApplicationResponseDto.success(new PhoneSettingDto(details));
+            List<String> details = objectMapper.readValue(updatedSetting.getDetails(), new TypeReference<List<String>>(){});
+
+            var phoneSettingDto = new PhoneSettingDto(details);
+            phoneSettingDto.setSettingName(PHONE_NUMBER_SETTING);
+            var response = ApplicationResponseDto.success(phoneSettingDto);
+
             return ResponseEntity.ok(response);
         }catch(Exception e){
             throw new ApplicationException(

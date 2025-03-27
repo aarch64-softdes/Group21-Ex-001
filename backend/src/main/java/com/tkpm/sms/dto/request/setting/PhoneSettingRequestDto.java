@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PhoneSettingRequestDto {
-    @RequiredConstraint(field = "Setting's details")
-    List<String> details;
+    @RequiredConstraint(field = "Supported Country codes")
+    List<String> supportedCountryCodes;
 }
