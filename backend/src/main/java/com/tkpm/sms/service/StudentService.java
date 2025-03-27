@@ -1,8 +1,5 @@
 package com.tkpm.sms.service;
 
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
 import com.tkpm.sms.dto.request.student.StudentCollectionRequest;
 import com.tkpm.sms.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.dto.request.student.StudentUpdateRequestDto;
@@ -15,6 +12,7 @@ import com.tkpm.sms.mapper.IdentityMapper;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
 import com.tkpm.sms.specification.StudentSpecifications;
+import com.tkpm.sms.utils.PhoneUtils;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +77,9 @@ public class StudentService {
                             studentCreateRequestDto.getEmail())));
         }
 
-        if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone().getPhoneNumber())) {
+        var phoneNumberRequest = PhoneUtils.ParsePhoneNumber(studentCreateRequestDto.getPhone().getPhoneNumber(),
+                studentCreateRequestDto.getPhone().getCountryCode());
+        if (studentRepository.existsStudentByPhone(phoneNumberRequest)) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
                     String.format(
                             "Student with phone number %s already existed",
@@ -87,6 +87,7 @@ public class StudentService {
         }
 
         Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
+        student.setPhone(phoneNumberRequest);
 
         log.info("Student created with address: {}", student.getPermanentAddress());
 
@@ -145,9 +146,10 @@ public class StudentService {
 
             throw new ApplicationException(errorCode);
         }
-
-        if (!student.getPhone().equals(studentUpdateRequestDto.getPhone().getPhoneNumber())
-                && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone().getPhoneNumber())) {
+        var phoneNumberRequest = PhoneUtils.ParsePhoneNumber(studentUpdateRequestDto.getPhone().getPhoneNumber(),
+                studentUpdateRequestDto.getPhone().getCountryCode());
+        if (!student.getPhone().equals(phoneNumberRequest)
+                && studentRepository.existsStudentByPhone(phoneNumberRequest)) {
             throw new ApplicationException(
                     ErrorCode.CONFLICT.withMessage(
                             String.format(
@@ -156,6 +158,7 @@ public class StudentService {
         }
 
         studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
+        student.setPhone(phoneNumberRequest);
 
         //TODO: Refactor
         if (studentUpdateRequestDto.getTemporaryAddress() != null) {
