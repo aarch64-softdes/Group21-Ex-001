@@ -22,6 +22,15 @@ CREATE TABLE addresses (
     CONSTRAINT pk_addresses PRIMARY KEY (id)
 );
 
+-- Create settings table based on the provided entity definition
+CREATE TABLE settings (
+    id VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    details TEXT,
+    CONSTRAINT pk_settings PRIMARY KEY (id),
+    CONSTRAINT uc_settings_name UNIQUE (name)
+);
+
 -- Create faculties table
 CREATE TABLE faculties (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -106,6 +115,11 @@ ALTER TABLE students
     
 ALTER TABLE students
     ADD CONSTRAINT uc_students_identity UNIQUE (identity_id);
+
+-- Insert settings records
+INSERT INTO settings (id, name, details) VALUES
+('d5a2c7e1-3b4f-48ae-90d5-8f6e7a9c1b2d', 'phonenumber', '["VN"]'),
+('f8e7d6c5-b4a3-42d1-90e8-7f6d5c4b3a2e', 'email', '@student.hcmus.edu.vn');
 
 -- Seed faculties data based on the existing student data (uppercase)
 INSERT INTO faculties (name) VALUES
@@ -193,6 +207,7 @@ VALUES
 ('MAIL010', '753 Aspen Place', 'My An', 'Ngu Hanh Son', 'Da Nang', 'Vietnam');
 
 -- Seed student data with relationships to addresses, faculties, programs, and statuses
+-- Updated with valid Vietnamese phone numbers and HCMUS email domain
 INSERT INTO students (
     id,
     student_id, 
@@ -220,8 +235,8 @@ INSERT INTO students (
     1, -- Faculty of Business English
     3,
     1, -- Business Administration
-    'john.smith@example.com',
-    '0123456789',
+    'john.smith@student.hcmus.edu.vn',
+    '0903456789',
     1, -- Studying
     'PERM001',
     'TEMP001',
@@ -238,7 +253,7 @@ INSERT INTO students (
     2, -- Faculty of Law
     2,
     2, -- Criminal Justice
-    'emily.johnson@example.com',
+    'emily.johnson@student.hcmus.edu.vn',
     '0987654321',
     1, -- studying
     'PERM002',
@@ -256,8 +271,8 @@ INSERT INTO students (
     3, -- Faculty of Japanese
     4,
     3, -- Japanese Literature
-    'michael.brown@example.com',
-    '0567891234',
+    'michael.brown@student.hcmus.edu.vn',
+    '0367891234',
     2, -- Graduated
     'PERM003',
     'TEMP003',
@@ -274,7 +289,7 @@ INSERT INTO students (
     4, -- Faculty of French
     1,
     4, -- French Studies
-    'sarah.davis@example.com',
+    'sarah.davis@student.hcmus.edu.vn',
     '0345678912',
     1, -- studying
     'PERM004',
@@ -292,8 +307,8 @@ INSERT INTO students (
     1, -- Faculty of Business English
     3,
     5, -- International Business
-    'david.wilson@example.com',
-    '0678912345',
+    'david.wilson@student.hcmus.edu.vn',
+    '0778912345',
     3, -- Suspended
     'PERM005',
     'TEMP005',
@@ -310,8 +325,8 @@ INSERT INTO students (
     3, -- Faculty of Japanese
     2,
     6, -- Japanese Culture
-    'jennifer.taylor@example.com',
-    '0234567891',
+    'jennifer.taylor@student.hcmus.edu.vn',
+    '0934567891',
     1, -- studying
     'PERM006',
     'TEMP006',
@@ -328,7 +343,7 @@ INSERT INTO students (
     2, -- Faculty of Law
     4,
     7, -- Corporate Law
-    'james.anderson@example.com',
+    'james.anderson@student.hcmus.edu.vn',
     '0891234567',
     1, -- studying
     'PERM007',
@@ -346,8 +361,8 @@ INSERT INTO students (
     4, -- Faculty of French
     1,
     8, -- French Language
-    'linda.martinez@example.com',
-    '0456789123',
+    'linda.martinez@student.hcmus.edu.vn',
+    '0796789123',
     4, -- Dropped
     'PERM008',
     'TEMP008',
@@ -364,7 +379,7 @@ INSERT INTO students (
     3, -- Faculty of Japanese
     3,
     9, -- Japanese Economics
-    'robert.thompson@example.com',
+    'robert.thompson@student.hcmus.edu.vn',
     '0789123456',
     1, -- studying
     'PERM009',
@@ -382,7 +397,7 @@ INSERT INTO students (
     1, -- Faculty of Business English
     2,
     10, -- Business Communication
-    'elizabeth.garcia@example.com',
+    'elizabeth.garcia@student.hcmus.edu.vn',
     '0912345678',
     1, -- studying
     'PERM010',
