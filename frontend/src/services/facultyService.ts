@@ -23,6 +23,7 @@ export default class FacultyService {
     const response = await api.get('/api/faculties', {
       params: {
         page,
+        size,
         sortName,
         sortType,
         search,

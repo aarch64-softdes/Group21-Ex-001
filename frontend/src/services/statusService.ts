@@ -23,6 +23,7 @@ export default class StatusService {
     const response = await api.get('/api/statuses', {
       params: {
         page,
+        size,
         sortName,
         sortType,
         search,
