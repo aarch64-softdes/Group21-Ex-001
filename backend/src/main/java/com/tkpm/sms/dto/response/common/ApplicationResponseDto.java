@@ -15,8 +15,7 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApplicationResponseDto<T> {
     @Builder.Default
-    int code = HttpStatus.SC_OK;
-
+    int code = HttpStatus.OK.value();
     String message;
     String errorCode;
     T content;
