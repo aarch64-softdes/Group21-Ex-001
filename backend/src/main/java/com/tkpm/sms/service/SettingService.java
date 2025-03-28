@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class SettingService {
     static String EMAIL_SETTING = "email";
     static String PHONE_NUMBER_SETTING = "phonenumber";
+    static String AT_SIGN = "@";
 
     ObjectMapper objectMapper;
     SettingRepository settingRepository;
@@ -44,7 +45,12 @@ public class SettingService {
                         ErrorCode.NOT_FOUND.withMessage(
                                 String.format("Setting with name %s not found", EMAIL_SETTING))));
 
-        setting.setDetails(settingRequestDto.getDomain());
+        var domain = settingRequestDto.getDomain();
+        if (!domain.contains(AT_SIGN)) {
+            domain = AT_SIGN + domain;
+        }
+
+        setting.setDetails(domain);
 
         return settingRepository.save(setting);
     }

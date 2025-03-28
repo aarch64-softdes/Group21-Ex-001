@@ -20,6 +20,7 @@ import StudentPage from './pages/studentPage';
 import ErrorBoundary from './components/error/ErrorBoundary';
 import { ApiError } from './lib/errors';
 import { showErrorToast } from './lib/toast-utils';
+import SettingPage from './pages/settingPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +50,7 @@ function App() {
                 <Route path='/faculty' element={<FacultyPage />} />
                 <Route path='/program' element={<ProgramPage />} />
                 <Route path='/status' element={<StatusPage />} />
+                <Route path='/setting' element={<SettingPage />} />
                 <Route path='*' element={<Navigate to='/' replace />} />
               </Routes>
             </Suspense>

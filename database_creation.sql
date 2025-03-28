@@ -22,6 +22,15 @@ CREATE TABLE addresses (
     CONSTRAINT pk_addresses PRIMARY KEY (id)
 );
 
+-- Create settings table based on the provided entity definition
+CREATE TABLE settings (
+    id VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    details TEXT,
+    CONSTRAINT pk_settings PRIMARY KEY (id),
+    CONSTRAINT uc_settings_name UNIQUE (name)
+);
+
 -- Create faculties table
 CREATE TABLE faculties (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -54,7 +63,7 @@ CREATE TABLE students (
     course INTEGER,
     program_id INTEGER NOT NULL,
     email VARCHAR(255) NOT NULL,
-    phone VARCHAR(10) NOT NULL,
+    phone VARCHAR(12) NOT NULL,
     status_id INTEGER NOT NULL,
     permanent_address_id VARCHAR(255),
     temporary_address_id VARCHAR(255),
@@ -107,6 +116,11 @@ ALTER TABLE students
 ALTER TABLE students
     ADD CONSTRAINT uc_students_identity UNIQUE (identity_id);
 
+-- Insert settings records
+INSERT INTO settings (id, name, details) VALUES
+('d5a2c7e1-3b4f-48ae-90d5-8f6e7a9c1b2d', 'phonenumber', '["VN"]'),
+('f8e7d6c5-b4a3-42d1-90e8-7f6d5c4b3a2e', 'email', '@student.hcmus.edu.vn');
+
 -- Seed faculties data based on the existing student data (uppercase)
 INSERT INTO faculties (name) VALUES
 ('Faculty of Business English'),
@@ -138,15 +152,15 @@ INSERT INTO statuses (name) VALUES
 INSERT INTO identities (id, type, number, issued_by, issued_date, expiry_date, has_chip, country, notes)
 VALUES
 -- Chip_Card (CCCD) examples - 12 digits
-('ID001', 'Chip_Card', '123456789012', 'Ministry of Public Security', '2018-05-10', '2028-05-10', true, 'Vietnam', 'Citizen Identity Card with Chip'),
-('ID004', 'Chip_Card', '234567891023', 'Ministry of Public Security', '2021-01-05', '2031-01-05', true, 'Vietnam', NULL),
-('ID006', 'Chip_Card', '345678912034', 'Ministry of Public Security', '2019-07-14', '2029-07-14', true, 'Vietnam', NULL),
-('ID009', 'Chip_Card', '456789123045', 'Ministry of Public Security', '2021-06-17', '2031-06-17', true, 'Vietnam', NULL),
+('ID001', 'Chip Card', '123456789012', 'Ministry of Public Security', '2018-05-10', '2028-05-10', true, 'Vietnam', 'Citizen Identity Card with Chip'),
+('ID004', 'Chip Card', '234567891023', 'Ministry of Public Security', '2021-01-05', '2031-01-05', true, 'Vietnam', NULL),
+('ID006', 'Chip Card', '345678912034', 'Ministry of Public Security', '2019-07-14', '2029-07-14', true, 'Vietnam', NULL),
+('ID009', 'Chip Card', '456789123045', 'Ministry of Public Security', '2021-06-17', '2031-06-17', true, 'Vietnam', NULL),
 
 -- Identity_Card (CMND) examples - 9 digits
-('ID003', 'Identity_Card', '456789123', 'Police Department', '2020-03-22', '2025-03-22', false, 'Vietnam', 'Old ID card'),
-('ID005', 'Identity_Card', '567891234', 'Police Department', '2017-11-30', '2027-11-30', false, 'Vietnam', NULL),
-('ID007', 'Identity_Card', '678912345', 'Police Department', '2022-09-08', '2027-09-08', false, 'Vietnam', NULL),
+('ID003', 'Identity Card', '456789123', 'Police Department', '2020-03-22', '2025-03-22', false, 'Vietnam', 'Old ID card'),
+('ID005', 'Identity Card', '567891234', 'Police Department', '2017-11-30', '2027-11-30', false, 'Vietnam', NULL),
+('ID007', 'Identity Card', '678912345', 'Police Department', '2022-09-08', '2027-09-08', false, 'Vietnam', NULL),
 
 -- Passport examples - 2 uppercase letters followed by 7 digits
 ('ID002', 'Passport', 'AB1234567', 'Immigration Department', '2019-08-15', '2029-08-15', false, 'Vietnam', 'International travel document'),
@@ -193,6 +207,7 @@ VALUES
 ('MAIL010', '753 Aspen Place', 'My An', 'Ngu Hanh Son', 'Da Nang', 'Vietnam');
 
 -- Seed student data with relationships to addresses, faculties, programs, and statuses
+-- Updated with valid Vietnamese phone numbers and HCMUS email domain
 INSERT INTO students (
     id,
     student_id, 
@@ -220,8 +235,8 @@ INSERT INTO students (
     1, -- Faculty of Business English
     3,
     1, -- Business Administration
-    'john.smith@example.com',
-    '0123456789',
+    'john.smith@student.hcmus.edu.vn',
+    '+84903456789',
     1, -- Studying
     'PERM001',
     'TEMP001',
@@ -238,8 +253,8 @@ INSERT INTO students (
     2, -- Faculty of Law
     2,
     2, -- Criminal Justice
-    'emily.johnson@example.com',
-    '0987654321',
+    'emily.johnson@student.hcmus.edu.vn',
+    '+84987654321',
     1, -- studying
     'PERM002',
     'TEMP002',
@@ -256,8 +271,8 @@ INSERT INTO students (
     3, -- Faculty of Japanese
     4,
     3, -- Japanese Literature
-    'michael.brown@example.com',
-    '0567891234',
+    'michael.brown@student.hcmus.edu.vn',
+    '+84367891234',
     2, -- Graduated
     'PERM003',
     'TEMP003',
@@ -274,8 +289,8 @@ INSERT INTO students (
     4, -- Faculty of French
     1,
     4, -- French Studies
-    'sarah.davis@example.com',
-    '0345678912',
+    'sarah.davis@student.hcmus.edu.vn',
+    '+84345678912',
     1, -- studying
     'PERM004',
     'TEMP004',
@@ -292,8 +307,8 @@ INSERT INTO students (
     1, -- Faculty of Business English
     3,
     5, -- International Business
-    'david.wilson@example.com',
-    '0678912345',
+    'david.wilson@student.hcmus.edu.vn',
+    '+84778912345',
     3, -- Suspended
     'PERM005',
     'TEMP005',
@@ -310,8 +325,8 @@ INSERT INTO students (
     3, -- Faculty of Japanese
     2,
     6, -- Japanese Culture
-    'jennifer.taylor@example.com',
-    '0234567891',
+    'jennifer.taylor@student.hcmus.edu.vn',
+    '+84934567891',
     1, -- studying
     'PERM006',
     'TEMP006',
@@ -328,8 +343,8 @@ INSERT INTO students (
     2, -- Faculty of Law
     4,
     7, -- Corporate Law
-    'james.anderson@example.com',
-    '0891234567',
+    'james.anderson@student.hcmus.edu.vn',
+    '+84891234567',
     1, -- studying
     'PERM007',
     'TEMP007',
@@ -346,8 +361,8 @@ INSERT INTO students (
     4, -- Faculty of French
     1,
     8, -- French Language
-    'linda.martinez@example.com',
-    '0456789123',
+    'linda.martinez@student.hcmus.edu.vn',
+    '+84796789123',
     4, -- Dropped
     'PERM008',
     'TEMP008',
@@ -364,8 +379,8 @@ INSERT INTO students (
     3, -- Faculty of Japanese
     3,
     9, -- Japanese Economics
-    'robert.thompson@example.com',
-    '0789123456',
+    'robert.thompson@student.hcmus.edu.vn',
+    '+84789123456',
     1, -- studying
     'PERM009',
     'TEMP009',
@@ -382,8 +397,8 @@ INSERT INTO students (
     1, -- Faculty of Business English
     2,
     10, -- Business Communication
-    'elizabeth.garcia@example.com',
-    '0912345678',
+    'elizabeth.garcia@student.hcmus.edu.vn',
+    '+84912345678',
     1, -- studying
     'PERM010',
     'TEMP010',

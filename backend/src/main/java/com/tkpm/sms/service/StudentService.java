@@ -12,6 +12,7 @@ import com.tkpm.sms.mapper.IdentityMapper;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
 import com.tkpm.sms.specification.StudentSpecifications;
+import com.tkpm.sms.utils.PhoneUtils;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +80,9 @@ public class StudentService {
 
         validateEmailDomain(studentCreateRequestDto.getEmail());
 
-        if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone().getPhoneNumber())) {
+        var phoneNumberRequest = PhoneUtils.ParsePhoneNumber(studentCreateRequestDto.getPhone().getPhoneNumber(),
+                studentCreateRequestDto.getPhone().getCountryCode());
+        if (studentRepository.existsStudentByPhone(phoneNumberRequest)) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
                     String.format(
                             "Student with phone number %s already existed",
@@ -87,6 +90,7 @@ public class StudentService {
         }
 
         Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
+        student.setPhone(phoneNumberRequest);
 
         log.info("Student created with address: {}", student.getPermanentAddress());
 
@@ -153,9 +157,10 @@ public class StudentService {
 
             throw new ApplicationException(errorCode);
         }
-
-        if (!student.getPhone().equals(studentUpdateRequestDto.getPhone().getPhoneNumber())
-                && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone().getPhoneNumber())) {
+        var phoneNumberRequest = PhoneUtils.ParsePhoneNumber(studentUpdateRequestDto.getPhone().getPhoneNumber(),
+                studentUpdateRequestDto.getPhone().getCountryCode());
+        if (!student.getPhone().equals(phoneNumberRequest)
+                && studentRepository.existsStudentByPhone(phoneNumberRequest)) {
             throw new ApplicationException(
                     ErrorCode.CONFLICT.withMessage(
                             String.format(
@@ -164,6 +169,7 @@ public class StudentService {
         }
 
         studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
+        student.setPhone(phoneNumberRequest);
 
         //TODO: Refactor
         if (studentUpdateRequestDto.getTemporaryAddress() != null) {
@@ -224,8 +230,11 @@ public class StudentService {
     }
 
     private void validateEmailDomain(String studentEmail) {
-        var getStudentDomain = studentEmail.split("@")[1];
+        var getStudentDomain = studentEmail.substring(studentEmail.indexOf(SettingService.AT_SIGN));
         var validDomain = settingService.getEmailSetting().getDetails();
+        log.info("Valid domain: {}", validDomain);
+        log.info("Student domain: {}", getStudentDomain);
+
         if (validDomain.isEmpty()) {
             throw new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with email %s not found", studentEmail)));
         }
