@@ -97,11 +97,12 @@ public class StatusController {
 //        return ResponseEntity.ok(statusService.getAllTransitions());
 //    }
 
-    @GetMapping("/verify-transition")
-    public ResponseEntity<Boolean> checkTransitionAllowed(
-            @RequestParam Integer fromStatusId, 
-            @RequestParam Integer toStatusId) {
-        boolean allowed = statusService.isTransitionAllowed(fromStatusId, toStatusId);
-        return ResponseEntity.ok(allowed);
-    }
+    // TODO: Implement this 
+//    @GetMapping("/verify-transition")
+//    public ResponseEntity<Boolean> checkTransitionAllowed(
+//            @RequestParam Integer fromStatusId,
+//            @RequestParam Integer toStatusId) {
+//        boolean allowed = statusService.isTransitionAllowed(fromStatusId, toStatusId);
+//        return ResponseEntity.ok(allowed);
+//    }
 }

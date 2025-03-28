@@ -117,11 +117,12 @@ public class StatusService {
         statusRepository.save(status);
     }
 
-    public boolean isTransitionAllowed(Integer fromStatusId, Integer toStatusId) {
-        var fromStatus = getStatus(fromStatusId).getId();
-        var toStatus = getStatus(toStatusId).getId();
-
-        return statusRepository.existsByFromStatusIdAndToStatusId(fromStatus, toStatus);
-    }
+    // TODO: Implement this
+//    public boolean isTransitionAllowed(Integer fromStatusId, Integer toStatusId) {
+//        var fromStatus = getStatus(fromStatusId).getId();
+//        var toStatus = getStatus(toStatusId).getId();
+//
+//        return statusRepository.existsByFromStatusIdAndToStatusId(fromStatus, toStatus);
+//    }
 
 }

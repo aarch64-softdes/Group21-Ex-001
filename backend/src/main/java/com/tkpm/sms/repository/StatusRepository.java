@@ -16,6 +16,6 @@ public interface StatusRepository extends JpaRepository<Status, Integer> {
 
     Optional<Status> findStatusByName(@NotNull(message = "Status's name is required") String name);
 
-    @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM Status s JOIN StatusTransition t WHERE s.id = :fromStatusId AND t = :toStatusId")
-    boolean existsByFromStatusIdAndToStatusId(Integer fromStatusId, Integer toStatusId);
+//    @Query("SELECT CASE WHEN :toStatusId MEMBER OF s.validTransitionIds THEN true ELSE false END FROM Status s WHERE s.id = :fromStatusId")
+//    boolean existsByFromStatusIdAndToStatusId(Integer fromStatusId, Integer toStatusId);
 }
