@@ -63,28 +63,12 @@ public class StatusService {
                             String.format("Status with name %s already existed", status.getName())));
         }
 
-        var newStatus = Status.builder().name(status.getName()).build();
+        var newStatus = Status
+                .builder()
+                .name(status.getName())
+                .validTransitionIds(status.getValidTransitionIds())
+                .build();
         var savedStatus = statusRepository.save(newStatus);
-
-        // if (status.getValidTransitions() != null && !status.getValidTransitions().isEmpty()) {
-        //     try {
-        //         List<StatusTransition> transitions = status.getValidTransitions().stream()
-        //             .map(toStatusId -> {
-        //                 Status toStatus = getStatus(toStatusId);
-        //                 return StatusTransition.builder()
-        //                     .fromStatus(savedStatus)
-        //                     .toStatus(toStatus)
-        //                     .build();
-        //             })
-        //             .collect(Collectors.toList());
-
-        //         statusTransitionRepository.saveAll(transitions);
-        //     } catch (Exception e) {
-        //         throw new ApplicationException(
-        //             ErrorCode.INVALID_ERROR_KEY.withMessage(
-        //                 "Status created but failed to add transitions: " + e.getMessage()));
-        //     }
-        // }
 
         return savedStatus;
     }
@@ -102,6 +86,7 @@ public class StatusService {
                         ErrorCode.NOT_FOUND.withMessage(
                                 String.format("Status with id %s not found", id))));
         statusToUpdate.setName(status.getName());
+        statusToUpdate.setValidTransitionIds(status.getValidTransitionIds());
 
         return statusRepository.save(statusToUpdate);
     }
