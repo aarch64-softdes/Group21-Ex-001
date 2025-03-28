@@ -8,6 +8,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -35,10 +36,12 @@ public class Status {
     // one-to-many relationship with student
     @OneToMany(mappedBy = "status")
     Set<Student> students;
-
-    @OneToMany(mappedBy = "fromStatus")
-    Set<StatusTransition> allowedTransitionsFrom;
     
-    @OneToMany(mappedBy = "toStatus")
-    Set<StatusTransition> allowedTransitionsTo;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "status_transitions",
+        joinColumns = @JoinColumn(name = "from_status_id")
+    )
+    @Column(name = "to_status_id")
+    List<Integer> validTransitionIds;
 }

@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,7 +35,7 @@ public class StatusService {
                                 ? Sort.Direction.DESC
                                 : Sort.Direction.ASC,
                         search.getSortBy()
-                ));
+                 ));
 
         return statusRepository.findAll(pageable);
     }
@@ -60,9 +62,31 @@ public class StatusService {
                     ErrorCode.CONFLICT.withMessage(
                             String.format("Status with name %s already existed", status.getName())));
         }
-        var newStatus = Status.builder().name(status.getName()).build();
 
-        return statusRepository.save(newStatus);
+        var newStatus = Status.builder().name(status.getName()).build();
+        var savedStatus = statusRepository.save(newStatus);
+
+        // if (status.getValidTransitions() != null && !status.getValidTransitions().isEmpty()) {
+        //     try {
+        //         List<StatusTransition> transitions = status.getValidTransitions().stream()
+        //             .map(toStatusId -> {
+        //                 Status toStatus = getStatus(toStatusId);
+        //                 return StatusTransition.builder()
+        //                     .fromStatus(savedStatus)
+        //                     .toStatus(toStatus)
+        //                     .build();
+        //             })
+        //             .collect(Collectors.toList());
+
+        //         statusTransitionRepository.saveAll(transitions);
+        //     } catch (Exception e) {
+        //         throw new ApplicationException(
+        //             ErrorCode.INVALID_ERROR_KEY.withMessage(
+        //                 "Status created but failed to add transitions: " + e.getMessage()));
+        //     }
+        // }
+
+        return savedStatus;
     }
 
     @Transactional
@@ -92,4 +116,12 @@ public class StatusService {
 
         statusRepository.save(status);
     }
+
+    public boolean isTransitionAllowed(Integer fromStatusId, Integer toStatusId) {
+        var fromStatus = getStatus(fromStatusId).getId();
+        var toStatus = getStatus(toStatusId).getId();
+
+        return statusRepository.existsByFromStatusIdAndToStatusId(fromStatus, toStatus);
+    }
+
 }

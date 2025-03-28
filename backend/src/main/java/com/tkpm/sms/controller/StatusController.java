@@ -53,7 +53,11 @@ public class StatusController {
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<StatusDto>> getStatus(@PathVariable Integer id) {
         var status = statusService.getStatus(id);
-        var statusDto = new StatusDto(status.getId(), status.getName());
+//        var validTransitions = status.getValidTransitionIds().stream().map(statusTransition -> statusTransition.getToStatus().getId()).toList();
+        var statusDto = new StatusDto(
+                status.getId(), 
+                status.getName(),
+                status.getValidTransitionIds());
 
         return ResponseEntity.ok(ApplicationResponseDto.success(statusDto));
     }
@@ -64,7 +68,7 @@ public class StatusController {
             UriComponentsBuilder uriComponentsBuilder
     ) {
         var newStatus = statusService.createStatus(status);
-        var statusDto = new StatusDto(newStatus.getId(), newStatus.getName());
+        var statusDto = new StatusDto(newStatus.getId(), newStatus.getName(), newStatus.getValidTransitionIds());
 
         return ResponseEntity.created(uriComponentsBuilder.path("/api/statuses/{id}").buildAndExpand(newStatus.getId()).toUri())
                 .body(ApplicationResponseDto.success(statusDto));
@@ -76,7 +80,7 @@ public class StatusController {
             @Valid @RequestBody StatusRequestDto status
     ) {
         var updatedStatus = statusService.updateStatus(id, status);
-        var statusDto = new StatusDto(updatedStatus.getId(), updatedStatus.getName());
+        var statusDto = new StatusDto(updatedStatus.getId(), updatedStatus.getName(), updatedStatus.getValidTransitionIds());
 
         return ResponseEntity.ok(ApplicationResponseDto.success(statusDto));
     }
@@ -86,5 +90,18 @@ public class StatusController {
         statusService.deleteStatus(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+//    @GetMapping("/transitions")
+//    public ResponseEntity<List<StatusTransitionResponseDto>> getAllTransitions() {
+//        return ResponseEntity.ok(statusService.getAllTransitions());
+//    }
+
+    @GetMapping("/verify-transition")
+    public ResponseEntity<Boolean> checkTransitionAllowed(
+            @RequestParam Integer fromStatusId, 
+            @RequestParam Integer toStatusId) {
+        boolean allowed = statusService.isTransitionAllowed(fromStatusId, toStatusId);
+        return ResponseEntity.ok(allowed);
     }
 }
