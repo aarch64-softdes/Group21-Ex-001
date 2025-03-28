@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,7 +35,7 @@ public class StatusService {
                                 ? Sort.Direction.DESC
                                 : Sort.Direction.ASC,
                         search.getSortBy()
-                ));
+                 ));
 
         return statusRepository.findAll(pageable);
     }
@@ -60,14 +62,20 @@ public class StatusService {
                     ErrorCode.CONFLICT.withMessage(
                             String.format("Status with name %s already existed", status.getName())));
         }
-        var newStatus = Status.builder().name(status.getName()).build();
 
-        return statusRepository.save(newStatus);
+        var newStatus = Status
+                .builder()
+                .name(status.getName())
+                .validTransitionIds(status.getValidTransitionIds())
+                .build();
+        var savedStatus = statusRepository.save(newStatus);
+
+        return savedStatus;
     }
 
     @Transactional
     public Status updateStatus(Integer id, StatusRequestDto status) {
-        if (statusRepository.existsStatusByName(status.getName())) {
+        if (statusRepository.existsStatusByNameAndIdNot(status.getName(), id)) {
             throw new ApplicationException(
                     ErrorCode.CONFLICT.withMessage(
                             String.format("Status with name %s already existed", status.getName())));
@@ -78,6 +86,7 @@ public class StatusService {
                         ErrorCode.NOT_FOUND.withMessage(
                                 String.format("Status with id %s not found", id))));
         statusToUpdate.setName(status.getName());
+        statusToUpdate.setValidTransitionIds(status.getValidTransitionIds());
 
         return statusRepository.save(statusToUpdate);
     }
@@ -91,5 +100,12 @@ public class StatusService {
         status.setDeletedAt(LocalDate.now());
 
         statusRepository.save(status);
+    }
+
+    public boolean isTransitionAllowed(Integer fromStatusId, Integer toStatusId) {
+        var fromStatus = getStatus(fromStatusId).getId();
+        var toStatus = getStatus(toStatusId).getId();
+
+        return statusRepository.existsByFromStatusIdAndToStatusId(fromStatus, toStatus);
     }
 }

@@ -11,11 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StatusRequestDto {
-    @NotEmpty(message = "NOT_NULL;Status's name is required")
-    String name;
+public class StatusVerificationDto {
+    @NotEmpty(message = "NOT_NULL;fromId is required")
+    Integer fromId;
 
-    List<Integer> validTransitionIds;
+    @NotEmpty(message = "NOT_NULL;toId is required")
+    Integer toId;
 }
 
 

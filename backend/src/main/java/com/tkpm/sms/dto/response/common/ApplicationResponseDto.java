@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApplicationResponseDto<T> {
     @Builder.Default
-    int code = HttpStatus.OK.value();
+    int code = HttpStatus.SC_OK;
 
     String message;
     String errorCode;
