@@ -1,5 +1,6 @@
 package com.tkpm.sms.dto.response;
 
+import com.tkpm.sms.dto.request.status.AllowedTransitionDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,4 +17,5 @@ public class StatusDto {
     String name;
 
     List<Integer> validTransitionIds;
+    List<AllowedTransitionDto> allowedTransitions;
 }
