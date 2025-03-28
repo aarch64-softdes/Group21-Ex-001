@@ -22,7 +22,6 @@ CREATE TABLE addresses (
     CONSTRAINT pk_addresses PRIMARY KEY (id)
 );
 
--- Create settings table based on the provided entity definition
 CREATE TABLE settings (
     id VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -70,6 +69,14 @@ CREATE TABLE students (
     mailing_address_id VARCHAR(255),
     identity_id VARCHAR(255),
     CONSTRAINT pk_students PRIMARY KEY (id)
+);
+
+CREATE TABLE status_transitions (
+    from_status_id INTEGER NOT NULL,
+    to_status_id INTEGER NOT NULL,
+    CONSTRAINT pk_status_transitions PRIMARY KEY (from_status_id, to_status_id),
+    CONSTRAINT fk_status_transitions_from_status FOREIGN KEY (from_status_id) REFERENCES statuses (id),
+    CONSTRAINT fk_status_transitions_to_status FOREIGN KEY (to_status_id) REFERENCES statuses (id)
 );
 
 -- Add constraints to students table
@@ -206,8 +213,18 @@ VALUES
 ('MAIL009', '864 Willow Way', 'Cau Giay', 'Cau Giay', 'Hanoi', 'Vietnam'),
 ('MAIL010', '753 Aspen Place', 'My An', 'Ngu Hanh Son', 'Da Nang', 'Vietnam');
 
--- Seed student data with relationships to addresses, faculties, programs, and statuses
--- Updated with valid Vietnamese phone numbers and HCMUS email domain
+
+-- From 'Studying' (1) status
+INSERT INTO status_transitions (from_status_id, to_status_id) VALUES
+(1, 2), -- Studying -> Graduated
+(1, 3), -- Studying -> Suspended
+(1, 4); -- Studying -> Dropped
+
+-- From 'Suspended' (3) status
+INSERT INTO status_transitions (from_status_id, to_status_id) VALUES
+(3, 1), -- Suspended -> Studying (reinstatement)
+(3, 4); -- Suspended -> Dropped
+
 INSERT INTO students (
     id,
     student_id, 
@@ -344,7 +361,7 @@ INSERT INTO students (
     4,
     7, -- Corporate Law
     'james.anderson@student.hcmus.edu.vn',
-    '+84891234567',
+    '+84791234567',
     1, -- studying
     'PERM007',
     'TEMP007',
