@@ -46,10 +46,11 @@ export const StatusFormSchema = z.object({
     .regex(/^[\p{L}\s]*$/u, 'Name must contain only letters and spaces'),
   allowedTransitions: z
     .array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-      }),
+      z
+        .object({
+          id: z.number(),
+        })
+        .optional(),
     )
     .optional(),
 });
@@ -64,13 +65,16 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   isEditing = false,
 }) => {
   const { data: statusData, isLoading: isLoadingStatus } = useStatus(
-    parseInt(id as string, 10),
+    parseInt(id || ''),
   );
   const { data: statusesData, isLoading: isLoadingStatuses } = useStatuses({
     page: 1,
     pageSize: 100,
     filters: {},
-    sort: { key: 'name', direction: 'asc' },
+    sort: {
+      key: 'name',
+      direction: 'asc',
+    },
   });
 
   const [open, setOpen] = useState(false);
@@ -84,15 +88,15 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
     },
   });
 
-  // Reset form when status data is loaded
   useEffect(() => {
+    console.log('Status data:', statusData);
+
     if (statusData && id) {
       form.reset({
         name: statusData.name || '',
         allowedTransitions: statusData.allowedTransitions || [],
       });
 
-      // Set selected statuses based on allowedTransitions
       if (statusData.allowedTransitions) {
         setSelectedStatuses(statusData.allowedTransitions);
       }
@@ -107,7 +111,6 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   const addStatus = (status: Status) => {
     const currentTransitions = form.getValues('allowedTransitions') || [];
 
-    // Prevent adding the current status being edited
     if (id && id === status.id) {
       return;
     }
@@ -239,7 +242,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                                     variant='outline'
                                     role='combobox'
                                     aria-expanded={open}
-                                    className='justify-between'
+                                    className=' justify-between'
                                     disabled={isLoadingStatuses}
                                   >
                                     {isLoadingStatuses ? (
@@ -252,7 +255,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                                     )}
                                   </Button>
                                 </PopoverTrigger>
-                                <PopoverContent>
+                                <PopoverContent className='w-[300px] p-0'>
                                   <Command>
                                     <CommandInput placeholder='Search status...' />
                                     <CommandEmpty>

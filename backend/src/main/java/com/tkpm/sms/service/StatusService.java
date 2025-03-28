@@ -103,9 +103,6 @@ public class StatusService {
     }
 
     public boolean isTransitionAllowed(Integer fromStatusId, Integer toStatusId) {
-        var fromStatus = getStatus(fromStatusId).getId();
-        var toStatus = getStatus(toStatusId).getId();
-
-        return statusRepository.existsByFromStatusIdAndToStatusId(fromStatus, toStatus);
+        return statusRepository.existsByFromStatusIdAndToStatusId(fromStatusId, toStatusId);
     }
 }

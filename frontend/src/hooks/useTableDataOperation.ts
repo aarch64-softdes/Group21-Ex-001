@@ -57,9 +57,9 @@ export const useTableEdit = <T extends { id: string }>(
       await actions?.onSave?.(currentEditItem.id, updatedData as T);
       setEditDialogOpen(false);
       setCurrentEditItem(null);
-      showSuccessToast('Edit saved successfully');
+      showSuccessToast('Edit successfully');
     } catch (error) {
-      console.error('Error saving edit:', error);
+      console.error('Error editing:', error);
       showErrorToast('Error editing: ' + getErrorMessage(error));
     } finally {
       setIsEditSaving(false);
