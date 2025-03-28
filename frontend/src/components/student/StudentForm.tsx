@@ -427,7 +427,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                             <Input
                               placeholder='e.g. S12345'
                               {...field}
-                              disabled={isEditing}
                               autoComplete='off'
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
