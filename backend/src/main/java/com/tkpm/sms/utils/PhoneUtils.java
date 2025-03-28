@@ -15,7 +15,7 @@ public class PhoneUtils {
         try{
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
                     phone, countryCode);
-            boolean isValidPhoneNumber = phoneNumberUtil.isValidNumber(phoneNumber);
+            boolean isValidPhoneNumber = phoneNumberUtil.isValidNumberForRegion(phoneNumber, countryCode);
             if(isValidPhoneNumber){
                 return phoneNumberUtil.format(
                                 phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL).
