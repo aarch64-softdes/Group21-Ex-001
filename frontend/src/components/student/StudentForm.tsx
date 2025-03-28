@@ -43,6 +43,10 @@ import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import LoadingButton from '../ui/loadingButton';
 import { cn } from '@/lib/utils';
+import {
+  findCountryByCode,
+  removeDialCodeFromPhoneNumber,
+} from '@/data/countryData';
 
 export const StudentFormSchema = z.object({
   studentId: z.string().min(1, 'Student ID is required'),
@@ -275,7 +279,11 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         program: studentData.program || '',
         email: studentData.email || '',
         phone: {
-          phoneNumber: studentData.phone?.phoneNumber || '',
+          phoneNumber:
+            removeDialCodeFromPhoneNumber(
+              studentData.phone?.phoneNumber,
+              studentData.phone?.countryCode,
+            ) || '',
           countryCode: studentData.phone?.countryCode || 'VN',
         },
         status: studentData.status || 'Studying',

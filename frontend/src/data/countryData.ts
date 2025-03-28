@@ -211,3 +211,18 @@ export const getDialCodesFromCodes = (codes: string[]): string[] => {
     return country ? country.dialCode : code;
   });
 };
+
+export const removeDialCodeFromPhoneNumber = (
+  phoneNumber: string,
+  countryCode: string,
+): string => {
+  const country = findCountryByCode(countryCode);
+
+  const dialCode = country.dialCode;
+
+  if (phoneNumber.startsWith(dialCode)) {
+    phoneNumber = phoneNumber.slice(dialCode.length);
+  }
+
+  return phoneNumber;
+};
