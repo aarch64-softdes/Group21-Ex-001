@@ -75,7 +75,7 @@ public class StatusService {
 
     @Transactional
     public Status updateStatus(Integer id, StatusRequestDto status) {
-        if (statusRepository.existsStatusByName(status.getName())) {
+        if (statusRepository.existsStatusByNameAndIdNot(status.getName(), id)) {
             throw new ApplicationException(
                     ErrorCode.CONFLICT.withMessage(
                             String.format("Status with name %s already existed", status.getName())));
