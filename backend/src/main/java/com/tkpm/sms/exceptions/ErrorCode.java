@@ -3,7 +3,6 @@ package com.tkpm.sms.exceptions;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
@@ -27,7 +26,10 @@ public enum ErrorCode {
     INVALID_EMAIL("Invalid email format", HttpStatus.BAD_REQUEST),
     INVALID_PHONE("Invalid phone number", HttpStatus.BAD_REQUEST),
     INVALID_STATUS("Invalid status", HttpStatus.BAD_REQUEST),
-    
+    INVALID_SETTING_NAME("Invalid setting name", HttpStatus.BAD_REQUEST),
+    INVALID_PHONE_SETTING_DETAILS("Invalid phone setting details", HttpStatus.BAD_REQUEST),
+    INVALID_SETTING_DETAILS("Invalid setting details", HttpStatus.BAD_REQUEST),
+
     // Identity Validation Errors (400)
     INVALID_IDENTITY_TYPE(
             "Invalid identity type, available values are {values}", HttpStatus.BAD_REQUEST),
@@ -47,6 +49,7 @@ public enum ErrorCode {
     // Resource Errors (4xx)
     NOT_FOUND("Resource not found", HttpStatus.NOT_FOUND),
     CONFLICT("Resource already existed", HttpStatus.CONFLICT),
+    UNSUPPORTED_EMAIL_DOMAIN("Unsupported email domain", HttpStatus.BAD_REQUEST),
     INVALID_FILE_FORMAT("Invalid file format", HttpStatus.BAD_REQUEST),
     ;
 

@@ -7,7 +7,7 @@ import {
   useDeleteStudent,
   useStudents,
   useUpdateStudent,
-} from '@/hooks/useStudentApi';
+} from '@/hooks/api/useStudentApi';
 
 import StudentDetail from '@/components/student/StudentDetail';
 import { SearchFilterOption } from '@/types/filter';

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QueryHookParams } from '@/types/table';
 import StudentService from '@/services/studentService';
 import { CreateStudentDTO, UpdateStudentDTO } from '@/types/student';
+import { showErrorToast, showSuccessToast } from '@/lib/toast-utils';
 
 const studentService = new StudentService();
 

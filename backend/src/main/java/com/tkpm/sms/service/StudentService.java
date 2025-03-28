@@ -12,6 +12,7 @@ import com.tkpm.sms.mapper.IdentityMapper;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
 import com.tkpm.sms.specification.StudentSpecifications;
+import com.tkpm.sms.utils.PhoneUtils;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,15 +32,16 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentService {
     StudentRepository studentRepository;
+
     StatusService statusService;
     ProgramService programService;
+    SettingService settingService;
     FacultyService facultyService;
-    StudentMapper studentMapper;
-
     AddressService addressService;
-    AddressMapper addressMapper;
-
     IdentityService identityService;
+
+    StudentMapper studentMapper;
+    AddressMapper addressMapper;
     IdentityMapper identityMapper;
 
     public Page<Student> findAll(StudentCollectionRequest search) {
@@ -76,14 +78,19 @@ public class StudentService {
                             studentCreateRequestDto.getEmail())));
         }
 
-        if (studentRepository.existsStudentByPhone(studentCreateRequestDto.getPhone())) {
+        validateEmailDomain(studentCreateRequestDto.getEmail());
+
+        var phoneNumberRequest = PhoneUtils.ParsePhoneNumber(studentCreateRequestDto.getPhone().getPhoneNumber(),
+                studentCreateRequestDto.getPhone().getCountryCode());
+        if (studentRepository.existsStudentByPhone(phoneNumberRequest)) {
             throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
                     String.format(
                             "Student with phone number %s already existed",
-                            studentCreateRequestDto.getPhone())));
+                            studentCreateRequestDto.getPhone().getPhoneNumber())));
         }
 
         Student student = studentMapper.createStudent(studentCreateRequestDto, facultyService, programService, statusService);
+        student.setPhone(phoneNumberRequest);
 
         log.info("Student created with address: {}", student.getPermanentAddress());
 
@@ -132,6 +139,14 @@ public class StudentService {
         var student = studentRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
 
+        validateEmailDomain(studentUpdateRequestDto.getEmail());
+
+        var existedStudent = studentRepository.findStudentByStudentId(studentUpdateRequestDto.getStudentId());
+        if (existedStudent.isPresent() && !existedStudent.get().getId().equals(student.getId())) {
+            throw new ApplicationException(ErrorCode.CONFLICT.withMessage(
+                    String.format("Student with id %s already exists", studentUpdateRequestDto.getStudentId())));
+        }
+
         if (!student.getEmail().equals(studentUpdateRequestDto.getEmail())
                 && studentRepository.existsStudentByEmail(studentUpdateRequestDto.getEmail())) {
 
@@ -142,17 +157,19 @@ public class StudentService {
 
             throw new ApplicationException(errorCode);
         }
-
-        if (!student.getPhone().equals(studentUpdateRequestDto.getPhone())
-                && studentRepository.existsStudentByPhone(studentUpdateRequestDto.getPhone())) {
+        var phoneNumberRequest = PhoneUtils.ParsePhoneNumber(studentUpdateRequestDto.getPhone().getPhoneNumber(),
+                studentUpdateRequestDto.getPhone().getCountryCode());
+        if (!student.getPhone().equals(phoneNumberRequest)
+                && studentRepository.existsStudentByPhone(phoneNumberRequest)) {
             throw new ApplicationException(
                     ErrorCode.CONFLICT.withMessage(
                             String.format(
                                     "Student with phone number %s already existed",
-                                    studentUpdateRequestDto.getPhone())));
+                                    studentUpdateRequestDto.getPhone().getPhoneNumber())));
         }
 
         studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
+        student.setPhone(phoneNumberRequest);
 
         //TODO: Refactor
         if (studentUpdateRequestDto.getTemporaryAddress() != null) {
@@ -210,5 +227,20 @@ public class StudentService {
         student = studentRepository.save(student);
 
         return student;
+    }
+
+    private void validateEmailDomain(String studentEmail) {
+        var getStudentDomain = studentEmail.substring(studentEmail.indexOf(SettingService.AT_SIGN));
+        var validDomain = settingService.getEmailSetting().getDetails();
+        log.info("Valid domain: {}", validDomain);
+        log.info("Student domain: {}", getStudentDomain);
+
+        if (validDomain.isEmpty()) {
+            throw new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with email %s not found", studentEmail)));
+        }
+
+        if (!validDomain.equals(getStudentDomain)) {
+            throw new ApplicationException(ErrorCode.UNSUPPORTED_EMAIL_DOMAIN.withMessage("Email domain is not supported, only " + validDomain + " is allowed"));
+        }
     }
 }

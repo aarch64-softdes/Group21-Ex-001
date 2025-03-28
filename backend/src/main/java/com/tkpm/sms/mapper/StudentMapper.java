@@ -2,6 +2,11 @@ package com.tkpm.sms.mapper;
 
 import java.util.Objects;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import com.tkpm.sms.dto.request.phone.PhoneRequestDto;
+import com.tkpm.sms.dto.response.PhoneDto;
+import com.tkpm.sms.utils.PhoneUtils;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,17 +31,21 @@ import com.tkpm.sms.service.ProgramService;
 import com.tkpm.sms.service.StatusService;
 import com.tkpm.sms.utils.ImportFileUtils;
 
-@Mapper(componentModel = "spring", imports = {ImportFileUtils.class, Gender.class, Faculty.class, Status.class, Objects.class})
+@Mapper(componentModel = "spring",
+        imports = {ImportFileUtils.class, Gender.class,
+                Faculty.class, Status.class, Objects.class, PhoneUtils.class})
 public interface StudentMapper {
 
     @Mapping(target = "status", source = "status.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
+    @Mapping(target = "phone", expression = "java(PhoneUtils.parsePhoneToPhoneDto(student.getPhone()))")
     StudentDto toStudentDto(Student student);
 
     @Mapping(target = "status", source = "status.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
+    @Mapping(target = "phone", expression = "java(PhoneUtils.parsePhoneToPhoneDto(student.getPhone()))")
     StudentMinimalDto toStudentMinimalDto(Student student);
 
 
@@ -44,6 +53,7 @@ public interface StudentMapper {
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "gender", qualifiedByName = "toGender")
+    @Mapping(target = "phone", ignore = true)
     Student toStudent(StudentDto studentDto,
                       @Context FacultyService facultyService,
                       @Context ProgramService programService,
@@ -53,6 +63,7 @@ public interface StudentMapper {
     @Mapping(target = "temporaryAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getTemporaryAddress()))")
     @Mapping(target = "mailingAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getMailingAddress()))")
     @Mapping(target = "identity", expression = "java(ImportFileUtils.parseIdentityCreateRequestDto(studentFileImportDto))")
+    @Mapping(target = "phone", expression = "java(PhoneUtils.parsePhoneToPhoneRequestDto(studentFileImportDto.getPhone()))")
     StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileImportDto);
 
     @Mapping(target = "id", ignore = true)
@@ -60,6 +71,7 @@ public interface StudentMapper {
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "gender", qualifiedByName = "toGender")
+    @Mapping(target = "phone", ignore = true)
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
@@ -74,6 +86,7 @@ public interface StudentMapper {
     @Mapping(target = "program", qualifiedByName = "toProgram")
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "gender", qualifiedByName = "toGender")
+    @Mapping(target = "phone", ignore = true)
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
@@ -127,4 +140,5 @@ public interface StudentMapper {
             throw new ApplicationException(ErrorCode.UNCATEGORIZED.withMessage("Gender not supported"));
         }
     }
+
 }

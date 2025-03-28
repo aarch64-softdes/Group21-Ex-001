@@ -45,8 +45,8 @@ public class Student {
     String email;
 
     @NotNull
-    @Pattern(regexp = "^0\\d{9}$", message = "Phone number must start with 0 and have 10 digits")
-    @Column(unique = true, length = 10)
+    @Pattern(regexp = "^\\+\\d{1,3}\\d{6,12}$", message = "Phone number must be in international format (e.g., +84123456789)")
+    @Column(unique = true)
     String phone;
 
     // many-to-one relationship with status

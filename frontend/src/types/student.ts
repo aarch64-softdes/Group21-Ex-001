@@ -19,7 +19,7 @@ export default interface Student {
   permanentAddress: Address;
   temporaryAddress: Address;
   mailingAddress: Address;
-  phone: string;
+  phone: Phone;
   status: Status;
   identity: IdentityDocument;
 }
@@ -36,7 +36,7 @@ export interface CreateStudentDTO {
   permanentAddress: Address;
   temporaryAddress: Address;
   mailingAddress: Address;
-  phone: string;
+  phone: Phone;
   status?: Status;
   identity: IdentityDocument;
 }
@@ -52,25 +52,34 @@ export interface UpdateStudentDTO {
   permanentAddress: Address;
   temporaryAddress: Address;
   mailingAddress: Address;
-  phone?: string;
+  phone?: Phone;
   status?: Status;
   identity: IdentityDocument;
 }
 
-export const mapToStudent = (data: any): Student => ({
-  id: data.id,
-  studentId: data.studentId,
-  name: data.name,
-  dob: data.dob ? new Date(data.dob) : new Date(),
-  gender: data.gender,
-  faculty: data.faculty,
-  course: data.course,
-  program: data.program,
-  email: data.email,
-  permanentAddress: data.permanentAddress,
-  temporaryAddress: data.temporaryAddress,
-  mailingAddress: data.mailingAddress,
-  phone: data.phone,
-  status: data.status,
-  identity: data.identity,
-});
+export interface Phone {
+  phoneNumber: string;
+  countryCode: string;
+}
+
+export const mapToStudent = (data: any): Student => {
+  const res = {
+    id: data.id,
+    studentId: data.studentId,
+    name: data.name,
+    dob: data.dob ? new Date(data.dob) : new Date(),
+    gender: data.gender,
+    faculty: data.faculty,
+    course: data.course,
+    program: data.program,
+    email: data.email,
+    permanentAddress: data.permanentAddress,
+    temporaryAddress: data.temporaryAddress,
+    mailingAddress: data.mailingAddress,
+    phone: data.phone,
+    status: data.status,
+    identity: data.identity,
+  };
+
+  return res;
+};
