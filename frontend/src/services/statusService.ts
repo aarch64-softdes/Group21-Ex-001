@@ -40,15 +40,22 @@ export default class StatusService {
 
   getStatus = async (id: number): Promise<Status> => {
     const response = await api.get(`/api/statuses/${id}`);
+
     return mapToStatus(response.data.content);
   };
 
   addNewStatus = async (data: CreateStatusDTO): Promise<void> => {
-    await api.post('/api/statuses', data);
+    await api.post('/api/statuses', {
+      name: data.name,
+      validTransitionIds: data.allowedTransitions?.map((t) => t.id) || [],
+    });
   };
 
   updateStatus = async (id: number, data: UpdateStatusDTO): Promise<void> => {
-    await api.put(`/api/statuses/${id}`, data);
+    await api.put(`/api/statuses/${id}`, {
+      name: data.name,
+      validTransitionIds: data.allowedTransitions?.map((t) => t.id) || [],
+    });
   };
 
   deleteStatus = async (id: number): Promise<void> => {

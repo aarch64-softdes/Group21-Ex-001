@@ -113,6 +113,7 @@ public class StudentService {
         student.setIdentity(
                 identityService.createIdentity(studentCreateRequestDto.getIdentity()));
 
+
         student = studentRepository.save(student);
         return student;
     }
@@ -166,6 +167,26 @@ public class StudentService {
                             String.format(
                                     "Student with phone number %s already existed",
                                     studentUpdateRequestDto.getPhone().getPhoneNumber())));
+        }
+
+        // Validate transition
+        if (studentUpdateRequestDto.getStatus() != null) {
+            var fromStatus = student.getStatus();
+            var toStatus = statusService.getStatusByName(studentUpdateRequestDto
+                    .getStatus());
+
+            if (fromStatus.equals(toStatus)) {
+                log.info("No need to change status");
+                // No need to change status
+            }
+            else if (statusService.isTransitionAllowed(fromStatus.getId(), toStatus.getId())) {
+                log.info("Transition from {} to {} is allowed", fromStatus.getName(), toStatus.getName());
+                student.setStatus(toStatus);
+            }
+            else {
+                throw new ApplicationException(ErrorCode.UNSUPPORTED_STATUS_TRANSITION.withMessage(
+                        String.format("Transition from %s to %s is not allowed", fromStatus.getName(), toStatus.getName())));
+            }
         }
 
         studentMapper.updateStudent(student, studentUpdateRequestDto, facultyService, programService, statusService);
@@ -223,6 +244,7 @@ public class StudentService {
                                 identityMapper.toIdentityCreateRequestDto(studentUpdateRequestDto.getIdentity())));
             }
         }
+
 
         student = studentRepository.save(student);
 

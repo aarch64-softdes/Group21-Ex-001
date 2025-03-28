@@ -51,6 +51,9 @@ public enum ErrorCode {
     CONFLICT("Resource already existed", HttpStatus.CONFLICT),
     UNSUPPORTED_EMAIL_DOMAIN("Unsupported email domain", HttpStatus.BAD_REQUEST),
     INVALID_FILE_FORMAT("Invalid file format", HttpStatus.BAD_REQUEST),
+
+    // Conflict Errors (409)
+    UNSUPPORTED_STATUS_TRANSITION("Unsupported status transition", HttpStatus.CONFLICT),
     ;
 
     @Setter

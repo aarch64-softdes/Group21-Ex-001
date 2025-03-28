@@ -46,7 +46,6 @@ export const useCreateStatus = () => {
     mutationFn: (data: CreateStatusDTO) => statusService.addNewStatus(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
-      showSuccessToast('Status created successfully');
     },
   });
 };
@@ -59,7 +58,6 @@ export const useUpdateStatus = () => {
       statusService.updateStatus(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
-      showSuccessToast('Status updated successfully');
     },
   });
 };
@@ -71,7 +69,6 @@ export const useDeleteStatus = () => {
     mutationFn: (id: number) => statusService.deleteStatus(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
-      showSuccessToast('Status deleted successfully');
     },
   });
 };

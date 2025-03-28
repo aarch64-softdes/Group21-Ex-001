@@ -1,17 +1,21 @@
 export default interface Status {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
+  allowedTransitions?: Status[];
 }
 
 export interface CreateStatusDTO {
-    name: string;
+  name: string;
+  allowedTransitions?: Status[];
 }
 
 export interface UpdateStatusDTO {
-    name: string;
+  name: string;
+  allowedTransitions?: Status[];
 }
 
 export const mapToStatus = (data: any): Status => ({
-    id: data.id,
-    name: data.name,
+  id: data.id,
+  name: data.name,
+  allowedTransitions: data.allowedTransitions,
 });

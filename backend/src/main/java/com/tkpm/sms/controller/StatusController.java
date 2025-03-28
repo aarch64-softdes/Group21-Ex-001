@@ -1,7 +1,9 @@
 package com.tkpm.sms.controller;
 
+import com.tkpm.sms.dto.request.status.AllowedTransitionDto;
 import com.tkpm.sms.dto.request.status.StatusRequestDto;
 import com.tkpm.sms.dto.request.common.BaseCollectionRequest;
+import com.tkpm.sms.dto.request.status.StatusVerificationDto;
 import com.tkpm.sms.dto.response.StatusDto;
 import com.tkpm.sms.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.dto.response.common.ListResponse;
@@ -17,6 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -50,10 +56,23 @@ public class StatusController {
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
+    // TODO: avoid n + 1 queries
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<StatusDto>> getStatus(@PathVariable Integer id) {
         var status = statusService.getStatus(id);
-        var statusDto = new StatusDto(status.getId(), status.getName());
+        List<AllowedTransitionDto> allowedTransitions = status.getValidTransitionIds().stream()
+                .map(toId -> {
+                    var toStatus = statusService.getStatus(toId);
+                    return new AllowedTransitionDto(toId, toStatus.getName());
+                })
+                .collect(Collectors.toList());
+
+        var statusDto = new StatusDto()
+                .builder()
+                .id(status.getId())
+                .name(status.getName())
+                .allowedTransitions(allowedTransitions)
+                .build();
 
         return ResponseEntity.ok(ApplicationResponseDto.success(statusDto));
     }
@@ -64,7 +83,12 @@ public class StatusController {
             UriComponentsBuilder uriComponentsBuilder
     ) {
         var newStatus = statusService.createStatus(status);
-        var statusDto = new StatusDto(newStatus.getId(), newStatus.getName());
+        var statusDto = new StatusDto()
+                .builder()
+                .id(newStatus.getId())
+                .name(newStatus.getName())
+                .validTransitionIds(newStatus.getValidTransitionIds())
+                .build();
 
         return ResponseEntity.created(uriComponentsBuilder.path("/api/statuses/{id}").buildAndExpand(newStatus.getId()).toUri())
                 .body(ApplicationResponseDto.success(statusDto));
@@ -76,7 +100,12 @@ public class StatusController {
             @Valid @RequestBody StatusRequestDto status
     ) {
         var updatedStatus = statusService.updateStatus(id, status);
-        var statusDto = new StatusDto(updatedStatus.getId(), updatedStatus.getName());
+        var statusDto = new StatusDto()
+                .builder()
+                .id(updatedStatus.getId())
+                .name(updatedStatus.getName())
+                .validTransitionIds(updatedStatus.getValidTransitionIds())
+                .build();
 
         return ResponseEntity.ok(ApplicationResponseDto.success(statusDto));
     }
@@ -86,5 +115,14 @@ public class StatusController {
         statusService.deleteStatus(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping("/verify-transition")
+    public ResponseEntity<ApplicationResponseDto<Boolean>> checkTransitionAllowed(
+            StatusVerificationDto statusVerificationDto) {
+        boolean allowed = statusService.isTransitionAllowed(
+                statusVerificationDto.getFromId(),
+                statusVerificationDto.getToId());
+        return ResponseEntity.ok(ApplicationResponseDto.success(allowed));
     }
 }
