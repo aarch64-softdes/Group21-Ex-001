@@ -10,7 +10,7 @@ import com.tkpm.sms.exceptions.ErrorCode;
 import java.util.Objects;
 
 public class PhoneUtils {
-    public static String ParsePhoneNumber(String phone, String countryCode) {
+    public static String parsePhoneNumber(String phone, String countryCode) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try{
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
@@ -22,10 +22,10 @@ public class PhoneUtils {
                         replaceAll(" ", "");
             }
             else{
-                ResponseInvalidPhone(phone, countryCode);
+                responseInvalidPhone(phone, countryCode);
             }
         }catch (Exception e){
-            ResponseInvalidPhone(phone, countryCode);
+            responseInvalidPhone(phone, countryCode);
         }
 
         return null;
@@ -61,7 +61,7 @@ public class PhoneUtils {
         }
     }
 
-    private static void ResponseInvalidPhone(String phone, String countryCode) {
+    private static void responseInvalidPhone(String phone, String countryCode) {
         String errorMessage = String.format("Invalid phone number: %s", phone);
         if(Objects.isNull(countryCode) || countryCode.isEmpty()){
             errorMessage = errorMessage + ", missing country code";

@@ -2,10 +2,6 @@ package com.tkpm.sms.mapper;
 
 import java.util.Objects;
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
-import com.tkpm.sms.dto.request.phone.PhoneRequestDto;
-import com.tkpm.sms.dto.response.PhoneDto;
 import com.tkpm.sms.utils.PhoneUtils;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -40,13 +36,13 @@ public interface StudentMapper {
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
     @Mapping(target = "phone", expression = "java(PhoneUtils.parsePhoneToPhoneDto(student.getPhone()))")
-    StudentDto toStudentDto(Student student);
+    StudentDto toDto(Student student);
 
     @Mapping(target = "status", source = "status.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
     @Mapping(target = "phone", expression = "java(PhoneUtils.parsePhoneToPhoneDto(student.getPhone()))")
-    StudentMinimalDto toStudentMinimalDto(Student student);
+    StudentMinimalDto toMinimalDto(Student student);
 
 
     @Mapping(target = "status", qualifiedByName = "toStatus")
@@ -90,10 +86,10 @@ public interface StudentMapper {
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
-    Student createStudent(StudentCreateRequestDto request,
-                          @Context FacultyService facultyService,
-                          @Context ProgramService programService,
-                          @Context StatusService statusService);
+    Student toEntity(StudentCreateRequestDto request,
+                     @Context FacultyService facultyService,
+                     @Context ProgramService programService,
+                     @Context StatusService statusService);
 
     @Named("toFaculty")
     default Faculty toFaculty(String name, @Context FacultyService facultyService) {

@@ -14,15 +14,15 @@ public interface IdentityMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "student", ignore = true)
-    Identity createIdentity(IdentityCreateRequestDto identityCreateRequestDto);
+    Identity toEntity(IdentityCreateRequestDto identityCreateRequestDto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "student", ignore = true)
     void updateIdentity(@MappingTarget Identity identity, IdentityUpdateRequestDto identityUpdateRequestDto);
 
-    IdentityDto toIdentityDto(Identity identity);
+    IdentityDto toDto(Identity identity);
 
-    IdentityUpdateRequestDto toIdentityUpdateRequestDto(IdentityCreateRequestDto requestDto);
+    IdentityUpdateRequestDto toUpdateDto(IdentityCreateRequestDto requestDto);
 
-    IdentityCreateRequestDto toIdentityCreateRequestDto(IdentityUpdateRequestDto requestDto);
+    IdentityCreateRequestDto toCreateDto(IdentityUpdateRequestDto requestDto);
 }
