@@ -2,7 +2,10 @@ package com.tkpm.sms.mapper;
 
 import java.util.Objects;
 
-import com.tkpm.sms.utils.PhoneUtils;
+import com.tkpm.sms.service.AddressService;
+import com.tkpm.sms.utils.PhoneParser;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,23 +29,36 @@ import com.tkpm.sms.service.FacultyService;
 import com.tkpm.sms.service.ProgramService;
 import com.tkpm.sms.service.StatusService;
 import com.tkpm.sms.utils.ImportFileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring",
         imports = {ImportFileUtils.class, Gender.class,
-                Faculty.class, Status.class, Objects.class, PhoneUtils.class})
-public interface StudentMapper {
+                Faculty.class, Status.class, Objects.class, PhoneParser.class})
+@RequiredArgsConstructor
+public abstract class StudentMapper {
+    @Autowired
+    protected PhoneParser phoneParser;
+    @Autowired
+    protected FacultyService facultyService;
+    @Autowired
+    protected StatusService statusService;
+    @Autowired
+    protected AddressService addressService;
+    @Autowired
+    protected ProgramService programService;
 
     @Mapping(target = "status", source = "status.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
-    @Mapping(target = "phone", expression = "java(PhoneUtils.parsePhoneToPhoneDto(student.getPhone()))")
-    StudentDto toDto(Student student);
+    @Mapping(target = "phone", expression = "java(phoneParser.parsePhoneToPhoneDto(student.getPhone()))")
+    public abstract StudentDto toDto(Student student);
 
     @Mapping(target = "status", source = "status.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "faculty", source = "faculty.name")
-    @Mapping(target = "phone", expression = "java(PhoneUtils.parsePhoneToPhoneDto(student.getPhone()))")
-    StudentMinimalDto toMinimalDto(Student student);
+    @Mapping(target = "phone", expression = "java(phoneParser.parsePhoneToPhoneDto(student.getPhone()))")
+    public abstract StudentMinimalDto toMinimalDto(Student student);
 
 
     @Mapping(target = "status", qualifiedByName = "toStatus")
@@ -50,17 +66,14 @@ public interface StudentMapper {
     @Mapping(target = "faculty", qualifiedByName = "toFaculty")
     @Mapping(target = "gender", qualifiedByName = "toGender")
     @Mapping(target = "phone", ignore = true)
-    Student toStudent(StudentDto studentDto,
-                      @Context FacultyService facultyService,
-                      @Context ProgramService programService,
-                      @Context StatusService statusService);
+    public abstract Student toStudent(StudentDto studentDto);
 
     @Mapping(target = "permanentAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getPermanentAddress()))")
     @Mapping(target = "temporaryAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getTemporaryAddress()))")
     @Mapping(target = "mailingAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileImportDto.getMailingAddress()))")
     @Mapping(target = "identity", expression = "java(ImportFileUtils.parseIdentityCreateRequestDto(studentFileImportDto))")
-    @Mapping(target = "phone", expression = "java(PhoneUtils.parsePhoneToPhoneRequestDto(studentFileImportDto.getPhone()))")
-    StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileImportDto);
+    @Mapping(target = "phone", expression = "java(phoneParser.parsePhoneToPhoneRequestDto(studentFileImportDto.getPhone()))")
+    public abstract StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileImportDto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", qualifiedByName = "toStatus")
@@ -71,11 +84,8 @@ public interface StudentMapper {
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
-    void updateStudent(@MappingTarget Student student,
-                       StudentUpdateRequestDto request,
-                       @Context FacultyService facultyService,
-                       @Context ProgramService programService,
-                       @Context StatusService statusService);
+    public abstract void updateStudent(@MappingTarget Student student,
+                       StudentUpdateRequestDto request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", qualifiedByName = "toStatus")
@@ -86,23 +96,20 @@ public interface StudentMapper {
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
-    Student toEntity(StudentCreateRequestDto request,
-                     @Context FacultyService facultyService,
-                     @Context ProgramService programService,
-                     @Context StatusService statusService);
+    public abstract Student toEntity(StudentCreateRequestDto request);
 
     @Named("toFaculty")
-    default Faculty toFaculty(String name, @Context FacultyService facultyService) {
+    protected Faculty toFaculty(String name) {
         return facultyService.getFacultyByName(name);
     }
 
     @Named("toStatus")
-    default Status toStatus(String name, @Context StatusService statusService) {
+    protected Status toStatus(String name) {
         return statusService.getStatusByName(name);
     }
 
     @Named("toProgram")
-    default Program toProgram(String name, @Context ProgramService programService) {
+    protected Program toProgram(String name) {
         return programService.getProgramByName(name);
     }
 
@@ -120,14 +127,14 @@ public interface StudentMapper {
     @Mapping(target = "faculty", source = "faculty.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "status", source = "status.name")
-    StudentFileDto toStudentFileDto(Student student);
+    public abstract StudentFileDto toStudentFileDto(Student student);
 
-    default String formatAddress(Address address) {
+    protected String formatAddress(Address address) {
         return Objects.isNull(address) ? "" : address.toString();
     }
 
     @Named("toGender")
-    default Gender toGender(String gender){
+    protected Gender toGender(String gender){
         if(gender.equalsIgnoreCase("male")){
             return Gender.Male;
         } else if (gender.equalsIgnoreCase("female")) {

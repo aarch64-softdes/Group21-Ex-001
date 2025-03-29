@@ -12,7 +12,7 @@ import com.tkpm.sms.mapper.IdentityMapper;
 import com.tkpm.sms.mapper.StudentMapper;
 import com.tkpm.sms.repository.StudentRepository;
 import com.tkpm.sms.specification.StudentSpecifications;
-import com.tkpm.sms.utils.PhoneUtils;
+import com.tkpm.sms.utils.PhoneParser;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +44,8 @@ public class StudentService {
     AddressMapper addressMapper;
     IdentityMapper identityMapper;
 
+    PhoneParser phoneParser;
+
     public Page<Student> findAll(StudentCollectionRequest search) {
         Pageable pageable = PageRequest.of(
                 search.getPage() - 1,
@@ -64,9 +66,9 @@ public class StudentService {
 
     @Transactional
     public Student createStudent(StudentCreateRequestDto studentCreateRequestDto) {
-        Student student = studentMapper.toEntity(studentCreateRequestDto, facultyService, programService, statusService);
+        Student student = studentMapper.toEntity(studentCreateRequestDto);
 
-        var phoneNumberRequest = PhoneUtils.parsePhoneNumber(studentCreateRequestDto.getPhone().getPhoneNumber(),
+        var phoneNumberRequest = phoneParser.parsePhoneNumber(studentCreateRequestDto.getPhone().getPhoneNumber(),
                 studentCreateRequestDto.getPhone().getCountryCode());
         student.setPhone(phoneNumberRequest);
         student.setMailingAddress(addressMapper.toEntity(studentCreateRequestDto.getMailingAddress()));
@@ -118,11 +120,11 @@ public class StudentService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND.withMessage(String.format("Student with id %s not found", id))));
 
         // Parse phone number from request
-        var phoneNumberRequest = PhoneUtils.parsePhoneNumber(updateRequestDto.getPhone().getPhoneNumber(),
+        var phoneNumberRequest = phoneParser.parsePhoneNumber(updateRequestDto.getPhone().getPhoneNumber(),
                 updateRequestDto.getPhone().getCountryCode());
 
         // Update student base fields
-        studentMapper.updateStudent(student, updateRequestDto, facultyService, programService, statusService);
+        studentMapper.updateStudent(student, updateRequestDto);
         student.setPhone(phoneNumberRequest);
 
         // Update temporary address
