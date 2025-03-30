@@ -14,21 +14,29 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface IdentityMapperImpl extends IdentityMapper {
 
+    @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "student", ignore = true)
     @Mapping(target = "type", source = "type", qualifiedByName = "stringToEnum")
     Identity toIdentity(IdentityCreateRequestDto requestDto);
 
-    @Mapping(target = "type", source = "type", qualifiedByName = "enumToString")
-    IdentityDto toIdentityDto(Identity identity);
-
+    @Override
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "student", ignore = true)
     @Mapping(target = "type", source = "type", qualifiedByName = "stringToEnum")
+    Identity toIdentity(IdentityUpdateRequestDto requestDto);
+
+    @Override
+    @Mapping(target = "type", source = "type", qualifiedByName = "enumToString")
+    IdentityDto toIdentityDto(Identity identity);
+
+    @Override
     void updateIdentityFromDto(IdentityUpdateRequestDto requestDto, @MappingTarget Identity identity);
 
+    @Override
     IdentityUpdateRequestDto toUpdateDto(IdentityCreateRequestDto requestDto);
 
+    @Override
     IdentityCreateRequestDto toCreateDto(IdentityUpdateRequestDto requestDto);
 
     @Named("stringToEnum")

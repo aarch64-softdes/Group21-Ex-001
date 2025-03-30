@@ -1,9 +1,9 @@
 package com.tkpm.sms.application.validator.identity;
 
-import com.tkpm.sms.dto.request.identity.IdentityCreateRequestDto;
-import com.tkpm.sms.dto.request.identity.IdentityUpdateRequestDto;
-import com.tkpm.sms.enums.IdentityType;
-import com.tkpm.sms.exceptions.ErrorCode;
+import com.tkpm.sms.application.dto.request.identity.IdentityCreateRequestDto;
+import com.tkpm.sms.application.dto.request.identity.IdentityUpdateRequestDto;
+import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.enums.IdentityType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +18,9 @@ public class IdentityValidator implements ConstraintValidator<IdentityConstraint
 
     private final Map<IdentityType, ErrorCode> identityTypeErrorCodeMap =
             Map.of(
-                    IdentityType.Chip_Card, ErrorCode.INVALID_CHIP_BASE_NUMBER,
-                    IdentityType.Identity_Card, ErrorCode.INVALID_IDENTITY_CARD_NUMBER,
-                    IdentityType.Passport, ErrorCode.INVALID_PASSPORT_NUMBER
+                    IdentityType.CHIP_CARD, ErrorCode.INVALID_CHIP_BASE_NUMBER,
+                    IdentityType.IDENTITY_CARD, ErrorCode.INVALID_IDENTITY_CARD_NUMBER,
+                    IdentityType.PASSPORT, ErrorCode.INVALID_PASSPORT_NUMBER
             );
 
     @Override
@@ -59,9 +59,9 @@ public class IdentityValidator implements ConstraintValidator<IdentityConstraint
             return true;
         }
 
-        var identity = IdentityType.fromString(type);
+        IdentityType identity = IdentityType.fromDisplayName(type);
         context.disableDefaultConstraintViolation();
-        
+
         if (Objects.isNull(identity)) {
             addValidationError(
                     ErrorCode.INVALID_IDENTITY_TYPE,
@@ -70,7 +70,7 @@ public class IdentityValidator implements ConstraintValidator<IdentityConstraint
             return false;
         }
 
-        if (!number.matches(identity.getPattern())) {
+        if (!identity.isValidNumber(number)) {
             addValidationError(
                     identityTypeErrorCodeMap.get(identity),
                     "number", context);

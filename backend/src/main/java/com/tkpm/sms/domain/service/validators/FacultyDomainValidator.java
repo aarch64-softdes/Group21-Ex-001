@@ -5,7 +5,7 @@ import com.tkpm.sms.domain.repository.FacultyRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class FacultyValidator {
+public class FacultyDomainValidator {
     private final FacultyRepository facultyRepository;
 
     public void validateNameUniqueness(String name) {

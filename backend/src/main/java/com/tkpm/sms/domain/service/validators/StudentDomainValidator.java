@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
-public class StudentValidator {
+public class StudentDomainValidator {
     private final StudentRepository studentRepository;
 
     // Email validation pattern

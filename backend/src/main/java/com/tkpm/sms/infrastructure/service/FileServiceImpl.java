@@ -1,7 +1,7 @@
 package com.tkpm.sms.infrastructure.service;
 
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
-import com.tkpm.sms.application.mapper.StudentMapper;
+import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
 import com.tkpm.sms.application.service.interfaces.FileService;
 import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.infrastructure.factories.FileStrategyFactory;
@@ -28,7 +28,7 @@ import java.util.List;
 public class FileServiceImpl implements FileService {
     StudentJpaRepository studentRepository;
     StudentPersistenceMapper studentPersistenceMapper;
-    StudentMapper studentMapper;
+    StudentMapperImpl studentMapper;
     FileStrategyFactory fileStrategyFactory;
 
     @Override

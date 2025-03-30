@@ -7,5 +7,4 @@ import com.tkpm.sms.domain.model.Identity;
 public interface IdentityService {
     Identity createIdentity(IdentityCreateRequestDto identityCreateRequestDto);
     Identity updateIdentity(String id, IdentityUpdateRequestDto identityUpdateRequestDto);
-    boolean canCreateIdentity(Identity identity);
 }

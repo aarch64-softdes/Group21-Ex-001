@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
-public class PhoneValidator {
+public class PhoneNumberValidator {
     private static final Pattern INTERNATIONAL_PHONE_PATTERN = 
         Pattern.compile("^\\+\\d{1,4}\\d{6,14}$");
     

@@ -12,7 +12,7 @@ import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.FacultyRepository;
-import com.tkpm.sms.domain.service.validators.FacultyValidator;
+import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class FacultyServiceImpl implements FacultyService {
     FacultyRepository facultyRepository;
-    FacultyValidator facultyValidator;
+    FacultyDomainValidator facultyValidator;
     ExceptionTranslator exceptionTranslator;
 
     @Override

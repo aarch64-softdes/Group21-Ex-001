@@ -9,6 +9,8 @@ public interface IdentityMapper {
 
     Identity toIdentity(IdentityCreateRequestDto requestDto);
 
+    Identity toIdentity(IdentityUpdateRequestDto requestDto);
+
     IdentityDto toIdentityDto(Identity identity);
 
     void updateIdentityFromDto(IdentityUpdateRequestDto requestDto, Identity identity);

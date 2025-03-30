@@ -33,8 +33,8 @@ public class StatusEntity {
     @Column(name = "deleted_at")
     LocalDate deletedAt;
 
-//    @OneToMany(mappedBy = "status")
-//    Set<StudentEntity> students;
+    @OneToMany(mappedBy = "status")
+    Set<StudentEntity> students;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(

@@ -9,7 +9,7 @@ import com.tkpm.sms.application.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
-import com.tkpm.sms.application.mapper.StudentMapper;
+import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
 import com.tkpm.sms.application.service.interfaces.*;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
@@ -19,12 +19,12 @@ import com.tkpm.sms.domain.model.Identity;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.StudentRepository;
-import com.tkpm.sms.domain.service.validators.AddressValidator;
-import com.tkpm.sms.domain.service.validators.FacultyValidator;
-import com.tkpm.sms.domain.service.validators.IdentityValidator;
-import com.tkpm.sms.domain.service.validators.ProgramValidator;
-import com.tkpm.sms.domain.service.validators.StatusValidator;
-import com.tkpm.sms.domain.service.validators.StudentValidator;
+import com.tkpm.sms.domain.service.validators.AddressDomainValidator;
+import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
+import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
+import com.tkpm.sms.domain.service.validators.ProgramDomainValidator;
+import com.tkpm.sms.domain.service.validators.StatusDomainValidator;
+import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,19 +42,19 @@ import java.util.stream.Collectors;
 public class StudentServiceImpl implements StudentService {
     StudentRepository studentRepository;
 
-    StatusValidator statusValidator;
-    ProgramValidator programValidator;
-    FacultyValidator facultyValidator;
-    AddressValidator addressValidator;
-    IdentityValidator identityValidator;
-    StudentValidator studentValidator;
+    StatusDomainValidator statusValidator;
+    ProgramDomainValidator programValidator;
+    FacultyDomainValidator facultyValidator;
+    AddressDomainValidator addressValidator;
+    IdentityDomainValidator identityValidator;
+    StudentDomainValidator studentValidator;
 
     StatusService statusService;
     ProgramService programService;
     FacultyService facultyService;
     IdentityService identityService;
 
-    StudentMapper studentMapper;
+    StudentMapperImpl studentMapper;
     AddressMapper addressMapper;
     IdentityMapper identityMapper;
 

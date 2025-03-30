@@ -11,7 +11,7 @@ import com.tkpm.sms.domain.model.Address;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.AddressRepository;
-import com.tkpm.sms.domain.service.validators.AddressValidator;
+import com.tkpm.sms.domain.service.validators.AddressDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class AddressServiceImpl implements AddressService {
     AddressRepository addressRepository;
-    AddressValidator addressDomainService;
+    AddressDomainValidator addressDomainValidator;
     AddressMapper addressMapper;
     ExceptionTranslator exceptionTranslator;
 
@@ -34,8 +34,8 @@ public class AddressServiceImpl implements AddressService {
             Address address = addressMapper.toAddress(requestDto);
 
             // Validate the address
-            addressDomainService.validateAddressFields(address);
-            addressDomainService.validateAddressConsistency(address);
+            addressDomainValidator.validateAddressFields(address);
+            addressDomainValidator.validateAddressConsistency(address);
 
             // Save and return
             return addressRepository.save(address);
@@ -57,8 +57,8 @@ public class AddressServiceImpl implements AddressService {
             addressMapper.updateAddressFromDto(requestDto, address);
 
             // Validate the updated address
-            addressDomainService.validateAddressFields(address);
-            addressDomainService.validateAddressConsistency(address);
+            addressDomainValidator.validateAddressFields(address);
+            addressDomainValidator.validateAddressConsistency(address);
 
             // Save and return
             return addressRepository.save(address);

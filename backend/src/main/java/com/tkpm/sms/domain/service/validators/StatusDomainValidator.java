@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class StatusValidator {
+public class StatusDomainValidator {
     private final StatusRepository statusRepository;
 
     public void validateNameUniqueness(String name) {

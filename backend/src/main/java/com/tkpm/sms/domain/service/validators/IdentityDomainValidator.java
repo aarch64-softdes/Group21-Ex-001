@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
-public class IdentityValidator {
+public class IdentityDomainValidator {
     private final IdentityRepository identityRepository;
 
     public void validateIdentityNumber(IdentityType type, String number) {

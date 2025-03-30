@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,5 +16,5 @@ public class Faculty {
     Integer id;
     String name;
     LocalDate deletedAt;
-//    Set<Student> students;
+    Set<Student> students;
 }

@@ -17,7 +17,7 @@ public class Status {
     Integer id;
     String name;
     LocalDate deletedAt;
-//    Set<Student> students;
+    Set<Student> students;
     List<Integer> validTransitionIds;
 
     public boolean canTransitionTo(Integer targetStatusId) {

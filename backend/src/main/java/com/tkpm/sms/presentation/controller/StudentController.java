@@ -8,7 +8,7 @@ import com.tkpm.sms.application.dto.response.common.ListResponse;
 import com.tkpm.sms.application.dto.response.common.PageDto;
 import com.tkpm.sms.application.dto.response.student.StudentDto;
 import com.tkpm.sms.application.dto.response.student.StudentMinimalDto;
-import com.tkpm.sms.application.mapper.StudentMapper;
+import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
 import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Student;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentController {
     StudentService studentService;
-    StudentMapper studentMapper;
+    StudentMapperImpl studentMapper;
 
     @GetMapping
     public ResponseEntity<ApplicationResponseDto<ListResponse<StudentMinimalDto>>> getStudents(

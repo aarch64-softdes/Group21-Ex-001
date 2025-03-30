@@ -12,7 +12,7 @@ import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.IdentityRepository;
-import com.tkpm.sms.domain.service.validators.IdentityValidator;
+import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class IdentityServiceImpl implements IdentityService {
     IdentityRepository identityRepository;
-    IdentityValidator identityDomainService;
+    IdentityDomainValidator identityDomainValidator;
     IdentityMapper identityMapper;
     ExceptionTranslator exceptionTranslator;
 
@@ -35,14 +35,14 @@ public class IdentityServiceImpl implements IdentityService {
             IdentityType identityType = IdentityType.fromDisplayName(requestDto.getType());
 
             // Validate identity type and number
-            identityDomainService.validateIdentityNumber(identityType, requestDto.getNumber());
+            identityDomainValidator.validateIdentityNumber(identityType, requestDto.getNumber());
 
             // Validate issued date and expiry date
-            identityDomainService.validateIssuedDateBeforeExpiryDate(
+            identityDomainValidator.validateIssuedDateBeforeExpiryDate(
                     requestDto.getIssuedDate(), requestDto.getExpiryDate());
 
             // Validate uniqueness
-            identityDomainService.validateIdentityUniqueness(identityType, requestDto.getNumber());
+            identityDomainValidator.validateIdentityUniqueness(identityType, requestDto.getNumber());
 
             // Convert DTO to domain entity and save
             Identity identity = identityMapper.toIdentity(requestDto);
@@ -64,14 +64,14 @@ public class IdentityServiceImpl implements IdentityService {
             IdentityType identityType = IdentityType.fromDisplayName(requestDto.getType());
 
             // Validate identity type and number
-            identityDomainService.validateIdentityNumber(identityType, requestDto.getNumber());
+            identityDomainValidator.validateIdentityNumber(identityType, requestDto.getNumber());
 
             // Validate issued date and expiry date
-            identityDomainService.validateIssuedDateBeforeExpiryDate(
+            identityDomainValidator.validateIssuedDateBeforeExpiryDate(
                     requestDto.getIssuedDate(), requestDto.getExpiryDate());
 
             // Validate uniqueness for update
-            identityDomainService.validateIdentityUniquenessForUpdate(identityType, requestDto.getNumber(), id);
+            identityDomainValidator.validateIdentityUniquenessForUpdate(identityType, requestDto.getNumber(), id);
 
             // Find existing identity
             Identity identity = identityRepository.findById(id)
@@ -88,10 +88,5 @@ public class IdentityServiceImpl implements IdentityService {
                     ErrorCode.INVALID_IDENTITY_TYPE.withMessage("Invalid identity type: " + requestDto.getType())
             );
         }
-    }
-
-    @Override
-    public boolean canCreateIdentity(Identity identity) {
-        return !identityRepository.existsByNumberAndType(identity.getNumber(), identity.getType());
     }
 }

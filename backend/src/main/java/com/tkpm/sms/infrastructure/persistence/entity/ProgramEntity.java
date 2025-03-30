@@ -32,7 +32,7 @@ public class ProgramEntity {
     @Column(name = "deleted_at")
     LocalDate deletedAt;
 
-//    // one-to-many relationship with student
-//    @OneToMany(mappedBy = "program")
-//    Set<StudentEntity> students;
+    // one-to-many relationship with student
+    @OneToMany(mappedBy = "program")
+    Set<StudentEntity> students;
 }

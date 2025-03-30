@@ -4,6 +4,7 @@ import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Program;
 import com.tkpm.sms.domain.repository.ProgramRepository;
+import com.tkpm.sms.infrastructure.persistence.entity.ProgramEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.ProgramJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.ProgramPersistenceMapper;
 import lombok.RequiredArgsConstructor;

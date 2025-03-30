@@ -22,5 +22,5 @@ public class Identity {
     boolean hasChip;
     String country;
     String notes;
-//    Student student;
+    Student student;
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ProgramValidator {
+public class ProgramDomainValidator {
     private final ProgramRepository programRepository;
 
     public void validateNameUniqueness(String name) {

@@ -1,4 +1,3 @@
-// application/service/StatusServiceImpl.java
 package com.tkpm.sms.application.service.implementation;
 
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
@@ -6,7 +5,6 @@ import com.tkpm.sms.application.dto.request.status.StatusRequestDto;
 import com.tkpm.sms.application.exception.ApplicationException;
 import com.tkpm.sms.application.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
-import com.tkpm.sms.application.mapper.PageRequestMapper;
 import com.tkpm.sms.application.mapper.StatusMapper;
 import com.tkpm.sms.application.service.interfaces.StatusService;
 import com.tkpm.sms.domain.common.PageRequest;
@@ -15,7 +13,7 @@ import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.StatusRepository;
-import com.tkpm.sms.domain.service.validators.StatusValidator;
+import com.tkpm.sms.domain.service.validators.StatusDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class StatusServiceImpl implements StatusService {
     StatusRepository statusRepository;
-    StatusValidator statusDomainService;
+    StatusDomainValidator statusDomainValidator;
     StatusMapper statusMapper;
     ExceptionTranslator exceptionTranslator;
 
@@ -69,7 +67,7 @@ public class StatusServiceImpl implements StatusService {
     public Status createStatus(StatusRequestDto statusRequestDto) {
         try {
             // Validate name uniqueness
-            statusDomainService.validateNameUniqueness(statusRequestDto.getName());
+            statusDomainValidator.validateNameUniqueness(statusRequestDto.getName());
 
             // Map DTO to domain entity
             Status status = statusMapper.toStatus(statusRequestDto);
@@ -86,7 +84,7 @@ public class StatusServiceImpl implements StatusService {
     public Status updateStatus(Integer id, StatusRequestDto statusRequestDto) {
         try {
             // Validate name uniqueness for update
-            statusDomainService.validateNameUniquenessForUpdate(statusRequestDto.getName(), id);
+            statusDomainValidator.validateNameUniquenessForUpdate(statusRequestDto.getName(), id);
 
             // Find existing status
             Status status = statusRepository.findById(id)
@@ -121,7 +119,7 @@ public class StatusServiceImpl implements StatusService {
     @Override
     public boolean isTransitionAllowed(Integer fromStatusId, Integer toStatusId) {
         try {
-            statusDomainService.validateStatusTransition(fromStatusId, toStatusId);
+            statusDomainValidator.validateStatusTransition(fromStatusId, toStatusId);
             return true;
         } catch (DomainException e) {
             return false;

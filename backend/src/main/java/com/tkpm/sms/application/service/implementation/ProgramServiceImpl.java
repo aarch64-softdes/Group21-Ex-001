@@ -13,7 +13,7 @@ import com.tkpm.sms.domain.model.Program;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.ProgramRepository;
-import com.tkpm.sms.domain.service.validators.ProgramValidator;
+import com.tkpm.sms.domain.service.validators.ProgramDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class ProgramServiceImpl implements ProgramService {
     ProgramRepository programRepository;
-    ProgramValidator programDomainService;
+    ProgramDomainValidator programDomainValidator;
     ExceptionTranslator exceptionTranslator;
     ProgramMapper programMapper;
 
@@ -67,7 +67,7 @@ public class ProgramServiceImpl implements ProgramService {
     public Program createProgram(ProgramRequestDto programRequestDto) {
         try {
             // Use domain service for business validation
-            programDomainService.validateNameUniqueness(programRequestDto.getName());
+            programDomainValidator.validateNameUniqueness(programRequestDto.getName());
 
             // Convert DTO to domain entity using mapper
             Program program = programMapper.toEntity(programRequestDto);
@@ -83,7 +83,7 @@ public class ProgramServiceImpl implements ProgramService {
     public Program updateProgram(Integer id, ProgramRequestDto programRequestDto) {
         try {
             // Use domain service for business validation
-            programDomainService.validateNameUniquenessForUpdate(programRequestDto.getName(), id);
+            programDomainValidator.validateNameUniquenessForUpdate(programRequestDto.getName(), id);
 
             Program programToUpdate = programRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException(
