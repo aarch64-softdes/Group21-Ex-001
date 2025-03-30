@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AddressDomainService {
+public class AddressValidator {
     public void validateAddressFields(Address address) {
         if ((address.getStreet() == null || address.getStreet().isBlank()) &&
             (address.getDistrict() == null || address.getDistrict().isBlank()) &&

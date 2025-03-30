@@ -1,6 +1,5 @@
 package com.tkpm.sms.domain.service;
 
-import com.tkpm.sms.domain.model.Identity;
 import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
 import com.tkpm.sms.domain.exception.InvalidIdentityException;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
-public class IdentityDomainService {
+public class IdentityValidator {
     private final IdentityRepository identityRepository;
 
     public void validateIdentityNumber(IdentityType type, String number) {

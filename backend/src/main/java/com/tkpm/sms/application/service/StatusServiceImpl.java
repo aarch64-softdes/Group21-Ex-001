@@ -14,7 +14,7 @@ import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.StatusRepository;
-import com.tkpm.sms.domain.service.StatusDomainService;
+import com.tkpm.sms.domain.service.StatusValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class StatusServiceImpl implements StatusService {
     StatusRepository statusRepository;
-    StatusDomainService statusDomainService;
+    StatusValidator statusDomainService;
     StatusMapper statusMapper;
     ExceptionTranslator exceptionTranslator;
 

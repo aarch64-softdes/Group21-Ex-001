@@ -10,7 +10,7 @@ import com.tkpm.sms.domain.model.Address;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.AddressRepository;
-import com.tkpm.sms.domain.service.AddressDomainService;
+import com.tkpm.sms.domain.service.AddressValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class AddressServiceImpl implements AddressService {
     AddressRepository addressRepository;
-    AddressDomainService addressDomainService;
+    AddressValidator addressDomainService;
     AddressMapper addressMapper;
     ExceptionTranslator exceptionTranslator;
 

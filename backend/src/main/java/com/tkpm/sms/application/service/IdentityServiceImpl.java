@@ -11,7 +11,7 @@ import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.IdentityRepository;
-import com.tkpm.sms.domain.service.IdentityDomainService;
+import com.tkpm.sms.domain.service.IdentityValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class IdentityServiceImpl implements IdentityService {
     IdentityRepository identityRepository;
-    IdentityDomainService identityDomainService;
+    IdentityValidator identityDomainService;
     IdentityMapper identityMapper;
     ExceptionTranslator exceptionTranslator;
 
