@@ -76,6 +76,13 @@ public class LoggerManager {
     }
 
     /**
+     * Static method to get a logger by default
+     */
+    public static BaseLogger getDefaultLoggerStatic() {
+        return instance.getDefaultLogger();
+    }
+
+    /**
      * Create a new LogEntry builder with source set to the caller class
      */
     public static LogEntry createLogEntry(String source) {
