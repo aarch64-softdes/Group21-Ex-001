@@ -2,6 +2,8 @@ package com.tkpm.sms.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tkpm.sms.enums.Gender;
+import com.tkpm.sms.infrastructure.persistence.entity.FacultyEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -61,8 +63,8 @@ public class Student {
 
     // many-to-one relationship with faculty
     @ManyToOne
-    @JoinColumn(name = "faculty_id")
-    Faculty faculty;
+    @JoinColumn(name = "faculty_id", nullable = true)
+    FacultyEntity faculty;
 
     @JsonBackReference
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,8 +1,8 @@
 package com.tkpm.sms.specification;
 
 import com.tkpm.sms.dto.request.student.StudentCollectionRequest;
-import com.tkpm.sms.entity.Faculty;
 import com.tkpm.sms.entity.Student;
+import com.tkpm.sms.infrastructure.persistence.entity.FacultyEntity;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -45,7 +45,7 @@ public class StudentSpecifications {
                 return null;
             }
 
-            Join<Student, Faculty> studentFacultyJoin = root.join("faculty");
+            Join<Student, FacultyEntity> studentFacultyJoin = root.join("faculty");
 
             return criteriaBuilder.like(
                     criteriaBuilder

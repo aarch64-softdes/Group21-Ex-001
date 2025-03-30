@@ -1,4 +1,4 @@
-package com.tkpm.sms.entity;
+package com.tkpm.sms.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +20,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SQLDelete(sql = "UPDATE faculties SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
-public class Faculty {
+public class FacultyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
@@ -33,6 +33,6 @@ public class Faculty {
     LocalDate deletedAt;
 
     // one-to-many relationship with student
-    @OneToMany(mappedBy = "faculty")
-    Set<Student> students;
+    // @OneToMany(mappedBy = "faculty")
+    // Set<StudentEntity> students;
 }

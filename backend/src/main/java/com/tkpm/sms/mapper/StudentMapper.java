@@ -2,11 +2,12 @@ package com.tkpm.sms.mapper;
 
 import java.util.Objects;
 
+import com.tkpm.sms.application.service.FacultyService;
+import com.tkpm.sms.domain.model.Faculty;
+import com.tkpm.sms.infrastructure.persistence.entity.FacultyEntity;
 import com.tkpm.sms.service.AddressService;
 import com.tkpm.sms.utils.PhoneParser;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -18,19 +19,16 @@ import com.tkpm.sms.dto.response.student.StudentDto;
 import com.tkpm.sms.dto.response.student.StudentFileDto;
 import com.tkpm.sms.dto.response.student.StudentMinimalDto;
 import com.tkpm.sms.entity.Address;
-import com.tkpm.sms.entity.Faculty;
 import com.tkpm.sms.entity.Program;
 import com.tkpm.sms.entity.Status;
 import com.tkpm.sms.entity.Student;
 import com.tkpm.sms.enums.Gender;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
-import com.tkpm.sms.service.FacultyService;
 import com.tkpm.sms.service.ProgramService;
 import com.tkpm.sms.service.StatusService;
 import com.tkpm.sms.utils.ImportFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring",
         imports = {ImportFileUtils.class, Gender.class,
@@ -99,8 +97,8 @@ public abstract class StudentMapper {
     public abstract Student toEntity(StudentCreateRequestDto request);
 
     @Named("toFaculty")
-    protected Faculty toFaculty(String name) {
-        return facultyService.getFacultyByName(name);
+    protected FacultyEntity toFaculty(String name) {
+        return new FacultyEntity();
     }
 
     @Named("toStatus")
