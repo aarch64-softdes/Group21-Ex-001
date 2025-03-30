@@ -30,9 +30,13 @@ public class IdentityService {
                             identityCreateRequestDto.getNumber())));
         }
 
-        Identity identity = identityMapper.createIdentity(identityCreateRequestDto);
+        Identity identity = identityMapper.toEntity(identityCreateRequestDto);
 
         return identityRepository.save(identity);
+    }
+
+    public boolean cannotCreateIdentity(Identity identity) {
+        return identityRepository.existsIdentityByNumberAndType(identity.getNumber(), identity.getType());
     }
 
     @Transactional

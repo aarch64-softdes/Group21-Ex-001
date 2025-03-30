@@ -6,11 +6,13 @@ import com.tkpm.sms.dto.request.phone.PhoneRequestDto;
 import com.tkpm.sms.dto.response.PhoneDto;
 import com.tkpm.sms.exceptions.ApplicationException;
 import com.tkpm.sms.exceptions.ErrorCode;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-public class PhoneUtils {
-    public static String ParsePhoneNumber(String phone, String countryCode) {
+@Component
+public class PhoneParser {
+    public String parsePhoneNumber(String phone, String countryCode) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try{
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
@@ -22,16 +24,16 @@ public class PhoneUtils {
                         replaceAll(" ", "");
             }
             else{
-                ResponseInvalidPhone(phone, countryCode);
+                responseInvalidPhone(phone, countryCode);
             }
         }catch (Exception e){
-            ResponseInvalidPhone(phone, countryCode);
+            responseInvalidPhone(phone, countryCode);
         }
 
         return null;
     }
 
-    public static PhoneDto parsePhoneToPhoneDto(String phone) {
+    public PhoneDto parsePhoneToPhoneDto(String phone) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try{
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
@@ -46,7 +48,7 @@ public class PhoneUtils {
         }
     }
 
-    public static PhoneRequestDto parsePhoneToPhoneRequestDto(String phone){
+    public PhoneRequestDto parsePhoneToPhoneRequestDto(String phone){
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try{
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
@@ -61,7 +63,7 @@ public class PhoneUtils {
         }
     }
 
-    private static void ResponseInvalidPhone(String phone, String countryCode) {
+    private void responseInvalidPhone(String phone, String countryCode) {
         String errorMessage = String.format("Invalid phone number: %s", phone);
         if(Objects.isNull(countryCode) || countryCode.isEmpty()){
             errorMessage = errorMessage + ", missing country code";

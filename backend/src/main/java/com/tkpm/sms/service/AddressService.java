@@ -20,7 +20,7 @@ public class AddressService {
 
     @Transactional
     public Address createAddress(AddressCreateRequestDto addressCreateRequestDto) {
-        Address address = addressMapper.createAddress(addressCreateRequestDto);
+        Address address = addressMapper.toEntity(addressCreateRequestDto);
         return addressRepository.save(address);
     }
 

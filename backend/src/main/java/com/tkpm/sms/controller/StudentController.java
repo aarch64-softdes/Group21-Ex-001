@@ -35,7 +35,7 @@ public class StudentController {
     ) {
         Page<StudentMinimalDto> pageResult =
                 studentService.findAll(search)
-                        .map(studentMapper::toStudentMinimalDto);
+                        .map(studentMapper::toMinimalDto);
 
         var pageDto = PageDto.builder()
                 .totalElements(pageResult.getTotalElements())
@@ -56,7 +56,7 @@ public class StudentController {
     public ResponseEntity<ApplicationResponseDto<StudentDto>> getStudentDetail(@PathVariable String id) {
         var student = studentService.getStudentDetail(id);
         var response = ApplicationResponseDto.success(
-                studentMapper.toStudentDto(student));
+                studentMapper.toDto(student));
 
         return ResponseEntity.ok(response);
     }
@@ -67,7 +67,7 @@ public class StudentController {
             UriComponentsBuilder uriComponentsBuilder
     ) {
         var newStudent = studentService.createStudent(student);
-        var response = ApplicationResponseDto.success(studentMapper.toStudentDto(newStudent));
+        var response = ApplicationResponseDto.success(studentMapper.toDto(newStudent));
         var locationOfNewUser = uriComponentsBuilder.path("api/students/{id}").buildAndExpand(newStudent.getId()).toUri();
 
         return ResponseEntity.created(locationOfNewUser).body(response);
@@ -86,7 +86,7 @@ public class StudentController {
             @Valid @RequestBody StudentUpdateRequestDto student
     ) {
         var updatedStudent = studentService.updateStudent(id, student);
-        var response = ApplicationResponseDto.success(studentMapper.toStudentDto(updatedStudent));
+        var response = ApplicationResponseDto.success(studentMapper.toDto(updatedStudent));
 
         return ResponseEntity.ok(response);
     }
