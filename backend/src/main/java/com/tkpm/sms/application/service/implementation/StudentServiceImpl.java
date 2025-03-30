@@ -80,6 +80,7 @@ public class StudentServiceImpl implements StudentService {
         // Validate student fields
         studentValidator.validateStudentIdUniqueness(requestDto.getStudentId());
         studentValidator.validateEmailUniqueness(requestDto.getEmail());
+        studentValidator.validateEmailDomain(requestDto.getEmail());
 
         // Parse and validate phone
         String phoneNumber = phoneParser.parsePhoneNumber(
@@ -144,6 +145,7 @@ public class StudentServiceImpl implements StudentService {
             studentValidator.validateEmailUniquenessForUpdate(requestDto.getEmail(), id);
         }
 
+        studentValidator.validateEmailDomain(requestDto.getEmail());
         // Parse and validate phone
         String phoneNumber = phoneParser.parsePhoneNumber(
                 requestDto.getPhone().getPhoneNumber(),

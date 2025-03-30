@@ -6,6 +6,7 @@ import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
 import com.tkpm.sms.domain.exception.InvalidStatusTransitionException;
 import com.tkpm.sms.domain.exception.InvalidStudentException;
+import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class StudentDomainValidator {
     private final StudentRepository studentRepository;
+    private final SettingRepository settingRepository;
 
     public void validateStudentIdUniqueness(String studentId) {
         if (studentRepository.existsByStudentId(studentId)) {
@@ -53,7 +55,9 @@ public class StudentDomainValidator {
         }
     }
 
-    public void validateEmailDomain(String email, String validDomain) {
+    public void validateEmailDomain(String email) {
+        var validDomain = settingRepository.getEmailSetting();
+
         if (!email.endsWith(validDomain)) {
             throw new InvalidStudentException(
                     String.format("Email domain is not supported, only %s is allowed", validDomain)

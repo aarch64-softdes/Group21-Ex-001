@@ -8,6 +8,7 @@ import com.tkpm.sms.application.exception.ApplicationException;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.service.interfaces.PhoneParser;
 import com.tkpm.sms.domain.exception.InvalidPhoneNumberException;
+import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.valueobject.Phone;
 import org.springframework.stereotype.Component;
 
@@ -15,12 +16,22 @@ import java.util.Objects;
 
 @Component
 public class PhoneParserImpl implements PhoneParser {
+    private final SettingRepository settingRepository;
+
+    public PhoneParserImpl(SettingRepository settingRepository) {
+        this.settingRepository = settingRepository;
+    }
+
+    public boolean isValidCountryCode(String countryCode) {
+        return settingRepository.getPhoneSetting().contains(countryCode);
+    }
 
     public String parsePhoneNumber(String phone, String countryCode) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
                     phone, countryCode);
+
             boolean isValidPhoneNumber = phoneNumberUtil.isValidNumberForRegion(phoneNumber, countryCode);
             if (isValidPhoneNumber) {
                 return phoneNumberUtil.format(
