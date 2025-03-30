@@ -1,4 +1,4 @@
-package com.tkpm.sms.application.service;
+package com.tkpm.sms.application.service.implementation;
 
 import com.tkpm.sms.application.dto.request.address.AddressCreateRequestDto;
 import com.tkpm.sms.application.dto.request.address.AddressUpdateRequestDto;
@@ -6,11 +6,12 @@ import com.tkpm.sms.application.exception.ApplicationException;
 import com.tkpm.sms.application.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.AddressMapper;
+import com.tkpm.sms.application.service.interfaces.AddressService;
 import com.tkpm.sms.domain.model.Address;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.AddressRepository;
-import com.tkpm.sms.domain.service.AddressValidator;
+import com.tkpm.sms.domain.service.validators.AddressValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;

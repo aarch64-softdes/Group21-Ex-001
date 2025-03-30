@@ -1,18 +1,18 @@
-package com.tkpm.sms.application.service;
+package com.tkpm.sms.application.service.implementation;
 
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
-import com.tkpm.sms.application.dto.request.program.ProgramRequestDto;
+import com.tkpm.sms.application.dto.request.faculty.FacultyRequestDto;
 import com.tkpm.sms.application.exception.ApplicationException;
 import com.tkpm.sms.application.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
-import com.tkpm.sms.application.mapper.ProgramMapper;
+import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
-import com.tkpm.sms.domain.model.Program;
+import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
-import com.tkpm.sms.domain.repository.ProgramRepository;
-import com.tkpm.sms.domain.service.ProgramValidator;
+import com.tkpm.sms.domain.repository.FacultyRepository;
+import com.tkpm.sms.domain.service.validators.FacultyValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -23,14 +23,14 @@ import java.time.LocalDate;
 @Service
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class ProgramServiceImpl implements ProgramService {
-    ProgramRepository programRepository;
-    ProgramValidator programDomainService;
+public class FacultyServiceImpl implements FacultyService {
+    FacultyRepository facultyRepository;
+    FacultyValidator facultyValidator;
     ExceptionTranslator exceptionTranslator;
-    ProgramMapper programMapper;
 
     @Override
-    public PageResponse<Program> getAllPrograms(BaseCollectionRequest search) {
+    public PageResponse<Faculty> getAllFaculties(BaseCollectionRequest search) {
+        // Convert to domain PageRequest
         PageRequest pageRequest = PageRequest.builder()
                 .pageNumber(search.getPage())
                 .pageSize(search.getSize())
@@ -40,77 +40,72 @@ public class ProgramServiceImpl implements ProgramService {
                         : PageRequest.SortDirection.ASC)
                 .build();
 
-        return programRepository.findAll(pageRequest);
+        return facultyRepository.findAll(pageRequest);
     }
 
     @Override
-    public Program getProgramById(Integer id) {
-        return programRepository.findById(id)
+    public Faculty getFacultyById(Integer id) {
+        return facultyRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(
                         ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Program with id %s not found", id)
+                                String.format("Faculty with id %s not found", id)
                         )));
     }
 
     @Override
-    public Program getProgramByName(String name) {
-        return programRepository.findByName(name)
+    public Faculty getFacultyByName(String name) {
+        return facultyRepository.findByName(name)
                 .orElseThrow(() -> new ApplicationException(
                         ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Program with name %s not found", name)
+                                String.format("Faculty with name %s not found", name)
                         )));
     }
 
     @Override
     @Transactional
-    public Program createProgram(ProgramRequestDto programRequestDto) {
+    public Faculty createFaculty(FacultyRequestDto faculty) {
         try {
             // Use domain service for business validation
-            programDomainService.validateNameUniqueness(programRequestDto.getName());
+            facultyValidator.validateNameUniqueness(faculty.getName());
 
-            // Convert DTO to domain entity using mapper
-            Program program = programMapper.toEntity(programRequestDto);
-            return programRepository.save(program);
+            var newFaculty = Faculty.builder().name(faculty.getName()).build();
+            return facultyRepository.save(newFaculty);
         } catch (DomainException e) {
-            // Translate domain exception to application exception
             throw exceptionTranslator.translateException(e);
         }
     }
 
     @Override
     @Transactional
-    public Program updateProgram(Integer id, ProgramRequestDto programRequestDto) {
+    public Faculty updateFaculty(Integer id, FacultyRequestDto faculty) {
         try {
             // Use domain service for business validation
-            programDomainService.validateNameUniquenessForUpdate(programRequestDto.getName(), id);
+            facultyValidator.validateNameUniquenessForUpdate(faculty.getName(), id);
 
-            Program programToUpdate = programRepository.findById(id)
+            Faculty facultyToUpdate = facultyRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException(
-                            String.format("Program with id %s not found", id)
+                            String.format("Faculty with id %s not found", id)
                     ));
 
-            // Update domain entity using mapper
-            programMapper.updateProgramFromDto(programRequestDto, programToUpdate);
-            return programRepository.save(programToUpdate);
+            facultyToUpdate.setName(faculty.getName());
+            return facultyRepository.save(facultyToUpdate);
         } catch (DomainException e) {
-            // Translate domain exception to application exception
             throw exceptionTranslator.translateException(e);
         }
     }
 
     @Override
     @Transactional
-    public void deleteProgram(Integer id) {
+    public void deleteFaculty(Integer id) {
         try {
-            Program program = programRepository.findById(id)
+            Faculty faculty = facultyRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException(
-                            String.format("Program with id %s not found", id)
+                            String.format("Faculty with id %s not found", id)
                     ));
 
-            program.setDeletedAt(LocalDate.now());
-            programRepository.save(program);
+            faculty.setDeletedAt(LocalDate.now());
+            facultyRepository.save(faculty);
         } catch (DomainException e) {
-            // Translate domain exception to application exception
             throw exceptionTranslator.translateException(e);
         }
     }

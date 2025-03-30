@@ -1,5 +1,5 @@
 // application/service/StatusServiceImpl.java
-package com.tkpm.sms.application.service;
+package com.tkpm.sms.application.service.implementation;
 
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.status.StatusRequestDto;
@@ -8,13 +8,14 @@ import com.tkpm.sms.application.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.PageRequestMapper;
 import com.tkpm.sms.application.mapper.StatusMapper;
+import com.tkpm.sms.application.service.interfaces.StatusService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.StatusRepository;
-import com.tkpm.sms.domain.service.StatusValidator;
+import com.tkpm.sms.domain.service.validators.StatusValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;

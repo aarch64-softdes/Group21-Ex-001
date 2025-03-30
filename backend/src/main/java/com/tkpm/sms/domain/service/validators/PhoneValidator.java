@@ -1,7 +1,6 @@
-package com.tkpm.sms.domain.service;
+package com.tkpm.sms.domain.service.validators;
 
 import com.tkpm.sms.domain.exception.InvalidPhoneNumberException;
-import com.tkpm.sms.domain.valueobject.Phone;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +8,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
-public class PhoneDomainService {
+public class PhoneValidator {
     private static final Pattern INTERNATIONAL_PHONE_PATTERN = 
         Pattern.compile("^\\+\\d{1,4}\\d{6,14}$");
     

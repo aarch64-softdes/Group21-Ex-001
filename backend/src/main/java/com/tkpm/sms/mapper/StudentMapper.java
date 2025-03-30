@@ -2,7 +2,7 @@ package com.tkpm.sms.mapper;
 
 import java.util.Objects;
 
-import com.tkpm.sms.application.service.FacultyService;
+import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.infrastructure.persistence.entity.FacultyEntity;
 import com.tkpm.sms.service.AddressService;

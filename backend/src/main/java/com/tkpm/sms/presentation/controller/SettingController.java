@@ -9,7 +9,7 @@ import com.tkpm.sms.application.dto.response.setting.EmailDomainSettingDto;
 import com.tkpm.sms.application.dto.response.setting.PhoneSettingDto;
 import com.tkpm.sms.application.exception.ApplicationException;
 import com.tkpm.sms.application.exception.ErrorCode;
-import com.tkpm.sms.application.service.SettingService;
+import com.tkpm.sms.application.service.interfaces.SettingService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

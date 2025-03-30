@@ -1,4 +1,4 @@
-package com.tkpm.sms.application.service;
+package com.tkpm.sms.application.service.implementation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +7,7 @@ import com.tkpm.sms.application.dto.request.setting.PhoneSettingRequestDto;
 import com.tkpm.sms.application.exception.ApplicationException;
 import com.tkpm.sms.application.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
+import com.tkpm.sms.application.service.interfaces.SettingService;
 import com.tkpm.sms.domain.model.Setting;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.repository.SettingRepository;

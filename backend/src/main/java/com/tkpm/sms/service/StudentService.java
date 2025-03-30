@@ -1,6 +1,6 @@
 package com.tkpm.sms.service;
 
-import com.tkpm.sms.application.service.FacultyService;
+import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.dto.request.student.StudentCollectionRequest;
 import com.tkpm.sms.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.dto.request.student.StudentUpdateRequestDto;

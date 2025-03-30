@@ -9,7 +9,7 @@ import com.tkpm.sms.application.dto.response.common.PageDto;
 import com.tkpm.sms.application.dto.response.status.AllowedTransitionDto;
 import com.tkpm.sms.application.dto.response.status.StatusDto;
 import com.tkpm.sms.application.mapper.StatusMapper;
-import com.tkpm.sms.application.service.StatusService;
+import com.tkpm.sms.application.service.interfaces.StatusService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Status;
 import jakarta.validation.Valid;

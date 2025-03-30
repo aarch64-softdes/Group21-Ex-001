@@ -9,7 +9,7 @@ import com.tkpm.sms.application.dto.response.common.PageDto;
 import com.tkpm.sms.application.dto.response.student.StudentDto;
 import com.tkpm.sms.application.dto.response.student.StudentMinimalDto;
 import com.tkpm.sms.application.mapper.StudentMapper;
-import com.tkpm.sms.application.service.StudentService;
+import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Student;
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.tkpm.sms.domain.service;
+package com.tkpm.sms.domain.service.validators;
 
 import com.tkpm.sms.domain.model.Address;
 import com.tkpm.sms.domain.exception.InvalidAddressException;

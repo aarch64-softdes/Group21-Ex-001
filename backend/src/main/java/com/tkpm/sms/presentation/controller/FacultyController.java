@@ -7,7 +7,7 @@ import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.application.dto.response.common.ListResponse;
 import com.tkpm.sms.application.dto.response.common.PageDto;
 import com.tkpm.sms.application.mapper.FacultyMapper;
-import com.tkpm.sms.application.service.FacultyService;
+import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Faculty;
 import jakarta.validation.Valid;

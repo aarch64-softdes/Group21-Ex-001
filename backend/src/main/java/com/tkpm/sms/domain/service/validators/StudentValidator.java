@@ -1,5 +1,6 @@
-package com.tkpm.sms.domain.service;
+package com.tkpm.sms.domain.service.validators;
 
+import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
@@ -9,6 +10,7 @@ import com.tkpm.sms.domain.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -84,6 +86,12 @@ public class StudentValidator {
                     String.format("Transition from %s to %s is not allowed",
                             student.getStatus().getName(), newStatus.getName())
             );
+        }
+    }
+
+    public void validateStudentDataForExport(List<Student> students) {
+        if (students == null || students.isEmpty()) {
+            throw new FileProcessingException("No student data available for export");
         }
     }
 }

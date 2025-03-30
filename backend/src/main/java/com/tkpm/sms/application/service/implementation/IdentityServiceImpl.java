@@ -1,4 +1,4 @@
-package com.tkpm.sms.application.service;
+package com.tkpm.sms.application.service.implementation;
 
 import com.tkpm.sms.application.dto.request.identity.IdentityCreateRequestDto;
 import com.tkpm.sms.application.dto.request.identity.IdentityUpdateRequestDto;
@@ -6,12 +6,13 @@ import com.tkpm.sms.application.exception.ApplicationException;
 import com.tkpm.sms.application.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.IdentityMapper;
+import com.tkpm.sms.application.service.interfaces.IdentityService;
 import com.tkpm.sms.domain.model.Identity;
 import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.IdentityRepository;
-import com.tkpm.sms.domain.service.IdentityValidator;
+import com.tkpm.sms.domain.service.validators.IdentityValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;

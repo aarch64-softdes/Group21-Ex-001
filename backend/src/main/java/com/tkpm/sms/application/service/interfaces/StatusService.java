@@ -1,4 +1,4 @@
-package com.tkpm.sms.application.service;
+package com.tkpm.sms.application.service.interfaces;
 
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.status.StatusRequestDto;
