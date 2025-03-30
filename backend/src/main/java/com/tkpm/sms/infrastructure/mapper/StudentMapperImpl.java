@@ -94,6 +94,7 @@ public abstract class StudentMapperImpl implements StudentMapper {
     @Mapping(target = "faculty", source = "faculty.name")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "status", source = "status.name")
+    @Mapping(target = "phone", expression = "java(student.getPhone().toString())")
     @Mapping(target = "gender", source = "gender", qualifiedByName = "genderEnumToString")
     public abstract StudentFileDto toStudentFileDto(Student student);
 

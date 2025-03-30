@@ -1,6 +1,7 @@
 package com.tkpm.sms.domain.model;
 
 import com.tkpm.sms.domain.enums.Gender;
+import com.tkpm.sms.domain.valueobject.Phone;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,7 +21,7 @@ public class Student {
     Gender gender;
     Integer course;
     String email;
-    String phone;
+    Phone phone;
 
     // Relationships
     Faculty faculty;

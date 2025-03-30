@@ -12,16 +12,14 @@ import java.util.Objects;
 public class Phone {
     String countryCode;
     String number;
-    String formattedNumber;
 
-    private Phone(String countryCode, String number, String formattedNumber) {
+    private Phone(String countryCode, String number) {
         this.countryCode = countryCode;
         this.number = number;
-        this.formattedNumber = formattedNumber;
     }
 
-    public static Phone of(String countryCode, String number, String formattedNumber) {
-        return new Phone(countryCode, number, formattedNumber);
+    public static Phone of(String countryCode, String number) {
+        return new Phone(countryCode, number);
     }
 
     @Override
@@ -29,16 +27,16 @@ public class Phone {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Phone phone = (Phone) o;
-        return Objects.equals(formattedNumber, phone.formattedNumber);
+        return Objects.equals(number, phone.number);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(formattedNumber);
+        return Objects.hash(number);
     }
 
     @Override
     public String toString() {
-        return formattedNumber;
+        return number;
     }
 }

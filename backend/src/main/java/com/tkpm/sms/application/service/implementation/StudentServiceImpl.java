@@ -8,6 +8,7 @@ import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
+import com.tkpm.sms.domain.valueobject.Phone;
 import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
 import com.tkpm.sms.application.service.interfaces.*;
 import com.tkpm.sms.domain.common.PageRequest;
@@ -83,7 +84,7 @@ public class StudentServiceImpl implements StudentService {
         studentValidator.validateEmailDomain(requestDto.getEmail());
 
         // Parse and validate phone
-        String phoneNumber = phoneParser.parsePhoneNumber(
+        Phone phoneNumber = phoneParser.parsePhoneNumberToPhone(
                 requestDto.getPhone().getPhoneNumber(),
                 requestDto.getPhone().getCountryCode());
 
@@ -147,7 +148,7 @@ public class StudentServiceImpl implements StudentService {
 
         studentValidator.validateEmailDomain(requestDto.getEmail());
         // Parse and validate phone
-        String phoneNumber = phoneParser.parsePhoneNumber(
+        Phone phoneNumber = phoneParser.parsePhoneNumberToPhone(
                 requestDto.getPhone().getPhoneNumber(),
                 requestDto.getPhone().getCountryCode());
 

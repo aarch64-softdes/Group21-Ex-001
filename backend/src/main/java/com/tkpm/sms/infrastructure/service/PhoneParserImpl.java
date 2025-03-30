@@ -59,11 +59,35 @@ public class PhoneParserImpl implements PhoneParser {
             String countryCode = phoneNumberUtil.getRegionCodeForNumber(phoneNumber);
             String nationalNumber = String.valueOf(phoneNumber.getNationalNumber());
 
-            return Phone.of(countryCode, nationalNumber, phoneString);
+            return Phone.of(countryCode, nationalNumber);
         } catch (Exception e) {
             throw new InvalidPhoneNumberException(
                     String.format("Invalid phone number: %s", phoneString));
         }
+    }
+
+    public Phone parsePhoneNumberToPhone(String phoneString, String countryCode) {
+        if (phoneString == null) {
+            return null;
+        }
+
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+        try {
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phoneString, countryCode);
+            boolean isValidPhoneNumber = phoneNumberUtil.isValidNumberForRegion(phoneNumber, countryCode);
+
+            if (!isValidPhoneNumber) {
+                responseInvalidPhone(phoneString, countryCode);
+            }
+
+            String nationalNumber = String.valueOf(phoneNumber.getNationalNumber());
+
+            return Phone.of(countryCode, nationalNumber);
+        } catch (Exception e) {
+            responseInvalidPhone(phoneString, countryCode);
+        }
+
+        return null;
     }
 
     public PhoneDto parsePhoneToPhoneDto(String phone) {
