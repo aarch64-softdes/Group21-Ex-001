@@ -3,7 +3,7 @@ package com.tkpm.sms.infrastructure.file;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.service.FileStrategy;
 import lombok.RequiredArgsConstructor;

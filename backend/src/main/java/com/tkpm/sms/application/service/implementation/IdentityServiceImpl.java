@@ -1,9 +1,10 @@
 package com.tkpm.sms.application.service.implementation;
 
+import com.tkpm.sms.application.annotation.TranslateDomainException;
 import com.tkpm.sms.application.dto.request.identity.IdentityCreateRequestDto;
 import com.tkpm.sms.application.dto.request.identity.IdentityUpdateRequestDto;
 import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.IdentityMapper;
 import com.tkpm.sms.application.service.interfaces.IdentityService;
@@ -29,6 +30,7 @@ public class IdentityServiceImpl implements IdentityService {
 
     @Override
     @Transactional
+    @TranslateDomainException
     public Identity createIdentity(IdentityCreateRequestDto requestDto) {
         try {
             // Convert string type to enum
@@ -47,8 +49,6 @@ public class IdentityServiceImpl implements IdentityService {
             // Convert DTO to domain entity and save
             Identity identity = identityMapper.toIdentity(requestDto);
             return identityRepository.save(identity);
-        } catch (DomainException e) {
-            throw exceptionTranslator.translateException(e);
         } catch (IllegalArgumentException e) {
             throw new ApplicationException(
                     ErrorCode.INVALID_IDENTITY_TYPE.withMessage("Invalid identity type: " + requestDto.getType())
@@ -58,8 +58,9 @@ public class IdentityServiceImpl implements IdentityService {
 
     @Override
     @Transactional
+    @TranslateDomainException
     public Identity updateIdentity(String id, IdentityUpdateRequestDto requestDto) {
-        try {
+        try{
             // Convert string type to enum
             IdentityType identityType = IdentityType.fromDisplayName(requestDto.getType());
 
@@ -81,8 +82,6 @@ public class IdentityServiceImpl implements IdentityService {
             // Update domain entity and save
             identityMapper.updateIdentityFromDto(requestDto, identity);
             return identityRepository.save(identity);
-        } catch (DomainException e) {
-            throw exceptionTranslator.translateException(e);
         } catch (IllegalArgumentException e) {
             throw new ApplicationException(
                     ErrorCode.INVALID_IDENTITY_TYPE.withMessage("Invalid identity type: " + requestDto.getType())

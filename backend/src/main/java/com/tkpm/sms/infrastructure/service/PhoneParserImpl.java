@@ -5,7 +5,7 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import com.tkpm.sms.application.dto.request.phone.PhoneRequestDto;
 import com.tkpm.sms.application.dto.response.PhoneDto;
 import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.service.interfaces.PhoneParser;
 import com.tkpm.sms.domain.exception.InvalidPhoneNumberException;
 import com.tkpm.sms.domain.valueobject.Phone;

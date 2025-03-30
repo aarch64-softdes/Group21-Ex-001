@@ -1,9 +1,10 @@
 package com.tkpm.sms.application.service.implementation;
 
+import com.tkpm.sms.application.annotation.TranslateDomainException;
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.program.ProgramRequestDto;
 import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.ProgramMapper;
 import com.tkpm.sms.application.service.interfaces.ProgramService;
@@ -45,74 +46,62 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
+    @TranslateDomainException
     public Program getProgramById(Integer id) {
         return programRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Program with id %s not found", id)
-                        )));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Program with id %s not found", id)
+                ));
     }
 
     @Override
+    @TranslateDomainException
     public Program getProgramByName(String name) {
         return programRepository.findByName(name)
-                .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Program with name %s not found", name)
-                        )));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Program with name %s not found", name)
+                ));
     }
 
     @Override
     @Transactional
+    @TranslateDomainException
     public Program createProgram(ProgramRequestDto programRequestDto) {
-        try {
-            // Use domain service for business validation
-            programDomainValidator.validateNameUniqueness(programRequestDto.getName());
+        // Use domain service for business validation
+        programDomainValidator.validateNameUniqueness(programRequestDto.getName());
 
-            // Convert DTO to domain entity using mapper
-            Program program = programMapper.toEntity(programRequestDto);
-            return programRepository.save(program);
-        } catch (DomainException e) {
-            // Translate domain exception to application exception
-            throw exceptionTranslator.translateException(e);
-        }
+        // Convert DTO to domain entity using mapper
+        Program program = programMapper.toEntity(programRequestDto);
+        return programRepository.save(program);
     }
 
     @Override
     @Transactional
+    @TranslateDomainException
     public Program updateProgram(Integer id, ProgramRequestDto programRequestDto) {
-        try {
-            // Use domain service for business validation
-            programDomainValidator.validateNameUniquenessForUpdate(programRequestDto.getName(), id);
+        // Use domain service for business validation
+        programDomainValidator.validateNameUniquenessForUpdate(programRequestDto.getName(), id);
 
-            Program programToUpdate = programRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            String.format("Program with id %s not found", id)
-                    ));
+        Program programToUpdate = programRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Program with id %s not found", id)
+                ));
 
-            // Update domain entity using mapper
-            programMapper.updateProgramFromDto(programRequestDto, programToUpdate);
-            return programRepository.save(programToUpdate);
-        } catch (DomainException e) {
-            // Translate domain exception to application exception
-            throw exceptionTranslator.translateException(e);
-        }
+        // Update domain entity using mapper
+        programMapper.updateProgramFromDto(programRequestDto, programToUpdate);
+        return programRepository.save(programToUpdate);
     }
 
     @Override
     @Transactional
+    @TranslateDomainException
     public void deleteProgram(Integer id) {
-        try {
-            Program program = programRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            String.format("Program with id %s not found", id)
-                    ));
+        Program program = programRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Program with id %s not found", id)
+                ));
 
-            program.setDeletedAt(LocalDate.now());
-            programRepository.save(program);
-        } catch (DomainException e) {
-            // Translate domain exception to application exception
-            throw exceptionTranslator.translateException(e);
-        }
+        program.setDeletedAt(LocalDate.now());
+        programRepository.save(program);
     }
 }

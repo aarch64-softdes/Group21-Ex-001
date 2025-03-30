@@ -1,11 +1,12 @@
 package com.tkpm.sms.application.service.implementation;
 
+import com.tkpm.sms.application.annotation.TranslateDomainException;
 import com.tkpm.sms.application.dto.request.student.StudentCollectionRequest;
 import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
@@ -76,133 +77,126 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @TranslateDomainException
     public Student getStudentDetail(String id) {
         return studentRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Student with id %s not found", id)
-                        )));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Student with id %s not found", id)));
     }
 
     @Override
     @Transactional
+    @TranslateDomainException
     public Student createStudent(StudentCreateRequestDto requestDto) {
-        try {
-            // Validate student fields
-            studentValidator.validateStudentIdUniqueness(requestDto.getStudentId());
-            studentValidator.validateEmailUniqueness(requestDto.getEmail());
-            studentValidator.validateName(requestDto.getName());
-            studentValidator.validateEmail(requestDto.getEmail());
+        // Validate student fields
+        studentValidator.validateStudentIdUniqueness(requestDto.getStudentId());
+        studentValidator.validateEmailUniqueness(requestDto.getEmail());
+        studentValidator.validateName(requestDto.getName());
+        studentValidator.validateEmail(requestDto.getEmail());
 
-            // Parse and validate phone
-            String phoneNumber = phoneParser.parsePhoneNumber(
-                    requestDto.getPhone().getPhoneNumber(),
-                    requestDto.getPhone().getCountryCode());
+        // Parse and validate phone
+        String phoneNumber = phoneParser.parsePhoneNumber(
+                requestDto.getPhone().getPhoneNumber(),
+                requestDto.getPhone().getCountryCode());
 
-            // Convert DTO to domain entity
-            Student student = studentMapper.toStudent(requestDto);
-            student.setPhone(phoneNumber);
+        // Convert DTO to domain entity
+        Student student = studentMapper.toStudent(requestDto);
+        student.setPhone(phoneNumber);
 
-            // Set related entities
-            var faculty = facultyService.getFacultyByName(requestDto.getFaculty());
-            var program = programService.getProgramByName(requestDto.getProgram());
-            var status = statusService.getStatusByName(requestDto.getStatus());
+        // Set related entities
+        var faculty = facultyService.getFacultyByName(requestDto.getFaculty());
+        var program = programService.getProgramByName(requestDto.getProgram());
+        var status = statusService.getStatusByName(requestDto.getStatus());
 
-            student.setFaculty(faculty);
-            student.setProgram(program);
-            student.setStatus(status);
+        student.setFaculty(faculty);
+        student.setProgram(program);
+        student.setStatus(status);
 
-            // Handle addresses
-            if (requestDto.getPermanentAddress() != null) {
-                Address address = addressMapper.toAddress(requestDto.getPermanentAddress());
-                addressValidator.validateAddressFields(address);
-                student.setPermanentAddress(address);
-            }
-
-            if (requestDto.getTemporaryAddress() != null) {
-                Address address = addressMapper.toAddress(requestDto.getTemporaryAddress());
-                addressValidator.validateAddressFields(address);
-                student.setTemporaryAddress(address);
-            }
-
-            if (requestDto.getMailingAddress() != null) {
-                Address address = addressMapper.toAddress(requestDto.getMailingAddress());
-                addressValidator.validateAddressFields(address);
-                student.setMailingAddress(address);
-            }
-
-            // Handle identity
-            if (requestDto.getIdentity() != null) {
-                Identity identity = identityMapper.toIdentity(requestDto.getIdentity());
-                identityValidator.validateIdentityNumber(identity.getType(), identity.getNumber());
-                identityValidator.validateIssuedDateBeforeExpiryDate(
-                        identity.getIssuedDate(), identity.getExpiryDate());
-                identityValidator.validateIdentityUniqueness(identity.getType(), identity.getNumber());
-                student.setIdentity(identity);
-            }
-
-            // Save student
-            return studentRepository.save(student);
-        } catch (DomainException e) {
-            throw exceptionTranslator.translateException(e);
+        // Handle addresses
+        if (requestDto.getPermanentAddress() != null) {
+            Address address = addressMapper.toAddress(requestDto.getPermanentAddress());
+            addressValidator.validateAddressFields(address);
+            student.setPermanentAddress(address);
         }
+
+        if (requestDto.getTemporaryAddress() != null) {
+            Address address = addressMapper.toAddress(requestDto.getTemporaryAddress());
+            addressValidator.validateAddressFields(address);
+            student.setTemporaryAddress(address);
+        }
+
+        if (requestDto.getMailingAddress() != null) {
+            Address address = addressMapper.toAddress(requestDto.getMailingAddress());
+            addressValidator.validateAddressFields(address);
+            student.setMailingAddress(address);
+        }
+
+        // Handle identity
+        if (requestDto.getIdentity() != null) {
+            Identity identity = identityMapper.toIdentity(requestDto.getIdentity());
+            identityValidator.validateIdentityNumber(identity.getType(), identity.getNumber());
+            identityValidator.validateIssuedDateBeforeExpiryDate(
+                    identity.getIssuedDate(), identity.getExpiryDate());
+            identityValidator.validateIdentityUniqueness(identity.getType(), identity.getNumber());
+            student.setIdentity(identity);
+        }
+
+        // Save student
+        return studentRepository.save(student);
     }
 
     @Override
     @Transactional
+    @TranslateDomainException
     public Student updateStudent(String id, StudentUpdateRequestDto requestDto) {
-        try {
-            // Find existing student
-            Student student = studentRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            String.format("Student with id %s not found", id)));
+        // Find existing student
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Student with id %s not found", id)));
 
-            // Validate student fields
-            if (!student.getStudentId().equals(requestDto.getStudentId())) {
-                studentValidator.validateStudentIdUniquenessForUpdate(requestDto.getStudentId(), id);
-            }
-
-            if (!student.getEmail().equals(requestDto.getEmail())) {
-                studentValidator.validateEmailUniquenessForUpdate(requestDto.getEmail(), id);
-                studentValidator.validateEmail(requestDto.getEmail());
-            }
-
-            studentValidator.validateName(requestDto.getName());
-
-            // Parse and validate phone
-            String phoneNumber = phoneParser.parsePhoneNumber(
-                    requestDto.getPhone().getPhoneNumber(),
-                    requestDto.getPhone().getCountryCode());
-
-            // Update student fields
-            studentMapper.updateStudentFromDto(requestDto, student);
-            student.setPhone(phoneNumber);
-
-            // Update related entities
-            var faculty = facultyService.getFacultyByName(requestDto.getFaculty());
-            var program = programService.getProgramByName(requestDto.getProgram());
-            var newStatus = statusService.getStatusByName(requestDto.getStatus());
-
-            // Validate status transition
-            if (student.getStatus() != null && !student.getStatus().getId().equals(newStatus.getId())) {
-                studentValidator.validateStatusTransition(student, newStatus);
-            }
-
-            student.setFaculty(faculty);
-            student.setProgram(program);
-            student.setStatus(newStatus);
-
-            // Update addresses
-            updateAddresses(student, requestDto);
-
-            // Update identity
-            updateIdentity(student, requestDto);
-
-            // Save updated student
-            return studentRepository.save(student);
-        } catch (DomainException e) {
-            throw exceptionTranslator.translateException(e);
+        // Validate student fields
+        if (!student.getStudentId().equals(requestDto.getStudentId())) {
+            studentValidator.validateStudentIdUniquenessForUpdate(requestDto.getStudentId(), id);
         }
+
+        if (!student.getEmail().equals(requestDto.getEmail())) {
+            studentValidator.validateEmailUniquenessForUpdate(requestDto.getEmail(), id);
+            studentValidator.validateEmail(requestDto.getEmail());
+        }
+
+        studentValidator.validateName(requestDto.getName());
+
+        // Parse and validate phone
+        String phoneNumber = phoneParser.parsePhoneNumber(
+                requestDto.getPhone().getPhoneNumber(),
+                requestDto.getPhone().getCountryCode());
+
+        // Update student fields
+        studentMapper.updateStudentFromDto(requestDto, student);
+        student.setPhone(phoneNumber);
+
+        // Update related entities
+        var faculty = facultyService.getFacultyByName(requestDto.getFaculty());
+        var program = programService.getProgramByName(requestDto.getProgram());
+        var newStatus = statusService.getStatusByName(requestDto.getStatus());
+
+        // Validate status transition
+        if (student.getStatus() != null && !student.getStatus().getId().equals(newStatus.getId())) {
+            studentValidator.validateStatusTransition(student, newStatus);
+        }
+
+        student.setFaculty(faculty);
+        student.setProgram(program);
+        student.setStatus(newStatus);
+
+        // Update addresses
+        updateAddresses(student, requestDto);
+
+        // Update identity
+        updateIdentity(student, requestDto);
+
+        // Save updated student
+        return studentRepository.save(student);
     }
 
     private void updateAddresses(Student student, StudentUpdateRequestDto requestDto) {
@@ -278,12 +272,11 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
+    @TranslateDomainException
     public void deleteStudentById(String id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Student with id %s not found", id)
-                        )));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Student with id %s not found", id)));
 
         studentRepository.delete(student);
     }

@@ -1,7 +1,7 @@
 package com.tkpm.sms.infrastructure.factories;
 
 import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.service.FileStrategy;
 import org.springframework.stereotype.Component;
 

@@ -33,7 +33,7 @@ public class StudentController {
     StudentService studentService;
     StudentMapperImpl studentMapper;
 
-    @GetMapping
+    @GetMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<ListResponse<StudentMinimalDto>>> getStudents(
             @ModelAttribute StudentCollectionRequest search
     ) {
@@ -68,7 +68,7 @@ public class StudentController {
         return ResponseEntity.ok(ApplicationResponseDto.success(studentDto));
     }
 
-    @PostMapping("/")
+    @PostMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<StudentDto>> createStudent(
             @Valid @RequestBody StudentCreateRequestDto student,
             UriComponentsBuilder uriComponentsBuilder

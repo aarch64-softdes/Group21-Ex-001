@@ -1,6 +1,6 @@
 package com.tkpm.sms.application.dto.request.phone;
 
-import com.tkpm.sms.application.validator.required.RequiredConstraint;
+import com.tkpm.sms.application.annotation.RequiredConstraint;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

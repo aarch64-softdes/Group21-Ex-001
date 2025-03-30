@@ -1,6 +1,7 @@
-package com.tkpm.sms.application.validator.required;
+package com.tkpm.sms.application.validation;
 
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.application.annotation.RequiredConstraint;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

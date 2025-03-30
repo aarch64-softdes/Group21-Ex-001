@@ -1,5 +1,6 @@
-package com.tkpm.sms.application.validator.identity;
+package com.tkpm.sms.application.annotation;
 
+import com.tkpm.sms.application.validation.IdentityValidator;
 import jakarta.validation.Constraint;
 
 import java.lang.annotation.ElementType;

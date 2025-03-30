@@ -1,9 +1,10 @@
 package com.tkpm.sms.application.service.implementation;
 
+import com.tkpm.sms.application.annotation.TranslateDomainException;
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.status.StatusRequestDto;
 import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.StatusMapper;
 import com.tkpm.sms.application.service.interfaces.StatusService;
@@ -45,21 +46,19 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
+    @TranslateDomainException
     public Status getStatusById(Integer id) {
         return statusRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Status with id %s not found", id)
-                        )));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Status with id %s not found", id)));
     }
 
     @Override
+    @TranslateDomainException
     public Status getStatusByName(String name) {
         return statusRepository.findByName(name)
-                .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Status with name %s not found", name)
-                        )));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Status with name %s not found", name)));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.tkpm.sms.application.exception;
+package com.tkpm.sms.domain.exception;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -2,7 +2,7 @@ package com.tkpm.sms.application.dto.response.common;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;

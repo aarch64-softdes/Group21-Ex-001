@@ -1,9 +1,10 @@
 package com.tkpm.sms.application.service.implementation;
 
+import com.tkpm.sms.application.annotation.TranslateDomainException;
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.faculty.FacultyRequestDto;
 import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.domain.common.PageRequest;
@@ -26,7 +27,6 @@ import java.time.LocalDate;
 public class FacultyServiceImpl implements FacultyService {
     FacultyRepository facultyRepository;
     FacultyDomainValidator facultyValidator;
-    ExceptionTranslator exceptionTranslator;
 
     @Override
     public PageResponse<Faculty> getAllFaculties(BaseCollectionRequest search) {
@@ -44,60 +44,54 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
+    @TranslateDomainException
     public Faculty getFacultyById(Integer id) {
         return facultyRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Faculty with id %s not found", id)
-                        )));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Faculty with id %s not found", id)
+                ));
     }
 
     @Override
+    @TranslateDomainException
     public Faculty getFacultyByName(String name) {
         return facultyRepository.findByName(name)
-                .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.NOT_FOUND.withMessage(
-                                String.format("Faculty with name %s not found", name)
-                        )));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Faculty with name %s not found", name)
+                ));
     }
 
     @Override
     @Transactional
+    @TranslateDomainException
     public Faculty createFaculty(FacultyRequestDto faculty) {
-        try {
-            // Use domain service for business validation
-            facultyValidator.validateNameUniqueness(faculty.getName());
+        // Use domain service for business validation
+        facultyValidator.validateNameUniqueness(faculty.getName());
 
-            var newFaculty = Faculty.builder().name(faculty.getName()).build();
-            return facultyRepository.save(newFaculty);
-        } catch (DomainException e) {
-            throw exceptionTranslator.translateException(e);
-        }
+        var newFaculty = Faculty.builder().name(faculty.getName()).build();
+        return facultyRepository.save(newFaculty);
     }
 
     @Override
     @Transactional
+    @TranslateDomainException
     public Faculty updateFaculty(Integer id, FacultyRequestDto faculty) {
-        try {
-            // Use domain service for business validation
-            facultyValidator.validateNameUniquenessForUpdate(faculty.getName(), id);
+        // Use domain service for business validation
+        facultyValidator.validateNameUniquenessForUpdate(faculty.getName(), id);
 
-            Faculty facultyToUpdate = facultyRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            String.format("Faculty with id %s not found", id)
-                    ));
+        Faculty facultyToUpdate = facultyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Faculty with id %s not found", id)
+                ));
 
-            facultyToUpdate.setName(faculty.getName());
-            return facultyRepository.save(facultyToUpdate);
-        } catch (DomainException e) {
-            throw exceptionTranslator.translateException(e);
-        }
+        facultyToUpdate.setName(faculty.getName());
+        return facultyRepository.save(facultyToUpdate);
     }
 
     @Override
     @Transactional
+    @TranslateDomainException
     public void deleteFaculty(Integer id) {
-        try {
             Faculty faculty = facultyRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException(
                             String.format("Faculty with id %s not found", id)
@@ -105,8 +99,5 @@ public class FacultyServiceImpl implements FacultyService {
 
             faculty.setDeletedAt(LocalDate.now());
             facultyRepository.save(faculty);
-        } catch (DomainException e) {
-            throw exceptionTranslator.translateException(e);
-        }
     }
 }

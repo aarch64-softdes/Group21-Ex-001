@@ -1,5 +1,6 @@
 package com.tkpm.sms.application.exception;
 
+import com.tkpm.sms.domain.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

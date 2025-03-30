@@ -1,8 +1,9 @@
-package com.tkpm.sms.application.validator.identity;
+package com.tkpm.sms.application.validation;
 
+import com.tkpm.sms.application.annotation.IdentityConstraint;
 import com.tkpm.sms.application.dto.request.identity.IdentityCreateRequestDto;
 import com.tkpm.sms.application.dto.request.identity.IdentityUpdateRequestDto;
-import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.enums.IdentityType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

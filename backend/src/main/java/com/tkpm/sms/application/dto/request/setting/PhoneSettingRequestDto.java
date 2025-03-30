@@ -1,6 +1,6 @@
 package com.tkpm.sms.application.dto.request.setting;
 
-import com.tkpm.sms.application.validator.required.RequiredConstraint;
+import com.tkpm.sms.application.annotation.RequiredConstraint;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

@@ -1,14 +1,6 @@
 package com.tkpm.sms.application.exception;
 
-import com.tkpm.sms.domain.exception.DomainException;
-import com.tkpm.sms.domain.exception.DuplicateResourceException;
-import com.tkpm.sms.domain.exception.ResourceNotFoundException;
-import com.tkpm.sms.domain.exception.InvalidStatusTransitionException;
-import com.tkpm.sms.domain.exception.InvalidAddressException;
-import com.tkpm.sms.domain.exception.InvalidIdentityException;
-import com.tkpm.sms.domain.exception.InvalidPhoneNumberException;
-import com.tkpm.sms.domain.exception.InvalidStudentException;
-import com.tkpm.sms.domain.exception.FileProcessingException;
+import com.tkpm.sms.domain.exception.*;
 import org.springframework.stereotype.Component;
 
 @Component
