@@ -1,7 +1,6 @@
-package com.tkpm.sms.application.dto.response;
+package com.tkpm.sms.application.dto.response.status;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tkpm.sms.application.dto.request.status.AllowedTransitionDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
