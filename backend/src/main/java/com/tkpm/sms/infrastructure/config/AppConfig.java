@@ -13,20 +13,10 @@ public class AppConfig {
         return new FacultyDomainValidator(facultyRepository);
     }
 
-    @Bean
-    public AddressDomainValidator addressValidator() {
-        return new AddressDomainValidator();
-    }
-
-    @Bean
     public IdentityDomainValidator identityValidator(IdentityRepository identityRepository) {
         return new IdentityDomainValidator(identityRepository);
     }
 
-    @Bean
-    public PhoneNumberValidator phoneValidator() {
-        return new PhoneNumberValidator();
-    }
 
     @Bean
     public ProgramDomainValidator programValidator(ProgramRepository programRepository) {

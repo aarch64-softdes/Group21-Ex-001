@@ -5,8 +5,6 @@ import com.tkpm.sms.application.dto.request.student.StudentCollectionRequest;
 import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
-import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
@@ -17,14 +15,9 @@ import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Address;
 import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.model.Identity;
-import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.StudentRepository;
-import com.tkpm.sms.domain.service.validators.AddressDomainValidator;
-import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
-import com.tkpm.sms.domain.service.validators.ProgramDomainValidator;
-import com.tkpm.sms.domain.service.validators.StatusDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -43,10 +36,6 @@ import java.util.stream.Collectors;
 public class StudentServiceImpl implements StudentService {
     StudentRepository studentRepository;
 
-    StatusDomainValidator statusValidator;
-    ProgramDomainValidator programValidator;
-    FacultyDomainValidator facultyValidator;
-    AddressDomainValidator addressValidator;
     IdentityDomainValidator identityValidator;
     StudentDomainValidator studentValidator;
 
@@ -91,8 +80,6 @@ public class StudentServiceImpl implements StudentService {
         // Validate student fields
         studentValidator.validateStudentIdUniqueness(requestDto.getStudentId());
         studentValidator.validateEmailUniqueness(requestDto.getEmail());
-        studentValidator.validateName(requestDto.getName());
-        studentValidator.validateEmail(requestDto.getEmail());
 
         // Parse and validate phone
         String phoneNumber = phoneParser.parsePhoneNumber(
@@ -115,28 +102,22 @@ public class StudentServiceImpl implements StudentService {
         // Handle addresses
         if (requestDto.getPermanentAddress() != null) {
             Address address = addressMapper.toAddress(requestDto.getPermanentAddress());
-            addressValidator.validateAddressFields(address);
             student.setPermanentAddress(address);
         }
 
         if (requestDto.getTemporaryAddress() != null) {
             Address address = addressMapper.toAddress(requestDto.getTemporaryAddress());
-            addressValidator.validateAddressFields(address);
             student.setTemporaryAddress(address);
         }
 
         if (requestDto.getMailingAddress() != null) {
             Address address = addressMapper.toAddress(requestDto.getMailingAddress());
-            addressValidator.validateAddressFields(address);
             student.setMailingAddress(address);
         }
 
         // Handle identity
         if (requestDto.getIdentity() != null) {
             Identity identity = identityMapper.toIdentity(requestDto.getIdentity());
-            identityValidator.validateIdentityNumber(identity.getType(), identity.getNumber());
-            identityValidator.validateIssuedDateBeforeExpiryDate(
-                    identity.getIssuedDate(), identity.getExpiryDate());
             identityValidator.validateIdentityUniqueness(identity.getType(), identity.getNumber());
             student.setIdentity(identity);
         }
@@ -161,10 +142,7 @@ public class StudentServiceImpl implements StudentService {
 
         if (!student.getEmail().equals(requestDto.getEmail())) {
             studentValidator.validateEmailUniquenessForUpdate(requestDto.getEmail(), id);
-            studentValidator.validateEmail(requestDto.getEmail());
         }
-
-        studentValidator.validateName(requestDto.getName());
 
         // Parse and validate phone
         String phoneNumber = phoneParser.parsePhoneNumber(
@@ -205,12 +183,10 @@ public class StudentServiceImpl implements StudentService {
             if (student.getPermanentAddress() == null) {
                 Address address = addressMapper.toAddress(
                         addressMapper.updateToCreateRequest(requestDto.getPermanentAddress()));
-                addressValidator.validateAddressFields(address);
                 student.setPermanentAddress(address);
             } else {
                 addressMapper.updateAddressFromDto(
                         requestDto.getPermanentAddress(), student.getPermanentAddress());
-                addressValidator.validateAddressFields(student.getPermanentAddress());
             }
         } else{
             student.setPermanentAddress(null);
@@ -221,12 +197,10 @@ public class StudentServiceImpl implements StudentService {
             if (student.getTemporaryAddress() == null) {
                 Address address = addressMapper.toAddress(
                         addressMapper.updateToCreateRequest(requestDto.getTemporaryAddress()));
-                addressValidator.validateAddressFields(address);
                 student.setTemporaryAddress(address);
             } else {
                 addressMapper.updateAddressFromDto(
                         requestDto.getTemporaryAddress(), student.getTemporaryAddress());
-                addressValidator.validateAddressFields(student.getTemporaryAddress());
             }
         } else{
             student.setTemporaryAddress(null);
@@ -237,12 +211,10 @@ public class StudentServiceImpl implements StudentService {
             if (student.getMailingAddress() == null) {
                 Address address = addressMapper.toAddress(
                         addressMapper.updateToCreateRequest(requestDto.getMailingAddress()));
-                addressValidator.validateAddressFields(address);
                 student.setMailingAddress(address);
             } else {
                 addressMapper.updateAddressFromDto(
                         requestDto.getMailingAddress(), student.getMailingAddress());
-                addressValidator.validateAddressFields(student.getMailingAddress());
             }
         } else{
             student.setMailingAddress(null);
@@ -265,9 +237,6 @@ public class StudentServiceImpl implements StudentService {
                     identity.getType(), identity.getNumber(), identity.getId());
         }
 
-        identityValidator.validateIdentityNumber(identity.getType(), identity.getNumber());
-        identityValidator.validateIssuedDateBeforeExpiryDate(
-                identity.getIssuedDate(), identity.getExpiryDate());
     }
 
     @Override

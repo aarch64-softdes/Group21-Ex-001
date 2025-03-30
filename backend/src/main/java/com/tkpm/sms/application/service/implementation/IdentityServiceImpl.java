@@ -36,13 +36,6 @@ public class IdentityServiceImpl implements IdentityService {
             // Convert string type to enum
             IdentityType identityType = IdentityType.fromDisplayName(requestDto.getType());
 
-            // Validate identity type and number
-            identityDomainValidator.validateIdentityNumber(identityType, requestDto.getNumber());
-
-            // Validate issued date and expiry date
-            identityDomainValidator.validateIssuedDateBeforeExpiryDate(
-                    requestDto.getIssuedDate(), requestDto.getExpiryDate());
-
             // Validate uniqueness
             identityDomainValidator.validateIdentityUniqueness(identityType, requestDto.getNumber());
 
@@ -63,13 +56,6 @@ public class IdentityServiceImpl implements IdentityService {
         try{
             // Convert string type to enum
             IdentityType identityType = IdentityType.fromDisplayName(requestDto.getType());
-
-            // Validate identity type and number
-            identityDomainValidator.validateIdentityNumber(identityType, requestDto.getNumber());
-
-            // Validate issued date and expiry date
-            identityDomainValidator.validateIssuedDateBeforeExpiryDate(
-                    requestDto.getIssuedDate(), requestDto.getExpiryDate());
 
             // Validate uniqueness for update
             identityDomainValidator.validateIdentityUniquenessForUpdate(identityType, requestDto.getNumber(), id);

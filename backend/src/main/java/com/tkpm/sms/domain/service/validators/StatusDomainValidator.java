@@ -28,15 +28,6 @@ public class StatusDomainValidator {
         }
     }
 
-    public void validateStatusTransition(Status fromStatus, Status toStatus) {
-        if (!fromStatus.canTransitionTo(toStatus)) {
-            throw new InvalidStatusTransitionException(
-                    String.format("Transition from %s to %s is not allowed",
-                            fromStatus.getName(), toStatus.getName())
-            );
-        }
-    }
-
     public void validateStatusTransition(Integer fromStatusId, Integer toStatusId) {
         if (!statusRepository.existsByFromStatusIdAndToStatusId(fromStatusId, toStatusId)) {
             throw new InvalidStatusTransitionException(

@@ -19,13 +19,6 @@ import java.util.regex.Pattern;
 public class StudentDomainValidator {
     private final StudentRepository studentRepository;
 
-    // Email validation pattern
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
-
-    // Name validation pattern (letters and spaces only)
-    private static final Pattern NAME_PATTERN = Pattern.compile("^[\\p{L}\\s]*$");
-
     public void validateStudentIdUniqueness(String studentId) {
         if (studentRepository.existsByStudentId(studentId)) {
             throw new DuplicateResourceException(
@@ -57,18 +50,6 @@ public class StudentDomainValidator {
             throw new DuplicateResourceException(
                     String.format("Student with email %s already exists", email)
             );
-        }
-    }
-
-    public void validateEmail(String email) {
-        if (email == null || !EMAIL_PATTERN.matcher(email).matches()) {
-            throw new InvalidStudentException("Invalid email format");
-        }
-    }
-
-    public void validateName(String name) {
-        if (name == null || !NAME_PATTERN.matcher(name).matches()) {
-            throw new InvalidStudentException("Name must contain only letters and spaces");
         }
     }
 
