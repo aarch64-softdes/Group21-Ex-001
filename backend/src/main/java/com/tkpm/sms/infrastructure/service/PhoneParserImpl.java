@@ -6,6 +6,7 @@ import com.tkpm.sms.application.dto.request.phone.PhoneRequestDto;
 import com.tkpm.sms.application.dto.response.PhoneDto;
 import com.tkpm.sms.application.exception.ApplicationException;
 import com.tkpm.sms.application.exception.ErrorCode;
+import com.tkpm.sms.application.service.PhoneParser;
 import com.tkpm.sms.domain.exception.InvalidPhoneNumberException;
 import com.tkpm.sms.domain.valueobject.Phone;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Component
-public class PhoneParser {
+public class PhoneParserImpl implements PhoneParser {
 
     public String parsePhoneNumber(String phone, String countryCode) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();

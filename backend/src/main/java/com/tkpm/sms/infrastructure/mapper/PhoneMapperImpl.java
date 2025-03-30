@@ -4,14 +4,14 @@ import com.tkpm.sms.application.dto.request.phone.PhoneRequestDto;
 import com.tkpm.sms.application.dto.response.PhoneDto;
 import com.tkpm.sms.application.mapper.PhoneMapper;
 import com.tkpm.sms.domain.valueobject.Phone;
-import com.tkpm.sms.infrastructure.service.PhoneParser;
+import com.tkpm.sms.infrastructure.service.PhoneParserImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class PhoneMapperImpl implements PhoneMapper {
-    private final PhoneParser phoneParser;
+    private final PhoneParserImpl phoneParser;
 
     public PhoneDto toPhoneDto(String phone) {
         if (phone == null) {
