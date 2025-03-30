@@ -88,10 +88,4 @@ public class StudentDomainValidator {
             );
         }
     }
-
-    public void validateStudentDataForExport(List<Student> students) {
-        if (students == null || students.isEmpty()) {
-            throw new FileProcessingException("No student data available for export");
-        }
-    }
 }

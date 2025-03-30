@@ -50,7 +50,16 @@ public class ApplicationResponseDto<T> {
 
     public static <T> ApplicationResponseDto<T> failure(ErrorCode exception) {
         return ApplicationResponseDto.<T>builder()
-                .code(exception.getHttpStatus().value())
+                .code(500)
+                .message(exception.getMessage())
+                .errorCode(exception.name())
+                .build();
+    }
+
+
+    public static <T> ApplicationResponseDto<T> failure(ErrorCode exception,int status) {
+        return ApplicationResponseDto.<T>builder()
+                .code(status)
                 .message(exception.getMessage())
                 .errorCode(exception.name())
                 .build();

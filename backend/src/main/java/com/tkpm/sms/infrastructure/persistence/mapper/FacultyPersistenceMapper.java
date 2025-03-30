@@ -7,9 +7,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface FacultyPersistenceMapper {
-//    @Mapping(target = "students", ignore = true)
+    @Mapping(target = "students", ignore = true)
     Faculty toDomain(FacultyEntity entity);
 
-//    @Mapping(target = "students", ignore = true)
+    @Mapping(target = "students", ignore = true)
     FacultyEntity toEntity(Faculty domain);
 }

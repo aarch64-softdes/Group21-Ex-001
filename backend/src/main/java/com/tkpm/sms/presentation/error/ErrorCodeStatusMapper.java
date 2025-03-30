@@ -17,8 +17,10 @@ public class ErrorCodeStatusMapper {
         mappings.put(ErrorCode.INVALID_ERROR_KEY, HttpStatus.INTERNAL_SERVER_ERROR);
         mappings.put(ErrorCode.FAIL_TO_EXPORT_FILE, HttpStatus.INTERNAL_SERVER_ERROR);
         mappings.put(ErrorCode.FAIL_TO_IMPORT_FILE, HttpStatus.INTERNAL_SERVER_ERROR);
+        mappings.put(ErrorCode.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 
         // Validation Errors (400)
+        mappings.put(ErrorCode.VALIDATION_ERROR, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_NAME, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_EMAIL, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_PHONE, HttpStatus.BAD_REQUEST);
@@ -26,6 +28,7 @@ public class ErrorCodeStatusMapper {
         mappings.put(ErrorCode.INVALID_SETTING_NAME, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_PHONE_SETTING_DETAILS, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_SETTING_DETAILS, HttpStatus.BAD_REQUEST);
+        mappings.put(ErrorCode.INVALID_ADDRESS, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_IDENTITY_TYPE, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_IDENTITY_CARD_NUMBER, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_CHIP_BASE_NUMBER, HttpStatus.BAD_REQUEST);

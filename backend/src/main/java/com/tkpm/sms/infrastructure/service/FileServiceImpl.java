@@ -1,6 +1,7 @@
 package com.tkpm.sms.infrastructure.service;
 
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
+import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
 import com.tkpm.sms.application.service.interfaces.FileService;
 import com.tkpm.sms.domain.exception.FileProcessingException;
@@ -30,6 +31,7 @@ public class FileServiceImpl implements FileService {
     StudentPersistenceMapper studentPersistenceMapper;
     StudentMapperImpl studentMapper;
     FileStrategyFactory fileStrategyFactory;
+    StudentDomainValidator studentDomainValidator;
 
     @Override
     public byte[] exportStudentFile(String format) {
@@ -46,11 +48,11 @@ public class FileServiceImpl implements FileService {
                             Sort.by("studentId")));
 
             students.addAll(studentPage
-            .getContent()
-            .stream()
-            .map(studentPersistenceMapper::toDomain)
-            .map(studentMapper::toStudentFileDto)
-            .toList());
+                .getContent()
+                .stream()
+                .map(studentPersistenceMapper::toDomain)
+                .map(studentMapper::toStudentFileDto)
+                .toList());
 
             currentPage++;
         } while (currentPage < studentPage.getTotalPages());

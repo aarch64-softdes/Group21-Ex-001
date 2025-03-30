@@ -218,6 +218,8 @@ public class StudentServiceImpl implements StudentService {
                         requestDto.getPermanentAddress(), student.getPermanentAddress());
                 addressValidator.validateAddressFields(student.getPermanentAddress());
             }
+        } else{
+            student.setPermanentAddress(null);
         }
 
         // Update temporary address
@@ -232,6 +234,8 @@ public class StudentServiceImpl implements StudentService {
                         requestDto.getTemporaryAddress(), student.getTemporaryAddress());
                 addressValidator.validateAddressFields(student.getTemporaryAddress());
             }
+        } else{
+            student.setTemporaryAddress(null);
         }
 
         // Update mailing address
@@ -246,37 +250,30 @@ public class StudentServiceImpl implements StudentService {
                         requestDto.getMailingAddress(), student.getMailingAddress());
                 addressValidator.validateAddressFields(student.getMailingAddress());
             }
+        } else{
+            student.setMailingAddress(null);
         }
     }
 
+    /**
+     * Assumes that the student has an identity
+     */
     private void updateIdentity(Student student, StudentUpdateRequestDto requestDto) {
-        if (requestDto.getIdentity() != null) {
-            if (student.getIdentity() == null) {
-                Identity identity = identityMapper.toIdentity(
-                        identityMapper.toCreateDto(requestDto.getIdentity()));
-                identityValidator.validateIdentityNumber(identity.getType(), identity.getNumber());
-                identityValidator.validateIssuedDateBeforeExpiryDate(
-                        identity.getIssuedDate(), identity.getExpiryDate());
-                identityValidator.validateIdentityUniqueness(identity.getType(), identity.getNumber());
-                student.setIdentity(identity);
-            } else {
-                Identity identity = student.getIdentity();
-                String oldType = identity.getType().getDisplayName();
-                String oldNumber = identity.getNumber();
+        Identity identity = student.getIdentity();
+        String oldType = identity.getType().getDisplayName();
+        String oldNumber = identity.getNumber();
 
-                identityMapper.updateIdentityFromDto(requestDto.getIdentity(), identity);
+        identityMapper.updateIdentityFromDto(requestDto.getIdentity(), identity);
 
-                // Only validate uniqueness if type or number changed
-                if (!oldType.equals(identity.getType().getDisplayName()) || !oldNumber.equals(identity.getNumber())) {
-                    identityValidator.validateIdentityUniquenessForUpdate(
-                            identity.getType(), identity.getNumber(), identity.getId());
-                }
-
-                identityValidator.validateIdentityNumber(identity.getType(), identity.getNumber());
-                identityValidator.validateIssuedDateBeforeExpiryDate(
-                        identity.getIssuedDate(), identity.getExpiryDate());
-            }
+        // Only validate uniqueness if type or number changed
+        if (!oldType.equals(identity.getType().getDisplayName()) || !oldNumber.equals(identity.getNumber())) {
+            identityValidator.validateIdentityUniquenessForUpdate(
+                    identity.getType(), identity.getNumber(), identity.getId());
         }
+
+        identityValidator.validateIdentityNumber(identity.getType(), identity.getNumber());
+        identityValidator.validateIssuedDateBeforeExpiryDate(
+                identity.getIssuedDate(), identity.getExpiryDate());
     }
 
     @Override

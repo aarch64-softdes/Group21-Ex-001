@@ -86,7 +86,7 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<StudentDto>> updateStudent(
             @PathVariable String id,
             @Valid @RequestBody StudentUpdateRequestDto student
