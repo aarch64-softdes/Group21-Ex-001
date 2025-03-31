@@ -26,6 +26,7 @@ public abstract class StudentPersistenceMapper {
 
     @Mapping(target = "gender", source = "gender", qualifiedByName = "genderStringToEnum")
     @Mapping(target = "phone", expression = "java(phoneMapper.toPhone(entity.getPhone()))")
+    @Mapping(target = "status", source = "status", qualifiedByName = "toMinimalDomain")
     public abstract Student toDomain(StudentEntity entity);
 
     @Named("genderEnumToString")

@@ -108,7 +108,8 @@ public class StudentRepositoryImpl implements StudentRepository {
 
         // Apply specifications for filtering
         Page<StudentEntity> page = jpaRepository.findAll(
-                StudentSpecifications.withFilters(search, faculty),
+                StudentSpecifications.withFilters(search, faculty)
+                        .and(StudentSpecifications.fetchRelatedEntities()),
                 pageable);
 
         // Convert Spring Page to domain PageResponse

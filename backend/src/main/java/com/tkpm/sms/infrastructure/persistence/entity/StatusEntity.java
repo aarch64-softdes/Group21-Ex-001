@@ -36,7 +36,7 @@ public class StatusEntity {
     @OneToMany(mappedBy = "status")
     Set<StudentEntity> students;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "status_transitions",
             joinColumns = @JoinColumn(name = "from_status_id")

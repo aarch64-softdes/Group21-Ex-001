@@ -54,7 +54,7 @@ public class PhoneParserImpl implements PhoneParser {
 
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {
-            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phoneString, settingRepository.getFirstPhoneSetting());
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phoneString, null);
             String countryCode = phoneNumberUtil.getRegionCodeForNumber(phoneNumber);
             String internationalNumber = phoneNumberUtil.format(
                             phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)

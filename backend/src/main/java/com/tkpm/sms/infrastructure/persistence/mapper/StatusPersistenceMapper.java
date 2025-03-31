@@ -5,6 +5,7 @@ import com.tkpm.sms.infrastructure.persistence.entity.StatusEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface StatusPersistenceMapper {
@@ -14,6 +15,11 @@ public interface StatusPersistenceMapper {
 
     @Mapping(target = "students", ignore = true)
     StatusEntity toEntity(Status domain);
+
+    @Mapping(target = "students", ignore = true)
+    @Mapping(target = "validTransitionIds", ignore = true)
+    @Named("toMinimalDomain")
+    Status toMinimalDomain(StatusEntity entity);
 
     @Mapping(target = "students", ignore = true)
     void updateDomainFromEntity(StatusEntity entity, @MappingTarget Status domain);
