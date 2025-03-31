@@ -1,8 +1,8 @@
 package com.tkpm.sms.domain.service.validators;
 
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
-import com.tkpm.sms.domain.exception.InvalidStatusTransitionException;
-import com.tkpm.sms.domain.exception.InvalidEmailException;
+import com.tkpm.sms.domain.exception.UnsupportedStatusTransitionException;
+import com.tkpm.sms.domain.exception.UnsupportedEmailException;
 import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.repository.SettingRepository;
@@ -56,7 +56,7 @@ public class StudentDomainValidator {
         var validDomain = settingRepository.getEmailSetting();
 
         if (!email.endsWith(validDomain)) {
-            throw new InvalidEmailException(
+            throw new UnsupportedEmailException(
                     String.format("Email domain is not supported, only %s is allowed", validDomain)
             );
         }
@@ -64,7 +64,7 @@ public class StudentDomainValidator {
 
     public void validateStatusTransition(Student student, Status newStatus) {
         if (student.getStatus() != null && !student.isStatusTransitionAllowed(newStatus)) {
-            throw new InvalidStatusTransitionException(
+            throw new UnsupportedStatusTransitionException(
                     String.format("Transition from %s to %s is not allowed",
                             student.getStatus().getName(), newStatus.getName())
             );

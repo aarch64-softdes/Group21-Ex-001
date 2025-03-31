@@ -8,7 +8,6 @@ import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.application.dto.response.setting.EmailDomainSettingDto;
 import com.tkpm.sms.application.dto.response.setting.PhoneSettingDto;
 import com.tkpm.sms.application.service.interfaces.SettingService;
-import com.tkpm.sms.domain.exception.ApplicationException;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,40 +26,17 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SettingController {
     SettingService settingService;
-    ObjectMapper objectMapper;
-    static String PHONE_NUMBER_SETTING = "phone number";
 
     @GetMapping("/phone-number")
     public ResponseEntity<ApplicationResponseDto<PhoneSettingDto>> getPhoneSetting() {
         var setting = settingService.getPhoneSetting();
-
-        try {
-            List<String> details = objectMapper.readValue(setting.getDetails(), new TypeReference<>() {
-            });
-            var phoneSettingDto = new PhoneSettingDto(details);
-            phoneSettingDto.setSettingName(PHONE_NUMBER_SETTING);
-            var response = ApplicationResponseDto.success(phoneSettingDto);
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            throw new ApplicationException(
-                    ErrorCode.INVALID_PHONE_SETTING_DETAILS.
-                            withMessage("Invalid phone setting details"));
-        }
+        return ResponseEntity.ok(ApplicationResponseDto.success(setting));
     }
 
     @GetMapping("/email")
     public ResponseEntity<ApplicationResponseDto<EmailDomainSettingDto>> getEmailSetting() {
         var setting = settingService.getEmailSetting();
-
-        var emailDomainSettingDto = EmailDomainSettingDto.builder()
-                .settingName(setting.getName())
-                .domain(setting.getDetails())
-                .build();
-
-        var response = ApplicationResponseDto.success(emailDomainSettingDto);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApplicationResponseDto.success(setting));
     }
 
     @PutMapping("/email")
@@ -68,16 +44,7 @@ public class SettingController {
             @RequestBody EmailDomainSettingRequestDto emailSettingRequestDto
     ) {
         var updatedSetting = settingService.updateEmailSetting(emailSettingRequestDto);
-        log.info("Updated setting: name: {} details: {}", updatedSetting.getName(), updatedSetting.getDetails());
-
-        var emailDomainSettingDto = EmailDomainSettingDto.builder()
-                .settingName(updatedSetting.getName())
-                .domain(updatedSetting.getDetails())
-                .build();
-
-        ApplicationResponseDto<EmailDomainSettingDto> response = ApplicationResponseDto.success(emailDomainSettingDto);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
     }
 
     @PutMapping("/phone-number")
@@ -85,19 +52,6 @@ public class SettingController {
             @RequestBody PhoneSettingRequestDto phoneSettingRequestDto
     ) {
         var updatedSetting = settingService.updatePhoneSetting(phoneSettingRequestDto);
-
-        try {
-            List<String> details = objectMapper.readValue(updatedSetting.getDetails(), new TypeReference<>() {
-            });
-            var phoneSettingDto = new PhoneSettingDto(details);
-            phoneSettingDto.setSettingName(PHONE_NUMBER_SETTING);
-            var response = ApplicationResponseDto.success(phoneSettingDto);
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            throw new ApplicationException(
-                    ErrorCode.INVALID_PHONE_SETTING_DETAILS.
-                            withMessage("Invalid phone setting details"));
-        }
+        return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
     }
 }

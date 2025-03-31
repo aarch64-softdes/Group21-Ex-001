@@ -18,10 +18,10 @@ public class AppConfig {
         return new FacultyDomainValidator(facultyRepository);
     }
 
+    @Bean
     public IdentityDomainValidator identityValidator(IdentityRepository identityRepository) {
         return new IdentityDomainValidator(identityRepository);
     }
-
 
     @Bean
     public ProgramDomainValidator programValidator(ProgramRepository programRepository) {

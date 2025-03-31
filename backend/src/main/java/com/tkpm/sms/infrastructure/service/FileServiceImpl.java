@@ -2,6 +2,7 @@ package com.tkpm.sms.infrastructure.service;
 
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.service.interfaces.FileService;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.infrastructure.factories.FileStrategyFactory;
@@ -63,7 +64,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public void importStudentFile(String format, Object multipartFile) {
         if (!(multipartFile instanceof MultipartFile)) {
-            throw new FileProcessingException("Invalid file type");
+            throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
 
         fileStrategyFactory.getStrategy(format).importFile(multipartFile);

@@ -20,27 +20,20 @@ public class ErrorCodeStatusMapper {
         mappings.put(ErrorCode.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 
         // Validation Errors (400)
-        mappings.put(ErrorCode.VALIDATION_ERROR, HttpStatus.BAD_REQUEST);
-        mappings.put(ErrorCode.INVALID_NAME, HttpStatus.BAD_REQUEST);
-        mappings.put(ErrorCode.INVALID_EMAIL, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_PHONE, HttpStatus.BAD_REQUEST);
-        mappings.put(ErrorCode.INVALID_STATUS, HttpStatus.BAD_REQUEST);
-        mappings.put(ErrorCode.INVALID_SETTING_NAME, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_PHONE_SETTING_DETAILS, HttpStatus.BAD_REQUEST);
-        mappings.put(ErrorCode.INVALID_SETTING_DETAILS, HttpStatus.BAD_REQUEST);
-        mappings.put(ErrorCode.INVALID_ADDRESS, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_IDENTITY_TYPE, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_IDENTITY_CARD_NUMBER, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_CHIP_BASE_NUMBER, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_PASSPORT_NUMBER, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_IDENTITY_ISSUED_DATE, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.FIELD_REQUIRED, HttpStatus.BAD_REQUEST);
-        mappings.put(ErrorCode.UNSUPPORTED_EMAIL_DOMAIN, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_FILE_FORMAT, HttpStatus.BAD_REQUEST);
 
         // Resource Errors (4xx)
         mappings.put(ErrorCode.NOT_FOUND, HttpStatus.NOT_FOUND);
-        mappings.put(ErrorCode.CONFLICT, HttpStatus.CONFLICT);
+        mappings.put(ErrorCode.DUPLICATE_RESOURCE, HttpStatus.CONFLICT);
+        mappings.put(ErrorCode.UNSUPPORTED_EMAIL_DOMAIN, HttpStatus.CONFLICT);
         mappings.put(ErrorCode.UNSUPPORTED_STATUS_TRANSITION, HttpStatus.CONFLICT);
     }
 

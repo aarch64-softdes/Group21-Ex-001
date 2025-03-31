@@ -4,7 +4,6 @@ import com.tkpm.sms.application.dto.request.student.StudentCollectionRequest;
 import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
-import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
 import com.tkpm.sms.application.service.interfaces.*;
@@ -48,7 +47,6 @@ public class StudentServiceImpl implements StudentService {
     AddressMapper addressMapper;
     IdentityMapper identityMapper;
 
-    ExceptionTranslator exceptionTranslator;
     PhoneParser phoneParser;
 
     @Override

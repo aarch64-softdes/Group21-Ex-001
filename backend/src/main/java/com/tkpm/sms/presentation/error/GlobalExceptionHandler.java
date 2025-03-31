@@ -1,8 +1,9 @@
 package com.tkpm.sms.presentation.error;
 
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.domain.exception.ApplicationException;
+import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.GenericDomainException;
 import jakarta.validation.ConstraintViolation;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -32,13 +33,13 @@ public class GlobalExceptionHandler {
         this.errorCodeStatusMapper = errorCodeStatusMapper;
     }
 
-    @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<ApplicationResponseDto<Object>> handleApplicationException(ApplicationException exception) {
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<ApplicationResponseDto<Object>> handleApplicationException(DomainException exception) {
         log.error("Application error", exception);
 
-        ErrorCode errorCode = exception.getErrorCode();
+        ErrorCode errorCode = exception.getCode();
         HttpStatus status = errorCodeStatusMapper.getStatus(errorCode);
-        var response = ApplicationResponseDto.failure(errorCode, status.value());
+        var response = ApplicationResponseDto.failure(exception, status.value());
 
         return ResponseEntity
                 .status(errorCodeStatusMapper.getStatus(errorCode))
@@ -51,7 +52,11 @@ public class GlobalExceptionHandler {
 
         var errorCode = ErrorCode.UNCATEGORIZED;
         HttpStatus status = errorCodeStatusMapper.getStatus(errorCode);
-        var response = ApplicationResponseDto.failure(errorCode, status.value());
+
+        var response = ApplicationResponseDto.failure(new GenericDomainException(
+                exception.getMessage(),
+                errorCode
+        ), status.value());
 
         return ResponseEntity
                 .status(status)
@@ -68,14 +73,26 @@ public class GlobalExceptionHandler {
         }
 
         String enumKey = fieldError.getDefaultMessage();
-        ErrorCode error = processValidationError(exception, enumKey);
+        ErrorResponseInfo errorInfo = processValidationError(exception, enumKey);
 
         return ResponseEntity
                 .badRequest()
-                .body(ApplicationResponseDto.failure(error));
+                .body(ApplicationResponseDto.failure(new GenericDomainException(
+                            errorInfo.formattedMessage,
+                            errorInfo.errorCode)));
     }
 
-    private ErrorCode processValidationError(
+    private static class ErrorResponseInfo {
+        ErrorCode errorCode;
+        String formattedMessage;
+
+        ErrorResponseInfo(ErrorCode errorCode, String message) {
+            this.errorCode = errorCode;
+            this.formattedMessage = message;
+        }
+    }
+
+    private ErrorResponseInfo processValidationError(
             MethodArgumentNotValidException exception,
             String enumKey
     ) {
@@ -90,20 +107,23 @@ public class GlobalExceptionHandler {
                     constraintViolation.getConstraintDescriptor().getAttributes();
 
             ErrorCode error = ErrorCode.valueOf(enumKey);
+            String formattedMessage = error.getDefaultMessage();
 
             if (attributes.containsKey(FIELD_ATTRIBUTE)) {
                 String requiredField = attributes.get(FIELD_ATTRIBUTE).toString();
-                error.setMessage(formatRequiredMessage(requiredField));
+                formattedMessage = formatRequiredMessage(requiredField);
             }
 
             if (attributes.containsKey(VALUES_ATTRIBUTE)) {
-                error.setMessage(formatEnumValues(error.getMessage(), attributes));
+                String[] values = (String[]) attributes.get(VALUES_ATTRIBUTE);
+                formattedMessage = formatEnumValues(formattedMessage, values);
             }
 
-            return error;
+            return new ErrorResponseInfo(error, formattedMessage);
         } catch (Exception e) {
             log.debug("Error processing validation error", e);
-            return ErrorCode.INVALID_ERROR_KEY;
+            return new ErrorResponseInfo(ErrorCode.INVALID_ERROR_KEY,
+                    ErrorCode.INVALID_ERROR_KEY.getDefaultMessage());
         }
     }
 
@@ -111,12 +131,14 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = ErrorCode.INVALID_ERROR_KEY;
         return ResponseEntity
                 .badRequest()
-                .body(ApplicationResponseDto.failure(errorCode));
+                .body(ApplicationResponseDto.failure(new GenericDomainException(
+                        errorCode.getDefaultMessage(),
+                        errorCode
+                )));
     }
 
-    private String formatEnumValues(String message, Map<String, Object> params) {
-        String[] values = (String[]) params.get(VALUES_ATTRIBUTE);
-        return message.replace("{" + "values" + "}", Arrays.toString(values));
+    private String formatEnumValues(String message, String[] values) {
+        return message.replace("{values}", Arrays.toString(values));
     }
 
     private String formatRequiredMessage(String requiredField) {

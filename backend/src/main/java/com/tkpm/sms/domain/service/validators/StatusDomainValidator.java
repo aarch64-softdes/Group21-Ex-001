@@ -1,7 +1,7 @@
 package com.tkpm.sms.domain.service.validators;
 
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
-import com.tkpm.sms.domain.exception.InvalidStatusTransitionException;
+import com.tkpm.sms.domain.exception.UnsupportedStatusTransitionException;
 import com.tkpm.sms.domain.repository.StatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class StatusDomainValidator {
 
     public void validateStatusTransition(Integer fromStatusId, Integer toStatusId) {
         if (!statusRepository.existsByFromStatusIdAndToStatusId(fromStatusId, toStatusId)) {
-            throw new InvalidStatusTransitionException(
+            throw new UnsupportedStatusTransitionException(
                     String.format("Transition from status ID %d to status ID %d is not allowed",
                             fromStatusId, toStatusId)
             );

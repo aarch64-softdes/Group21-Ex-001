@@ -2,14 +2,18 @@ package com.tkpm.sms.application.service.interfaces;
 
 import com.tkpm.sms.application.dto.request.setting.EmailDomainSettingRequestDto;
 import com.tkpm.sms.application.dto.request.setting.PhoneSettingRequestDto;
+import com.tkpm.sms.application.dto.response.setting.EmailDomainSettingDto;
+import com.tkpm.sms.application.dto.response.setting.PhoneSettingDto;
 import com.tkpm.sms.domain.model.Setting;
 
+import java.util.List;
+
 public interface SettingService {
-    Setting getPhoneSetting();
+    PhoneSettingDto getPhoneSetting();
 
-    Setting getEmailSetting();
+    EmailDomainSettingDto getEmailSetting();
 
-    Setting updateEmailSetting(EmailDomainSettingRequestDto emailSettingRequestDto);
+    EmailDomainSettingDto updateEmailSetting(EmailDomainSettingRequestDto emailSettingRequestDto);
 
-    Setting updatePhoneSetting(PhoneSettingRequestDto phoneSettingRequestDto);
+    PhoneSettingDto updatePhoneSetting(PhoneSettingRequestDto phoneSettingRequestDto);
 }

@@ -5,8 +5,8 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import com.tkpm.sms.application.dto.request.phone.PhoneRequestDto;
 import com.tkpm.sms.application.dto.response.PhoneDto;
 import com.tkpm.sms.application.service.interfaces.PhoneParser;
-import com.tkpm.sms.domain.exception.ApplicationException;
 import com.tkpm.sms.domain.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.GenericDomainException;
 import com.tkpm.sms.domain.exception.InvalidPhoneNumberException;
 import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.valueobject.Phone;
@@ -62,7 +62,7 @@ public class PhoneParserImpl implements PhoneParser {
             return Phone.of(countryCode, nationalNumber);
         } catch (Exception e) {
             throw new InvalidPhoneNumberException(
-                    String.format("Invalid phone number: %s", phoneString));
+                    String.format("Invalid phone number: %s", phoneString), e);
         }
     }
 
@@ -100,8 +100,8 @@ public class PhoneParserImpl implements PhoneParser {
             );
 
         } catch (Exception e) {
-            throw new ApplicationException(ErrorCode.INVALID_PHONE.withMessage(
-                    String.format("Invalid phone number: %s", phone)));
+            throw new InvalidPhoneNumberException(
+                    String.format("Invalid phone number: %s", phone), e);
         }
     }
 
@@ -116,8 +116,8 @@ public class PhoneParserImpl implements PhoneParser {
             );
 
         } catch (Exception e) {
-            throw new ApplicationException(ErrorCode.INVALID_PHONE.withMessage(
-                    String.format("Invalid phone number: %s", phone)));
+            throw new InvalidPhoneNumberException(
+                    String.format("Invalid phone number: %s", phone), e);
         }
     }
 
@@ -129,6 +129,6 @@ public class PhoneParserImpl implements PhoneParser {
             errorMessage = errorMessage + String.format(" with country code: %s", countryCode);
         }
 
-        throw new InvalidPhoneNumberException(errorMessage);
+        throw new GenericDomainException(errorMessage);
     }
 }

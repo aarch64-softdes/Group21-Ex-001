@@ -2,6 +2,7 @@ package com.tkpm.sms.application.dto.response.common;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -48,20 +49,20 @@ public class ApplicationResponseDto<T> {
                 .build();
     }
 
-    public static <T> ApplicationResponseDto<T> failure(ErrorCode exception) {
+    public static <T> ApplicationResponseDto<T> failure(DomainException exception) {
         return ApplicationResponseDto.<T>builder()
                 .code(500)
                 .message(exception.getMessage())
-                .errorCode(exception.name())
+                .errorCode(exception.getCode().getName())
                 .build();
     }
 
 
-    public static <T> ApplicationResponseDto<T> failure(ErrorCode exception, int status) {
+    public static <T> ApplicationResponseDto<T> failure(DomainException exception, int status) {
         return ApplicationResponseDto.<T>builder()
                 .code(status)
                 .message(exception.getMessage())
-                .errorCode(exception.name())
+                .errorCode(exception.getCode().getName())
                 .build();
     }
 }

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.service.interfaces.StudentService;
-import com.tkpm.sms.domain.exception.ApplicationException;
 import com.tkpm.sms.domain.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.service.FileStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class CsvStrategy implements FileStrategy {
         } catch (IOException e) {
             log.error("Failed to export with csv format", e);
 
-            throw new ApplicationException(ErrorCode.FAIL_TO_EXPORT_FILE.withMessage("Failed to export file with CSV format"));
+            throw new FileProcessingException("Failed to export with csv format", ErrorCode.FAIL_TO_EXPORT_FILE);
         }
 
         return outputStream.toByteArray();
@@ -44,7 +44,7 @@ public class CsvStrategy implements FileStrategy {
     @Override
     public void importFile(Object file) {
         if (!(file instanceof MultipartFile multipartFile)) {
-            throw new ApplicationException(ErrorCode.INVALID_FILE_FORMAT.withMessage("Invalid file format"));
+            throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
 
         List<StudentFileDto> students;
@@ -57,7 +57,7 @@ public class CsvStrategy implements FileStrategy {
         } catch (IOException e) {
             log.info("Error reading file", e);
 
-            throw new ApplicationException(ErrorCode.FAIL_TO_IMPORT_FILE.withMessage("Fail to import students data from CSV"));
+            throw new FileProcessingException("Error reading file", ErrorCode.FAIL_TO_IMPORT_FILE);
         }
 
         studentService.saveListStudentFromFile(students);
