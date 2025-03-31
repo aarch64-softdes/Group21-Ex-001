@@ -15,27 +15,26 @@ import org.springframework.beans.factory.annotation.Autowired;
         StatusPersistenceMapper.class,
         AddressPersistenceMapper.class,
         IdentityPersistenceMapper.class,
-        PhoneMapper.class
 })
-public interface StudentPersistenceMapper {
+public abstract class StudentPersistenceMapper {
     @Autowired
-    PhoneMapper phoneMapper = null;
+    PhoneMapper phoneMapper;
 
     @Mapping(target = "gender", source = "gender", qualifiedByName = "genderEnumToString")
     @Mapping(target = "phone", expression = "java(domain.getPhone().toString())")
-    StudentEntity toEntity(Student domain);
+    public abstract StudentEntity toEntity(Student domain);
 
     @Mapping(target = "gender", source = "gender", qualifiedByName = "genderStringToEnum")
     @Mapping(target = "phone", expression = "java(phoneMapper.toPhone(entity.getPhone()))")
-    Student toDomain(StudentEntity entity);
+    public abstract Student toDomain(StudentEntity entity);
 
     @Named("genderEnumToString")
-    default String genderEnumToString(Gender gender) {
+    protected String genderEnumToString(Gender gender) {
         return gender != null ? gender.getDisplayName() : null;
     }
 
     @Named("genderStringToEnum")
-    default Gender genderStringToEnum(String gender) {
+    protected Gender genderStringToEnum(String gender) {
         return gender != null ? Gender.fromDisplayName(gender) : null;
     }
 }
