@@ -1,5 +1,7 @@
 package com.tkpm.sms.domain.enums;
 
+import com.tkpm.sms.domain.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.InvalidIdentityException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +22,7 @@ public enum IdentityType {
         return Arrays.stream(values())
                 .filter(type -> type.getDisplayName().equals(displayName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown identity type: " + displayName));
+                .orElseThrow(() -> new InvalidIdentityException("Unknown identity type: " + displayName, ErrorCode.INVALID_IDENTITY_TYPE));
     }
 
     public boolean isValidNumber(String number) {

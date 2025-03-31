@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IdentityJpaRepository extends JpaRepository<IdentityEntity, String> {
     boolean existsByNumberAndType(String number, String type);
+
     boolean existsByNumberAndTypeAndIdNot(String number, String type, String id);
 }

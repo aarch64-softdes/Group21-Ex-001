@@ -17,7 +17,7 @@ public class IdentityDomainValidator {
                     String.format("Identity with type %s and number %s already exists", type.getDisplayName(), number)
             );
         }
-    }
+}
 
     public void validateIdentityUniquenessForUpdate(IdentityType type, String number, String id) {
         if (identityRepository.existsByNumberAndTypeAndIdNot(number, type, id)) {

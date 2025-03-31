@@ -1,6 +1,5 @@
 package com.tkpm.sms.domain.service.validators;
 
-import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
 import com.tkpm.sms.domain.exception.InvalidStatusTransitionException;
 import com.tkpm.sms.domain.repository.StatusRepository;

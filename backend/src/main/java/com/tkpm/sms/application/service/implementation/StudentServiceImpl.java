@@ -1,6 +1,5 @@
 package com.tkpm.sms.application.service.implementation;
 
-import com.tkpm.sms.application.annotation.TranslateDomainException;
 import com.tkpm.sms.application.dto.request.student.StudentCollectionRequest;
 import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
@@ -8,18 +7,18 @@ import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
-import com.tkpm.sms.domain.valueobject.Phone;
-import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
 import com.tkpm.sms.application.service.interfaces.*;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
-import com.tkpm.sms.domain.model.Address;
-import com.tkpm.sms.domain.model.Student;
-import com.tkpm.sms.domain.model.Identity;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
+import com.tkpm.sms.domain.model.Address;
+import com.tkpm.sms.domain.model.Identity;
+import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.repository.StudentRepository;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
+import com.tkpm.sms.domain.valueobject.Phone;
+import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -67,7 +66,6 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @TranslateDomainException
     public Student getStudentDetail(String id) {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -76,7 +74,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    @TranslateDomainException
     public Student createStudent(StudentCreateRequestDto requestDto) {
         // Validate student fields
         studentValidator.validateStudentIdUniqueness(requestDto.getStudentId());
@@ -130,7 +127,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    @TranslateDomainException
     public Student updateStudent(String id, StudentUpdateRequestDto requestDto) {
         // Find existing student
         Student student = studentRepository.findById(id)
@@ -191,7 +187,7 @@ public class StudentServiceImpl implements StudentService {
                 addressMapper.updateAddressFromDto(
                         requestDto.getPermanentAddress(), student.getPermanentAddress());
             }
-        } else{
+        } else {
             student.setPermanentAddress(null);
         }
 
@@ -205,7 +201,7 @@ public class StudentServiceImpl implements StudentService {
                 addressMapper.updateAddressFromDto(
                         requestDto.getTemporaryAddress(), student.getTemporaryAddress());
             }
-        } else{
+        } else {
             student.setTemporaryAddress(null);
         }
 
@@ -219,7 +215,7 @@ public class StudentServiceImpl implements StudentService {
                 addressMapper.updateAddressFromDto(
                         requestDto.getMailingAddress(), student.getMailingAddress());
             }
-        } else{
+        } else {
             student.setMailingAddress(null);
         }
     }
@@ -244,7 +240,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    @TranslateDomainException
     public void deleteStudentById(String id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(

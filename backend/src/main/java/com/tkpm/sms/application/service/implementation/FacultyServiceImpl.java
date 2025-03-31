@@ -1,17 +1,12 @@
 package com.tkpm.sms.application.service.implementation;
 
-import com.tkpm.sms.application.annotation.TranslateDomainException;
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.faculty.FacultyRequestDto;
-import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.domain.exception.ErrorCode;
-import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
-import com.tkpm.sms.domain.model.Faculty;
-import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
+import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.repository.FacultyRepository;
 import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +39,6 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    @TranslateDomainException
     public Faculty getFacultyById(Integer id) {
         return facultyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -53,7 +47,6 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    @TranslateDomainException
     public Faculty getFacultyByName(String name) {
         return facultyRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -63,7 +56,6 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     @Transactional
-    @TranslateDomainException
     public Faculty createFaculty(FacultyRequestDto faculty) {
         // Use domain service for business validation
         facultyValidator.validateNameUniqueness(faculty.getName());
@@ -74,7 +66,6 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     @Transactional
-    @TranslateDomainException
     public Faculty updateFaculty(Integer id, FacultyRequestDto faculty) {
         // Use domain service for business validation
         facultyValidator.validateNameUniquenessForUpdate(faculty.getName(), id);
@@ -90,14 +81,13 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     @Transactional
-    @TranslateDomainException
     public void deleteFaculty(Integer id) {
-            Faculty faculty = facultyRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            String.format("Faculty with id %s not found", id)
-                    ));
+        Faculty faculty = facultyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Faculty with id %s not found", id)
+                ));
 
-            faculty.setDeletedAt(LocalDate.now());
-            facultyRepository.save(faculty);
+        faculty.setDeletedAt(LocalDate.now());
+        facultyRepository.save(faculty);
     }
 }

@@ -6,6 +6,8 @@ import com.tkpm.sms.domain.model.Address;
 
 public interface AddressService {
     Address createAddress(AddressCreateRequestDto addressCreateRequestDto);
+
     Address updateAddress(String id, AddressUpdateRequestDto addressUpdateRequestDto);
+
     Address getAddressById(String id);
 }

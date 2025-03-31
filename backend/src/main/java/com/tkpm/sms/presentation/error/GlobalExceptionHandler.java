@@ -1,7 +1,7 @@
 package com.tkpm.sms.presentation.error;
 
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.application.exception.ApplicationException;
+import com.tkpm.sms.domain.exception.ApplicationException;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import jakarta.validation.ConstraintViolation;
 import lombok.AccessLevel;

@@ -34,7 +34,7 @@ public class SettingRepositoryImpl implements SettingRepository {
     }
 
     @Override
-    public List<String> getPhoneSetting()  {
+    public List<String> getPhoneSetting() {
         var setting = jpaRepository.findPhoneSetting();
 
         var allowedCountries = setting.getDetails();

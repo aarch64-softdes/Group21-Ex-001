@@ -8,7 +8,6 @@ import com.tkpm.sms.domain.model.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface AddressMapperImpl extends AddressMapper {

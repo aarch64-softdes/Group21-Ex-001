@@ -7,5 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface SettingPersistenceMapper {
     Setting toDomain(SettingEntity entity);
+
     SettingEntity toEntity(Setting domain);
 }

@@ -2,7 +2,10 @@ package com.tkpm.sms.presentation.controller;
 
 import com.tkpm.sms.domain.enums.Gender;
 import com.tkpm.sms.domain.enums.IdentityType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,14 +18,14 @@ public class MetadataController {
     @GetMapping("/identity-type")
     public List<String> getAllIdentityType() {
         return Arrays.stream(IdentityType.values())
-            .map(IdentityType::getDisplayName)
-            .collect(Collectors.toList());
+                .map(IdentityType::getDisplayName)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/gender")
     public List<String> getAllGender() {
         return Arrays.stream(Gender.values())
-            .map(Gender::getDisplayName)
-            .collect(Collectors.toList());
+                .map(Gender::getDisplayName)
+                .collect(Collectors.toList());
     }
 }

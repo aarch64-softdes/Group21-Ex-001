@@ -23,22 +23,22 @@ public class StudentDto {
     String name;
     LocalDate dob;
     String gender;
-    
+
     // Academic Information
     String faculty;
     Integer course;
     String program;
     String status;
-    
+
     // Contact Information
     String email;
     PhoneDto phone;
-    
+
     // Address Information
     AddressDto permanentAddress;
     AddressDto temporaryAddress;
     AddressDto mailingAddress;
-    
+
     // Identity Information
     IdentityDto identity;
 }

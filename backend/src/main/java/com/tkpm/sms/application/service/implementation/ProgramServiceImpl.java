@@ -1,18 +1,13 @@
 package com.tkpm.sms.application.service.implementation;
 
-import com.tkpm.sms.application.annotation.TranslateDomainException;
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.program.ProgramRequestDto;
-import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.domain.exception.ErrorCode;
-import com.tkpm.sms.application.exception.ExceptionTranslator;
 import com.tkpm.sms.application.mapper.ProgramMapper;
 import com.tkpm.sms.application.service.interfaces.ProgramService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
-import com.tkpm.sms.domain.model.Program;
-import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
+import com.tkpm.sms.domain.model.Program;
 import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.domain.service.validators.ProgramDomainValidator;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +23,6 @@ import java.time.LocalDate;
 public class ProgramServiceImpl implements ProgramService {
     ProgramRepository programRepository;
     ProgramDomainValidator programDomainValidator;
-    ExceptionTranslator exceptionTranslator;
     ProgramMapper programMapper;
 
     @Override
@@ -46,7 +40,6 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    @TranslateDomainException
     public Program getProgramById(Integer id) {
         return programRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -55,7 +48,6 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    @TranslateDomainException
     public Program getProgramByName(String name) {
         return programRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -65,7 +57,6 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     @Transactional
-    @TranslateDomainException
     public Program createProgram(ProgramRequestDto programRequestDto) {
         // Use domain service for business validation
         programDomainValidator.validateNameUniqueness(programRequestDto.getName());
@@ -77,7 +68,6 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     @Transactional
-    @TranslateDomainException
     public Program updateProgram(Integer id, ProgramRequestDto programRequestDto) {
         // Use domain service for business validation
         programDomainValidator.validateNameUniquenessForUpdate(programRequestDto.getName(), id);
@@ -94,7 +84,6 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     @Transactional
-    @TranslateDomainException
     public void deleteProgram(Integer id) {
         Program program = programRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(

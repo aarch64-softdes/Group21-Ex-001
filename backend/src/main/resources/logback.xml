@@ -39,7 +39,7 @@
 
     <!-- Set specific logger levels -->
     <logger name="com.tkpm.sms.infrastructure.logging.logger.JsonLogger" level="DEBUG" additivity="false">
-        <appender-ref ref="JSON_FILE" />
+        <appender-ref ref="JSON_FILE"/>
     </logger>
 
     <logger name="com.tkpm.sms.infrastructure.logging.logger.FileLogger" level="DEBUG" additivity="false">
@@ -57,6 +57,6 @@
 
     <!-- Root logger configuration -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

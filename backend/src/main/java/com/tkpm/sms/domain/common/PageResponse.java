@@ -2,6 +2,7 @@ package com.tkpm.sms.domain.common;
 
 import lombok.Builder;
 import lombok.Getter;
+
 import java.util.List;
 
 @Getter

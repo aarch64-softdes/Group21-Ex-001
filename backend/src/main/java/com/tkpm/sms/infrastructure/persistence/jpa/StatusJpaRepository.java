@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface StatusJpaRepository extends JpaRepository<StatusEntity, Integer> {
     Optional<StatusEntity> findStatusByName(String name);
+
     boolean existsStatusByName(String name);
+
     boolean existsStatusByNameAndIdNot(String name, Integer id);
 
     @Query("SELECT CASE WHEN :toStatusId MEMBER OF s.validTransitionIds THEN true ELSE false END FROM StatusEntity s WHERE s.id = :fromStatusId")

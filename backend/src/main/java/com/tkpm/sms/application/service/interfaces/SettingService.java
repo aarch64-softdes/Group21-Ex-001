@@ -6,7 +6,10 @@ import com.tkpm.sms.domain.model.Setting;
 
 public interface SettingService {
     Setting getPhoneSetting();
+
     Setting getEmailSetting();
+
     Setting updateEmailSetting(EmailDomainSettingRequestDto emailSettingRequestDto);
+
     Setting updatePhoneSetting(PhoneSettingRequestDto phoneSettingRequestDto);
 }

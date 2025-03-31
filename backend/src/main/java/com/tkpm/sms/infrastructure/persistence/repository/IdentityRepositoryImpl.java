@@ -1,7 +1,7 @@
 package com.tkpm.sms.infrastructure.persistence.repository;
 
-import com.tkpm.sms.domain.model.Identity;
 import com.tkpm.sms.domain.enums.IdentityType;
+import com.tkpm.sms.domain.model.Identity;
 import com.tkpm.sms.domain.repository.IdentityRepository;
 import com.tkpm.sms.infrastructure.persistence.jpa.IdentityJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.IdentityPersistenceMapper;

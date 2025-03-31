@@ -7,11 +7,18 @@ import com.tkpm.sms.domain.model.Status;
 
 public interface StatusService {
     PageResponse<Status> getAllStatuses(BaseCollectionRequest search);
+
     Status getStatusById(Integer id);
+
     Status getStatusByName(String name);
+
     Status createStatus(StatusRequestDto statusRequestDto);
+
     Status updateStatus(Integer id, StatusRequestDto statusRequestDto);
+
     void deleteStatus(Integer id);
+
     boolean isTransitionAllowed(Integer fromStatusId, Integer toStatusId);
+
     boolean isTransitionAllowed(Status fromStatus, Status toStatus);
 }

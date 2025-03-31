@@ -1,10 +1,10 @@
 package com.tkpm.sms.application.dto.request.student;
 
+import com.tkpm.sms.application.annotation.IdentityConstraint;
+import com.tkpm.sms.application.annotation.RequiredConstraint;
 import com.tkpm.sms.application.dto.request.address.AddressCreateRequestDto;
 import com.tkpm.sms.application.dto.request.identity.IdentityCreateRequestDto;
 import com.tkpm.sms.application.dto.request.phone.PhoneRequestDto;
-import com.tkpm.sms.application.annotation.IdentityConstraint;
-import com.tkpm.sms.application.annotation.RequiredConstraint;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -47,7 +47,7 @@ public class StudentCreateRequestDto {
     AddressCreateRequestDto permanentAddress;
 
     AddressCreateRequestDto temporaryAddress;
-    
+
     AddressCreateRequestDto mailingAddress;
 
     PhoneRequestDto phone;

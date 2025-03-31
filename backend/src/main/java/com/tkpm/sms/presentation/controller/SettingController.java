@@ -7,9 +7,9 @@ import com.tkpm.sms.application.dto.request.setting.PhoneSettingRequestDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.application.dto.response.setting.EmailDomainSettingDto;
 import com.tkpm.sms.application.dto.response.setting.PhoneSettingDto;
-import com.tkpm.sms.application.exception.ApplicationException;
-import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.application.service.interfaces.SettingService;
+import com.tkpm.sms.domain.exception.ApplicationException;
+import com.tkpm.sms.domain.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,7 +35,8 @@ public class SettingController {
         var setting = settingService.getPhoneSetting();
 
         try {
-            List<String> details = objectMapper.readValue(setting.getDetails(), new TypeReference<>() {});
+            List<String> details = objectMapper.readValue(setting.getDetails(), new TypeReference<>() {
+            });
             var phoneSettingDto = new PhoneSettingDto(details);
             phoneSettingDto.setSettingName(PHONE_NUMBER_SETTING);
             var response = ApplicationResponseDto.success(phoneSettingDto);
@@ -86,7 +87,8 @@ public class SettingController {
         var updatedSetting = settingService.updatePhoneSetting(phoneSettingRequestDto);
 
         try {
-            List<String> details = objectMapper.readValue(updatedSetting.getDetails(), new TypeReference<>() {});
+            List<String> details = objectMapper.readValue(updatedSetting.getDetails(), new TypeReference<>() {
+            });
             var phoneSettingDto = new PhoneSettingDto(details);
             phoneSettingDto.setSettingName(PHONE_NUMBER_SETTING);
             var response = ApplicationResponseDto.success(phoneSettingDto);

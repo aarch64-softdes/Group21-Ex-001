@@ -57,7 +57,7 @@ public class ApplicationResponseDto<T> {
     }
 
 
-    public static <T> ApplicationResponseDto<T> failure(ErrorCode exception,int status) {
+    public static <T> ApplicationResponseDto<T> failure(ErrorCode exception, int status) {
         return ApplicationResponseDto.<T>builder()
                 .code(status)
                 .message(exception.getMessage())

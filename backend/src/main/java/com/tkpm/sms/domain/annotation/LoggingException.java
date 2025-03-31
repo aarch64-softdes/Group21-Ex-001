@@ -10,5 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LoggingException {
     String value() default "";
+
     String[] args() default {};
 }

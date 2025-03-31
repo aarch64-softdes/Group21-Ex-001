@@ -21,14 +21,14 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FileController {
     FileService fileService;
-    
+
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportStudentsToFile(@RequestParam("format") String format) {
         byte[] data = fileService.exportStudentFile(format);
         String filename = generateFilename(format);
-        
-        String mediaType = format.equalsIgnoreCase("json") 
-                ? "application/json" 
+
+        String mediaType = format.equalsIgnoreCase("json")
+                ? "application/json"
                 : "text/csv";
 
         return ResponseEntity.ok()

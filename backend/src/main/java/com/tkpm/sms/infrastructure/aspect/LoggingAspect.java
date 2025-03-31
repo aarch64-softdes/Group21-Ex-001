@@ -7,7 +7,6 @@ import com.tkpm.sms.domain.annotation.LoggingException;
 import com.tkpm.sms.infrastructure.logging.BaseLogger;
 import com.tkpm.sms.infrastructure.logging.LogEntry;
 import com.tkpm.sms.infrastructure.logging.LoggerManager;
-import com.tkpm.sms.infrastructure.logging.LoggerType;
 import com.tkpm.sms.infrastructure.utils.ArgumentFormatterUtils;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
@@ -20,7 +19,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Aspect
 @Component

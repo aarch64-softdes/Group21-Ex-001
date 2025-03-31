@@ -9,5 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LoggingBefore {
     String value() default "";
+
     String[] args() default {};
 }

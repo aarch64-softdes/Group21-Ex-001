@@ -15,13 +15,13 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public class StudentMinimalDto {
-     // Basic Information
-     String id;
-     String studentId;
-     String name;
-     LocalDate dob;
-     String gender;
-     
+    // Basic Information
+    String id;
+    String studentId;
+    String name;
+    LocalDate dob;
+    String gender;
+
     // Academic Information
     String faculty;
     Integer course;

@@ -11,6 +11,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentCollectionRequest extends BaseCollectionRequest {
     String search; // search by name or by studentId
-    
+
     String faculty;
 }

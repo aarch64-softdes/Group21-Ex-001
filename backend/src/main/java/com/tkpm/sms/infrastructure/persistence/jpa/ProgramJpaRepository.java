@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface ProgramJpaRepository extends JpaRepository<ProgramEntity, Integer> {
     Optional<ProgramEntity> findProgramByName(String name);
+
     boolean existsProgramByName(String name);
+
     boolean existsProgramByNameAndIdNot(String name, Integer id);
 }

@@ -7,9 +7,14 @@ import com.tkpm.sms.domain.model.Program;
 
 public interface ProgramService {
     PageResponse<Program> getAllPrograms(BaseCollectionRequest search);
+
     Program getProgramById(Integer id);
+
     Program getProgramByName(String name);
+
     Program createProgram(ProgramRequestDto program);
+
     Program updateProgram(Integer id, ProgramRequestDto program);
+
     void deleteProgram(Integer id);
 }

@@ -11,9 +11,14 @@ import java.util.List;
 
 public interface StudentService {
     PageResponse<Student> findAll(StudentCollectionRequest search);
+
     Student getStudentDetail(String id);
+
     Student createStudent(StudentCreateRequestDto studentCreateRequestDto);
+
     Student updateStudent(String id, StudentUpdateRequestDto updateRequestDto);
+
     void deleteStudentById(String id);
+
     void saveListStudentFromFile(List<StudentFileDto> students);
 }

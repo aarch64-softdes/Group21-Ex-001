@@ -12,7 +12,7 @@ public class BaseCollectionRequest {
     int page = 1;
 
     int size = 5;
-    
+
     String sortBy = "name";
 
     String sortDirection = "asc";
