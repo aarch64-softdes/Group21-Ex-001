@@ -2,9 +2,17 @@ package com.tkpm.sms.infrastructure.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JsonUtils {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper;
+
+    @Autowired
+    public JsonUtils(ObjectMapper mapper) {
+        JsonUtils.objectMapper = mapper;
+    }
 
     /**
      * Converts an object to a JSON string.

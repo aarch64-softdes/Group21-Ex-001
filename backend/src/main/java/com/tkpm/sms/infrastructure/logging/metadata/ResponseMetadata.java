@@ -23,6 +23,7 @@ public class ResponseMetadata extends BaseMetadata {
     String endpoint;
     String path;
     String httpMethod;
+    String response;
 
     @Override
     public Map<String, Object> toHashMap() {
@@ -33,6 +34,7 @@ public class ResponseMetadata extends BaseMetadata {
         map.put("endpoint", endpoint);
         map.put("path", path);
         map.put("httpMethod", httpMethod);
+        map.put("response", response);
         return map;
     }
 }

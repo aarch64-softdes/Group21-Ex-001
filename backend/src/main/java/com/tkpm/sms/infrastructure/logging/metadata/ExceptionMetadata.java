@@ -25,6 +25,7 @@ public class ExceptionMetadata extends BaseMetadata {
     String httpMethod;
     String exceptionClass;
     String exceptionMessage;
+    String requestParameters;
 
     @Override
     public Map<String, Object> toHashMap() {
@@ -37,6 +38,7 @@ public class ExceptionMetadata extends BaseMetadata {
         map.put("httpMethod", httpMethod);
         map.put("exceptionClass", exceptionClass);
         map.put("exceptionMessage", exceptionMessage);
+        map.put("requestParameters", requestParameters);
         return map;
     }
 }

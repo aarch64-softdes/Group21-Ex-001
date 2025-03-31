@@ -1,6 +1,7 @@
 package com.tkpm.sms.infrastructure.aspect;
 
 import com.tkpm.sms.infrastructure.logging.BaseLogger;
+import com.tkpm.sms.infrastructure.utils.JsonUtils;
 import com.tkpm.sms.infrastructure.logging.LogEntry;
 import com.tkpm.sms.infrastructure.logging.LoggerManager;
 import com.tkpm.sms.infrastructure.logging.LoggerType;
@@ -72,6 +73,9 @@ public class ControllerLoggingAspect {
 
         String fullPath = getFullPath(request);
 
+        // Convert parameters to JSON
+        String parametersJson = convertArgsToJson(joinPoint.getArgs());
+
         // Build request metadata
         RequestMetadata metadata = RequestMetadata.builder()
                 .controller(className)
@@ -79,7 +83,7 @@ public class ControllerLoggingAspect {
                 .endpoint(request.getRequestURI())
                 .path(fullPath)
                 .httpMethod(request.getMethod())
-                .parameters(joinPoint.getArgs().length > 0 ? Arrays.toString(joinPoint.getArgs()) : null)
+                .parameters(joinPoint.getArgs().length > 0 ? parametersJson : null)
                 .build();
 
         // Create log entry
@@ -102,8 +106,9 @@ public class ControllerLoggingAspect {
         // Log to primary logger
         getLogger().log(logEntry);
 
-        // Also log simplified message to console
-        consoleLogger.log("API Request to: " + request.getMethod() + " " + fullPath, LogLevel.INFO);
+        // Also log simplified message to console with arguments
+        consoleLogger.log("API Request to: " + request.getMethod() + " " + fullPath +
+                " with arguments: " + parametersJson, LogLevel.INFO);
     }
 
     /**
@@ -122,6 +127,9 @@ public class ControllerLoggingAspect {
 
         String fullPath = getFullPath(request);
 
+        // Convert response to JSON
+        String responseJson = convertResultToJson(result);
+
         // Build response metadata
         ResponseMetadata metadata = ResponseMetadata.builder()
                 .controller(className)
@@ -130,6 +138,7 @@ public class ControllerLoggingAspect {
                 .endpoint(request.getRequestURI())
                 .path(fullPath)
                 .httpMethod(request.getMethod())
+                .response(responseJson)
                 .build();
 
         // Create log entry
@@ -150,9 +159,10 @@ public class ControllerLoggingAspect {
         // Log to primary logger
         getLogger().log(logEntry);
 
-        // Also log simplified message to console
+        // Also log simplified message to console with response summary
         consoleLogger.log("API Response from: " + request.getMethod() + " " + fullPath +
-                " (took " + executionTime + "ms)", LogLevel.INFO);
+                " (took " + executionTime + "ms)" +
+                (responseJson != null ? " with response: " + responseJson : ""), LogLevel.INFO);
 
         // Clean up thread local variables
         cleanupThreadLocals();
@@ -178,6 +188,9 @@ public class ControllerLoggingAspect {
 
         String fullPath = getFullPath(request);
 
+        // Convert parameters to JSON for exception context
+        String parametersJson = convertArgsToJson(joinPoint.getArgs());
+
         // Build exception metadata
         ExceptionMetadata metadata = ExceptionMetadata.builder()
                 .controller(className)
@@ -188,6 +201,7 @@ public class ControllerLoggingAspect {
                 .httpMethod(request.getMethod())
                 .exceptionClass(exception.getClass().getName())
                 .exceptionMessage(exception.getMessage())
+                .requestParameters(parametersJson)
                 .build();
 
         // Create log entry
@@ -212,12 +226,46 @@ public class ControllerLoggingAspect {
         // Log to primary logger
         getLogger().log(logEntry);
 
-        // Also log simplified error message to console
+        // Also log simplified error message to console with context
         consoleLogger.log("API Exception in: " + request.getMethod() + " " + fullPath +
-                " - " + exception.getClass().getSimpleName() + ": " + exception.getMessage(), LogLevel.ERROR);
+                " - " + exception.getClass().getSimpleName() + ": " + exception.getMessage() +
+                " with arguments: " + parametersJson, LogLevel.ERROR);
 
         // Clean up thread local variables
         cleanupThreadLocals();
+    }
+
+    /**
+     * Convert method arguments to JSON string
+     */
+    private String convertArgsToJson(Object[] args) {
+        try {
+            if (args == null || args.length == 0) {
+                return "{}";
+            }
+            if (args.length == 1) {
+                return JsonUtils.toJson(args[0]);
+            }
+            return JsonUtils.toJson(args);
+        } catch (Exception e) {
+            consoleLogger.log("Failed to convert arguments to JSON: " + e.getMessage(), LogLevel.WARN);
+            return Arrays.toString(args); // Fallback to toString if JSON conversion fails
+        }
+    }
+
+    /**
+     * Convert result object to JSON string
+     */
+    private String convertResultToJson(Object result) {
+        try {
+            if (result == null) {
+                return null;
+            }
+            return JsonUtils.toJson(result);
+        } catch (Exception e) {
+            consoleLogger.log("Failed to convert response to JSON: " + e.getMessage(), LogLevel.WARN);
+            return result.toString(); // Fallback to toString if JSON conversion fails
+        }
     }
 
     /**
