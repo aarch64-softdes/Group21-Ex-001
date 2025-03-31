@@ -5,7 +5,6 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import com.tkpm.sms.application.dto.request.phone.PhoneRequestDto;
 import com.tkpm.sms.application.dto.response.PhoneDto;
 import com.tkpm.sms.application.service.interfaces.PhoneParser;
-import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.GenericDomainException;
 import com.tkpm.sms.domain.exception.InvalidPhoneNumberException;
 import com.tkpm.sms.domain.repository.SettingRepository;
@@ -55,11 +54,13 @@ public class PhoneParserImpl implements PhoneParser {
 
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {
-            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phoneString, null);
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phoneString, settingRepository.getFirstPhoneSetting());
             String countryCode = phoneNumberUtil.getRegionCodeForNumber(phoneNumber);
-            String nationalNumber = String.valueOf(phoneNumber.getNationalNumber());
+            String internationalNumber = phoneNumberUtil.format(
+                            phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
+                    .replaceAll(" ", "");
 
-            return Phone.of(countryCode, nationalNumber);
+            return Phone.of(countryCode, internationalNumber);
         } catch (Exception e) {
             throw new InvalidPhoneNumberException(
                     String.format("Invalid phone number: %s", phoneString), e);
@@ -80,9 +81,11 @@ public class PhoneParserImpl implements PhoneParser {
                 responseInvalidPhone(phoneString, countryCode);
             }
 
-            String nationalNumber = String.valueOf(phoneNumber.getNationalNumber());
+            String internationalNumber = phoneNumberUtil.format(
+                            phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
+                    .replaceAll(" ", "");
 
-            return Phone.of(countryCode, nationalNumber);
+            return Phone.of(countryCode, internationalNumber);
         } catch (Exception e) {
             responseInvalidPhone(phoneString, countryCode);
         }

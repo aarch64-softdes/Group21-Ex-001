@@ -12,5 +12,7 @@ public interface SettingRepository {
 
     List<String> getPhoneSetting();
 
+    String getFirstPhoneSetting();
+
     String getEmailSetting();
 }

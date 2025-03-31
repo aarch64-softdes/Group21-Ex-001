@@ -31,6 +31,7 @@ public interface IdentityMapperImpl extends IdentityMapper {
     IdentityDto toIdentityDto(Identity identity);
 
     @Override
+    @Mapping(target = "type", source = "type", qualifiedByName = "stringToEnum")
     void updateIdentityFromDto(IdentityUpdateRequestDto requestDto, @MappingTarget Identity identity);
 
     @Override

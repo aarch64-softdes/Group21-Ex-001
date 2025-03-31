@@ -47,6 +47,20 @@ public class SettingRepositoryImpl implements SettingRepository {
     }
 
     @Override
+    public String getFirstPhoneSetting() {
+        var setting = jpaRepository.findPhoneSetting();
+
+        var allowedCountries = setting.getDetails();
+
+        try {
+            List<String> allowedCountriesList = objectMapper.readValue(allowedCountries, List.class);
+            return allowedCountriesList.get(0);
+        } catch (JsonProcessingException e) {
+            return "";
+        }
+    }
+
+    @Override
     public String getEmailSetting() {
         var setting = jpaRepository.findEmailSetting();
 
