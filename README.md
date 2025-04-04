@@ -447,30 +447,3 @@ After Elasticsearch is running and your application has generated some logs:
 7. Click "Save data view to Kibana"
 
 Now you can use Discover to search and filter your logs, or create visualizations and dashboards.
-
-## Feature Demonstrations
-
-### Configurable Phone number and Email domain
-![Phone Number and Email Domain Settings](documents/assets/setting-phonenumber-emaildomain.png)
-#### 1. Phone number
-![Phone Number Validation](documents/assets/phonenumer-validation.png)
-
-
-#### 2. Emai domain
-![Email Domain Validation](documents/assets/emaildomain-validation.png)
-
-### Status transition
-
-Status transition configuration:
-![Status Transition Settings](documents/assets/status-transition-setting.png)
-
-Status transition during edit:
-![Status Transition Edit](documents/assets/status-transistion-edit.png)
-
-### Forbid add/update student with existed student's id
-
-Adding student with existing ID:
-![Add Student Existed ID](documents/assets/add-student-existed-id.png)
-
-Editing student with existing ID:
-![Edit Student Existed ID](documents/assets/edit-student-existed-id.png)
