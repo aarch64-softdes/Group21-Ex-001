@@ -58,7 +58,7 @@ export default class StudentService {
         faculty: '',
         status: '',
         program: '',
-        course: 0,
+        schoolYear: 0,
         permanentAddress: {
           id: '',
           street: '',

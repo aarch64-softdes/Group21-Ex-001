@@ -44,6 +44,7 @@ public class StudentEntity {
     @Column(nullable = false)
     String gender;
 
+    @Column(name = "school_year")
     Integer schoolYear;
 
     @Email

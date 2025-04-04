@@ -272,9 +272,9 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
             </div>
             <div className='flex flex-col'>
               <dt className='text-sm font-medium text-muted-foreground'>
-                Course Year
+                School Year
               </dt>
-              <dd className='mt-1'>{student.course}</dd>
+              <dd className='mt-1'>{student.schoolYear}</dd>
             </div>
           </CardContent>
         </Card>

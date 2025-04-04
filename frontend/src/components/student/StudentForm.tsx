@@ -43,10 +43,7 @@ import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import LoadingButton from '../ui/loadingButton';
 import { cn } from '@/lib/utils';
-import {
-  findCountryByCode,
-  removeDialCodeFromPhoneNumber,
-} from '@/data/countryData';
+import { removeDialCodeFromPhoneNumber } from '@/data/countryData';
 
 export const StudentFormSchema = z.object({
   studentId: z.string().min(1, 'Student ID is required'),
@@ -61,7 +58,7 @@ export const StudentFormSchema = z.object({
   }, 'Date of birth must be in the past'),
   gender: z.string().min(1, 'Gender is required'),
   faculty: z.string().min(1, 'Faculty is required'),
-  course: z.number().int().positive(),
+  schoolYear: z.number().int().positive(),
   program: z.string(),
   email: z.string().email('Invalid email address'),
   address: z.string().optional(),
@@ -214,7 +211,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       dob: '',
       gender: '',
       faculty: '',
-      course: 1,
+      schoolYear: 1,
       program: '',
       email: '',
       phone: {
@@ -275,7 +272,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         dob: formattedDob || '',
         gender: studentData.gender || '',
         faculty: studentData.faculty || '',
-        course: parseInt(studentData.course?.toString() || '1', 10),
+        schoolYear: parseInt(studentData.schoolYear?.toString() || '1', 10),
         program: studentData.program || '',
         email: studentData.email || '',
         phone: {
@@ -803,10 +800,10 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                     />
                     <FormField
                       control={form.control}
-                      name='course'
+                      name='schoolYear'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Course Year</FormLabel>
+                          <FormLabel>School Year</FormLabel>
                           <FormControl>
                             <Input
                               type='number'

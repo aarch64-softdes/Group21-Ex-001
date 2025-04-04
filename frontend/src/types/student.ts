@@ -13,7 +13,7 @@ export default interface Student {
   dob: Date;
   gender: Gender;
   faculty: Faculty;
-  course: number;
+  schoolYear: number;
   program: string;
   email: string;
   permanentAddress: Address;
@@ -30,7 +30,7 @@ export interface CreateStudentDTO {
   dob: Date;
   gender: Gender;
   faculty: Faculty;
-  course: number;
+  schoolYear: number;
   program: string;
   email: string;
   permanentAddress: Address;
@@ -46,7 +46,7 @@ export interface UpdateStudentDTO {
   dob?: Date;
   gender?: Gender;
   faculty?: Faculty;
-  course?: number;
+  schoolYear?: number;
   program?: string;
   email?: string;
   permanentAddress: Address;
@@ -70,7 +70,7 @@ export const mapToStudent = (data: any): Student => {
     dob: data.dob ? new Date(data.dob) : new Date(),
     gender: data.gender,
     faculty: data.faculty,
-    course: data.course,
+    schoolYear: data.schoolYear,
     program: data.program,
     email: data.email,
     permanentAddress: data.permanentAddress,
