@@ -38,25 +38,25 @@
     </appender>
 
     <!-- Set specific logger levels -->
-    <logger name="com.tkpm.sms.logging.logger.JsonLogger" level="DEBUG" additivity="false">
-        <appender-ref ref="JSON_FILE" />
+    <logger name="com.tkpm.sms.infrastructure.logging.logger.JsonLogger" level="DEBUG" additivity="false">
+        <appender-ref ref="JSON_FILE"/>
     </logger>
 
-    <logger name="com.tkpm.sms.logging.logger.FileLogger" level="DEBUG" additivity="false">
+    <logger name="com.tkpm.sms.infrastructure.logging.logger.FileLogger" level="DEBUG" additivity="false">
         <appender-ref ref="FILE"/>
     </logger>
 
-    <logger name="com.tkpm.sms.logging.logger.ConsoleLogger" level="DEBUG" additivity="false">
+    <logger name="com.tkpm.sms.infrastructure.logging.logger.ConsoleLogger" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger name="com.tkpm.sms.logging.logger.ElasticsearchLogger" level="DEBUG" additivity="false">
+    <logger name="com.tkpm.sms.infrastructure.logging.logger.ElasticsearchLogger" level="DEBUG" additivity="false">
         <appender-ref ref="JSON_FILE"/>
         <appender-ref ref="FILE"/>
     </logger>
 
     <!-- Root logger configuration -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>
