@@ -102,7 +102,7 @@ export default class StudentService {
   };
 
   updateStudent = async (id: string, data: UpdateStudentDTO): Promise<void> => {
-    await api.patch(`/api/students/${id}`, data);
+    await api.put(`/api/students/${id}`, data);
   };
 
   deleteStudent = async (id: string): Promise<void> => {
