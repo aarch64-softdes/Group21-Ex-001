@@ -13,14 +13,14 @@ import {
 
 // Layout component to be created
 import Layout from './components/layouts/Layout';
-import FacultyPage from './pages/facultyPage';
-import ProgramPage from './pages/programPage';
-import StatusPage from './pages/statusPage';
-import StudentPage from './pages/studentPage';
+import FacultyPage from './features/faculty/facultyPage';
+import ProgramPage from './features/program/programPage';
+import StatusPage from './features/status/statusPage';
+import StudentPage from './features/student/studentPage';
 import ErrorBoundary from './components/error/ErrorBoundary';
-import { ApiError } from './lib/errors';
-import { showErrorToast } from './lib/toast-utils';
-import SettingPage from './pages/settingPage';
+import { ApiError } from './shared/lib/errors';
+import { showErrorToast } from './shared/lib/toast-utils';
+import SettingPage from './features/settings/settingPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
