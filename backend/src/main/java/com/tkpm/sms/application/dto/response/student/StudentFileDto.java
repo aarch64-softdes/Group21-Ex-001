@@ -32,8 +32,8 @@ public class StudentFileDto {
     @JsonProperty("Faculty")
     String faculty;
 
-    @JsonProperty("Course")
-    Integer course;
+    @JsonProperty("School Year")
+    Integer schoolYear;
 
     @JsonProperty("Program")
     String program;
