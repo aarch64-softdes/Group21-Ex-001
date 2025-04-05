@@ -19,7 +19,7 @@ public class Student {
     String name;
     LocalDate dob;
     Gender gender;
-    Integer course;
+    Integer schoolYear;
     String email;
     Phone phone;
 

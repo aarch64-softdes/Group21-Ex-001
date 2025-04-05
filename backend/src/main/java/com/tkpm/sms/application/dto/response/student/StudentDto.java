@@ -26,7 +26,7 @@ public class StudentDto {
 
     // Academic Information
     String faculty;
-    Integer course;
+    Integer schoolYear;
     String program;
     String status;
 

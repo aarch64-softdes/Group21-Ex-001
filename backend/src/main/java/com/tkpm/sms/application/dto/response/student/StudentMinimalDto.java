@@ -24,7 +24,7 @@ public class StudentMinimalDto {
 
     // Academic Information
     String faculty;
-    Integer course;
+    Integer schoolYear;
     String program;
     String status;
 

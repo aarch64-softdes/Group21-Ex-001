@@ -11,12 +11,23 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks",
-    "data": "@/data"
+    "components": "@/shared/components",
+    "ui": "@/shared/components/ui",
+    "core": "@/core",
+    "features": "@/features",
+    "utils": "@/shared/lib/utils",
+    "lib": "@/shared/lib",
+    "hooks": "@/shared/hooks",
+    "data": "@/shared/data",
+    "types": "@/core/types",
+    "api": "@/core/api",
+
+    "student": "@/features/student",
+    "program": "@/features/program",
+    "faculty": "@/features/faculty",
+    "status": "@/features/status",
+    "settings": "@/features/settings",
+    "metadata": "@/features/metadata"
   },
   "iconLibrary": "lucide"
 }

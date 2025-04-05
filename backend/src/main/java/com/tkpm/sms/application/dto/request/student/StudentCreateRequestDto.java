@@ -34,8 +34,8 @@ public class StudentCreateRequestDto {
     @RequiredConstraint(field = "Faculty")
     String faculty;
 
-    @RequiredConstraint(field = "Course")
-    Integer course;
+    @RequiredConstraint(field = "School Year")
+    Integer schoolYear;
 
     @RequiredConstraint(field = "Program")
     String program;
