@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
+import { Separator } from '@ui/separator';
 import { useFaculty } from '@/features/faculty/api/useFacultyApi';
 import { DetailComponentProps } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';

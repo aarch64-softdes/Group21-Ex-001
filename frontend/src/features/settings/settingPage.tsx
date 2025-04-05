@@ -1,5 +1,5 @@
-import EmailDomainSettings from '@/components/settings/EmailDomainSettings';
-import PhoneSettings from '@/components/settings/PhoneSettings';
+import EmailDomainSettings from '@settings/components/EmailDomainSettings';
+import PhoneSettings from '@settings/components/PhoneSettings';
 import React from 'react';
 
 const SettingPage: React.FC = () => {

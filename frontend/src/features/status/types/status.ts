@@ -1,5 +1,5 @@
 export default interface Status {
-  id: string;
+  id: number;
   name: string;
   allowedTransitions?: Status[];
 }

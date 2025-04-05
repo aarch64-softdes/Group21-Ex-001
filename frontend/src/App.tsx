@@ -12,15 +12,15 @@ import {
 } from 'react-router-dom';
 
 // Layout component to be created
-import Layout from './components/layouts/Layout';
-import FacultyPage from './features/faculty/facultyPage';
-import ProgramPage from './features/program/programPage';
-import StatusPage from './features/status/statusPage';
-import StudentPage from './features/student/studentPage';
-import ErrorBoundary from './components/error/ErrorBoundary';
-import { ApiError } from './shared/lib/errors';
-import { showErrorToast } from './shared/lib/toast-utils';
-import SettingPage from './features/settings/settingPage';
+import Layout from '@components/layouts/Layout';
+import FacultyPage from '@faculty/facultyPage';
+import ProgramPage from '@program/programPage';
+import StatusPage from '@status/statusPage';
+import StudentPage from '@student/studentPage';
+import SettingPage from '@settings/settingPage';
+import ErrorBoundary from '@components/error/ErrorBoundary';
+import { ApiError } from '@lib/errors';
+import { showErrorToast } from '@lib/toast-utils';
 
 const queryClient = new QueryClient({
   defaultOptions: {

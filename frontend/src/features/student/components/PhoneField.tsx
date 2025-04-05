@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@ui/button';
 import {
   Command,
   CommandEmpty,
@@ -6,21 +6,17 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
+} from '@ui/command';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { ScrollArea } from '@/components/ui/scroll-area';
+} from '@ui/form';
+import { Input } from '@ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover';
+import { ScrollArea } from '@ui/scroll-area';
 import { usePhoneSetting } from '@/features/settings/api/useSettingsApi';
 import {
   Country,

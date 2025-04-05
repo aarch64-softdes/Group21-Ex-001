@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@ui/dropdown-menu';
 import { FileDown } from 'lucide-react';
 import { useState } from 'react';
 

@@ -7,9 +7,9 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+} from '@ui/accordion';
+import { Button } from '@ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
 import {
   Form,
   FormControl,
@@ -17,31 +17,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@ui/form';
+import { Input } from '@ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
+} from '@ui/select';
+import { Separator } from '@ui/separator';
 
-import AddressForm from '@/components/student/AddressForm';
-import PhoneField from '@/components/student/PhoneField';
+import AddressForm from '@student/components/AddressForm';
+import PhoneField from '@student/components/PhoneField';
 import {
   useEntityFaculties,
   useEntityPrograms,
   useEntityStatuses,
   useGenders,
-} from '@/shared/api/useMetadata';
-import { useStudent } from '@/features/student/api/useStudentApi';
-import Student, { CreateStudentDTO } from '@/features/student/types/student';
+} from '@/core/metadata/useMetadata';
+import { useStudent } from '@student/api/useStudentApi';
+import Student, { CreateStudentDTO } from '@student/types/student';
 import { FormComponentProps } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import LoadingButton from '../ui/loadingButton';
+import LoadingButton from '@ui/loadingButton';
 import { cn } from '@/shared/lib/utils';
 import { removeDialCodeFromPhoneNumber } from '@/shared/data/countryData';
 

@@ -1,6 +1,6 @@
 import ProgramDetail from '@/features/program/components/ProgramDetail';
 import ProgramForm from '@/features/program/components/ProgramForm';
-import GenericTable from '@/components/table/GenericTable';
+import GenericTable from '@components/table/GenericTable';
 import {
   useCreateProgram,
   useDeleteProgram,

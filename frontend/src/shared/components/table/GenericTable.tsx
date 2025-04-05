@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@ui/dialog';
 import {
   Table,
   TableBody,
@@ -6,15 +6,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@ui/table';
 
 import ActionCell from './ActionCell';
 import SkeletonTable from './SkeletonTable';
 
-import SearchFilter from '@/components/filter/SearchFilter';
-import TablePagination from '@/components/table/TablePagination';
-import LoadingButton from '@/components/ui/loadingButton';
-import { Separator } from '@/components/ui/separator';
+import SearchFilter from '@components/filter/SearchFilter';
+import TablePagination from '@components/table/TablePagination';
+import LoadingButton from '@components/ui/loadingButton';
+import { Separator } from '@components/ui/separator';
 import {
   useGenericTableData,
   useTableAdd,

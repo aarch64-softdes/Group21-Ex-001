@@ -4,7 +4,7 @@ import Student, {
   CreateStudentDTO,
   UpdateStudentDTO,
   mapToStudent,
-} from '@/features/student/types/student';
+} from '@student/types/student';
 
 export default class StudentService {
   getStudents = async ({

@@ -1,6 +1,6 @@
 import FacultyDetail from '@/features/faculty/components/FacultyDetail';
 import FacultyForm from '@/features/faculty/components/FacultyForm';
-import GenericTable from '@/components/table/GenericTable';
+import GenericTable from '@components/table/GenericTable';
 import {
   useCreateFaculty,
   useDeleteFaculty,

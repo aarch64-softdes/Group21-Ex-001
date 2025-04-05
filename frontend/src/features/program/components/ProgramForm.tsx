@@ -2,8 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
 import {
   Form,
   FormControl,
@@ -11,15 +11,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
+} from '@ui/form';
+import { Input } from '@ui/input';
+import { Separator } from '@ui/separator';
 import { useProgram } from '@/features/program/api/useProgramApi';
 import Program, { CreateProgramDTO } from '@/features/program/types/program';
 import { FormComponentProps } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
-import LoadingButton from '../../../components/ui/loadingButton';
+import LoadingButton from '@ui/loadingButton';
 
 // Define schema
 export const ProgramFormSchema = z.object({

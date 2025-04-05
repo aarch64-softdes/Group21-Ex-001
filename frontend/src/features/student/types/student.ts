@@ -1,5 +1,5 @@
-import { Address } from '@/features/student/types/address';
-import IdentityDocument from './identityDocument';
+import { Address } from '@student/types/address';
+import IdentityDocument from '@student/types/identityDocument';
 
 // Using string types instead of enums since values come from the API
 export type Gender = string;

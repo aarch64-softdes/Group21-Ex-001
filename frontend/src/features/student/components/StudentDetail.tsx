@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { DetailComponentProps } from '@/core/types/table';
 import { useStudent } from '@/features/student/api/useStudentApi';
 import { Loader2, User, Mail, Phone, School, Calendar } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
+import { Badge } from '@ui/badge';
+import { Separator } from '@ui/separator';
+import { Avatar, AvatarFallback } from '@ui/avatar';
 import { Country, findCountryByCode } from '@/shared/data/countryData';
 
 interface DetailFieldProps {

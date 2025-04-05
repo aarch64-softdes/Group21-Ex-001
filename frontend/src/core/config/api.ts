@@ -6,7 +6,7 @@ import {
   AuthenticationError,
   AuthorizationError,
   ServerError,
-} from '../../shared/lib/errors';
+} from '@/shared/lib/errors';
 
 // Create axios instance
 const api = axios.create({

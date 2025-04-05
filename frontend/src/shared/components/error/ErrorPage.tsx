@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@ui/button';
 import { AlertCircle, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

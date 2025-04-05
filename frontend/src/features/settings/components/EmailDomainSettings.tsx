@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+} from '@ui/card';
+import { Input } from '@ui/input';
 import {
   useEmailDomainSetting,
   useUpdateEmailDomainSetting,
@@ -20,7 +20,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@ui/dialog';
 import { Loader2 } from 'lucide-react';
 import { cn, getErrorMessage } from '@/shared/lib/utils';
 import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';

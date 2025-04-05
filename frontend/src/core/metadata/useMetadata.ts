@@ -1,5 +1,5 @@
 import FacultyService from '@/features/faculty/api/facultyService';
-import MetadataService from '@/shared/api/metadataService';
+import MetadataService from '@/core/metadata/metadataService';
 import ProgramService from '@/features/program/api/programService';
 import StatusService from '@/features/status/api/statusService';
 import { useQuery } from '@tanstack/react-query';

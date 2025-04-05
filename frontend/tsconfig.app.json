@@ -23,7 +23,23 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/components/*": ["./src/shared/components/*"],
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/shared/components/*"],
+      "@student/*": ["./src/features/student/*"],
+      "@program/*": ["./src/features/program/*"],
+      "@course/*": ["./src/features/course/*"],
+      "@faculty/*": ["./src/features/faculty/*"],
+      "@status/*": ["./src/features/status/*"],
+      "@settings/*": ["./src/features/settings/*"],
+      "@ui/*": ["./src/shared/components/ui/*"],
+      "@core/*": ["./src/core/*"],
+      "@features/*": ["./src/features/*"],
+      "@lib/*": ["./src/shared/lib/*"],
+      "@hooks/*": ["./src/shared/hooks/*"],
+      "@data/*": ["./src/shared/data/*"],
+      "@types/*": ["./src/core/types/*"],
+      "@config/*": ["./src/core/api/*"],
     }
   },
   "include": ["src"]

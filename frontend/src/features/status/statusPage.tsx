@@ -1,16 +1,13 @@
-import StatusDetail from '@/features/status/components/StatusDetail';
-import StatusForm from '@/features/status/components/StatusForm';
-import GenericTable from '@/components/table/GenericTable';
+import StatusDetail from '@status/components/StatusDetail';
+import StatusForm from '@status/components/StatusForm';
+import GenericTable from '@components/table/GenericTable';
 import {
   useCreateStatus,
   useDeleteStatus,
   useStatuses,
   useUpdateStatus,
-} from '@/features/status/api/useStatusApi';
-import Status, {
-  CreateStatusDTO,
-  UpdateStatusDTO,
-} from '@/features/status/types/status';
+} from '@status/api/useStatusApi';
+import Status, { CreateStatusDTO, UpdateStatusDTO } from '@status/types/status';
 import { Column } from '@/core/types/table';
 import React from 'react';
 

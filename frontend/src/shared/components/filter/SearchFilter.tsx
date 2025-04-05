@@ -2,14 +2,10 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@ui/accordion';
+import { Button } from '@ui/button';
+import { Input } from '@ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { SearchFilterOption } from '@/core/types/filter';
 import { Search, X } from 'lucide-react';

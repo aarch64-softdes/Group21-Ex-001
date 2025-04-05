@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@ui/card';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@ui/dialog';
 import {
   Command,
   CommandEmpty,
@@ -21,12 +21,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover';
+import { Badge } from '@ui/badge';
+import { ScrollArea } from '@ui/scroll-area';
 import { Check, ChevronsUpDown, Loader2, Pencil, Save, X } from 'lucide-react';
 import {
   usePhoneSetting,
@@ -38,9 +36,7 @@ import {
   findCountryByCode,
 } from '@/shared/data/countryData';
 import React, { useEffect, useState } from 'react';
-import { Badge } from '@/components/ui/badge';
 import { cn, getErrorMessage } from '@/shared/lib/utils';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
 
 const PhoneSettings: React.FC<{ className?: string }> = (className) => {

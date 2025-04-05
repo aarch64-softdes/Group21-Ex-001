@@ -1,14 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-// Import the UpdateStatusDTO
 import Status, {
   CreateStatusDTO,
   UpdateStatusDTO,
 } from '@/features/status/types/status';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
 import {
   Form,
   FormControl,
@@ -16,19 +15,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
+} from '@ui/form';
+import { Input } from '@ui/input';
+import { Separator } from '@ui/separator';
 import { useStatus, useStatuses } from '@/features/status/api/useStatusApi';
 import { FormComponentProps } from '@/core/types/table';
 import { Loader2, ChevronsUpDown, Check, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import LoadingButton from '../../../components/ui/loadingButton';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import LoadingButton from '@ui/loadingButton';
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -36,9 +31,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
+} from '@ui/command';
+import { ScrollArea } from '@ui/scroll-area';
+import { Badge } from '@ui/badge';
 
 // Define schema
 export const StatusFormSchema = z.object({

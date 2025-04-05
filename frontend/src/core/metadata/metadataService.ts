@@ -1,4 +1,4 @@
-import api from '../config/api';
+import api from '@/core/config/api';
 
 export interface MetadataItem {
   name: string;

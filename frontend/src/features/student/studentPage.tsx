@@ -1,5 +1,5 @@
-import StudentForm from '@/components/student/StudentForm';
-import GenericTable from '@/components/table/GenericTable';
+import StudentForm from '@student/components/StudentForm';
+import GenericTable from '@components/table/GenericTable';
 import React, { useCallback } from 'react';
 
 import {
@@ -9,7 +9,7 @@ import {
   useUpdateStudent,
 } from '@/features/student/api/useStudentApi';
 
-import StudentDetail from '@/components/student/StudentDetail';
+import StudentDetail from '@student/components/StudentDetail';
 import { SearchFilterOption } from '@/core/types/filter';
 import Student, { CreateStudentDTO } from '@/features/student/types/student';
 import { Column } from '@/core/types/table';

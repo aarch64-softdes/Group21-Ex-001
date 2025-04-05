@@ -1,9 +1,5 @@
-import { showSuccessToast } from '@/shared/lib/toast-utils';
-import StatusService from '@/features/status/api/statusService';
-import {
-  CreateStatusDTO,
-  UpdateStatusDTO,
-} from '@/features/status/types/status';
+import StatusService from '@status/api/statusService';
+import { CreateStatusDTO, UpdateStatusDTO } from '@status/types/status';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 

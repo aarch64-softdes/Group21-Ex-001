@@ -1,7 +1,19 @@
-import { SortConfig } from '@/components/table/TableSort';
 import { UseQueryResult } from '@tanstack/react-query';
 import { ApiResponse } from './apiResponse';
 import { FilterOption, FilterParams } from './filter';
+
+export type SortConfig = {
+  key: string | null;
+  direction: 'asc' | 'desc' | null;
+};
+
+export type SortProps = {
+  columnKey: string;
+  columnHeader: string;
+  sortConfig: SortConfig;
+  onSort: (key: string, direction: 'asc' | 'desc' | null) => void;
+  sortable?: boolean;
+};
 
 export type ColumnStyle = {
   width?: string;

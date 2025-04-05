@@ -1,8 +1,7 @@
-import { SortConfig } from '@/components/table/TableSort';
-import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
-import { getErrorMessage } from '@/shared/lib/utils';
+import { showErrorToast, showSuccessToast } from '@lib/toast-utils';
+import { getErrorMessage } from '@lib/utils';
 import { FilterOption, FilterParams } from '@/core/types/filter';
-import { QueryHook, TableActions } from '@/core/types/table';
+import { QueryHook, TableActions, SortConfig } from '@/core/types/table';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useTableAdd = <T extends { id: string }>(

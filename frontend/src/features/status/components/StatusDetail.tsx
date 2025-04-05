@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
+import { Separator } from '@ui/separator';
 import { useStatus } from '@/features/status/api/useStatusApi';
 import { DetailComponentProps } from '@/core/types/table';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@ui/badge';
 import { Loader2 } from 'lucide-react';
 import React from 'react';
 
