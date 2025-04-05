@@ -17,11 +17,14 @@ export default defineConfig({
       '@lib': path.resolve(__dirname, './src/shared/lib'),
       '@ui': path.resolve(__dirname, './src/shared/components/ui'),
       '@hooks': path.resolve(__dirname, './src/shared/hooks'),
+
       '@student': path.resolve(__dirname, './src/features/student'),
       '@faculty': path.resolve(__dirname, './src/features/faculty'),
       '@program': path.resolve(__dirname, './src/features/program'),
       '@status': path.resolve(__dirname, './src/features/status'),
       '@settings': path.resolve(__dirname, './src/features/settings'),
+      '@metadata': path.resolve(__dirname, './src/features/metadata'),
+
       '@config': path.resolve(__dirname, './src/core/config'),
       '@utils': path.resolve(__dirname, './src/shared/utils'),
       '@data': path.resolve(__dirname, './src/shared/data'),

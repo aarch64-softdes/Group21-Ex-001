@@ -35,7 +35,7 @@ import {
   useEntityPrograms,
   useEntityStatuses,
   useGenders,
-} from '@/core/metadata/useMetadata';
+} from '@metadata/api/useMetadata';
 import { useStudent } from '@student/api/useStudentApi';
 import Student, { CreateStudentDTO } from '@student/types/student';
 import { FormComponentProps } from '@/core/types/table';

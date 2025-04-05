@@ -26,12 +26,15 @@
       "@/components/*": ["./src/shared/components/*"],
       "@/*": ["./src/*"],
       "@components/*": ["./src/shared/components/*"],
+
       "@student/*": ["./src/features/student/*"],
       "@program/*": ["./src/features/program/*"],
       "@course/*": ["./src/features/course/*"],
       "@faculty/*": ["./src/features/faculty/*"],
       "@status/*": ["./src/features/status/*"],
       "@settings/*": ["./src/features/settings/*"],
+      "@metadata/*": ["./src/features/metadata/*"],
+
       "@ui/*": ["./src/shared/components/ui/*"],
       "@core/*": ["./src/core/*"],
       "@features/*": ["./src/features/*"],

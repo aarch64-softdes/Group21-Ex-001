@@ -21,11 +21,13 @@
     "data": "@/shared/data",
     "types": "@/core/types",
     "api": "@/core/api",
+
     "student": "@/features/student",
     "program": "@/features/program",
     "faculty": "@/features/faculty",
     "status": "@/features/status",
-    "settings": "@/features/settings"
+    "settings": "@/features/settings",
+    "metadata": "@/features/metadata"
   },
   "iconLibrary": "lucide"
 }

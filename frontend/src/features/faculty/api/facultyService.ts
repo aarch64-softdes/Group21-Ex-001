@@ -4,7 +4,7 @@ import Faculty, {
   CreateFacultyDTO,
   UpdateFacultyDTO,
   mapToFaculty,
-} from '@/features/faculty/types/faculty';
+} from '@faculty/types/faculty';
 
 export default class FacultyService {
   getFaculties = async ({

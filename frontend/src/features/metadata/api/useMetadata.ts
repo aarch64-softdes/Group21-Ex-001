@@ -1,7 +1,7 @@
-import FacultyService from '@/features/faculty/api/facultyService';
-import MetadataService from '@/core/metadata/metadataService';
-import ProgramService from '@/features/program/api/programService';
-import StatusService from '@/features/status/api/statusService';
+import FacultyService from '@faculty/api/facultyService';
+import MetadataService from '@metadata/api/metadataService';
+import ProgramService from '@program/api/programService';
+import StatusService from '@status/api/statusService';
 import { useQuery } from '@tanstack/react-query';
 
 const metadataService = new MetadataService();
