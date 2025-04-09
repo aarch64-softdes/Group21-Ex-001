@@ -40,6 +40,11 @@ const items = [
     icon: Activity,
   },
   {
+    title: 'Subject',
+    url: 'subject',
+    icon: BookOpen,
+  },
+  {
     title: 'Setting',
     url: 'setting',
     icon: Settings,
