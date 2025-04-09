@@ -30,11 +30,11 @@ public class SubjectEntity {
     FacultyEntity faculty;
 
     // relationship with prerequisite subjects
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "subject_prerequisites",
             joinColumns = @JoinColumn(name = "subject_id")
     )
     @Column(name = "prerequisite_id")
-    List<Integer> prerequisiteIds;
+    List<Integer> prerequisitesId;
 }

@@ -18,5 +18,5 @@ public class SubjectDto {
     String description;
     Integer credits;
     String faculty;
-    List<PrerequisitesSubjects> prerequisitesSubjects;
+    List<PrerequisiteSubjectDto> prerequisitesSubjects;
 }

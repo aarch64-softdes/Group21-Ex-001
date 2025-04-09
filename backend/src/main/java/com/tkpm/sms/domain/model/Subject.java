@@ -18,5 +18,5 @@ public class Subject {
     String description;
     Integer credits;
     Faculty faculty;
-    List<String> prerequisites;
+    List<Integer> prerequisitesId;
 }

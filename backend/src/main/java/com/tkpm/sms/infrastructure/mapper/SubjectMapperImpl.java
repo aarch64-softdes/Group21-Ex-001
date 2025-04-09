@@ -1,7 +1,6 @@
 package com.tkpm.sms.infrastructure.mapper;
 
 import com.tkpm.sms.application.dto.request.subject.SubjectRequestDto;
-import com.tkpm.sms.application.dto.response.subject.PrerequisitesSubjects;
 import com.tkpm.sms.application.dto.response.subject.SubjectDto;
 import com.tkpm.sms.application.mapper.SubjectMapper;
 import com.tkpm.sms.domain.model.Subject;
