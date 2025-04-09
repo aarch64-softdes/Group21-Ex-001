@@ -1,4 +1,3 @@
-import { showSuccessToast } from '@/shared/lib/toast-utils';
 import SubjectService from '@/features/subject/api/subjectService';
 import {
   CreateSubjectDTO,
@@ -67,7 +66,6 @@ export const useCreateSubject = () => {
     mutationFn: (data: CreateSubjectDTO) => subjectService.addNewSubject(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
-      showSuccessToast('Subject created successfully');
     },
   });
 };
@@ -80,7 +78,6 @@ export const useUpdateSubject = () => {
       subjectService.updateSubject(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
-      showSuccessToast('Subject updated successfully');
     },
   });
 };
@@ -92,7 +89,6 @@ export const useDeleteSubject = () => {
     mutationFn: (id: string) => subjectService.deleteSubject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
-      showSuccessToast('Subject deleted successfully');
     },
   });
 };

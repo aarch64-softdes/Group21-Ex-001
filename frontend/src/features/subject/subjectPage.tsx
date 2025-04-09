@@ -13,6 +13,8 @@ import { Column } from '@/core/types/table';
 import React from 'react';
 import { SearchFilterOption } from '@/core/types/filter';
 import { BookOpen, FileSearch } from 'lucide-react';
+import SubjectForm from '@subject/components/SubjectForm';
+import SubjectDetail from '@subject/components/SubjectDetail';
 
 const SubjectPage: React.FC = () => {
   const createSubject = useCreateSubject();
@@ -97,8 +99,8 @@ const SubjectPage: React.FC = () => {
         queryHook={useSubjects}
         columns={columns}
         actions={actions}
-        formComponent={<></>}
-        detailComponent={<></>}
+        formComponent={SubjectForm}
+        detailComponent={SubjectDetail}
         disabledActions={{
           edit: false,
           delete: false,
