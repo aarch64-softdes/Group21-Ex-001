@@ -83,7 +83,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                 {classData.code}
               </CardTitle>
               <p className='text-muted-foreground text-sm'>
-                {classData.subjectName}
+                {classData.subject?.name}
               </p>
             </div>
             <Badge variant='secondary' className='px-3 py-1'>
@@ -100,7 +100,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <BookOpen className='h-4 w-4' />
                   Subject
                 </h3>
-                <p>{classData.subjectName}</p>
+                <p>{classData.subject?.name}</p>
               </div>
 
               <div>
@@ -108,7 +108,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <GraduationCap className='h-4 w-4' />
                   Program
                 </h3>
-                <p>{classData.programName}</p>
+                <p>{classData.program?.name}</p>
               </div>
 
               <div>

@@ -1,7 +1,10 @@
 import {
   Activity,
+  Bookmark,
   BookOpen,
+  FileText,
   GraduationCap,
+  Library,
   Settings,
   Users,
 } from 'lucide-react';
@@ -32,7 +35,7 @@ const items = [
   {
     title: 'Program',
     url: 'program',
-    icon: BookOpen,
+    icon: Library,
   },
   {
     title: 'Status',
@@ -42,12 +45,12 @@ const items = [
   {
     title: 'Subject',
     url: 'subject',
-    icon: BookOpen,
+    icon: Bookmark,
   },
   {
     title: 'Class',
     url: 'class',
-    icon: BookOpen,
+    icon: FileText,
   },
   {
     title: 'Setting',

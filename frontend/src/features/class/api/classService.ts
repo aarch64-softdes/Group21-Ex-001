@@ -1,16 +1,11 @@
 import { ApiResponse } from '@/core/types/apiResponse';
-import Class, {
-  CreateClassDto,
-  UpdateClassDto,
-  mapToClass,
-} from '@/features/class/types/class';
+import Class, { CreateClassDto, UpdateClassDto } from '../types/class';
 
-// Mock data
+// Mock data for testing and development
 const mockClasses: Class[] = [
   {
     id: '1',
-    subjectId: '1', // Introduction to Computer Science
-    program: '1', // Computer Science
+    subjectId: '1',
     code: 'CS101-01',
     year: 2025,
     startAt: new Date('2025-01-15'),
@@ -18,11 +13,23 @@ const mockClasses: Class[] = [
     maxStudent: 40,
     schedule: 'T2(3-6)', // Monday 3rd-6th period
     room: 'A101',
+    subject: {
+      id: '1',
+      name: 'Introduction to Computer Science',
+      code: 'CS101',
+      credits: 3,
+      description: 'A basic introduction to computer science principles',
+      faculty: 'Computer Science',
+      prerequisites: [],
+    },
+    program: {
+      id: '1',
+      name: 'Computer Science',
+    },
   },
   {
     id: '2',
-    subjectId: '1', // Introduction to Computer Science
-    program: '2', // Information Technology
+    subjectId: '1',
     code: 'CS101-02',
     year: 2025,
     startAt: new Date('2025-01-15'),
@@ -30,11 +37,23 @@ const mockClasses: Class[] = [
     maxStudent: 35,
     schedule: 'T4(1-4)', // Wednesday 1st-4th period
     room: 'B202',
+    subject: {
+      id: '1',
+      name: 'Introduction to Computer Science',
+      code: 'CS101',
+      credits: 3,
+      description: 'A basic introduction to computer science principles',
+      faculty: 'Computer Science',
+      prerequisites: [],
+    },
+    program: {
+      id: '2',
+      name: 'Information Technology',
+    },
   },
   {
     id: '3',
-    subjectId: '2', // Advanced Mathematics
-    program: '4', // Mathematics
+    subjectId: '2',
     code: 'MATH301-01',
     year: 2025,
     startAt: new Date('2025-01-16'),
@@ -42,11 +61,24 @@ const mockClasses: Class[] = [
     maxStudent: 30,
     schedule: 'T3(6-9)', // Tuesday 6th-9th period
     room: 'C303',
+    subject: {
+      id: '2',
+      name: 'Advanced Mathematics',
+      code: 'MATH301',
+      credits: 4,
+      description:
+        'Advanced topics in mathematics including calculus and linear algebra',
+      faculty: 'Mathematics',
+      prerequisites: [],
+    },
+    program: {
+      id: '4',
+      name: 'Mathematics',
+    },
   },
   {
     id: '4',
-    subjectId: '3', // Data Structures and Algorithms
-    program: '3', // Software Engineering
+    subjectId: '3',
     code: 'CS201-01',
     year: 2025,
     startAt: new Date('2025-01-17'),
@@ -54,11 +86,23 @@ const mockClasses: Class[] = [
     maxStudent: 45,
     schedule: 'T5(4-7)', // Thursday 4th-7th period
     room: 'A105',
+    subject: {
+      id: '3',
+      name: 'Data Structures and Algorithms',
+      code: 'CS201',
+      credits: 4,
+      description: 'Study of data structures and fundamental algorithms',
+      faculty: 'Computer Science',
+      prerequisites: ['1'],
+    },
+    program: {
+      id: '3',
+      name: 'Software Engineering',
+    },
   },
   {
     id: '5',
-    subjectId: '4', // Introduction to Physics
-    program: '6', // Engineering
+    subjectId: '4',
     code: 'PHYS101-01',
     year: 2025,
     startAt: new Date('2025-01-18'),
@@ -66,27 +110,21 @@ const mockClasses: Class[] = [
     maxStudent: 50,
     schedule: 'T6(1-4)', // Friday 1st-4th period
     room: 'D404',
+    subject: {
+      id: '4',
+      name: 'Introduction to Physics',
+      code: 'PHYS101',
+      credits: 3,
+      description: 'Basic principles of physics and mechanics',
+      faculty: 'Physics',
+      prerequisites: [],
+    },
+    program: {
+      id: '6',
+      name: 'Engineering',
+    },
   },
 ];
-
-// Map to store subject name by id for mock data
-const subjectNameMap = {
-  '1': 'Introduction to Computer Science',
-  '2': 'Advanced Mathematics',
-  '3': 'Data Structures and Algorithms',
-  '4': 'Introduction to Physics',
-  '5': 'Database Management Systems',
-};
-
-// Map to store program name by id for mock data
-const programNameMap = {
-  '1': 'Computer Science',
-  '2': 'Information Technology',
-  '3': 'Software Engineering',
-  '4': 'Mathematics',
-  '5': 'Physics',
-  '6': 'Engineering',
-};
 
 export default class ClassService {
   getClasses = async ({
@@ -109,169 +147,185 @@ export default class ClassService {
     lecturer?: string;
     year?: string;
     program?: string;
-  }): Promise<
-    ApiResponse<Class & { subjectName?: string; programName?: string }>
-  > => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+  }): Promise<ApiResponse<Class>> => {
+    try {
+      // For real API implementation
+      // const response = await api.get('/api/classes', {
+      //   params: {
+      //     page,
+      //     size,
+      //     sortName,
+      //     sortType,
+      //     search,
+      //     subject,
+      //     lecturer,
+      //     year,
+      //     program,
+      //   },
+      // });
+      //
+      // return {
+      //   data: response.data.content.data.map(mapToClass),
+      //   totalItems: response.data.content.page.totalItems,
+      //   totalPages: response.data.content.page.totalPages,
+      //   currentPage: response.data.content.page.pageNumber,
+      // };
 
-    // Clone the mock data to avoid modifying the original
-    let filteredData = [...mockClasses];
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // Filter by search term (code or room)
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filteredData = filteredData.filter(
-        (cls) =>
-          cls.code.toLowerCase().includes(searchLower) ||
-          cls.room.toLowerCase().includes(searchLower),
-      );
-    }
+      // Clone the mock data to avoid modifying the original
+      let filteredData = [...mockClasses];
 
-    // Filter by subject
-    if (subject) {
-      filteredData = filteredData.filter((cls) => {
-        const subjectName =
-          subjectNameMap[cls.subjectId as keyof typeof subjectNameMap];
-        return subjectName?.toLowerCase().includes(subject.toLowerCase());
-      });
-    }
-
-    // Filter by lecturer
-    if (lecturer) {
-      filteredData = filteredData.filter((cls) =>
-        cls.lecturer.toLowerCase().includes(lecturer.toLowerCase()),
-      );
-    }
-
-    // Filter by year
-    if (year) {
-      filteredData = filteredData.filter((cls) => cls.year.toString() === year);
-    }
-
-    // Filter by program
-    if (program) {
-      filteredData = filteredData.filter((cls) => {
-        const programName =
-          programNameMap[cls.program as keyof typeof programNameMap];
-        return programName?.toLowerCase().includes(program.toLowerCase());
-      });
-    }
-
-    // Sort data
-    filteredData.sort((a, b) => {
-      const aValue = a[sortName as keyof Class];
-      const bValue = b[sortName as keyof Class];
-
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortType === 'asc'
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
+      // Filter by search term (code or room)
+      if (search) {
+        const searchLower = search.toLowerCase();
+        filteredData = filteredData.filter(
+          (cls) =>
+            cls.code.toLowerCase().includes(searchLower) ||
+            cls.room.toLowerCase().includes(searchLower),
+        );
       }
 
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortType === 'asc' ? aValue - bValue : bValue - aValue;
+      // Filter by subject name
+      if (subject) {
+        filteredData = filteredData.filter((cls) =>
+          cls.subject?.name.toLowerCase().includes(subject.toLowerCase()),
+        );
       }
 
-      if (aValue instanceof Date && bValue instanceof Date) {
-        return sortType === 'asc'
-          ? aValue.getTime() - bValue.getTime()
-          : bValue.getTime() - aValue.getTime();
+      // Filter by lecturer
+      if (lecturer) {
+        filteredData = filteredData.filter((cls) =>
+          cls.lecturer.toLowerCase().includes(lecturer.toLowerCase()),
+        );
       }
 
-      return 0;
-    });
+      // Filter by year
+      if (year) {
+        filteredData = filteredData.filter(
+          (cls) => cls.year.toString() === year,
+        );
+      }
 
-    // Enhance data with subject and program names (for display in the table)
-    const enhancedData = filteredData.map((cls) => ({
-      ...cls,
-      subjectName: subjectNameMap[cls.subjectId as keyof typeof subjectNameMap],
-      programName: programNameMap[cls.program as keyof typeof programNameMap],
-    }));
+      // Filter by program name
+      if (program) {
+        filteredData = filteredData.filter((cls) =>
+          cls.program?.name.toLowerCase().includes(program.toLowerCase()),
+        );
+      }
 
-    // Paginate data
-    const start = (page - 1) * size;
-    const end = start + size;
-    const paginatedData = enhancedData.slice(start, end);
+      // Paginate data
+      const start = (page - 1) * size;
+      const end = start + size;
+      const paginatedData = filteredData.slice(start, end);
 
-    return {
-      data: paginatedData,
-      totalItems: enhancedData.length,
-      totalPages: Math.ceil(enhancedData.length / size),
-      currentPage: page,
-    };
+      return {
+        data: paginatedData,
+        totalItems: filteredData.length,
+        totalPages: Math.ceil(filteredData.length / size),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error('Error fetching classes:', error);
+      throw error;
+    }
   };
 
-  getClass = async (
-    id: string,
-  ): Promise<Class & { subjectName?: string; programName?: string }> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 300));
+  getClass = async (id: string): Promise<Class> => {
+    try {
+      // For real API implementation
+      // const response = await api.get(`/api/classes/${id}`);
+      // return mapToClass(response.data.content);
 
-    const classItem = mockClasses.find((c) => c.id === id);
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-    if (!classItem) {
-      throw new Error('Class not found');
+      const classItem = mockClasses.find((c) => c.id === id);
+
+      if (!classItem) {
+        throw new Error('Class not found');
+      }
+
+      return classItem;
+    } catch (error) {
+      console.error('Error fetching class:', error);
+      throw error;
     }
-
-    return {
-      ...classItem,
-      subjectName:
-        subjectNameMap[classItem.subjectId as keyof typeof subjectNameMap],
-      programName:
-        programNameMap[classItem.program as keyof typeof programNameMap],
-    };
-  };
-
-  // Get all subjects for dropdown
-  getSubjects = async (): Promise<Array<{ id: string; name: string }>> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    return Object.entries(subjectNameMap).map(([id, name]) => ({
-      id,
-      name,
-    }));
   };
 
   addClass = async (data: CreateClassDto): Promise<void> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      // For real API implementation
+      // await api.post('/api/classes', data);
 
-    const newId = (mockClasses.length + 1).toString();
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    mockClasses.push({
-      id: newId,
-      ...data,
-    });
+      const newId = (mockClasses.length + 1).toString();
+
+      // Create a new class with the provided data
+      const newClass: Class = {
+        id: newId,
+        subjectId: data.subjectId,
+        code: data.code,
+        year: data.year,
+        startAt: data.startAt,
+        lecturer: data.lecturer,
+        maxStudent: data.maxStudent,
+        schedule: data.schedule,
+        room: data.room,
+      };
+
+      mockClasses.push(newClass);
+    } catch (error) {
+      console.error('Error adding class:', error);
+      throw error;
+    }
   };
 
   updateClass = async (id: string, data: UpdateClassDto): Promise<void> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      // For real API implementation
+      // await api.put(`/api/classes/${id}`, data);
 
-    const index = mockClasses.findIndex((c) => c.id === id);
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (index === -1) {
-      throw new Error('Class not found');
+      const index = mockClasses.findIndex((c) => c.id === id);
+
+      if (index === -1) {
+        throw new Error('Class not found');
+      }
+
+      mockClasses[index] = {
+        ...mockClasses[index],
+        ...data,
+      };
+    } catch (error) {
+      console.error('Error updating class:', error);
+      throw error;
     }
-
-    mockClasses[index] = {
-      ...mockClasses[index],
-      ...data,
-    };
   };
 
   deleteClass = async (id: string): Promise<void> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      // For real API implementation
+      // await api.delete(`/api/classes/${id}`);
 
-    const index = mockClasses.findIndex((c) => c.id === id);
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (index === -1) {
-      throw new Error('Class not found');
+      const index = mockClasses.findIndex((c) => c.id === id);
+
+      if (index === -1) {
+        throw new Error('Class not found');
+      }
+
+      mockClasses.splice(index, 1);
+    } catch (error) {
+      console.error('Error deleting class:', error);
+      throw error;
     }
-
-    mockClasses.splice(index, 1);
   };
 }

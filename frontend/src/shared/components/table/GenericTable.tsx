@@ -27,6 +27,7 @@ import { useMemo, useState } from 'react';
 import TableSort from './TableSort';
 import FileImportButton from './FileImportButton';
 import FileExportButton from './FileExportButton';
+import { getNestedValue } from '@/shared/lib/utils';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
@@ -120,9 +121,19 @@ const GenericTable = <T extends { id: string }>({
                   width: column.style?.width,
                 }}
               >
-                {column.transform
-                  ? column.transform(cell[column.key])
-                  : String(cell[column.key])}
+                {(() => {
+                  // Get the value using the path or key
+                  const value = column.nested
+                    ? getNestedValue(cell, column.key.toString())
+                    : cell[column.key as keyof typeof cell];
+
+                  // Apply transform if specified or convert to string
+                  return column.transform
+                    ? column.transform(value)
+                    : value !== null && value !== undefined
+                    ? String(value)
+                    : '';
+                })()}
               </TableCell>
             ))}
             <TableCell className='min-w-20 py-1'>
@@ -191,7 +202,7 @@ const GenericTable = <T extends { id: string }>({
                 key={filterOption.id}
                 onChange={(value) => filters.onChange(filterOption.id, value)}
                 {...filterOption}
-                value={filters.value[filterOption.id] || ''}
+                value={filters.value[filterOption.id] as string}
                 componentType='popover'
               />
             );

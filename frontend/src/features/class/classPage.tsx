@@ -37,11 +37,13 @@ const ClassPage: React.FC = () => {
       },
       {
         header: 'Subject',
-        key: 'subjectName',
+        key: 'subject.name',
+        nested: true,
       },
       {
         header: 'Program',
-        key: 'programName',
+        key: 'program.name',
+        nested: true,
       },
       {
         header: 'Lecturer',

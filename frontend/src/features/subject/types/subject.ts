@@ -27,7 +27,7 @@ export interface UpdateSubjectDTO {
 }
 
 export const mapToSubject = (data: any): Subject => ({
-  id: data.id,
+  id: data.id as string,
   name: data.name,
   code: data.code,
   credits: data.credits,
