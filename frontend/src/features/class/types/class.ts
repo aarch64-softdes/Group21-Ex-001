@@ -1,3 +1,5 @@
+import Subject from '@/features/subject/types/subject';
+
 export default interface Class {
   id: string;
   subjectId: string;
@@ -9,6 +11,7 @@ export default interface Class {
   maxStudent: number;
   schedule: string;
   room: string;
+  subject?: Subject;
 }
 
 export interface CreateClassDto {
@@ -46,4 +49,5 @@ export const mapToClass = (data: any): Class => ({
   maxStudent: data.maxStudent,
   schedule: data.schedule,
   room: data.room,
+  subject: data.subject,
 });

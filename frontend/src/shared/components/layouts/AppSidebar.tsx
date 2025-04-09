@@ -45,6 +45,11 @@ const items = [
     icon: BookOpen,
   },
   {
+    title: 'Class',
+    url: 'class',
+    icon: BookOpen,
+  },
+  {
     title: 'Setting',
     url: 'setting',
     icon: Settings,
