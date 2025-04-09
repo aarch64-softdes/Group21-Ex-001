@@ -30,12 +30,7 @@ import { Separator } from '@ui/separator';
 
 import AddressForm from '@student/components/AddressForm';
 import PhoneField from '@student/components/PhoneField';
-import {
-  useEntityFaculties,
-  useEntityPrograms,
-  useEntityStatuses,
-  useGenders,
-} from '@metadata/api/useMetadata';
+import { useGenders } from '@metadata/api/useMetadata';
 import { useStudent } from '@student/api/useStudentApi';
 import Student, { CreateStudentDTO } from '@student/types/student';
 import { FormComponentProps } from '@/core/types/table';
@@ -44,6 +39,9 @@ import { useEffect, useState } from 'react';
 import LoadingButton from '@ui/loadingButton';
 import { cn } from '@/shared/lib/utils';
 import { removeDialCodeFromPhoneNumber } from '@/shared/data/countryData';
+import { useFaculties } from '@/features/faculty/api/useFacultyApi';
+import { usePrograms } from '@/features/program/api/useProgramApi';
+import { useStatuses } from '@/features/status/api/useStatusApi';
 
 export const StudentFormSchema = z.object({
   studentId: z.string().min(1, 'Student ID is required'),
@@ -192,10 +190,40 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
   isLoading = false,
   isEditing = false,
 }) => {
-  const facultiesQuery = useEntityFaculties();
-  const programsQuery = useEntityPrograms();
-  const statusesQuery = useEntityStatuses();
+  // Replace metadata queries with direct entity queries
+  const { data: facultiesData, isLoading: isLoadingFaculties } = useFaculties({
+    page: 1,
+    pageSize: 100,
+    filters: {},
+    sort: {
+      key: 'name',
+      direction: 'asc',
+    },
+  });
+
+  const { data: programsData, isLoading: isLoadingPrograms } = usePrograms({
+    page: 1,
+    pageSize: 100,
+    filters: {},
+    sort: {
+      key: 'name',
+      direction: 'asc',
+    },
+  });
+
+  const { data: statusesData, isLoading: isLoadingStatuses } = useStatuses({
+    page: 1,
+    pageSize: 100,
+    filters: {},
+    sort: {
+      key: 'name',
+      direction: 'asc',
+    },
+  });
+
+  // Keep the gender metadata query as it's still needed
   const gendersQuery = useGenders();
+
   const { data: studentData, isLoading: isLoadingStudent } = useStudent(
     id ?? '',
   );
@@ -777,14 +805,17 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {facultiesQuery.isLoading ? (
+                              {isLoadingFaculties ? (
                                 <div className='flex items-center justify-center p-2'>
                                   <Loader2 className='h-4 w-4 animate-spin' />
                                 </div>
-                              ) : facultiesQuery.data ? (
-                                facultiesQuery.data.map((faculty) => (
-                                  <SelectItem key={faculty} value={faculty}>
-                                    {faculty.replace(/_/g, ' ')}
+                              ) : facultiesData?.data ? (
+                                facultiesData.data.map((faculty) => (
+                                  <SelectItem
+                                    key={faculty.id}
+                                    value={faculty.name}
+                                  >
+                                    {faculty.name}
                                   </SelectItem>
                                 ))
                               ) : (
@@ -843,14 +874,17 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {programsQuery.isLoading ? (
+                                {isLoadingPrograms ? (
                                   <div className='flex items-center justify-center p-2'>
                                     <Loader2 className='h-4 w-4 animate-spin' />
                                   </div>
-                                ) : programsQuery.data ? (
-                                  programsQuery.data.map((program) => (
-                                    <SelectItem key={program} value={program}>
-                                      {program.replace(/_/g, ' ')}
+                                ) : programsData?.data ? (
+                                  programsData.data.map((program) => (
+                                    <SelectItem
+                                      key={program.id}
+                                      value={program.name}
+                                    >
+                                      {program.name}
                                     </SelectItem>
                                   ))
                                 ) : (
@@ -882,14 +916,17 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {statusesQuery.isLoading ? (
+                              {isLoadingStatuses ? (
                                 <div className='flex items-center justify-center p-2'>
                                   <Loader2 className='h-4 w-4 animate-spin' />
                                 </div>
-                              ) : statusesQuery.data ? (
-                                statusesQuery.data.map((status) => (
-                                  <SelectItem key={status} value={status}>
-                                    {status.replace(/_/g, ' ')}
+                              ) : statusesData?.data ? (
+                                statusesData.data.map((status) => (
+                                  <SelectItem
+                                    key={status.id}
+                                    value={status.name}
+                                  >
+                                    {status.name}
                                   </SelectItem>
                                 ))
                               ) : (
