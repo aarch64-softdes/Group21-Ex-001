@@ -34,7 +34,7 @@ export default class StatusService {
 
     return {
       data: response.data.content.data.map(mapToStatus),
-      totalItems: response.data.content.page.totalItems,
+      totalItems: response.data.content.page.totalElements,
       totalPages: response.data.content.page.totalPages,
       currentPage: response.data.content.page.pageNumber,
     };

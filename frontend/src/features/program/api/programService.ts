@@ -30,9 +30,11 @@ export default class ProgramService {
       },
     });
 
+    console.log('response', response.data);
+
     return {
       data: response.data.content.data.map(mapToProgram),
-      totalItems: response.data.content.page.totalItems,
+      totalItems: response.data.content.page.totalElements,
       totalPages: response.data.content.page.totalPages,
       currentPage: response.data.content.page.pageNumber,
     };

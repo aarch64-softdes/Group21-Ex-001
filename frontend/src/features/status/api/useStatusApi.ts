@@ -4,6 +4,10 @@ import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { showSuccessToast, showErrorToast } from '@/shared/lib/toast-utils';
 import { getErrorMessage } from '@/shared/lib/utils';
+import Status from '@/features/faculty/types/faculty';
+import programService from '@/features/program/api/programService';
+import { useLoadMore } from '@/shared/hooks/useLoadMore';
+import { useState } from 'react';
 
 const statusService = new StatusService();
 
@@ -30,6 +34,33 @@ export const useStatuses = (params: QueryHookParams) => {
         search,
       }),
   });
+};
+
+export const useStatusesDropdown = (initialPageSize?: number) => {
+  const [statusSearch, setStatusSearch] = useState<string>('');
+  const statuses = useLoadMore<Status>({
+    queryKey: ['statuses', 'dropdown'],
+    fetchFn: (page, size, searchQuery) =>
+      statusService.getStatuses({
+        page,
+        size,
+        sortName: 'name',
+        sortType: 'asc',
+        search: searchQuery,
+      }),
+    mapFn: (status: Status) => ({
+      id: status.id,
+      label: status.name,
+      value: status.name,
+    }),
+    searchQuery: statusSearch,
+    initialPageSize,
+  });
+
+  return {
+    ...statuses,
+    setStatusSearch,
+  };
 };
 
 export const useStatus = (id: string) => {

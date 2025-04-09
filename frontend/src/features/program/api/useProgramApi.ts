@@ -7,6 +7,9 @@ import {
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getErrorMessage } from '@/shared/lib/utils';
+import Program from '@/features/faculty/types/faculty';
+import { useLoadMore } from '@/shared/hooks/useLoadMore';
+import { useState } from 'react';
 
 const programService = new ProgramService();
 
@@ -33,6 +36,33 @@ export const usePrograms = (params: QueryHookParams) => {
         search,
       }),
   });
+};
+
+export const useProgramsDropdown = (initialPageSize?: number) => {
+  const [programSearch, setProgramSearch] = useState<string>('');
+  const programs = useLoadMore<Program>({
+    queryKey: ['programs', 'dropdown'],
+    fetchFn: (page, size, searchQuery) =>
+      programService.getPrograms({
+        page,
+        size,
+        sortName: 'name',
+        sortType: 'asc',
+        search: searchQuery,
+      }),
+    mapFn: (program: Program) => ({
+      id: program.id,
+      label: program.name,
+      value: program.name,
+    }),
+    searchQuery: programSearch,
+    initialPageSize,
+  });
+
+  return {
+    ...programs,
+    setProgramSearch,
+  };
 };
 
 export const useProgram = (id: string) => {

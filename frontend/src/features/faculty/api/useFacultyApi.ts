@@ -1,9 +1,14 @@
 import { showSuccessToast, showErrorToast } from '@/shared/lib/toast-utils';
 import FacultyService from '@faculty/api/facultyService';
-import { CreateFacultyDTO, UpdateFacultyDTO } from '@faculty/types/faculty';
+import Faculty, {
+  CreateFacultyDTO,
+  UpdateFacultyDTO,
+} from '@faculty/types/faculty';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getErrorMessage } from '@/shared/lib/utils';
+import { useLoadMore } from '@/shared/hooks/useLoadMore';
+import { useState } from 'react';
 
 const facultyService = new FacultyService();
 
@@ -30,6 +35,33 @@ export const useFaculties = (params: QueryHookParams) => {
         search,
       }),
   });
+};
+
+export const useFacultiesDropdown = (initialPageSize?: number) => {
+  const [facultySearch, setFacultySearch] = useState<string>('');
+  const faculties = useLoadMore<Faculty>({
+    queryKey: ['faculties', 'dropdown'],
+    fetchFn: (page, size, searchQuery) =>
+      facultyService.getFaculties({
+        page,
+        size,
+        sortName: 'name',
+        sortType: 'asc',
+        search: searchQuery,
+      }),
+    mapFn: (faculty: Faculty) => ({
+      id: faculty.id,
+      label: faculty.name,
+      value: faculty.name,
+    }),
+    searchQuery: facultySearch,
+    initialPageSize,
+  });
+
+  return {
+    ...faculties,
+    setFacultySearch,
+  };
 };
 
 export const useFaculty = (id: string) => {
