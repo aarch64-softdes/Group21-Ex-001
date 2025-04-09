@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from '@ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@ui/dialog';
 import {
   Table,
   TableBody,
@@ -263,6 +263,7 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Add Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTitle className='text-center text-2xl font-semibold' />
         <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
           <FormComponent
             onSubmit={handleAdd}
@@ -273,6 +274,7 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogTitle className='text-center text-2xl font-semibold' />
         <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
           <FormComponent
             id={currentEditItem?.id}
@@ -286,6 +288,7 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Detail Dialog */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
+        <DialogTitle className='text-center text-2xl font-semibold' />
         <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
           <DetailComponent id={currentDetailItem?.id} />
         </DialogContent>
