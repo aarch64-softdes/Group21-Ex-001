@@ -30,7 +30,7 @@ export const useStatuses = (params: QueryHookParams) => {
   });
 };
 
-export const useStatus = (id: number) => {
+export const useStatus = (id: string) => {
   return useQuery({
     queryKey: ['status', id],
     queryFn: () => statusService.getStatus(id),
@@ -53,7 +53,7 @@ export const useUpdateStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateStatusDTO }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateStatusDTO }) =>
       statusService.updateStatus(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
@@ -65,7 +65,7 @@ export const useDeleteStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => statusService.deleteStatus(id),
+    mutationFn: (id: string) => statusService.deleteStatus(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
     },

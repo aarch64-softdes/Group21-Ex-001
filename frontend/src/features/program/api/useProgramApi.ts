@@ -34,7 +34,7 @@ export const usePrograms = (params: QueryHookParams) => {
   });
 };
 
-export const useProgram = (id: number) => {
+export const useProgram = (id: string) => {
   return useQuery({
     queryKey: ['program', id],
     queryFn: () => programService.getProgram(id),
@@ -58,7 +58,7 @@ export const useUpdateProgram = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateProgramDTO }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateProgramDTO }) =>
       programService.updateProgram(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
@@ -71,7 +71,7 @@ export const useDeleteProgram = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => programService.deleteProgram(id),
+    mutationFn: (id: string) => programService.deleteProgram(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
       showSuccessToast('Program deleted successfully');

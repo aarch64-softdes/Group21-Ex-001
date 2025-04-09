@@ -25,8 +25,8 @@ import {
 import {
   useSubject,
   useSubjectsForPrerequisites,
-} from '@/features/subject/api/useSubjectApi';
-import Subject, { CreateSubjectDTO } from '@/features/subject/types/subject';
+} from '@subject/api/useSubjectApi';
+import Subject, { CreateSubjectDTO } from '@subject/types/subject';
 import { FormComponentProps } from '@/core/types/table';
 import { Loader2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -46,7 +46,7 @@ import {
 } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
-import { useFaculties } from '@/features/faculty/api/useFacultyApi';
+import { useFaculties } from '@faculty/api/useFacultyApi';
 
 // Define schema
 export const SubjectFormSchema = z.object({

@@ -43,7 +43,7 @@ export const StatusFormSchema = z.object({
     .array(
       z
         .object({
-          id: z.any(),
+          id: z.string(),
         })
         .optional(),
     )

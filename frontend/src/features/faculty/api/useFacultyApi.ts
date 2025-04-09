@@ -1,9 +1,6 @@
 import { showSuccessToast } from '@/shared/lib/toast-utils';
-import FacultyService from '@/features/faculty/api/facultyService';
-import {
-  CreateFacultyDTO,
-  UpdateFacultyDTO,
-} from '@/features/faculty/types/faculty';
+import FacultyService from '@faculty/api/facultyService';
+import { CreateFacultyDTO, UpdateFacultyDTO } from '@faculty/types/faculty';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -34,7 +31,7 @@ export const useFaculties = (params: QueryHookParams) => {
   });
 };
 
-export const useFaculty = (id: number) => {
+export const useFaculty = (id: string) => {
   return useQuery({
     queryKey: ['faculty', id],
     queryFn: () => facultyService.getFaculty(id),
@@ -58,7 +55,7 @@ export const useUpdateFaculty = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateFacultyDTO }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateFacultyDTO }) =>
       facultyService.updateFaculty(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
@@ -71,7 +68,7 @@ export const useDeleteFaculty = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => facultyService.deleteFaculty(id),
+    mutationFn: (id: string) => facultyService.deleteFaculty(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
       showSuccessToast('Faculty deleted successfully');

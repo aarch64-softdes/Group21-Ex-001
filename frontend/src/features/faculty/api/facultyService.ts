@@ -32,13 +32,13 @@ export default class FacultyService {
 
     return {
       data: response.data.content.data.map(mapToFaculty),
-      totalItems: response.data.content.data.length,
-      totalPages: 1, // Since pagination is not implemented in these entities
-      currentPage: page,
+      totalItems: response.data.content.page.totalItems,
+      totalPages: response.data.content.page.totalPages,
+      currentPage: response.data.content.page.pageNumber,
     };
   };
 
-  getFaculty = async (id: number): Promise<Faculty> => {
+  getFaculty = async (id: string): Promise<Faculty> => {
     const response = await api.get(`/api/faculties/${id}`);
     return mapToFaculty(response.data.content);
   };
@@ -47,11 +47,11 @@ export default class FacultyService {
     await api.post('/api/faculties', data);
   };
 
-  updateFaculty = async (id: number, data: UpdateFacultyDTO): Promise<void> => {
+  updateFaculty = async (id: string, data: UpdateFacultyDTO): Promise<void> => {
     await api.put(`/api/faculties/${id}`, data);
   };
 
-  deleteFaculty = async (id: number): Promise<void> => {
+  deleteFaculty = async (id: string): Promise<void> => {
     await api.delete(`/api/faculties/${id}`);
   };
 }

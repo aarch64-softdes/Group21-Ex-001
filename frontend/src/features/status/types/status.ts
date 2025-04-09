@@ -18,7 +18,7 @@ export const mapToStatus = (data: any): Status => ({
   id: data.id as string,
   name: data.name,
   allowedTransitions: data.allowedTransitions?.map((t: any) => ({
-    id: t.id || t.toId,
+    id: (t.id || t.toId) as string,
     name: t.name,
   })),
 });
