@@ -1,4 +1,4 @@
-import { showSuccessToast } from '@/shared/lib/toast-utils';
+import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
 import ProgramService from '@/features/program/api/programService';
 import {
   CreateProgramDTO,
@@ -6,6 +6,7 @@ import {
 } from '@/features/program/types/program';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getErrorMessage } from '@/shared/lib/utils';
 
 const programService = new ProgramService();
 
@@ -51,6 +52,9 @@ export const useCreateProgram = () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
       showSuccessToast('Program created successfully');
     },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -64,6 +68,9 @@ export const useUpdateProgram = () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
       showSuccessToast('Program updated successfully');
     },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -75,6 +82,9 @@ export const useDeleteProgram = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
       showSuccessToast('Program deleted successfully');
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };

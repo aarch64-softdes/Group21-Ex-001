@@ -1,8 +1,9 @@
-import { showSuccessToast } from '@/shared/lib/toast-utils';
+import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
 import ClassService from '@/features/class/api/classService';
 import { CreateClassDto, UpdateClassDto } from '@/features/class/types/class';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getErrorMessage } from '@/shared/lib/utils';
 
 const classService = new ClassService();
 
@@ -70,6 +71,9 @@ export const useCreateClass = () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       showSuccessToast('Class created successfully');
     },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -83,6 +87,9 @@ export const useUpdateClass = () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       showSuccessToast('Class updated successfully');
     },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -94,6 +101,9 @@ export const useDeleteClass = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       showSuccessToast('Class deleted successfully');
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };

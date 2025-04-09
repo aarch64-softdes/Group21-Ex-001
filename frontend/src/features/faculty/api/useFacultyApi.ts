@@ -1,8 +1,9 @@
-import { showSuccessToast } from '@/shared/lib/toast-utils';
+import { showSuccessToast, showErrorToast } from '@/shared/lib/toast-utils';
 import FacultyService from '@faculty/api/facultyService';
 import { CreateFacultyDTO, UpdateFacultyDTO } from '@faculty/types/faculty';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getErrorMessage } from '@/shared/lib/utils';
 
 const facultyService = new FacultyService();
 
@@ -48,6 +49,9 @@ export const useCreateFaculty = () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
       showSuccessToast('Faculty added successfully');
     },
+    onError: (error: any) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -61,6 +65,9 @@ export const useUpdateFaculty = () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
       showSuccessToast('Faculty updated successfully');
     },
+    onError: (error: any) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -72,6 +79,9 @@ export const useDeleteFaculty = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
       showSuccessToast('Faculty deleted successfully');
+    },
+    onError: (error: any) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };

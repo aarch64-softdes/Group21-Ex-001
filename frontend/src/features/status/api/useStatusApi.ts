@@ -2,6 +2,8 @@ import StatusService from '@status/api/statusService';
 import { CreateStatusDTO, UpdateStatusDTO } from '@status/types/status';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { showSuccessToast, showErrorToast } from '@/shared/lib/toast-utils';
+import { getErrorMessage } from '@/shared/lib/utils';
 
 const statusService = new StatusService();
 
@@ -45,6 +47,10 @@ export const useCreateStatus = () => {
     mutationFn: (data: CreateStatusDTO) => statusService.addNewStatus(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
+      showSuccessToast('Status created successfully');
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };
@@ -57,6 +63,10 @@ export const useUpdateStatus = () => {
       statusService.updateStatus(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
+      showSuccessToast('Status updated successfully');
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };
@@ -68,6 +78,10 @@ export const useDeleteStatus = () => {
     mutationFn: (id: string) => statusService.deleteStatus(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
+      showSuccessToast('Status deleted successfully');
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };

@@ -1,5 +1,3 @@
-import { showErrorToast, showSuccessToast } from '@lib/toast-utils';
-import { getErrorMessage } from '@lib/utils';
 import { FilterOption, FilterParams } from '@/core/types/filter';
 import { QueryHook, TableActions, SortConfig } from '@/core/types/table';
 import { useCallback, useEffect, useState } from 'react';
@@ -15,10 +13,8 @@ export const useTableAdd = <T extends { id: string }>(
       setIsAdding(true);
       setDialogOpen(false);
       await actions?.onAdd?.(value);
-      showSuccessToast('Successfully added!');
     } catch (error) {
       console.error(error);
-      showErrorToast('Failed to add: ' + getErrorMessage(error));
     } finally {
       setIsAdding(false);
     }
@@ -56,10 +52,8 @@ export const useTableEdit = <T extends { id: string }>(
       await actions?.onSave?.(currentEditItem.id, updatedData as T);
       setEditDialogOpen(false);
       setCurrentEditItem(null);
-      showSuccessToast('Edit successfully');
     } catch (error) {
       console.error('Error editing:', error);
-      showErrorToast('Error editing: ' + getErrorMessage(error));
     } finally {
       setIsEditSaving(false);
     }
@@ -86,10 +80,8 @@ export const useTableDelete = (actions?: TableActions) => {
       setDeletingRow(id);
       await actions?.onDelete?.(id);
       setDeletingRow(null);
-      showSuccessToast('Successfully deleted!');
     } catch (error) {
       console.error(error);
-      showErrorToast('Failed to delete: ' + getErrorMessage(error));
     } finally {
       setIsDeleting(false);
     }

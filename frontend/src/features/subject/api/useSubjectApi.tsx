@@ -5,6 +5,8 @@ import {
 } from '@/features/subject/types/subject';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { showErrorToast } from '@/shared/lib/toast-utils';
+import { getErrorMessage } from '@/shared/lib/utils';
 
 const subjectService = new SubjectService();
 
@@ -67,6 +69,9 @@ export const useCreateSubject = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
     },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -79,6 +84,9 @@ export const useUpdateSubject = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
     },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -89,6 +97,9 @@ export const useDeleteSubject = () => {
     mutationFn: (id: string) => subjectService.deleteSubject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };
