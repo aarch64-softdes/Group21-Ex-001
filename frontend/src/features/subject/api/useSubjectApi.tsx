@@ -1,5 +1,5 @@
 import SubjectService from '@/features/subject/api/subjectService';
-import {
+import Subject, {
   CreateSubjectDTO,
   UpdateSubjectDTO,
 } from '@/features/subject/types/subject';
@@ -7,6 +7,10 @@ import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { showErrorToast } from '@/shared/lib/toast-utils';
 import { getErrorMessage } from '@/shared/lib/utils';
+import programService from '@/features/program/api/programService';
+import Program from '@/features/program/types/program';
+import { useLoadMore } from '@/shared/hooks/useLoadMore';
+import { useState } from 'react';
 
 const subjectService = new SubjectService();
 
@@ -40,6 +44,33 @@ export const useSubjects = (params: QueryHookParams) => {
         faculty,
       }),
   });
+};
+
+export const useSubjectsDropdown = (initialPageSize?: number) => {
+  const [subjectSearch, setSubjectSearch] = useState<string>('');
+  const subjects = useLoadMore<Subject>({
+    queryKey: ['subjects', 'dropdown'],
+    fetchFn: (page, size, searchQuery) =>
+      subjectService.getSubjects({
+        page,
+        size,
+        sortName: 'name',
+        sortType: 'asc',
+        search: searchQuery,
+      }),
+    mapFn: (subject: Subject) => ({
+      id: subject.id,
+      label: subject.name,
+      value: subject.name,
+    }),
+    searchQuery: subjectSearch,
+    initialPageSize,
+  });
+
+  return {
+    ...subjects,
+    setSubjectSearch,
+  };
 };
 
 export const useSubject = (id: string) => {

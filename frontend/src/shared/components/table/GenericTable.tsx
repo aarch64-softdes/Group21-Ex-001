@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle } from '@ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@ui/dialog';
 import {
   Table,
   TableBody,
@@ -28,6 +28,7 @@ import TableSort from './TableSort';
 import FileImportButton from './FileImportButton';
 import FileExportButton from './FileExportButton';
 import { getNestedValue } from '@/shared/lib/utils';
+import { ScrollArea } from '../ui/scroll-area';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
@@ -274,34 +275,52 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Add Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogTitle className='text-center text-2xl font-semibold' />
-        <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
-          <FormComponent
-            onSubmit={handleAdd}
-            onCancel={() => setDialogOpen(false)}
-          />
+        <DialogContent className='max-w-screen w-[90%] p-4 rounded-md max-h-[96vh] flex flex-col'>
+          <DialogHeader>
+            <DialogTitle />
+          </DialogHeader>
+          <div className='flex-1 overflow-hidden my-4'>
+            <ScrollArea className='h-[calc(90vh-50px)] w-full'>
+              <FormComponent
+                onSubmit={handleAdd}
+                onCancel={() => setDialogOpen(false)}
+              />
+            </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogTitle className='text-center text-2xl font-semibold' />
-        <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
-          <FormComponent
-            id={currentEditItem?.id}
-            onSubmit={handleEditSave}
-            onCancel={() => setEditDialogOpen(false)}
-            isLoading={isEditSaving}
-            isEditing={true}
-          />
+        <DialogContent className='max-w-screen w-[90%] p-4 rounded-md max-h-[96vh] flex flex-col'>
+          <DialogHeader>
+            <DialogTitle />
+          </DialogHeader>
+          <div className='flex-1 overflow-hidden my-4'>
+            <ScrollArea className='h-[calc(90vh-50px)] w-full'>
+              <FormComponent
+                id={currentEditItem?.id}
+                onSubmit={handleEditSave}
+                onCancel={() => setEditDialogOpen(false)}
+                isLoading={isEditSaving}
+                isEditing={true}
+              />
+            </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Detail Dialog */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogTitle className='text-center text-2xl font-semibold' />
-        <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
-          <DetailComponent id={currentDetailItem?.id} />
+        <DialogContent className='max-w-screen w-[90%] p-4 rounded-md max-h-[96vh] flex flex-col'>
+          <DialogHeader>
+            <DialogTitle />
+          </DialogHeader>
+          <div className='flex-1 overflow-hidden my-4'>
+            <ScrollArea className='h-[calc(90vh-50px)] w-full'>
+              <DetailComponent id={currentDetailItem?.id} />
+            </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

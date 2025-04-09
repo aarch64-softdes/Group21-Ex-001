@@ -16,13 +16,6 @@ import { Input } from '@ui/input';
 import { Separator } from '@ui/separator';
 import { Textarea } from '@ui/textarea';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@ui/select';
-import {
   useSubject,
   useSubjectsForPrerequisites,
 } from '@subject/api/useSubjectApi';
@@ -46,7 +39,8 @@ import {
 } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
-import { useFaculties } from '@faculty/api/useFacultyApi';
+import { useFacultiesDropdown } from '@faculty/api/useFacultyApi';
+import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 
 // Define schema
 export const SubjectFormSchema = z.object({
@@ -83,13 +77,7 @@ const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
   const { data: subjectData, isLoading: isLoadingSubject } = useSubject(
     id || '',
   );
-  const { data: facultiesData, isLoading: isLoadingFaculties } = useFaculties({
-    page: 1,
-    pageSize: 100,
-    filters: {},
-    sort: { key: 'name', direction: 'asc' },
-  });
-
+  const faculties = useFacultiesDropdown(5);
   const subjectsQuery = useSubjectsForPrerequisites(id);
 
   // Store all subjects for displaying names in the UI
@@ -254,36 +242,20 @@ const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Faculty</FormLabel>
-                          <Select
+                          <LoadMoreSelect
+                            value={field.value || ''}
                             onValueChange={field.onChange}
-                            value={field.value || undefined}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder='Select faculty' />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {isLoadingFaculties ? (
-                                <div className='flex items-center justify-center p-2'>
-                                  <Loader2 className='h-4 w-4 animate-spin' />
-                                </div>
-                              ) : facultiesData?.data ? (
-                                facultiesData.data.map((faculty) => (
-                                  <SelectItem
-                                    key={faculty.id}
-                                    value={faculty.name}
-                                  >
-                                    {faculty.name}
-                                  </SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem value='' disabled>
-                                  Failed to load faculties
-                                </SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
+                            placeholder='Select faculty'
+                            items={faculties.selectItems}
+                            isLoading={faculties.isLoading}
+                            isLoadingMore={faculties.isLoadingMore}
+                            hasMore={faculties.hasMore}
+                            onLoadMore={faculties.loadMore}
+                            disabled={faculties.isLoading}
+                            emptyMessage='No faculties found.'
+                            searchPlaceholder='Search faculties...'
+                            onSearch={faculties.setFacultySearch}
+                          />
                           <FormMessage />
                         </FormItem>
                       )}

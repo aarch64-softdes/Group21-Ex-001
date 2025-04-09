@@ -22,13 +22,17 @@ import {
   SelectValue,
 } from '@ui/select';
 import { useClass } from '@/features/class/api/useClassApi';
-import { usePrograms } from '@/features/program/api/useProgramApi';
+import { useProgramsDropdown } from '@/features/program/api/useProgramApi';
 import Class, { CreateClassDto } from '@/features/class/types/class';
 import { FormComponentProps } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 import LoadingButton from '@ui/loadingButton';
-import { useSubjects } from '@/features/subject/api/useSubjectApi';
+import {
+  useSubjects,
+  useSubjectsDropdown,
+} from '@/features/subject/api/useSubjectApi';
+import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 
 // Schedule validation pattern - ex: T2(3-6)
 const schedulePattern = /^T[2-7]\([1-9]-([1-9]|1[0-2])\)$/;
@@ -36,7 +40,7 @@ const schedulePattern = /^T[2-7]\([1-9]-([1-9]|1[0-2])\)$/;
 // Define schema
 export const ClassFormSchema = z.object({
   subjectId: z.string().min(1, 'Subject is required'),
-  program: z.string().min(1, 'Program is required'),
+  programId: z.string().min(1, 'Program is required'),
   code: z
     .string()
     .min(1, 'Code is required')
@@ -79,25 +83,14 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
   isEditing = false,
 }) => {
   const { data: classData, isLoading: isLoadingClass } = useClass(id || '');
-  const { data: subjects, isLoading: isLoadingSubjects } = useSubjects({
-    page: 1,
-    pageSize: 100,
-    filters: {},
-    sort: { key: 'name', direction: 'asc' },
-  });
-
-  const { data: programsData, isLoading: isLoadingPrograms } = usePrograms({
-    page: 1,
-    pageSize: 100,
-    filters: {},
-    sort: { key: 'name', direction: 'asc' },
-  });
+  const subjects = useSubjectsDropdown(5);
+  const programs = useProgramsDropdown(5);
 
   const form = useForm<ClassFormValues>({
     resolver: zodResolver(ClassFormSchema),
     defaultValues: {
       subjectId: '',
-      program: '',
+      programId: '',
       code: '',
       year: new Date().getFullYear(),
       startAt: '',
@@ -119,7 +112,7 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
     if (classData && id) {
       form.reset({
         subjectId: classData.subjectId || '',
-        program: classData.program || '',
+        programId: classData.program?.id || '',
         code: classData.code || '',
         year: classData.year || new Date().getFullYear(),
         startAt: formatDateForInput(classData.startAt),
@@ -154,7 +147,7 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
       </div>
 
       {/* Content */}
-      <div className='flex-1 overflow-y-auto p-4 min-h-0'>
+      <div className='flex-1 p-4 min-h-0'>
         <div className='max-w-5xl mx-auto pb-4'>
           <Form {...form}>
             {isFormLoading ? (
@@ -181,37 +174,20 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Subject</FormLabel>
-                          <Select
+                          <LoadMoreSelect
+                            value={field.value || ''}
                             onValueChange={field.onChange}
-                            value={field.value}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder='Select subject' />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {isLoadingSubjects ? (
-                                <div className='flex items-center justify-center p-2'>
-                                  <Loader2 className='h-4 w-4 animate-spin' />
-                                </div>
-                              ) : subjects?.data && subjects.data.length > 0 ? (
-                                subjects.data.map((subject) => (
-                                  <SelectItem
-                                    key={subject.id}
-                                    value={subject.id}
-                                  >
-                                    {subject.name}
-                                  </SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem value='' disabled>
-                                  No subjects available
-                                </SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
+                            placeholder='Select subject'
+                            items={subjects.selectItems}
+                            isLoading={subjects.isLoading}
+                            isLoadingMore={subjects.isLoadingMore}
+                            hasMore={subjects.hasMore}
+                            onLoadMore={subjects.loadMore}
+                            disabled={subjects.isLoading}
+                            emptyMessage='No subjects found.'
+                            searchPlaceholder='Search subject...'
+                            onSearch={subjects.setSubjectSearch}
+                          />
                           <FormMessage />
                         </FormItem>
                       )}
@@ -219,42 +195,24 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
 
                     <FormField
                       control={form.control}
-                      name='program'
+                      name='programId'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Program</FormLabel>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value || undefined}
-                            >
-                              <FormControl>
-                                <SelectTrigger className=''>
-                                  <SelectValue placeholder='Select program' />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {isLoadingPrograms ? (
-                                  <div className='flex items-center justify-center p-2'>
-                                    <Loader2 className='h-4 w-4 animate-spin' />
-                                  </div>
-                                ) : programsData?.data ? (
-                                  programsData.data.map((program) => (
-                                    <SelectItem
-                                      key={program.id}
-                                      value={program.name}
-                                    >
-                                      {program.name}
-                                    </SelectItem>
-                                  ))
-                                ) : (
-                                  <SelectItem value='' disabled>
-                                    Failed to load programs
-                                  </SelectItem>
-                                )}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
+                          <LoadMoreSelect
+                            value={field.value || ''}
+                            onValueChange={field.onChange}
+                            placeholder='Select program'
+                            items={programs.selectItems}
+                            isLoading={programs.isLoading}
+                            isLoadingMore={programs.isLoadingMore}
+                            hasMore={programs.hasMore}
+                            onLoadMore={programs.loadMore}
+                            disabled={programs.isLoading}
+                            emptyMessage='No programs found.'
+                            searchPlaceholder='Search programs...'
+                            onSearch={programs.setProgramSearch}
+                          />
                           <FormMessage />
                         </FormItem>
                       )}

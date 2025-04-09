@@ -71,7 +71,7 @@ export function LoadMoreSelect({
   }, [localSearch, onSearch]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={true}>
       <PopoverTrigger asChild>
         <FormControl>
           <Button
@@ -106,7 +106,7 @@ export function LoadMoreSelect({
                 </p>
               </div>
             ) : (
-              <ScrollArea className='max-h-60'>
+              <ScrollArea className='h-48'>
                 <CommandEmpty>{emptyMessage}</CommandEmpty>
                 <CommandGroup>
                   {items.map((item) => (

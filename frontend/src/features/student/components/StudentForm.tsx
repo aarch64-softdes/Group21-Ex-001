@@ -401,7 +401,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       </div>
 
       {/* Content */}
-      <ScrollArea className='flex-1/2  p-4 min-h-0'>
+      <div className='flex-1/2  p-4 min-h-0'>
         <div className='max-w-5xl mx-auto pb-4'>
           <Form {...form}>
             {isFormLoading ? (
@@ -891,7 +891,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
             )}
           </Form>
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };
