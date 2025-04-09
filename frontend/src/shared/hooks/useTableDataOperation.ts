@@ -15,7 +15,7 @@ export const useTableAdd = <T extends { id: string }>(
       setIsAdding(true);
       setDialogOpen(false);
       await actions?.onAdd?.(value);
-      showSuccessToast('Successfully added!');
+      // showSuccessToast('Successfully added!');
     } catch (error) {
       console.error(error);
       showErrorToast('Failed to add: ' + getErrorMessage(error));
