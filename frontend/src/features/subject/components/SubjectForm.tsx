@@ -31,7 +31,6 @@ import { FormComponentProps } from '@/core/types/table';
 import { Loader2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import LoadingButton from '@ui/loadingButton';
-import { useEntityFaculties } from '@metadata/api/useMetadata';
 import { Badge } from '@/components/ui/badge';
 import {
   Popover,
@@ -47,6 +46,7 @@ import {
 } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
+import { useFaculties } from '@/features/faculty/api/useFacultyApi';
 
 // Define schema
 export const SubjectFormSchema = z.object({
@@ -83,7 +83,13 @@ const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
   const { data: subjectData, isLoading: isLoadingSubject } = useSubject(
     id || '',
   );
-  const facultiesQuery = useEntityFaculties();
+  const { data: facultiesData, isLoading: isLoadingFaculties } = useFaculties({
+    page: 1,
+    pageSize: 100,
+    filters: {},
+    sort: { key: 'name', direction: 'asc' },
+  });
+
   const subjectsQuery = useSubjectsForPrerequisites(id);
 
   // Store all subjects for displaying names in the UI
@@ -258,14 +264,17 @@ const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {facultiesQuery.isLoading ? (
+                              {isLoadingFaculties ? (
                                 <div className='flex items-center justify-center p-2'>
                                   <Loader2 className='h-4 w-4 animate-spin' />
                                 </div>
-                              ) : facultiesQuery.data ? (
-                                facultiesQuery.data.map((faculty) => (
-                                  <SelectItem key={faculty} value={faculty}>
-                                    {faculty.replace(/_/g, ' ')}
+                              ) : facultiesData?.data ? (
+                                facultiesData.data.map((faculty) => (
+                                  <SelectItem
+                                    key={faculty.id}
+                                    value={faculty.name}
+                                  >
+                                    {faculty.name}
                                   </SelectItem>
                                 ))
                               ) : (

@@ -61,13 +61,6 @@ export const useClass = (id: string) => {
   });
 };
 
-export const useSubjectsForDropdown = () => {
-  return useQuery({
-    queryKey: ['subjects-dropdown'],
-    queryFn: () => classService.getSubjects(),
-  });
-};
-
 export const useCreateClass = () => {
   const queryClient = useQueryClient();
 

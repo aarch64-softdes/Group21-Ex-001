@@ -10,7 +10,7 @@ const mockClasses: Class[] = [
   {
     id: '1',
     subjectId: '1', // Introduction to Computer Science
-    programId: '1', // Computer Science
+    program: '1', // Computer Science
     code: 'CS101-01',
     year: 2025,
     startAt: new Date('2025-01-15'),
@@ -22,7 +22,7 @@ const mockClasses: Class[] = [
   {
     id: '2',
     subjectId: '1', // Introduction to Computer Science
-    programId: '2', // Information Technology
+    program: '2', // Information Technology
     code: 'CS101-02',
     year: 2025,
     startAt: new Date('2025-01-15'),
@@ -34,7 +34,7 @@ const mockClasses: Class[] = [
   {
     id: '3',
     subjectId: '2', // Advanced Mathematics
-    programId: '4', // Mathematics
+    program: '4', // Mathematics
     code: 'MATH301-01',
     year: 2025,
     startAt: new Date('2025-01-16'),
@@ -46,7 +46,7 @@ const mockClasses: Class[] = [
   {
     id: '4',
     subjectId: '3', // Data Structures and Algorithms
-    programId: '3', // Software Engineering
+    program: '3', // Software Engineering
     code: 'CS201-01',
     year: 2025,
     startAt: new Date('2025-01-17'),
@@ -58,7 +58,7 @@ const mockClasses: Class[] = [
   {
     id: '5',
     subjectId: '4', // Introduction to Physics
-    programId: '6', // Engineering
+    program: '6', // Engineering
     code: 'PHYS101-01',
     year: 2025,
     startAt: new Date('2025-01-18'),
@@ -153,7 +153,7 @@ export default class ClassService {
     if (program) {
       filteredData = filteredData.filter((cls) => {
         const programName =
-          programNameMap[cls.programId as keyof typeof programNameMap];
+          programNameMap[cls.program as keyof typeof programNameMap];
         return programName?.toLowerCase().includes(program.toLowerCase());
       });
     }
@@ -186,7 +186,7 @@ export default class ClassService {
     const enhancedData = filteredData.map((cls) => ({
       ...cls,
       subjectName: subjectNameMap[cls.subjectId as keyof typeof subjectNameMap],
-      programName: programNameMap[cls.programId as keyof typeof programNameMap],
+      programName: programNameMap[cls.program as keyof typeof programNameMap],
     }));
 
     // Paginate data
@@ -219,7 +219,7 @@ export default class ClassService {
       subjectName:
         subjectNameMap[classItem.subjectId as keyof typeof subjectNameMap],
       programName:
-        programNameMap[classItem.programId as keyof typeof programNameMap],
+        programNameMap[classItem.program as keyof typeof programNameMap],
     };
   };
 
@@ -229,17 +229,6 @@ export default class ClassService {
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     return Object.entries(subjectNameMap).map(([id, name]) => ({
-      id,
-      name,
-    }));
-  };
-
-  // Get all programs for dropdown
-  getPrograms = async (): Promise<Array<{ id: string; name: string }>> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    return Object.entries(programNameMap).map(([id, name]) => ({
       id,
       name,
     }));

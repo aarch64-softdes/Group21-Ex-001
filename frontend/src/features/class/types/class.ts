@@ -3,7 +3,7 @@ import Subject from '@/features/subject/types/subject';
 export default interface Class {
   id: string;
   subjectId: string;
-  programId: string;
+  program: string;
   code: string;
   year: number;
   startAt: Date;
@@ -16,7 +16,7 @@ export default interface Class {
 
 export interface CreateClassDto {
   subjectId: string;
-  programId: string;
+  program: string;
   code: string;
   year: number;
   startAt: Date;
@@ -28,7 +28,7 @@ export interface CreateClassDto {
 
 export interface UpdateClassDto {
   subjectId?: string;
-  programId?: string;
+  program?: string;
   code?: string;
   year?: number;
   startAt?: Date;
@@ -41,7 +41,7 @@ export interface UpdateClassDto {
 export const mapToClass = (data: any): Class => ({
   id: data.id,
   subjectId: data.subjectId,
-  programId: data.programId,
+  program: data.program,
   code: data.code,
   year: data.year,
   startAt: new Date(data.startAt),

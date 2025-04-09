@@ -13,6 +13,8 @@ import { Column } from '@/core/types/table';
 import React from 'react';
 import { SearchFilterOption } from '@/core/types/filter';
 import { BookOpen, Users } from 'lucide-react';
+import ClassForm from './components/ClassForm';
+import ClassDetail from './components/ClassDetail';
 
 interface ExtendedClass extends Class {
   subjectName?: string;
@@ -127,8 +129,8 @@ const ClassPage: React.FC = () => {
         queryHook={useClasses}
         columns={columns}
         actions={actions}
-        formComponent={<></>}
-        detailComponent={<></>}
+        formComponent={ClassForm}
+        detailComponent={ClassDetail}
         disabledActions={{
           edit: false,
           delete: false,
