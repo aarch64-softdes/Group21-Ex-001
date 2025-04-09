@@ -27,6 +27,7 @@
     "faculty": "@/features/faculty",
     "status": "@/features/status",
     "subject": "@/features/subject",
+    "class": "@/features/class",
     "settings": "@/features/settings",
     "metadata": "@/features/metadata"
   },
