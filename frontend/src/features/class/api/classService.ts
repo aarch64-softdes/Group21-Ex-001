@@ -1,5 +1,6 @@
 import { ApiResponse } from '@/core/types/apiResponse';
 import Class, { CreateClassDto, UpdateClassDto } from '../types/class';
+import Program from '@/features/program/types/program';
 
 // Mock data for testing and development
 const mockClasses: Class[] = [
@@ -22,10 +23,7 @@ const mockClasses: Class[] = [
       faculty: 'Computer Science',
       prerequisites: [],
     },
-    program: {
-      id: '1',
-      name: 'Computer Science',
-    },
+    program: 'Computer Science',
   },
   {
     id: '2',
@@ -46,10 +44,7 @@ const mockClasses: Class[] = [
       faculty: 'Computer Science',
       prerequisites: [],
     },
-    program: {
-      id: '2',
-      name: 'Information Technology',
-    },
+    program: 'Computer Science',
   },
   {
     id: '3',
@@ -71,10 +66,7 @@ const mockClasses: Class[] = [
       faculty: 'Mathematics',
       prerequisites: [],
     },
-    program: {
-      id: '4',
-      name: 'Mathematics',
-    },
+    program: 'Mathematics',
   },
   {
     id: '4',
@@ -95,10 +87,7 @@ const mockClasses: Class[] = [
       faculty: 'Computer Science',
       prerequisites: ['1'],
     },
-    program: {
-      id: '3',
-      name: 'Software Engineering',
-    },
+    program: 'Computer Science',
   },
   {
     id: '5',
@@ -119,10 +108,7 @@ const mockClasses: Class[] = [
       faculty: 'Physics',
       prerequisites: [],
     },
-    program: {
-      id: '6',
-      name: 'Engineering',
-    },
+    program: 'Engineering',
   },
 ];
 
@@ -210,9 +196,15 @@ export default class ClassService {
 
       // Filter by program name
       if (program) {
-        filteredData = filteredData.filter((cls) =>
-          cls.program?.name.toLowerCase().includes(program.toLowerCase()),
-        );
+        filteredData = filteredData.filter((cls) => {
+          if (cls.program && typeof cls.program === 'string') {
+            return cls.program.toLowerCase().includes(program.toLowerCase());
+          }
+
+          return (cls.program as Program)?.name
+            .toLowerCase()
+            .includes(program.toLowerCase());
+        });
       }
 
       // Paginate data

@@ -61,7 +61,7 @@ export const useSubjectsDropdown = (initialPageSize?: number) => {
     mapFn: (subject: Subject) => ({
       id: subject.id,
       label: subject.name,
-      value: subject.name,
+      value: subject.id,
     }),
     searchQuery: subjectSearch,
     initialPageSize,

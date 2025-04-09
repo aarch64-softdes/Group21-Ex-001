@@ -12,7 +12,7 @@ export default interface Class {
   schedule: string;
   room: string;
   subject?: Subject;
-  program?: Program;
+  program?: Program | string;
 }
 
 export interface CreateClassDto {

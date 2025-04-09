@@ -14,13 +14,6 @@ import {
 } from '@ui/form';
 import { Input } from '@ui/input';
 import { Separator } from '@ui/separator';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@ui/select';
 import { useClass } from '@/features/class/api/useClassApi';
 import { useProgramsDropdown } from '@/features/program/api/useProgramApi';
 import Class, { CreateClassDto } from '@/features/class/types/class';
@@ -28,10 +21,7 @@ import { FormComponentProps } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 import LoadingButton from '@ui/loadingButton';
-import {
-  useSubjects,
-  useSubjectsDropdown,
-} from '@/features/subject/api/useSubjectApi';
+import { useSubjectsDropdown } from '@/features/subject/api/useSubjectApi';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 
 // Schedule validation pattern - ex: T2(3-6)
@@ -40,7 +30,7 @@ const schedulePattern = /^T[2-7]\([1-9]-([1-9]|1[0-2])\)$/;
 // Define schema
 export const ClassFormSchema = z.object({
   subjectId: z.string().min(1, 'Subject is required'),
-  programId: z.string().min(1, 'Program is required'),
+  program: z.string().min(1, 'Program is required'),
   code: z
     .string()
     .min(1, 'Code is required')
@@ -90,7 +80,7 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
     resolver: zodResolver(ClassFormSchema),
     defaultValues: {
       subjectId: '',
-      programId: '',
+      program: '',
       code: '',
       year: new Date().getFullYear(),
       startAt: '',
@@ -112,7 +102,7 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
     if (classData && id) {
       form.reset({
         subjectId: classData.subjectId || '',
-        programId: classData.program?.id || '',
+        program: classData.program || '',
         code: classData.code || '',
         year: classData.year || new Date().getFullYear(),
         startAt: formatDateForInput(classData.startAt),
@@ -195,7 +185,7 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
 
                     <FormField
                       control={form.control}
-                      name='programId'
+                      name='program'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Program</FormLabel>
