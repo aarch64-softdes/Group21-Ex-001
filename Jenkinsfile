@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        SONAR_TOKEN = credentials('sonarcloud-token')
+        SONAR_TOKEN = credentials('sonar_token')
     }
     
     stages {
@@ -54,7 +54,9 @@ pipeline {
             }
             post {
                 success {
-                    archiveArtifacts artifacts: 'backend/target/*.jar', fingerprint: true
+                    dir('backend') {
+                        archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                    }
                 }
             }
         }
@@ -63,10 +65,11 @@ pipeline {
             steps {
                 dir('backend') {
                     sh '''
-                    mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-                        -Dsonar.projectKey=aarch64-softdes_Group21-Ex-001
-                        -Dsonar.organization=aarch64-softdes
-                        -Dsonar.host.url=https://sonarcloud.io
+                        SONAR_TOKEN=${SONAR_TOKEN} \
+                        mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                            -Dsonar.projectKey=aarch64-sms \
+                            -Dsonar.organization=aarch64 \
+                            -Dsonar.host.url=https://sonarcloud.io \
                     '''
                 }
             }
