@@ -12,6 +12,7 @@ import org.mapstruct.MappingTarget;
 public interface SubjectMapperImpl extends SubjectMapper {
 
     @Override
+    @Mapping(target = "faculty", ignore = true)
     Subject toSubject(SubjectRequestDto subjectRequestDto);
 
     @Override

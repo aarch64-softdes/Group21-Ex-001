@@ -2,6 +2,8 @@ package com.tkpm.sms.infrastructure.persistence.entity;
 
 import com.tkpm.sms.domain.model.Faculty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,9 +21,15 @@ public class SubjectEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
+    @NotNull
     String name;
+
+    @NotNull
     String code;
     String description;
+
+    @NotNull
+    @Min(2)
     Integer credits;
 
     // many-to-one relationship with faculty

@@ -2,6 +2,7 @@ package com.tkpm.sms.application.dto.request.subject;
 
 import com.tkpm.sms.application.annotation.RequiredConstraint;
 import com.tkpm.sms.domain.model.Faculty;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,18 +14,18 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SubjectRequestDto {
-    @RequiredConstraint(field = "Subject's name")
+    @RequiredConstraint(field = "name")
     String name;
 
-    @RequiredConstraint(field = "Subject's code")
+    @RequiredConstraint(field = "code")
     String code;
 
     String description;
 
-    @RequiredConstraint(field = "Subject's credits")
+    @RequiredConstraint(field = "credits")
     Integer credits;
 
     Integer facultyId;
 
-    List<String> prerequisites;
+    List<Integer> prerequisitesId;
 }

@@ -3,6 +3,7 @@ package com.tkpm.sms.application.service.implementation;
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.subject.SubjectRequestDto;
 import com.tkpm.sms.application.mapper.SubjectMapper;
+import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.application.service.interfaces.SubjectService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
@@ -16,6 +17,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,8 @@ public class SubjectServiceImpl implements SubjectService {
     SubjectRepository subjectRepository;
     SubjectDomainValidator subjectValidator;
     SubjectMapper subjectMapper;
+
+    FacultyService facultyService;
 
     @Override
     public PageResponse<Subject> findAll(BaseCollectionRequest request) {
@@ -50,6 +55,7 @@ public class SubjectServiceImpl implements SubjectService {
     public Subject createSubject(SubjectRequestDto subjectRequestDto) {
         subjectValidator.validateSubjectCodeUniqueness(subjectRequestDto.getCode());
         Subject subject = subjectMapper.toSubject(subjectRequestDto);
+        subject.setFaculty(facultyService.getFacultyById(subjectRequestDto.getFacultyId()));
 
         return subjectRepository.save(subject);
     }
