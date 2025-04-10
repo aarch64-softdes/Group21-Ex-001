@@ -54,6 +54,8 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public Subject createSubject(SubjectRequestDto subjectRequestDto) {
         subjectValidator.validateSubjectCodeUniqueness(subjectRequestDto.getCode());
+        subjectValidator.validateSubjectNameUniqueness(subjectRequestDto.getName());
+
         Subject subject = subjectMapper.toSubject(subjectRequestDto);
         subject.setFaculty(facultyService.getFacultyById(subjectRequestDto.getFacultyId()));
 
@@ -62,13 +64,13 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject updateSubject(Integer id, SubjectRequestDto subjectRequestDto) {
+        subjectValidator.validateSubjectNameUniquenessForUpdate(subjectRequestDto.getName(), id);
+        subjectValidator.validateSubjectCodeUniquenessForUpdate(subjectRequestDto.getCode(), id);
+
         Subject subject = subjectRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
 
-        if(!subject.getCode().equals(subjectRequestDto.getCode())) {
-            subjectValidator.validateSubjectCodeUniqueness(subjectRequestDto.getCode());
-        }
 
         subjectMapper.updateSubjectFromDto(subjectRequestDto, subject);
 

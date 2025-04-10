@@ -19,4 +19,10 @@ public interface SubjectRepository {
     Subject save(Subject subject);
 
     void delete(Subject subject);
+
+    boolean existsByName(String name);
+
+    boolean existsByNameAndIdNot(String name, Integer id);
+
+    boolean existsByCodeAndIdNot(String code, Integer id);
 }

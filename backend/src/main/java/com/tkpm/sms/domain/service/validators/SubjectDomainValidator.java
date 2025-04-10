@@ -22,13 +22,27 @@ public class SubjectDomainValidator {
     }
 
     public void validateSubjectCodeUniquenessForUpdate(String code, Integer id) {
-        Optional<Subject> existingSubject = subjectRepository.findById(id);
-        if(existingSubject.isPresent() && !existingSubject.get().getCode().equals(code) ) {
+        if(subjectRepository.existsByCodeAndIdNot(code, id)) {
             throw new DuplicateResourceException(
                     String.format("Subject with code %s already exists", code)
             );
         }
     }
 
+    public void validateSubjectNameUniqueness(String name) {
+        if (subjectRepository.existsByName(name)) {
+            throw new DuplicateResourceException(
+                    String.format("Subject with name %s already exists", name)
+            );
+        }
+    }
+
+    public void validateSubjectNameUniquenessForUpdate(String name, Integer id) {
+        if(subjectRepository.existsByNameAndIdNot(name, id)) {
+            throw new DuplicateResourceException(
+                    String.format("Subject with name %s already exists", name)
+            );
+        }
+    }
 
 }

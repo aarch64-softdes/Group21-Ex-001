@@ -11,6 +11,7 @@ import com.tkpm.sms.application.mapper.SubjectMapper;
 import com.tkpm.sms.application.service.interfaces.SubjectService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Subject;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -81,7 +82,7 @@ public class SubjectController {
 
     @PostMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<SubjectDto>> createSubject(
-            @RequestBody SubjectRequestDto subjectRequestDto,
+            @Valid @RequestBody SubjectRequestDto subjectRequestDto,
             UriComponentsBuilder uriComponentsBuilder
     ) {
         Subject createdSubject = subjectService.createSubject(subjectRequestDto);
@@ -93,7 +94,7 @@ public class SubjectController {
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<SubjectDto>> updateSubject(
             @PathVariable Integer id,
-            @RequestBody SubjectRequestDto subjectRequestDto
+            @Valid @RequestBody SubjectRequestDto subjectRequestDto
     ) {
         Subject updatedSubject = subjectService.updateSubject(id, subjectRequestDto);
         SubjectDto updatedSubjectDto = subjectMapper.toSubjectDto(updatedSubject);

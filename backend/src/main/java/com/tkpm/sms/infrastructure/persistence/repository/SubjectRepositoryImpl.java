@@ -83,4 +83,19 @@ public class SubjectRepositoryImpl implements SubjectRepository {
 
         jpaRepository.delete(subjectEntity);
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        return jpaRepository.existsByName(name);
+    }
+
+    @Override
+    public boolean existsByNameAndIdNot(String name, Integer id) {
+        return jpaRepository.existsByNameAndIdNot(name, id);
+    }
+
+    @Override
+    public boolean existsByCodeAndIdNot(String code, Integer id) {
+        return jpaRepository.existsByCodeAndIdNot(code, id);
+    }
 }
