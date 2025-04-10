@@ -17,7 +17,7 @@ spring:
         format_sql: true
 
 elasticsearch:
-  enabled: false # Disable Elasticsearch for tests
+  enabled: false
 
 logging:
   level:
