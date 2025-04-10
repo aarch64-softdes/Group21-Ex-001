@@ -21,9 +21,6 @@ import java.util.List;
 @Configuration
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ElasticsearchConfig {
-    @Value("${elasticsearch.enabled:true}")
-    boolean enabled;
-
     @Value("${elasticsearch.host:localhost}")
     String host;
 
@@ -35,9 +32,6 @@ public class ElasticsearchConfig {
 
     @Bean
     public RestClient restClient() {
-        if (!enabled) {
-            return null;
-        }
         RestClientBuilder builder = RestClient.builder(
                 new HttpHost(host, port, "http"));
 

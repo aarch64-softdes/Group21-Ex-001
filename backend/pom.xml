@@ -165,6 +165,20 @@
                 </configuration>
             </plugin>
 
+            <!-- Google Java Format-->
+<!--            <plugin>-->
+<!--                <groupId>com.spotify.fmt</groupId>-->
+<!--                <artifactId>fmt-maven-plugin</artifactId>-->
+<!--                <version>2.21</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>check</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

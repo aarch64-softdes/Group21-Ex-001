@@ -5,6 +5,10 @@ pipeline {
         jdk 'JDK 21'
         maven 'Maven 3.9.6'
     }
+
+    environment {
+        SONAR_TOKEN = credentials('sonarcloud-token')
+    }
     
     stages {
         stage('Checkout') {
@@ -58,10 +62,15 @@ pipeline {
         stage('Code Quality') {
             steps {
                 dir('backend') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=student-management-system -Dsonar.projectName="Student Management System"'
+                    sh '''
+                    mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+                        -Dsonar.projectKey=aarch64-softdes_Group21-Ex-001
+                        -Dsonar.organization=aarch64-softdes
+                        -Dsonar.host.url=https://sonarcloud.io
+                    '''
                 }
             }
-        }
+        
     }
     
     post {
