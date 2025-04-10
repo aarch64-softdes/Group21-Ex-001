@@ -1,5 +1,6 @@
 package com.tkpm.sms.application.dto.request.status;
 
+import com.tkpm.sms.application.annotation.RequiredConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,10 +11,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatusVerificationDto {
-    @NotEmpty(message = "NOT_NULL;fromId is required")
+    @RequiredConstraint(field = "fromId")
     Integer fromId;
 
-    @NotEmpty(message = "NOT_NULL;toId is required")
+    @RequiredConstraint(field = "toId")
     Integer toId;
 }
 

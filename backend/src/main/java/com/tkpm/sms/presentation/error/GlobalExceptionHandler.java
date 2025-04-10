@@ -74,12 +74,18 @@ public class GlobalExceptionHandler {
 
         String enumKey = fieldError.getDefaultMessage();
         ErrorResponseInfo errorInfo = processValidationError(exception, enumKey);
+        HttpStatus status = errorCodeStatusMapper.getStatus(errorInfo.errorCode);
+
+        var response = ApplicationResponseDto.failure(
+                new GenericDomainException(
+                        errorInfo.formattedMessage,
+                        errorInfo.errorCode),
+                status.value()
+        );
 
         return ResponseEntity
                 .badRequest()
-                .body(ApplicationResponseDto.failure(new GenericDomainException(
-                            errorInfo.formattedMessage,
-                            errorInfo.errorCode)));
+                .body(response);
     }
 
     private static class ErrorResponseInfo {
