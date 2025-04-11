@@ -28,7 +28,7 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     public PageResponse<Status> getAllStatuses(BaseCollectionRequest search) {
-        PageRequest pageRequest = PageRequest.from();
+        PageRequest pageRequest = PageRequest.from(search);
 
         return statusRepository.findAll(pageRequest);
     }
