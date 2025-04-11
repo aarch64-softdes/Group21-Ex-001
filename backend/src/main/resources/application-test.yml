@@ -1,0 +1,27 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+elasticsearch:
+  enabled: false
+
+logging:
+  level:
+    root: INFO
+    com.tkpm.sms: DEBUG
+  controller:
+    logger-type: CONSOLE # Use console logging for tests
