@@ -34,10 +34,6 @@ public class CourseController {
     public ResponseEntity<ApplicationResponseDto<ListResponse<CourseMinimalDto>>> getCourses(
             @ModelAttribute BaseCollectionRequest request
     ) {
-        if (request.getSortBy().equals("name")) {
-            request.setSortBy("id");
-        }
-
         var pageResponse = courseService.findAll(request);
 
         var pageDto = PageDto.builder()
