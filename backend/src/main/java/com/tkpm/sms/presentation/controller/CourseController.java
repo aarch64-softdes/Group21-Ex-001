@@ -4,12 +4,13 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.course.CourseCreateRequestDto;
 import com.tkpm.sms.application.dto.request.course.CourseUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.application.dto.response.common.ListResponse;
-import com.tkpm.sms.application.dto.response.common.PageDto;
 import com.tkpm.sms.application.dto.response.course.CourseDto;
 import com.tkpm.sms.application.dto.response.course.CourseMinimalDto;
 import com.tkpm.sms.application.mapper.CourseMapper;
 import com.tkpm.sms.application.service.interfaces.CourseService;
+import com.tkpm.sms.domain.common.PageResponse;
+import com.tkpm.sms.domain.model.Course;
+import com.tkpm.sms.domain.utils.ListUtils;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -31,28 +34,12 @@ public class CourseController {
     CourseMapper courseMapper;
 
     @GetMapping({"/", ""})
-    public ResponseEntity<ApplicationResponseDto<ListResponse<CourseMinimalDto>>> getCourses(
-            @ModelAttribute BaseCollectionRequest request
+    public ResponseEntity<ApplicationResponseDto<PageResponse<CourseMinimalDto>>> getCourses(
+            @ModelAttribute BaseCollectionRequest search
     ) {
-        var pageResponse = courseService.findAll(request);
-
-        var pageDto = PageDto.builder()
-                .pageNumber(pageResponse.getPageNumber())
-                .pageSize(pageResponse.getPageSize())
-                .totalElements(pageResponse.getTotalElements())
-                .totalPages(pageResponse.getTotalPages())
-                .build();
-
-        var courseMinimalDtos = pageResponse.getContent()
-                .stream()
-                .map(courseMapper::toMinimalDto)
-                .toList();
-
-        var listResponse = ListResponse.<CourseMinimalDto>builder()
-                .data(courseMinimalDtos)
-                .page(pageDto)
-                .build();
-
+        PageResponse<Course> pageResponse = courseService.findAll(search);
+        List<CourseMinimalDto> studentDtos = ListUtils.transform(pageResponse.getData(), courseMapper::toMinimalDto);
+        PageResponse<CourseMinimalDto> listResponse = PageResponse.of(pageResponse, studentDtos);
         return ResponseEntity.ok(
                 ApplicationResponseDto.success(listResponse)
         );
