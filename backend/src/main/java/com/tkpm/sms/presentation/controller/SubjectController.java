@@ -5,12 +5,11 @@ import com.tkpm.sms.application.dto.request.subject.SubjectRequestDto;
 import com.tkpm.sms.application.dto.response.subject.PrerequisiteSubjectDto;
 import com.tkpm.sms.application.dto.response.subject.SubjectDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.application.dto.response.common.ListResponse;
-import com.tkpm.sms.application.dto.response.common.PageDto;
 import com.tkpm.sms.application.mapper.SubjectMapper;
 import com.tkpm.sms.application.service.interfaces.SubjectService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Subject;
+import com.tkpm.sms.domain.utils.ListUtils;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,30 +31,12 @@ public class SubjectController {
     SubjectMapper subjectMapper;
 
     @GetMapping({"/", ""})
-    public ResponseEntity<ApplicationResponseDto<ListResponse<SubjectDto>>> getSubjects(
+    public ResponseEntity<ApplicationResponseDto<PageResponse<SubjectDto>>> getSubjects(
          @ModelAttribute BaseCollectionRequest request
     ) {
         PageResponse<Subject> pageResponse = subjectService.findAll(request);
-
-        // Map domain entities to DTOs
-        List<SubjectDto> subjectDtoList = pageResponse.getContent().stream()
-             .map(subjectMapper::toSubjectDto)
-             .toList();
-
-        // Create page info
-        var pageDto = PageDto.builder()
-             .totalElements(pageResponse.getTotalElements())
-             .pageSize(pageResponse.getPageSize())
-             .pageNumber(pageResponse.getPageNumber())
-             .totalPages(pageResponse.getTotalPages())
-             .build();
-
-        // Create response
-        var listResponse = ListResponse.<SubjectDto>builder()
-             .page(pageDto)
-             .data(subjectDtoList)
-             .build();
-
+        List<SubjectDto> subjectDtoList = ListUtils.transform(pageResponse.getData(), subjectMapper::toSubjectDto);
+        PageResponse<SubjectDto> listResponse = PageResponse.of(pageResponse, subjectDtoList);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 

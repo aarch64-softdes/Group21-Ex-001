@@ -45,4 +45,8 @@ public class SubjectEntity {
     )
     @Column(name = "prerequisite_id")
     List<Integer> prerequisitesId;
+
+    // one-to-many relationship with courses
+    @OneToMany(mappedBy = "subject", fetch = FetchType.EAGER)
+    List<CourseEntity> courses;
 }
