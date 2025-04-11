@@ -4,12 +4,11 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.faculty.FacultyRequestDto;
 import com.tkpm.sms.application.dto.response.FacultyDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.application.dto.response.common.ListResponse;
-import com.tkpm.sms.application.dto.response.common.PageDto;
 import com.tkpm.sms.application.mapper.FacultyMapper;
 import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Faculty;
+import com.tkpm.sms.domain.utils.ListUtils;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -32,30 +30,12 @@ public class FacultyController {
     FacultyMapper facultyMapper;
 
     @GetMapping({"", "/"})
-    public ResponseEntity<ApplicationResponseDto<ListResponse<FacultyDto>>> getAllFaculties(
+    public ResponseEntity<ApplicationResponseDto<PageResponse<FacultyDto>>> getAllFaculties(
             @ModelAttribute BaseCollectionRequest search
     ) {
         PageResponse<Faculty> pageResponse = facultyService.getAllFaculties(search);
-
-        // Map domain entities to DTOs
-        List<FacultyDto> facultyDtos = pageResponse.getContent().stream()
-                .map(facultyMapper::toDto)
-                .collect(Collectors.toList());
-
-        // Create page info
-        var pageDto = PageDto.builder()
-                .totalElements(pageResponse.getTotalElements())
-                .pageSize(pageResponse.getPageSize())
-                .pageNumber(pageResponse.getPageNumber())
-                .totalPages(pageResponse.getTotalPages())
-                .build();
-
-        // Create response
-        var listResponse = ListResponse.<FacultyDto>builder()
-                .page(pageDto)
-                .data(facultyDtos)
-                .build();
-
+        List<FacultyDto> facultyDtos = ListUtils.transform(pageResponse.getData(), facultyMapper::toDto);
+        PageResponse<FacultyDto> listResponse = PageResponse.of(pageResponse, facultyDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
