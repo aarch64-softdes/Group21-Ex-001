@@ -14,8 +14,8 @@ import {
 } from '@ui/form';
 import { Input } from '@ui/input';
 import { Separator } from '@ui/separator';
-import { useFaculty } from '@/features/faculty/api/useFacultyApi';
-import Faculty, { CreateFacultyDTO } from '@/features/faculty/types/faculty';
+import { useFaculty } from '@faculty/api/useFacultyApi';
+import Faculty, { CreateFacultyDTO } from '@faculty/types/faculty';
 import { FormComponentProps } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
@@ -40,7 +40,7 @@ const FacultyForm: React.FC<FormComponentProps<Faculty>> = ({
   isEditing = false,
 }) => {
   const { data: facultyData, isLoading: isLoadingFaculty } = useFaculty(
-    id ? parseInt(id, 10) : 0,
+    id || '',
   );
 
   const form = useForm<FacultyFormValues>({

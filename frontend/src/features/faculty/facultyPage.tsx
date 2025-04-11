@@ -40,7 +40,7 @@ const FacultyPage: React.FC = () => {
     () => ({
       onSave: async (id: string, value: UpdateFacultyDTO) => {
         await updateFaculty.mutateAsync({
-          id: parseInt(id, 10),
+          id: id,
           data: value,
         });
       },
@@ -48,7 +48,7 @@ const FacultyPage: React.FC = () => {
         await createFaculty.mutateAsync(value);
       },
       onDelete: async (id: string) => {
-        await deleteFaculty.mutateAsync(parseInt(id, 10));
+        await deleteFaculty.mutateAsync(id);
       },
     }),
     [updateFaculty, createFaculty, deleteFaculty],
@@ -70,7 +70,6 @@ const FacultyPage: React.FC = () => {
         }}
         requireDeleteConfirmation={true}
         filterOptions={[]}
-        disablePagination={true}
       />
     </div>
   );

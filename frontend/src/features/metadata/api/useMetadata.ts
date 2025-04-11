@@ -1,13 +1,7 @@
-import FacultyService from '@faculty/api/facultyService';
 import MetadataService from '@metadata/api/metadataService';
-import ProgramService from '@program/api/programService';
-import StatusService from '@status/api/statusService';
 import { useQuery } from '@tanstack/react-query';
 
 const metadataService = new MetadataService();
-const facultyService = new FacultyService();
-const programService = new ProgramService();
-const statusService = new StatusService();
 
 export const useGenders = () => {
   return useQuery<String[], Error>({
@@ -17,35 +11,10 @@ export const useGenders = () => {
   });
 };
 
-export const useEntityFaculties = () => {
+export const useIdentityTypes = () => {
   return useQuery<String[], Error>({
-    queryKey: ['entity-faculties'],
-    queryFn: async () => {
-      const response = await facultyService.getFaculties({});
-      return response.data.map((faculty) => faculty.name);
-    },
-    staleTime: 1000 * 60 * 5,
-  });
-};
-
-export const useEntityPrograms = () => {
-  return useQuery<String[], Error>({
-    queryKey: ['entity-programs'],
-    queryFn: async () => {
-      const response = await programService.getPrograms({});
-      return response.data.map((program) => program.name);
-    },
-    staleTime: 1000 * 60 * 5,
-  });
-};
-
-export const useEntityStatuses = () => {
-  return useQuery<String[], Error>({
-    queryKey: ['entity-statuses'],
-    queryFn: async () => {
-      const response = await statusService.getStatuses({});
-      return response.data.map((status) => status.name);
-    },
-    staleTime: 1000 * 60 * 5,
+    queryKey: ['identity-types'],
+    queryFn: () => metadataService.getIdentityTypes(),
+    staleTime: 1000 * 60 * 60, // 1 hour
   });
 };

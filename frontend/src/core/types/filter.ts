@@ -1,13 +1,11 @@
-import { RowId } from './table';
-
 export interface CheckboxItem {
-  id: RowId;
+  id: string;
   label: string;
   icon: React.FC<React.SVGProps<SVGSVGElement>>;
 }
 
 export interface BaseFilterOption {
-  id: RowId;
+  id: string;
   label?: string;
   labelIcon?: React.FC<React.SVGProps<SVGSVGElement>>;
   type: 'enum' | 'range' | 'date' | 'search';

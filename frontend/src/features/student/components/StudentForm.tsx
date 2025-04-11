@@ -30,12 +30,7 @@ import { Separator } from '@ui/separator';
 
 import AddressForm from '@student/components/AddressForm';
 import PhoneField from '@student/components/PhoneField';
-import {
-  useEntityFaculties,
-  useEntityPrograms,
-  useEntityStatuses,
-  useGenders,
-} from '@metadata/api/useMetadata';
+import { useGenders } from '@metadata/api/useMetadata';
 import { useStudent } from '@student/api/useStudentApi';
 import Student, { CreateStudentDTO } from '@student/types/student';
 import { FormComponentProps } from '@/core/types/table';
@@ -44,6 +39,13 @@ import { useEffect, useState } from 'react';
 import LoadingButton from '@ui/loadingButton';
 import { cn } from '@/shared/lib/utils';
 import { removeDialCodeFromPhoneNumber } from '@/shared/data/countryData';
+import { useFacultiesDropdown } from '@/features/faculty/api/useFacultyApi';
+import { useProgramsDropdown } from '@/features/program/api/useProgramApi';
+import { useStatusesDropdown } from '@/features/status/api/useStatusApi';
+import LoadMoreSelect from '@/components/common/LoadMoreSelect';
+import Faculty from '@/features/faculty/types/faculty';
+import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export const StudentFormSchema = z.object({
   studentId: z.string().min(1, 'Student ID is required'),
@@ -192,10 +194,12 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
   isLoading = false,
   isEditing = false,
 }) => {
-  const facultiesQuery = useEntityFaculties();
-  const programsQuery = useEntityPrograms();
-  const statusesQuery = useEntityStatuses();
+  const faculties = useFacultiesDropdown(isEditing ? 100 : 5);
+  const programs = useProgramsDropdown(isEditing ? 100 : 5);
+  const statuses = useStatusesDropdown(isEditing ? 100 : 5);
+
   const gendersQuery = useGenders();
+
   const { data: studentData, isLoading: isLoadingStudent } = useStudent(
     id ?? '',
   );
@@ -397,7 +401,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       </div>
 
       {/* Content */}
-      <div className='flex-1/2 overflow-y-auto p-4 min-h-0'>
+      <div className='flex-1/2  p-4 min-h-0'>
         <div className='max-w-5xl mx-auto pb-4'>
           <Form {...form}>
             {isFormLoading ? (
@@ -745,10 +749,12 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                             <FormItem className='col-span-2'>
                               <FormLabel>Notes</FormLabel>
                               <FormControl>
-                                <textarea
-                                  placeholder='Additional information about the passport'
+                                <Textarea
+                                  placeholder='Any additional information'
                                   {...field}
-                                  className='flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                                  autoComplete='off'
+                                  rows={3}
+                                  className='resize-none'
                                 />
                               </FormControl>
                               <FormMessage />
@@ -767,37 +773,25 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Faculty</FormLabel>
-                          <Select
+                          <LoadMoreSelect
+                            value={field.value || ''}
                             onValueChange={field.onChange}
-                            value={field.value || undefined}
-                          >
-                            <FormControl>
-                              <SelectTrigger className='w-full'>
-                                <SelectValue placeholder='Select faculty' />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {facultiesQuery.isLoading ? (
-                                <div className='flex items-center justify-center p-2'>
-                                  <Loader2 className='h-4 w-4 animate-spin' />
-                                </div>
-                              ) : facultiesQuery.data ? (
-                                facultiesQuery.data.map((faculty) => (
-                                  <SelectItem key={faculty} value={faculty}>
-                                    {faculty.replace(/_/g, ' ')}
-                                  </SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem value='' disabled>
-                                  Failed to load faculties
-                                </SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
+                            placeholder='Select faculty'
+                            items={faculties.selectItems}
+                            isLoading={faculties.isLoading}
+                            isLoadingMore={faculties.isLoadingMore}
+                            hasMore={faculties.hasMore}
+                            onLoadMore={faculties.loadMore}
+                            disabled={faculties.isLoading}
+                            emptyMessage='No faculties found.'
+                            searchPlaceholder='Search faculties...'
+                            onSearch={faculties.setFacultySearch}
+                          />
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name='schoolYear'
@@ -832,35 +826,20 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Program</FormLabel>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value || undefined}
-                            >
-                              <FormControl>
-                                <SelectTrigger className='w-full'>
-                                  <SelectValue placeholder='Select program' />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {programsQuery.isLoading ? (
-                                  <div className='flex items-center justify-center p-2'>
-                                    <Loader2 className='h-4 w-4 animate-spin' />
-                                  </div>
-                                ) : programsQuery.data ? (
-                                  programsQuery.data.map((program) => (
-                                    <SelectItem key={program} value={program}>
-                                      {program.replace(/_/g, ' ')}
-                                    </SelectItem>
-                                  ))
-                                ) : (
-                                  <SelectItem value='' disabled>
-                                    Failed to load programs
-                                  </SelectItem>
-                                )}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
+                          <LoadMoreSelect
+                            value={field.value || ''}
+                            onValueChange={field.onChange}
+                            placeholder='Select program'
+                            items={programs.selectItems}
+                            isLoading={programs.isLoading}
+                            isLoadingMore={programs.isLoadingMore}
+                            hasMore={programs.hasMore}
+                            onLoadMore={programs.loadMore}
+                            disabled={programs.isLoading}
+                            emptyMessage='No programs found.'
+                            searchPlaceholder='Search programs...'
+                            onSearch={programs.setProgramSearch}
+                          />
                           <FormMessage />
                         </FormItem>
                       )}
@@ -872,33 +851,20 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Status</FormLabel>
-                          <Select
+                          <LoadMoreSelect
+                            value={field.value || ''}
                             onValueChange={field.onChange}
-                            value={field.value || undefined}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder='Select status' />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {statusesQuery.isLoading ? (
-                                <div className='flex items-center justify-center p-2'>
-                                  <Loader2 className='h-4 w-4 animate-spin' />
-                                </div>
-                              ) : statusesQuery.data ? (
-                                statusesQuery.data.map((status) => (
-                                  <SelectItem key={status} value={status}>
-                                    {status.replace(/_/g, ' ')}
-                                  </SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem value='' disabled>
-                                  Failed to load statuses
-                                </SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
+                            placeholder='Select status'
+                            items={statuses.selectItems}
+                            isLoading={statuses.isLoading}
+                            isLoadingMore={statuses.isLoadingMore}
+                            hasMore={statuses.hasMore}
+                            onLoadMore={statuses.loadMore}
+                            disabled={statuses.isLoading}
+                            emptyMessage='No statuses found.'
+                            searchPlaceholder='Search statuses...'
+                            onSearch={statuses.setStatusSearch}
+                          />
                           <FormMessage />
                         </FormItem>
                       )}

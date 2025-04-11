@@ -23,12 +23,12 @@ export type ColumnStyle = {
 
 export interface Column<T> {
   header: string;
-  key: keyof T;
+  key: keyof T | string;
+  nested?: boolean;
   isDefaultSort?: boolean;
   sortable?: boolean;
   style?: ColumnStyle;
-  validate?: (value: T[keyof T]) => string | null;
-  transform?: (value: T[keyof T]) => string;
+  transform?: (value: any) => string; // Use any to allow for any type of value
 }
 
 export interface TableFileOptions {

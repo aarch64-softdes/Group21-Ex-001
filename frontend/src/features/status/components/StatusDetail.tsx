@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 import React from 'react';
 
 const StatusDetail: React.FC<DetailComponentProps> = ({ id: statusId }) => {
-  const { data: status, isLoading } = useStatus(parseInt(statusId as string));
+  const { data: status, isLoading } = useStatus(statusId as string);
 
   if (isLoading) {
     return (

@@ -46,7 +46,7 @@ public class StudentEntity {
 
     @Column(name = "school_year")
     Integer schoolYear;
-
+    
     @Email
     @NotNull
     @Column(unique = true)

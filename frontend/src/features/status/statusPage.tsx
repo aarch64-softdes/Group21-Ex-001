@@ -37,7 +37,7 @@ const StatusPage: React.FC = () => {
     () => ({
       onSave: async (id: string, value: UpdateStatusDTO) => {
         await updateStatus.mutateAsync({
-          id: parseInt(id, 10),
+          id,
           data: value,
         });
       },
@@ -45,7 +45,7 @@ const StatusPage: React.FC = () => {
         await createStatus.mutateAsync(value);
       },
       onDelete: async (id: string) => {
-        await deleteStatus.mutateAsync(parseInt(id, 10));
+        await deleteStatus.mutateAsync(id);
       },
     }),
     [updateStatus, createStatus, deleteStatus],
@@ -67,7 +67,6 @@ const StatusPage: React.FC = () => {
         }}
         requireDeleteConfirmation={true}
         filterOptions={[]}
-        disablePagination={true}
       />
     </div>
   );

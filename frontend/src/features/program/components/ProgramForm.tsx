@@ -40,7 +40,7 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
   isEditing = false,
 }) => {
   const { data: programData, isLoading: isLoadingProgram } = useProgram(
-    id ? parseInt(id, 10) : 0,
+    id || '',
   );
 
   const form = useForm<ProgramFormValues>({
@@ -119,7 +119,8 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
                         </FormItem>
                       )}
                     />
-                  </CardContent>
+                  </CardContent>{' '}
+                  id ? id : '',
                 </Card>
 
                 <div className='flex justify-end gap-2 pt-4'>

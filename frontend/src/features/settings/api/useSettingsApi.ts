@@ -5,6 +5,8 @@ import {
   PhoneSetting,
   PhoneSettingRequest,
 } from '@/features/settings/types/setting';
+import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
+import { getErrorMessage } from '@/shared/lib/utils';
 
 const settingsService = new SettingsService();
 
@@ -24,6 +26,10 @@ export const useUpdateEmailDomainSetting = () => {
       settingsService.updateEmailDomainSetting(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['emailDomainSetting'] });
+      showSuccessToast('Email domain setting updated successfully');
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };
@@ -44,6 +50,9 @@ export const useUpdatePhoneSetting = () => {
       settingsService.updatePhoneSetting(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['phoneSetting'] });
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };

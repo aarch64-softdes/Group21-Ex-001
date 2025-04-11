@@ -29,7 +29,9 @@
       "@program/*": ["./src/features/program/*"],
       "@course/*": ["./src/features/course/*"],
       "@faculty/*": ["./src/features/faculty/*"],
+      "@subject/*": ["./src/features/subject/*"],
       "@status/*": ["./src/features/status/*"],
+      "@class/*": ["./src/features/class/*"],
       "@settings/*": ["./src/features/settings/*"],
       "@metadata/*": ["./src/features/metadata/*"],
 
