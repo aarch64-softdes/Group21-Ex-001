@@ -3,6 +3,7 @@ package com.tkpm.sms.infrastructure.service;
 import com.tkpm.sms.application.service.interfaces.DocumentTemplateProcessingService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
+
 import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
 import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 import fr.opensagres.xdocreport.converter.ConverterTypeTo;
@@ -16,6 +17,12 @@ import fr.opensagres.xdocreport.template.TemplateEngineKind;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.jodconverter.core.office.OfficeManager;
+import org.jodconverter.local.JodConverter;
+import org.jodconverter.local.office.LocalOfficeManager;
+import org.jxls.common.Context;
+import org.jxls.util.JxlsHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +30,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @Slf4j
@@ -31,6 +41,9 @@ import java.util.Map;
 public class DocumentTemplateProcessingServiceImpl implements DocumentTemplateProcessingService {
 
     private final ResourceLoader resourceLoader;
+
+    @Value("${app.libreoffice.home:}")
+    private String configuredLibreOfficeHome;
 
     @Override
     public InputStream loadTemplate(String templatePath) {
@@ -44,15 +57,33 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
 
     @Override
     public byte[] processTemplateAsPdf(String templatePath, Map<String, Object> data) {
-        boolean isDocx = templatePath.endsWith(".docx");
-        InputStream templateInputStream = loadTemplate(templatePath);
+        String fileExtension = templatePath.substring(templatePath.lastIndexOf("."));
+        try (InputStream is = loadTemplate(templatePath)) {
+            switch (fileExtension) {
+                case ".xlsx":
+                    byte[] processedTemplate = processExcelTemplate(is.readAllBytes(), data);
+                    return convertExcelToPdf(processedTemplate);
+                case ".docx":
+                case ".odt":
+                    boolean isDocx = fileExtension.equals(".docx");
+                    InputStream templateInputStream = loadTemplate(templatePath);
+                    byte[] processedDocument = processDocumentTemplate(templateInputStream, data, isDocx);
+                    return convertToPdf(processedDocument, isDocx);
+                default:
+                    log.error("Unsupported file extension: {}", fileExtension);
+                    throw new FileProcessingException("Unsupported file format",
+                            ErrorCode.FAIL_TO_EXPORT_FILE);
+            }
+        } catch (IOException e) {
+            log.error("Failed to process {} template as PDF", fileExtension, e);
+            throw new FileProcessingException("Failed to process template as PDF",
+                    ErrorCode.FAIL_TO_EXPORT_FILE);
+        }
 
-        byte[] processedDocument = processTemplate(templateInputStream, data, isDocx);
-        return convertToPdf(processedDocument, isDocx);
     }
 
     @Override
-    public byte[] processTemplate(InputStream templateInputStream, Map<String, Object> data, boolean isDocx) {
+    public byte[] processDocumentTemplate(InputStream templateInputStream, Map<String, Object> data, boolean isDocx) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             IXDocReport report = XDocReportRegistry.getRegistry().loadReport(
                     templateInputStream,
@@ -102,6 +133,113 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
                 log.error("Failed to convert ODT to PDF", e);
                 throw new FileProcessingException("Failed to convert ODT to PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
             }
+        }
+    }
+
+    @Override
+    public byte[] processExcelTemplate(byte[] excelTemplate, Map<String, Object> data) {
+        log.info("Processing Excel template with JXLS 2.14.0...");
+        try (InputStream templateStream = new ByteArrayInputStream(excelTemplate);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            Context context = new Context();
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                context.putVar(entry.getKey(), entry.getValue());
+            }
+
+            JxlsHelper.getInstance().processTemplate(templateStream, outputStream, context);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            log.error("Failed to process Excel template", e);
+            throw new FileProcessingException("Failed to process Excel template", ErrorCode.FAIL_TO_EXPORT_FILE);
+        }
+    }
+
+    @Override
+    public byte[] convertExcelToPdf(byte[] excelBytes) {
+        try {
+            // Create Office Manager for LibreOffice
+            OfficeManager officeManager = LocalOfficeManager.builder()
+                    .install()
+                    .officeHome(getLibreOfficeHome())
+                    .build();
+
+            try {
+                officeManager.start();
+
+                Path tempInputFile = Files.createTempFile("document_", ".xlsx");
+                Path tempOutputFile = Files.createTempFile("document_", ".pdf");
+
+                try {
+                    Files.write(tempInputFile, excelBytes);
+                    JodConverter.convert(tempInputFile.toFile())
+                            .to(tempOutputFile.toFile())
+                            .execute();
+
+                    return Files.readAllBytes(tempOutputFile);
+                } finally {
+                    try {
+                        Files.deleteIfExists(tempInputFile);
+                        Files.deleteIfExists(tempOutputFile);
+                    } catch (IOException e) {
+                        log.warn("Failed to delete temporary files", e);
+                    }
+                }
+            } finally {
+                officeManager.stop();
+            }
+        } catch (Exception e) {
+            log.error("Error converting Excel to PDF", e);
+            throw new FileProcessingException("Failed to convert Excel to PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
+        }
+    }
+
+    public byte[] convertDocumentToPdf(byte[] documentBytes, String sourceFormat) {
+        if (sourceFormat.endsWith(".xlsx")) {
+            return convertExcelToPdf(documentBytes);
+        } else {
+            boolean isDocx = sourceFormat.endsWith(".docx");
+            return convertToPdf(documentBytes, isDocx);
+        }
+    }
+
+    /**
+     * Gets the LibreOffice home directory, using configuration or auto-detection
+     */
+    private String getLibreOfficeHome() {
+        final String DEFAULT_LIBREOFFICE_WINDOWS_PATH = "C:/Program Files/LibreOffice";
+        final String DEFAULT_LIBREOFFICE_MAC_PATH = "/Applications/LibreOffice.app";
+        final String DEFAULT_LIBREOFFICE_LINUX_PATH = "/usr/lib/libreoffice";
+
+        if (configuredLibreOfficeHome != null && !configuredLibreOfficeHome.isEmpty()) {
+            if (Files.exists(Paths.get(configuredLibreOfficeHome))) {
+                return configuredLibreOfficeHome;
+            }
+            log.warn("Configured LibreOffice home does not exist: {}, using default paths", configuredLibreOfficeHome);
+        }
+
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.contains("win")) {
+            return DEFAULT_LIBREOFFICE_WINDOWS_PATH;
+        } else if (os.contains("mac")) {
+            return DEFAULT_LIBREOFFICE_MAC_PATH;
+        } else {
+            String[] possiblePaths = {
+                    "/usr/lib/libreoffice",
+                    "/usr/lib64/libreoffice",
+                    "/opt/libreoffice",
+                    "/usr/lib/openoffice",
+                    "/usr/lib64/openoffice"
+            };
+
+            for (String path : possiblePaths) {
+                if (Files.exists(Paths.get(path))) {
+                    return path;
+                }
+            }
+
+            return DEFAULT_LIBREOFFICE_LINUX_PATH;
         }
     }
 }

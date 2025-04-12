@@ -29,7 +29,7 @@ public interface DocumentTemplateProcessingService {
      * @param isDocx              true if template is docx, false if odt
      * @return byte array of the processed document
      */
-    byte[] processTemplate(InputStream templateInputStream, Map<String, Object> data, boolean isDocx);
+    byte[] processDocumentTemplate(InputStream templateInputStream, Map<String, Object> data, boolean isDocx);
 
     /**
      * Converts a document to PDF. A document can be either docx or odt.
@@ -39,4 +39,9 @@ public interface DocumentTemplateProcessingService {
      * @return byte array of the PDF
      */
     byte[] convertToPdf(byte[] document, boolean isDocx);
+
+    public byte[] processExcelTemplate(byte[] excelTemplate, Map<String, Object> data);
+
+    public byte[] convertExcelToPdf(byte[] excelBytes);
+
 }
