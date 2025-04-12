@@ -26,16 +26,14 @@ public class FileMapperConfig {
     public CsvMapper csvMapper() {
         var csvMapper = new CsvMapper();
         csvMapper.findAndRegisterModules();
-        csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
         csvMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         csvMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
-
         return csvMapper;
     }
 
     @Bean
-    public CsvSchema csvSchema(CsvMapper csvMapper) {
+    public CsvSchema csvStudentSchema(CsvMapper csvMapper) {
         return csvMapper.schemaFor(StudentFileDto.class).withHeader();
     }
 }

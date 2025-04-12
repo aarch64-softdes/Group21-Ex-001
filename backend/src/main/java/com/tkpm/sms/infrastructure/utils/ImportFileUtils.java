@@ -44,20 +44,19 @@ public class ImportFileUtils {
             return null;
         }
 
-        address = formalizeString(address);
-        log.info("Parsing address {}", address);
         String[] parts = address.split(",");
-        log.info("Address parts {}", Arrays.asList(parts));
         return AddressCreateRequestDto.builder()
                 .street(parts[0])
                 .ward(parts[1])
                 .district(parts[2])
-                .country(parts[3])
+                .province(parts[2] == null ? "" : parts[2])
+                .country(parts[3] == null ? "" : parts[3])
                 .build();
     }
 
     public static IdentityCreateRequestDto parseIdentityCreateRequestDto(
             StudentFileDto studentFileImportDto) {
+        log.info("Parsing student file {}", studentFileImportDto.getIdentityIssuedDate());
         return IdentityCreateRequestDto.builder()
                 .type(studentFileImportDto.getIdentityType())
                 .number(studentFileImportDto.getIdentityNumber())

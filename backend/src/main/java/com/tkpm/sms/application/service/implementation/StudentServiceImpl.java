@@ -18,6 +18,7 @@ import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.domain.valueobject.Phone;
 import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
+import com.tkpm.sms.infrastructure.persistence.entity.StudentEntity;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -251,7 +252,7 @@ public class StudentServiceImpl implements StudentService {
     public void saveListStudentFromFile(List<StudentFileDto> studentFileDtos) {
         List<StudentCreateRequestDto> studentCreateRequests = studentFileDtos.stream()
                 .map(studentMapper::toStudentCreateRequest)
-                .collect(Collectors.toList());
+                .toList();
 
         for (StudentCreateRequestDto request : studentCreateRequests) {
             createStudent(request);

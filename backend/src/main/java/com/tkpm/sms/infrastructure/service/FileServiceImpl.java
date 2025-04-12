@@ -1,7 +1,9 @@
 package com.tkpm.sms.infrastructure.service;
 
+import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.service.interfaces.FileService;
+import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
@@ -31,6 +33,7 @@ public class FileServiceImpl implements FileService {
     StudentJpaRepository studentRepository;
     StudentPersistenceMapper studentPersistenceMapper;
     StudentMapperImpl studentMapper;
+    StudentService studentService;
     FileStrategyFactory fileStrategyFactory;
     StudentDomainValidator studentDomainValidator;
 
@@ -58,7 +61,7 @@ public class FileServiceImpl implements FileService {
             currentPage++;
         } while (currentPage < studentPage.getTotalPages());
 
-        return fileStrategyFactory.getStrategy(format).export(students);
+        return fileStrategyFactory.getStrategy(format).toBytes(students);
     }
 
     @Override
@@ -67,6 +70,8 @@ public class FileServiceImpl implements FileService {
             throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
 
-        fileStrategyFactory.getStrategy(format).importFile(multipartFile);
+        List<StudentFileDto> students = fileStrategyFactory.getStrategy(format).convert(multipartFile, StudentFileDto.class);
+
+        studentService.saveListStudentFromFile(students);
     }
 }

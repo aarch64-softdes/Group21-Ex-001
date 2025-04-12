@@ -22,6 +22,10 @@ import java.util.Date;
 public class FileController {
     FileService fileService;
 
+    /**
+     * Export students to a file in the specified format (CSV or JSON).
+     * @param format The format of the file to export (CSV or JSON).
+     */
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportStudentsToFile(@RequestParam("format") String format) {
         byte[] data = fileService.exportStudentFile(format);

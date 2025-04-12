@@ -1,8 +1,6 @@
 package com.tkpm.sms.infrastructure.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tkpm.sms.application.dto.response.student.StudentFileDto;
-import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.service.FileStrategy;
@@ -22,10 +20,9 @@ import java.util.List;
 public class JsonStrategy implements FileStrategy {
     @Qualifier("jsonMapper")
     private final ObjectMapper jsonMapper;
-    private final StudentService studentService;
 
     @Override
-    public byte[] export(Iterable<?> data) {
+    public byte[] toBytes(Iterable<?> data) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         try {
@@ -40,25 +37,19 @@ public class JsonStrategy implements FileStrategy {
     }
 
     @Override
-    public void importFile(Object file) {
+    public <T> List<T> convert(Object file, Class<T> clazz) {
         if (!(file instanceof MultipartFile multipartFile)) {
             throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
 
-        List<StudentFileDto> students;
+        var dataType = jsonMapper.getTypeFactory().constructCollectionType(List.class, clazz);
 
         try {
-            students = jsonMapper.readValue(
-                    multipartFile.getInputStream(),
-                    jsonMapper.getTypeFactory()
-                            .constructCollectionType(List.class, StudentFileDto.class));
+            return jsonMapper.readValue(multipartFile.getInputStream(), dataType);
         } catch (IOException e) {
             log.info("Error reading file", e);
-
             throw new FileProcessingException("Error reading file", ErrorCode.FAIL_TO_IMPORT_FILE);
         }
-
-        studentService.saveListStudentFromFile(students);
     }
 
     @Override
