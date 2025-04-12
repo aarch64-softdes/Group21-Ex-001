@@ -8,6 +8,7 @@ import com.tkpm.sms.application.dto.response.common.ListResponse;
 import com.tkpm.sms.application.dto.response.common.PageDto;
 import com.tkpm.sms.application.dto.response.student.StudentDto;
 import com.tkpm.sms.application.dto.response.student.StudentMinimalDto;
+import com.tkpm.sms.application.service.interfaces.FileService;
 import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Student;
@@ -17,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,11 +34,11 @@ import java.util.stream.Collectors;
 public class StudentController {
     StudentService studentService;
     StudentMapperImpl studentMapper;
+    FileService fileService;
 
-    @GetMapping({"/", ""})
+    @GetMapping({ "/", "" })
     public ResponseEntity<ApplicationResponseDto<ListResponse<StudentMinimalDto>>> getStudents(
-            @ModelAttribute StudentCollectionRequest search
-    ) {
+            @ModelAttribute StudentCollectionRequest search) {
         PageResponse<Student> pageResponse = studentService.findAll(search);
 
         // Map domain entities to DTOs
@@ -68,14 +70,14 @@ public class StudentController {
         return ResponseEntity.ok(ApplicationResponseDto.success(studentDto));
     }
 
-    @PostMapping({"/", ""})
+    @PostMapping({ "/", "" })
     public ResponseEntity<ApplicationResponseDto<StudentDto>> createStudent(
             @Valid @RequestBody StudentCreateRequestDto student,
-            UriComponentsBuilder uriComponentsBuilder
-    ) {
+            UriComponentsBuilder uriComponentsBuilder) {
         var newStudent = studentService.createStudent(student);
         var studentDto = studentMapper.toStudentDto(newStudent);
-        var locationOfNewUser = uriComponentsBuilder.path("api/students/{id}").buildAndExpand(newStudent.getId()).toUri();
+        var locationOfNewUser = uriComponentsBuilder.path("api/students/{id}").buildAndExpand(newStudent.getId())
+                .toUri();
 
         return ResponseEntity.created(locationOfNewUser).body(ApplicationResponseDto.success(studentDto));
     }
@@ -89,10 +91,19 @@ public class StudentController {
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<StudentDto>> updateStudent(
             @PathVariable String id,
-            @Valid @RequestBody StudentUpdateRequestDto student
-    ) {
+            @Valid @RequestBody StudentUpdateRequestDto student) {
         var updatedStudent = studentService.updateStudent(id, student);
         var studentDto = studentMapper.toStudentDto(updatedStudent);
         return ResponseEntity.ok(ApplicationResponseDto.success(studentDto));
+    }
+
+    @GetMapping("/{id}/transcript")
+    public ResponseEntity<byte[]> getTranscript(
+            @PathVariable String id) {
+        byte[] transcript = fileService.exportTranscript(id);
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=transcript.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(transcript);
     }
 }
