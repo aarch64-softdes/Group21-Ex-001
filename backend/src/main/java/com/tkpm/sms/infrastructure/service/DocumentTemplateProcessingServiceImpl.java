@@ -14,7 +14,8 @@ import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
-import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.jodconverter.core.office.OfficeManager;
@@ -37,13 +38,17 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DocumentTemplateProcessingServiceImpl implements DocumentTemplateProcessingService {
 
-    private final ResourceLoader resourceLoader;
+    ResourceLoader resourceLoader;
+    String configuredLibreOfficeHome;
 
-    @Value("${app.libreoffice.home:}")
-    private String configuredLibreOfficeHome;
+    public DocumentTemplateProcessingServiceImpl(@Value("${app.libreoffice.home:}") String configuredLibreOfficeHome,
+            ResourceLoader resourceLoader) {
+        this.configuredLibreOfficeHome = configuredLibreOfficeHome;
+        this.resourceLoader = resourceLoader;
+    }
 
     @Override
     public InputStream loadTemplate(String templatePath) {
@@ -68,7 +73,7 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
                     boolean isDocx = fileExtension.equals(".docx");
                     InputStream templateInputStream = loadTemplate(templatePath);
                     byte[] processedDocument = processDocumentTemplate(templateInputStream, data, isDocx);
-                    return convertToPdf(processedDocument, isDocx);
+                    return convertDocumentToPdf(processedDocument, isDocx);
                 default:
                     log.error("Unsupported file extension: {}", fileExtension);
                     throw new FileProcessingException("Unsupported file format",
@@ -103,7 +108,7 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
     }
 
     @Override
-    public byte[] convertToPdf(byte[] document, boolean isDocx) {
+    public byte[] convertDocumentToPdf(byte[] document, boolean isDocx) {
         if (isDocx) {
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(document);
                     XWPFDocument docxDocument = new XWPFDocument(inputStream);
@@ -199,13 +204,10 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
             return convertExcelToPdf(documentBytes);
         } else {
             boolean isDocx = sourceFormat.endsWith(".docx");
-            return convertToPdf(documentBytes, isDocx);
+            return convertDocumentToPdf(documentBytes, isDocx);
         }
     }
 
-    /**
-     * Gets the LibreOffice home directory, using configuration or auto-detection
-     */
     private String getLibreOfficeHome() {
         final String DEFAULT_LIBREOFFICE_WINDOWS_PATH = "C:/Program Files/LibreOffice";
         final String DEFAULT_LIBREOFFICE_MAC_PATH = "/Applications/LibreOffice.app";

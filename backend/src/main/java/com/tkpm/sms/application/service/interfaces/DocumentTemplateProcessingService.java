@@ -22,7 +22,7 @@ public interface DocumentTemplateProcessingService {
     byte[] processTemplateAsPdf(String templateFilePath, Map<String, Object> data);
 
     /**
-     * Processes a template with the given data
+     * Processes a `docx` or `odt` template with the given data
      * 
      * @param templateInputStream template input stream
      * @param data                data to be used in the template
@@ -32,16 +32,29 @@ public interface DocumentTemplateProcessingService {
     byte[] processDocumentTemplate(InputStream templateInputStream, Map<String, Object> data, boolean isDocx);
 
     /**
-     * Converts a document to PDF. A document can be either docx or odt.
+     * Converts a `docx` or `odt` document to PDF.
      * 
      * @param document document to be converted
      * @param isDocx   true if document is docx, false if odt
      * @return byte array of the PDF
      */
-    byte[] convertToPdf(byte[] document, boolean isDocx);
+    byte[] convertDocumentToPdf(byte[] document, boolean isDocx);
 
+    /**
+     * Processes an Excel template with the given data
+     * 
+     * @param excelTemplate Excel template as byte array
+     * @param data          data to be used in the template
+     * @return byte array of the processed Excel document
+     */
     public byte[] processExcelTemplate(byte[] excelTemplate, Map<String, Object> data);
 
+    /**
+     * Converts an Excel document to PDF
+     * 
+     * @param excelBytes Excel document as byte array
+     * @return byte array of the PDF
+     */
     public byte[] convertExcelToPdf(byte[] excelBytes);
 
 }

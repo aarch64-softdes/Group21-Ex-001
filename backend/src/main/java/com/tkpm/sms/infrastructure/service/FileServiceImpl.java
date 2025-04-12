@@ -19,10 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -70,8 +74,23 @@ public class FileServiceImpl implements FileService {
             throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
 
-        List<StudentFileDto> students = fileStrategyFactory.getStrategy(format).convert(multipartFile, StudentFileDto.class);
+        List<StudentFileDto> students = fileStrategyFactory.getStrategy(format).convert(multipartFile,
+                StudentFileDto.class);
 
         studentService.saveListStudentFromFile(students);
+    }
+
+    public byte[] exportTranscript(@PathVariable String id) {
+        var student = studentService.getStudentDetail(id);
+        var studentData = studentMapper.toStudentDto(student);
+
+        List<Object> data = new ArrayList<>();
+        data.add("templates/template.xlsx");
+
+        var studentDataMap = new HashMap<String, Object>();
+        studentDataMap.put("student", studentData);
+        data.add(studentDataMap);
+
+        return fileStrategyFactory.getStrategy("pdf").toBytes(data);
     }
 }
