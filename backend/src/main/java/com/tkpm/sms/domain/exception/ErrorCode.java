@@ -32,6 +32,9 @@ public enum ErrorCode {
     INVALID_IDENTITY_ISSUED_DATE("Identity issued date must be before expired date"),
     FIELD_REQUIRED("{field} must be filled in"),
 
+    // Subject Validation Errors
+    INVALID_SUBJECT_CREDITS("Subject credits must be greater or equals {value}"),
+
     // Resource Errors
     NOT_FOUND("Resource not found"),
     DUPLICATE_RESOURCE("Resource already existed"),
