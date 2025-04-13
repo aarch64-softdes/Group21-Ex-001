@@ -33,7 +33,6 @@
       "@faculty/*": ["./src/features/faculty/*"],
       "@status/*": ["./src/features/status/*"],
       "@subject/*": ["./src/features/subject/*"],
-      "@class/*": ["./src/features/class/*"],
       "@settings/*": ["./src/features/settings/*"],
       "@metadata/*": ["./src/features/metadata/*"],
 

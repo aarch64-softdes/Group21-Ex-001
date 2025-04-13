@@ -14,9 +14,9 @@ import {
 } from '@ui/form';
 import { Input } from '@ui/input';
 import { Separator } from '@ui/separator';
-import { useClass } from '@/features/class/api/useClassApi';
+import { useCourse } from '@/features/course/api/useCourseApi';
 import { useProgramsDropdown } from '@/features/program/api/useProgramApi';
-import Class, { CreateClassDto } from '@/features/class/types/class';
+import Course, { CreateCourseDTO } from '@/features/course/types/course';
 import { FormComponentProps } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
@@ -28,7 +28,7 @@ import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 const schedulePattern = /^T[2-7]\([1-9]-([1-9]|1[0-2])\)$/;
 
 // Define schema
-export const ClassFormSchema = z.object({
+export const CourseFormSchema = z.object({
   subjectId: z.string().min(1, 'Subject is required'),
   program: z.string().min(1, 'Program is required'),
   code: z
@@ -63,21 +63,21 @@ export const ClassFormSchema = z.object({
     .max(50, 'Room must be less than 50 characters'),
 });
 
-export type ClassFormValues = z.infer<typeof ClassFormSchema>;
+export type CourseFormValues = z.infer<typeof CourseFormSchema>;
 
-const ClassForm: React.FC<FormComponentProps<Class>> = ({
+const CourseForm: React.FC<FormComponentProps<Course>> = ({
   onSubmit,
   onCancel,
   id,
   isLoading = false,
   isEditing = false,
 }) => {
-  const { data: classData, isLoading: isLoadingClass } = useClass(id || '');
+  const { data: courseData, isLoading: isLoadingCourse } = useCourse(id || '');
   const subjects = useSubjectsDropdown(5);
   const programs = useProgramsDropdown(5);
 
-  const form = useForm<ClassFormValues>({
-    resolver: zodResolver(ClassFormSchema),
+  const form = useForm<CourseFormValues>({
+    resolver: zodResolver(CourseFormSchema),
     defaultValues: {
       subjectId: '',
       program: '',
@@ -97,42 +97,42 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
     return date.toISOString().split('T')[0];
   };
 
-  // Reset form when class data is loaded
+  // Reset form when course data is loaded
   useEffect(() => {
-    if (classData && id) {
+    if (courseData && id) {
       form.reset({
-        subjectId: classData.subjectId || '',
-        program: classData.program || '',
-        code: classData.code || '',
-        year: classData.year || new Date().getFullYear(),
-        startAt: formatDateForInput(classData.startAt),
-        lecturer: classData.lecturer || '',
-        maxStudent: classData.maxStudent || 30,
-        schedule: classData.schedule || '',
-        room: classData.room || '',
+        subjectId: courseData.subjectId || '',
+        program: courseData.program?.toString() || '',
+        code: courseData.code || '',
+        year: courseData.year || new Date().getFullYear(),
+        startAt: formatDateForInput(courseData.startAt),
+        lecturer: courseData.lecturer || '',
+        maxStudent: courseData.maxStudent || 30,
+        schedule: courseData.schedule || '',
+        room: courseData.room || '',
       });
     }
-  }, [classData, id, form]);
+  }, [courseData, id, form]);
 
-  const handleSubmit = (values: ClassFormValues) => {
+  const handleSubmit = (values: CourseFormValues) => {
     // Transform the string date to a Date object before submitting
     const submissionValues = {
       ...values,
       startAt: new Date(values.startAt),
     };
 
-    onSubmit(submissionValues as unknown as CreateClassDto);
+    onSubmit(submissionValues as unknown as CreateCourseDTO);
   };
 
   // Determine if we should show loading state
-  const isFormLoading = isLoading || (isEditing && isLoadingClass);
+  const isFormLoading = isLoading || (isEditing && isLoadingCourse);
 
   return (
     <div className='sticky inset-0'>
       {/* Header */}
       <div className='border-b px-4 py-2 flex items-center justify-between'>
         <h2 className='text-xl font-semibold'>
-          {isEditing ? 'Edit Class' : 'Add New Class'}
+          {isEditing ? 'Edit Course' : 'Add New Course'}
         </h2>
       </div>
 
@@ -153,7 +153,7 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
                 <Card className='mb-6'>
                   <CardHeader>
                     <CardTitle className='text-lg font-medium'>
-                      Class Information
+                      Course Information
                     </CardTitle>
                     <Separator />
                   </CardHeader>
@@ -213,7 +213,7 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
                       name='code'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Class Code</FormLabel>
+                          <FormLabel>Course Code</FormLabel>
                           <FormControl>
                             <Input
                               placeholder='e.g. CS101-01'
@@ -396,7 +396,7 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
                     Cancel
                   </Button>
                   <LoadingButton type='submit' isLoading={isLoading}>
-                    {isEditing ? 'Save Changes' : 'Add Class'}
+                    {isEditing ? 'Save Changes' : 'Add Course'}
                   </LoadingButton>
                 </div>
               </form>
@@ -408,4 +408,4 @@ const ClassForm: React.FC<FormComponentProps<Class>> = ({
   );
 };
 
-export default ClassForm;
+export default CourseForm;

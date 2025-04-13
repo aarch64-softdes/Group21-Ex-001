@@ -1,35 +1,35 @@
 import GenericTable from '@components/table/GenericTable';
 import {
-  useCreateClass,
-  useDeleteClass,
-  useClasses,
-  useUpdateClass,
-} from '@/features/class/api/useClassApi';
-import Class, {
-  CreateClassDto,
-  UpdateClassDto,
-} from '@/features/class/types/class';
+  useCreateCourse,
+  useDeleteCourse,
+  useCourses,
+  useUpdateCourse,
+} from '@/features/course/api/useCourseApi';
+import Course, {
+  CreateCourseDTO,
+  UpdateCourseDTO,
+} from '@/features/course/types/course';
 import { Column } from '@/core/types/table';
 import React from 'react';
 import { SearchFilterOption } from '@/core/types/filter';
 import { BookOpen, Users } from 'lucide-react';
-import ClassForm from './components/ClassForm';
-import ClassDetail from './components/ClassDetail';
+import CourseForm from './components/CourseForm';
+import CourseDetail from './components/CourseDetail';
 
-interface ExtendedClass extends Class {
+interface ExtendedCourse extends Course {
   subjectName?: string;
   programName?: string;
 }
 
-const ClassPage: React.FC = () => {
-  const createClass = useCreateClass();
-  const updateClass = useUpdateClass();
-  const deleteClass = useDeleteClass();
+const CoursePage: React.FC = () => {
+  const createCourse = useCreateCourse();
+  const updateCourse = useUpdateCourse();
+  const deleteCourse = useDeleteCourse();
 
-  const columns: Column<ExtendedClass>[] = React.useMemo(
+  const columns: Column<ExtendedCourse>[] = React.useMemo(
     () => [
       {
-        header: 'Class Code',
+        header: 'Course Code',
         key: 'code',
         style: {
           width: '120px',
@@ -83,20 +83,20 @@ const ClassPage: React.FC = () => {
 
   const actions = React.useMemo(
     () => ({
-      onSave: async (id: string, value: UpdateClassDto) => {
-        await updateClass.mutateAsync({
+      onSave: async (id: string, value: UpdateCourseDTO) => {
+        await updateCourse.mutateAsync({
           id,
           data: value,
         });
       },
-      onAdd: async (value: CreateClassDto) => {
-        await createClass.mutateAsync(value);
+      onAdd: async (value: CreateCourseDTO) => {
+        await createCourse.mutateAsync(value);
       },
       onDelete: async (id: string) => {
-        await deleteClass.mutateAsync(id);
+        await deleteCourse.mutateAsync(id);
       },
     }),
-    [updateClass, createClass, deleteClass],
+    [updateCourse, createCourse, deleteCourse],
   );
 
   const searchCodeFilterOption: SearchFilterOption = {
@@ -126,13 +126,13 @@ const ClassPage: React.FC = () => {
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
-        tableTitle='Class Management'
-        addingTitle='Add Class'
-        queryHook={useClasses}
+        tableTitle='Course Management'
+        addingTitle='Add Course'
+        queryHook={useCourses}
         columns={columns}
         actions={actions}
-        formComponent={ClassForm}
-        detailComponent={ClassDetail}
+        formComponent={CourseForm}
+        detailComponent={CourseDetail}
         disabledActions={{
           edit: false,
           delete: false,
@@ -148,4 +148,4 @@ const ClassPage: React.FC = () => {
   );
 };
 
-export default ClassPage;
+export default CoursePage;

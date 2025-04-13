@@ -1,7 +1,7 @@
 import Program from '@/features/program/types/program';
 import Subject from '@/features/subject/types/subject';
 
-export default interface Class {
+export default interface Course {
   id: string;
   subjectId: string;
   code: string;
@@ -15,7 +15,7 @@ export default interface Class {
   program?: Program | string;
 }
 
-export interface CreateClassDto {
+export interface CreateCourseDTO {
   subjectId: string;
   programId: string;
   code: string;
@@ -27,7 +27,7 @@ export interface CreateClassDto {
   room: string;
 }
 
-export interface UpdateClassDto {
+export interface UpdateCourseDTO {
   subjectId?: string;
   programId?: string;
   code?: string;
@@ -39,7 +39,7 @@ export interface UpdateClassDto {
   room?: string;
 }
 
-export const mapToClass = (data: any): Class => ({
+export const mapToCourse = (data: any): Course => ({
   id: data.id as string,
   subjectId: data.subjectId as string,
   code: data.code,

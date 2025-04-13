@@ -1,9 +1,9 @@
 import { ApiResponse } from '@/core/types/apiResponse';
-import Class, { CreateClassDto, UpdateClassDto } from '../types/class';
+import Course, { CreateCourseDTO, UpdateCourseDTO } from '../types/course';
 import Program from '@/features/program/types/program';
 
 // Mock data for testing and development
-const mockClasses: Class[] = [
+const mockCourses: Course[] = [
   {
     id: '1',
     subjectId: '1',
@@ -112,8 +112,8 @@ const mockClasses: Class[] = [
   },
 ];
 
-export default class ClassService {
-  getClasses = async ({
+export default class CourseService {
+  getCourses = async ({
     page = 1,
     size = 10,
     sortName = 'code',
@@ -133,35 +133,13 @@ export default class ClassService {
     lecturer?: string;
     year?: string;
     program?: string;
-  }): Promise<ApiResponse<Class>> => {
+  }): Promise<ApiResponse<Course>> => {
     try {
-      // For real API implementation
-      // const response = await api.get('/api/classes', {
-      //   params: {
-      //     page,
-      //     size,
-      //     sortName,
-      //     sortType,
-      //     search,
-      //     subject,
-      //     lecturer,
-      //     year,
-      //     program,
-      //   },
-      // });
-      //
-      // return {
-      //   data: response.data.content.data.map(mapToClass),
-      //   totalItems: response.data.content.page.totalItems,
-      //   totalPages: response.data.content.page.totalPages,
-      //   currentPage: response.data.content.page.pageNumber,
-      // };
-
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Clone the mock data to avoid modifying the original
-      let filteredData = [...mockClasses];
+      let filteredData = [...mockCourses];
 
       // Filter by search term (code or room)
       if (search) {
@@ -219,45 +197,38 @@ export default class ClassService {
         currentPage: page,
       };
     } catch (error) {
-      console.error('Error fetching classes:', error);
+      console.error('Error fetching courses:', error);
       throw error;
     }
   };
 
-  getClass = async (id: string): Promise<Class> => {
+  getCourse = async (id: string): Promise<Course> => {
     try {
-      // For real API implementation
-      // const response = await api.get(`/api/classes/${id}`);
-      // return mapToClass(response.data.content);
-
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      const classItem = mockClasses.find((c) => c.id === id);
+      const course = mockCourses.find((c) => c.id === id);
 
-      if (!classItem) {
-        throw new Error('Class not found');
+      if (!course) {
+        throw new Error('Course not found');
       }
 
-      return classItem;
+      return course;
     } catch (error) {
-      console.error('Error fetching class:', error);
+      console.error('Error fetching course:', error);
       throw error;
     }
   };
 
-  addClass = async (data: CreateClassDto): Promise<void> => {
+  addCourse = async (data: CreateCourseDTO): Promise<void> => {
     try {
-      // For real API implementation
-      // await api.post('/api/classes', data);
-
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const newId = (mockClasses.length + 1).toString();
+      const newId = (mockCourses.length + 1).toString();
 
-      // Create a new class with the provided data
-      const newClass: Class = {
+      // Create a new course with the provided data
+      const newCourse: Course = {
         id: newId,
         subjectId: data.subjectId,
         code: data.code,
@@ -269,54 +240,48 @@ export default class ClassService {
         room: data.room,
       };
 
-      mockClasses.push(newClass);
+      mockCourses.push(newCourse);
     } catch (error) {
-      console.error('Error adding class:', error);
+      console.error('Error adding course:', error);
       throw error;
     }
   };
 
-  updateClass = async (id: string, data: UpdateClassDto): Promise<void> => {
+  updateCourse = async (id: string, data: UpdateCourseDTO): Promise<void> => {
     try {
-      // For real API implementation
-      // await api.put(`/api/classes/${id}`, data);
-
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const index = mockClasses.findIndex((c) => c.id === id);
+      const index = mockCourses.findIndex((c) => c.id === id);
 
       if (index === -1) {
-        throw new Error('Class not found');
+        throw new Error('Course not found');
       }
 
-      mockClasses[index] = {
-        ...mockClasses[index],
+      mockCourses[index] = {
+        ...mockCourses[index],
         ...data,
       };
     } catch (error) {
-      console.error('Error updating class:', error);
+      console.error('Error updating course:', error);
       throw error;
     }
   };
 
-  deleteClass = async (id: string): Promise<void> => {
+  deleteCourse = async (id: string): Promise<void> => {
     try {
-      // For real API implementation
-      // await api.delete(`/api/classes/${id}`);
-
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const index = mockClasses.findIndex((c) => c.id === id);
+      const index = mockCourses.findIndex((c) => c.id === id);
 
       if (index === -1) {
-        throw new Error('Class not found');
+        throw new Error('Course not found');
       }
 
-      mockClasses.splice(index, 1);
+      mockCourses.splice(index, 1);
     } catch (error) {
-      console.error('Error deleting class:', error);
+      console.error('Error deleting course:', error);
       throw error;
     }
   };

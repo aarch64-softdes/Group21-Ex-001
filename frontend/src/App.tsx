@@ -22,7 +22,7 @@ import ErrorBoundary from '@components/error/ErrorBoundary';
 import { ApiError } from '@lib/errors';
 import { showErrorToast } from '@lib/toast-utils';
 import SubjectPage from '@subject/subjectPage';
-import ClassPage from '@class/classPage';
+import ClassPage from '@/features/course/coursePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,13 +1,16 @@
 import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
-import ClassService from '@/features/class/api/classService';
-import { CreateClassDto, UpdateClassDto } from '@/features/class/types/class';
+import CourseService from '@/features/course/api/courseService';
+import {
+  CreateCourseDTO,
+  UpdateCourseDTO,
+} from '@/features/course/types/course';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getErrorMessage } from '@/shared/lib/utils';
 
-const classService = new ClassService();
+const courseService = new CourseService();
 
-export const useClasses = (params: QueryHookParams) => {
+export const useCourses = (params: QueryHookParams) => {
   let { page, pageSize, filters, sort } = params;
 
   let search = '';
@@ -32,7 +35,7 @@ export const useClasses = (params: QueryHookParams) => {
 
   return useQuery({
     queryKey: [
-      'classes',
+      'courses',
       page,
       pageSize,
       search,
@@ -42,7 +45,7 @@ export const useClasses = (params: QueryHookParams) => {
       sortType,
     ],
     queryFn: () =>
-      classService.getClasses({
+      courseService.getCourses({
         page,
         size: pageSize,
         sortName,
@@ -54,22 +57,22 @@ export const useClasses = (params: QueryHookParams) => {
   });
 };
 
-export const useClass = (id: string) => {
+export const useCourse = (id: string) => {
   return useQuery({
-    queryKey: ['class', id],
-    queryFn: () => classService.getClass(id),
+    queryKey: ['course', id],
+    queryFn: () => courseService.getCourse(id),
     enabled: !!id,
   });
 };
 
-export const useCreateClass = () => {
+export const useCreateCourse = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateClassDto) => classService.addClass(data),
+    mutationFn: (data: CreateCourseDTO) => courseService.addCourse(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      showSuccessToast('Class created successfully');
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      showSuccessToast('Course created successfully');
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -77,15 +80,15 @@ export const useCreateClass = () => {
   });
 };
 
-export const useUpdateClass = () => {
+export const useUpdateCourse = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateClassDto }) =>
-      classService.updateClass(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateCourseDTO }) =>
+      courseService.updateCourse(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      showSuccessToast('Class updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      showSuccessToast('Course updated successfully');
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -93,14 +96,14 @@ export const useUpdateClass = () => {
   });
 };
 
-export const useDeleteClass = () => {
+export const useDeleteCourse = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => classService.deleteClass(id),
+    mutationFn: (id: string) => courseService.deleteCourse(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      showSuccessToast('Class deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      showSuccessToast('Course deleted successfully');
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));

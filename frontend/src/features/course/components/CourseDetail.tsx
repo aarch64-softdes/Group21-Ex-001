@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
 import { Separator } from '@ui/separator';
 import { Badge } from '@ui/badge';
-import { useClass } from '@/features/class/api/useClassApi';
+import { useCourse } from '@/features/course/api/useCourseApi';
 import { DetailComponentProps } from '@/core/types/table';
 import {
   Loader2,
@@ -15,8 +15,8 @@ import {
 } from 'lucide-react';
 import React from 'react';
 
-const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
-  const { data: classData, isLoading } = useClass(classId as string);
+const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
+  const { data: courseData, isLoading } = useCourse(courseId as string);
 
   if (isLoading) {
     return (
@@ -26,10 +26,10 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
     );
   }
 
-  if (!classData) {
+  if (!courseData) {
     return (
       <div className='flex items-center justify-center h-48'>
-        <p className='text-muted-foreground'>Class not found</p>
+        <p className='text-muted-foreground'>Course not found</p>
       </div>
     );
   }
@@ -80,14 +80,14 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
           <div className='flex justify-between items-start'>
             <div>
               <CardTitle className='text-2xl font-bold'>
-                {classData.code}
+                {courseData.code}
               </CardTitle>
               <p className='text-muted-foreground text-sm'>
-                {classData.subject?.name}
+                {courseData.subject?.name}
               </p>
             </div>
             <Badge variant='secondary' className='px-3 py-1'>
-              {classData.year}
+              {courseData.year}
             </Badge>
           </div>
           <Separator />
@@ -100,7 +100,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <BookOpen className='h-4 w-4' />
                   Subject
                 </h3>
-                <p>{classData.subject?.name}</p>
+                <p>{courseData.subject?.name}</p>
               </div>
 
               <div>
@@ -108,7 +108,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <GraduationCap className='h-4 w-4' />
                   Program
                 </h3>
-                <p>{classData.program?.name}</p>
+                <p>{courseData.program?.name || courseData.program}</p>
               </div>
 
               <div>
@@ -116,7 +116,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <User className='h-4 w-4' />
                   Lecturer
                 </h3>
-                <p>{classData.lecturer}</p>
+                <p>{courseData.lecturer}</p>
               </div>
 
               <div>
@@ -124,7 +124,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <Users className='h-4 w-4' />
                   Maximum Students
                 </h3>
-                <p>{classData.maxStudent}</p>
+                <p>{courseData.maxStudent}</p>
               </div>
 
               <div>
@@ -132,7 +132,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <GraduationCap className='h-4 w-4' />
                   Academic Year
                 </h3>
-                <p>{classData.year}</p>
+                <p>{courseData.year}</p>
               </div>
             </div>
 
@@ -142,7 +142,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <Calendar className='h-4 w-4' />
                   Start Date
                 </h3>
-                <p>{formatDate(classData.startAt)}</p>
+                <p>{formatDate(courseData.startAt)}</p>
               </div>
 
               <div>
@@ -150,9 +150,9 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <Clock className='h-4 w-4' />
                   Schedule
                 </h3>
-                <p>{interpretSchedule(classData.schedule)}</p>
+                <p>{interpretSchedule(courseData.schedule)}</p>
                 <p className='text-xs text-muted-foreground mt-1'>
-                  Raw format: {classData.schedule}
+                  Raw format: {courseData.schedule}
                 </p>
               </div>
 
@@ -161,7 +161,7 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
                   <MapPin className='h-4 w-4' />
                   Room
                 </h3>
-                <p>{classData.room}</p>
+                <p>{courseData.room}</p>
               </div>
             </div>
           </div>
@@ -171,4 +171,4 @@ const ClassDetail: React.FC<DetailComponentProps> = ({ id: classId }) => {
   );
 };
 
-export default ClassDetail;
+export default CourseDetail;
