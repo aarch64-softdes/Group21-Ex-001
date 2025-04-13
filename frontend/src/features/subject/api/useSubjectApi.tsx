@@ -44,18 +44,30 @@ export const useSubjects = (params: QueryHookParams) => {
   });
 };
 
-export const useSubjectsDropdown = (initialPageSize?: number) => {
+export const useSubjectsDropdown = (
+  initialPageSize?: number,
+  excludeId?: string,
+) => {
   const [subjectSearch, setSubjectSearch] = useState<string>('');
   const subjects = useLoadMore<Subject>({
     queryKey: ['subjects', 'dropdown'],
-    fetchFn: (page, size, searchQuery) =>
-      subjectService.getSubjects({
+    fetchFn: async (page, size, searchQuery) => {
+      let { data, totalItems } = await subjectService.getSubjects({
         page,
         size,
         sortBy: 'name',
         sortDirection: 'asc',
         search: searchQuery,
-      }),
+      });
+      if (excludeId) {
+        data = data.filter((subject) => subject.id !== excludeId);
+        totalItems = data.length;
+      }
+      return {
+        data,
+        totalItems,
+      };
+    },
     mapFn: (subject: Subject) => ({
       id: subject.id,
       label: subject.name,
@@ -76,17 +88,6 @@ export const useSubject = (id: string) => {
     queryKey: ['subject', id],
     queryFn: () => subjectService.getSubject(id),
     enabled: !!id,
-  });
-};
-
-export const useSubjectsForPrerequisites = (currentId?: string) => {
-  return useQuery({
-    queryKey: ['subjects-for-prerequisites', currentId],
-    queryFn: async () => {
-      const response = await subjectService.getSubjects({});
-      // Filter out the current subject from the list (can't be its own prerequisite)
-      return response.data.filter((subject) => subject.id !== currentId);
-    },
   });
 };
 

@@ -15,7 +15,7 @@ import { cn } from '@/shared/lib/utils';
 import { FormControl } from '@ui/form';
 
 export interface SelectItem {
-  id: string | number;
+  id: string;
   label: string;
   value: string;
 }
