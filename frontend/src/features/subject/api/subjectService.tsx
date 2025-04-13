@@ -35,9 +35,9 @@ export default class SubjectService {
 
     return {
       data: response.data.content.data.map(mapToSubject),
-      totalItems: response.data.content.page.totalElements,
-      totalPages: response.data.content.page.totalPages,
-      currentPage: page,
+      totalItems: response.data.content.totalElements,
+      totalPages: response.data.content.totalPages,
+      currentPage: response.data.content.pageNumber,
     };
   };
 

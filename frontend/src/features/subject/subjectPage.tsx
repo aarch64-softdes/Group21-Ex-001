@@ -76,22 +76,6 @@ const SubjectPage: React.FC = () => {
     [updateSubject, createSubject, deleteSubject],
   );
 
-  const searchNameFilterOption: SearchFilterOption = {
-    id: 'search',
-    label: 'Search by name or code',
-    labelIcon: BookOpen,
-    placeholder: 'Search by name or code',
-    type: 'search',
-  };
-
-  const searchFacultyFilterOption: SearchFilterOption = {
-    id: 'faculty',
-    label: 'Search by faculty',
-    labelIcon: FileSearch,
-    placeholder: 'Search by faculty',
-    type: 'search',
-  };
-
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
@@ -107,7 +91,7 @@ const SubjectPage: React.FC = () => {
           delete: false,
         }}
         requireDeleteConfirmation={true}
-        filterOptions={[searchNameFilterOption, searchFacultyFilterOption]}
+        filterOptions={[]}
       />
     </div>
   );

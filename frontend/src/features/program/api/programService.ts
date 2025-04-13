@@ -34,9 +34,9 @@ export default class ProgramService {
 
     return {
       data: response.data.content.data.map(mapToProgram),
-      totalItems: response.data.content.page.totalElements,
-      totalPages: response.data.content.page.totalPages,
-      currentPage: response.data.content.page.pageNumber,
+      totalItems: response.data.content.totalElements,
+      totalPages: response.data.content.totalPages,
+      currentPage: response.data.content.pageNumber,
     };
   };
 

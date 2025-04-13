@@ -102,6 +102,9 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
                   Subject
                 </h3>
                 <p>{courseData.subject?.name}</p>
+                <p className='text-xs text-muted-foreground mt-1'>
+                  Code: {courseData.subject?.code}
+                </p>
               </div>
 
               <div>

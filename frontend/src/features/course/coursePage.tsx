@@ -32,15 +32,8 @@ const CoursePage: React.FC = () => {
       },
       {
         header: 'Subject',
-        key: 'subject',
-      },
-      {
-        header: 'Program',
-        key: 'program',
-      },
-      {
-        header: 'Lecturer',
-        key: 'lecturer',
+        key: 'subject.name',
+        nested: true,
       },
       {
         header: 'Room',
@@ -57,13 +50,6 @@ const CoursePage: React.FC = () => {
         },
       },
       {
-        header: 'Max Students',
-        key: 'maxStudent',
-        style: {
-          width: '80px',
-        },
-      },
-      {
         header: 'Year',
         key: 'year',
         style: {
@@ -71,10 +57,10 @@ const CoursePage: React.FC = () => {
         },
       },
       {
-        header: 'Sem',
+        header: 'Semester',
         key: 'semester',
         style: {
-          width: '50px',
+          width: '80px',
         },
       },
     ],

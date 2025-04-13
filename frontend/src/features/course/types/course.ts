@@ -12,8 +12,8 @@ export default interface Course {
   room: string;
   schedule: string;
   startDate: Date;
-  subject?: Subject;
-  program?: Program;
+  subject?: Partial<Subject>;
+  program?: Partial<Program>;
 }
 
 export interface CreateCourseDTO {
@@ -40,7 +40,7 @@ export interface UpdateCourseDTO {
 
 export const mapToCourse = (data: any): Course => ({
   id: data.id.toString(),
-  code: `${data.subject?.code}-${data.id.toString().padStart(2, '0')}`,
+  code: data.code,
   year: data.year,
   semester: data.semester,
   lecturer: data.lecturer,
@@ -48,6 +48,16 @@ export const mapToCourse = (data: any): Course => ({
   room: data.room,
   schedule: data.schedule,
   startDate: data.startDate ? new Date(data.startDate) : new Date(),
-  subject: data.subject,
+  subject:
+    typeof data.subject === 'string'
+      ? {
+          name: data.subject,
+          code: data.subjectCode,
+        }
+      : {
+          id: data.subject.id,
+          name: data.subject.name,
+          code: data.subject.code,
+        },
   program: data.program,
 });
