@@ -11,13 +11,13 @@ import com.tkpm.sms.domain.model.Subject;
 public interface CourseService {
     PageResponse<Course> findAll(BaseCollectionRequest request);
 
-    Course getCourseById(String id);
+    Course getCourseById(Integer id);
 
     Course createCourse(CourseCreateRequestDto createRequestDto);
 
-    Course updateCourse(String id, CourseUpdateRequestDto updateRequestDto);
+    Course updateCourse(Integer id, CourseUpdateRequestDto updateRequestDto);
 
-    void deleteCourse(String id);
+    void deleteCourse(Integer id);
 
     ///  TODO: Enroll actions need to be defined here
 }

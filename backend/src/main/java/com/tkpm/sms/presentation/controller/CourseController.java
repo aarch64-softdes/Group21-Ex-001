@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -47,7 +48,7 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<CourseDto>> getCourseById(
-            @PathVariable String id
+            @PathVariable Integer id
     ) {
         var course = courseService.getCourseById(id);
 
@@ -78,7 +79,7 @@ public class CourseController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<Object>> updateCourse(
-            @PathVariable String id,
+            @PathVariable Integer id,
             @Valid @RequestBody CourseUpdateRequestDto courseUpdateRequestDto
     ) {
         var course = courseService.updateCourse(id, courseUpdateRequestDto);
@@ -92,10 +93,10 @@ public class CourseController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<Void>> deleteCourse(
-            @PathVariable String id
+            @PathVariable Integer id
     ) {
-        courseService.deleteCourse(String.valueOf(id));
+        courseService.deleteCourse(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

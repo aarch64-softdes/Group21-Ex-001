@@ -47,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course getCourseById(String id) {
+    public Course getCourseById(Integer id) {
         var course = courseRepository.findById(id);
         if (course.isEmpty()) {
             throw new EntityNotFoundException(
@@ -85,7 +85,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public Course updateCourse(String id, CourseUpdateRequestDto updateRequestDto) {
+    public Course updateCourse(Integer id, CourseUpdateRequestDto updateRequestDto) {
         var course = courseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 String.format("Course with id %s not found", id)
         ));
@@ -102,7 +102,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void deleteCourse(String id) {
+    public void deleteCourse(Integer id) {
         courseRepository.deleteById(id);
     }
 }

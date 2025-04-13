@@ -6,10 +6,10 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CourseJpaRepository extends JpaRepository<CourseEntity, String> , PagingAndSortingRepository<CourseEntity, String> {
+public interface CourseJpaRepository extends JpaRepository<CourseEntity, Integer> , PagingAndSortingRepository<CourseEntity, Integer> {
     boolean existsBySchedule(String courseSchedule);
 
     boolean existsByRoomAndSchedule(String room, String courseSchedule);
 
-    boolean existsByIdNotAndRoomAndSchedule(String id, String room, String schedule);
+    boolean existsByIdNotAndRoomAndSchedule(Integer id, String room, String schedule);
 }

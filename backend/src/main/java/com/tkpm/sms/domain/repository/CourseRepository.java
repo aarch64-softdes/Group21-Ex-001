@@ -9,15 +9,15 @@ import java.util.Optional;
 public interface CourseRepository {
     PageResponse<Course> findAll(PageRequest pageRequest);
 
-    Optional<Course> findById(String id);
+    Optional<Course> findById(Integer id);
 
     Course save(Course course);
 
-    void deleteById(String id);
+    void deleteById(Integer id);
 
     boolean existsByCourseSchedule(String schedule);
 
     boolean existsByRoomAndCourseSchedule(String room, String schedule);
 
-    boolean existsByIdNotAndRoomAndCourseSchedule(String id, String room, String schedule);
+    boolean existsByIdNotAndRoomAndCourseSchedule(Integer id, String room, String schedule);
 }

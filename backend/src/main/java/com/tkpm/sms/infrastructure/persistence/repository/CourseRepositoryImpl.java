@@ -35,7 +35,7 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public Optional<Course> findById(String id) {
+    public Optional<Course> findById(Integer id) {
         return courseJpaRepository.findById(id)
                 .map(coursePersistenceMapper::toDomain);
     }
@@ -48,7 +48,7 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(Integer id) {
         var course = courseJpaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Course not found with id: " + id
         ));
@@ -67,7 +67,7 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public boolean existsByIdNotAndRoomAndCourseSchedule(String id, String room, String schedule) {
+    public boolean existsByIdNotAndRoomAndCourseSchedule(Integer id, String room, String schedule) {
         return courseJpaRepository.existsByIdNotAndRoomAndSchedule(id, room, schedule);
     }
 }

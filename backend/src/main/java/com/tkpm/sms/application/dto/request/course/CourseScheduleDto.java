@@ -3,7 +3,9 @@ package com.tkpm.sms.application.dto.request.course;
 import com.tkpm.sms.application.annotation.RequiredConstraint;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Setter
 @Builder
@@ -21,5 +23,19 @@ public class CourseScheduleDto {
     @Override
     public String toString() {
         return dateOfWeek + "(" + startTime + "-" + endTime + ")";
+    }
+
+    public static CourseScheduleDto getScheduleFromString(String schedule) {
+        var dateOfWeek = schedule.substring(0, schedule.indexOf("("));
+        int startTime = Integer.parseInt(schedule.substring(schedule.indexOf("(") + 1, schedule.indexOf("-")));
+        int endTime = Integer.parseInt(schedule.substring(schedule.indexOf("-") + 1, schedule.indexOf(")")));
+
+        log.info("Parsed schedule: dateOfWeek={}, startTime={}, endTime={}", dateOfWeek, startTime, endTime);
+
+        return CourseScheduleDto.builder()
+                .dateOfWeek(dateOfWeek)
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
     }
 }

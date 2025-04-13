@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Course {
-    String id;
+    Integer id;
     int year;
     int semester;
     String lecturer;
