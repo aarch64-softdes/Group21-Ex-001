@@ -36,7 +36,7 @@ export const SubjectFormSchema = z.object({
     .max(20, 'Code must be less than 20 characters'),
   credits: z
     .number()
-    .min(1, 'Credits must be at least 1')
+    .min(2, 'Credits must be at least 2')
     .max(10, 'Credits must be at most 10')
     .or(z.string().regex(/^\d+$/).transform(Number)),
   description: z
