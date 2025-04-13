@@ -1,6 +1,7 @@
 package com.tkpm.sms.domain.service.validators;
 
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
+import com.tkpm.sms.domain.exception.SubjectDeletionPrerequisiteConstraintException;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SubjectDomainValidator {
     private final SubjectRepository subjectRepository;
+
+    public void validateSubjectIsPrerequisiteForOtherSubjects(Integer subjectId) {
+        if (subjectRepository.isPrerequisiteForOtherSubjects(subjectId)) {
+            throw new SubjectDeletionPrerequisiteConstraintException(
+                    String.format("Subject with id %d is a prerequisite for other subjects", subjectId)
+            );
+        }
+    }
 
     public void validateSubjectCodeUniqueness(String code) {
         if (subjectRepository.existsByCode(code)) {

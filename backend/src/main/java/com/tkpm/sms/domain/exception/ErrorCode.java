@@ -32,8 +32,10 @@ public enum ErrorCode {
     INVALID_IDENTITY_ISSUED_DATE("Identity issued date must be before expired date"),
     FIELD_REQUIRED("{field} must be filled in"),
 
-    // Subject Validation Errors
+    // Subject Errors
     INVALID_SUBJECT_CREDITS("Subject credits must be greater or equals {value}"),
+    SUBJECT_DELETION_TIME_CONSTRAINT("Subject can only be deleted within 30 minutes after creation"),
+    SUBJECT_DELETION_PREREQUISITE_CONSTRAINT("Subject is a prerequisite for other subjects"),
 
     // Resource Errors
     NOT_FOUND("Resource not found"),

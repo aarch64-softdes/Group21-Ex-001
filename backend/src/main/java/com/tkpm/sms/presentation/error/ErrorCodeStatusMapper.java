@@ -36,6 +36,10 @@ public class ErrorCodeStatusMapper {
         mappings.put(ErrorCode.DUPLICATE_RESOURCE, HttpStatus.CONFLICT);
         mappings.put(ErrorCode.UNSUPPORTED_EMAIL_DOMAIN, HttpStatus.CONFLICT);
         mappings.put(ErrorCode.UNSUPPORTED_STATUS_TRANSITION, HttpStatus.CONFLICT);
+
+        // Subject Errors (4xx)
+        mappings.put(ErrorCode.SUBJECT_DELETION_PREREQUISITE_CONSTRAINT, HttpStatus.BAD_REQUEST);
+        mappings.put(ErrorCode.SUBJECT_DELETION_TIME_CONSTRAINT, HttpStatus.BAD_REQUEST);
     }
 
     public HttpStatus getStatus(ErrorCode errorCode) {
