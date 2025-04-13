@@ -12,6 +12,6 @@ export interface UpdateFacultyDTO {
 }
 
 export const mapToFaculty = (data: any): Faculty => ({
-  id: data.id as string,
+  id: data.id.toString(),
   name: data.name,
 });

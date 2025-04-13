@@ -43,6 +43,7 @@ export default class SubjectService {
 
   getSubject = async (id: string): Promise<Subject> => {
     const response = await api.get(`/api/subjects/${id}`);
+
     return mapToSubject(response.data.content);
   };
 

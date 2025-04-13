@@ -64,6 +64,33 @@ export const useFacultiesDropdown = (initialPageSize?: number) => {
   };
 };
 
+export const useFacultiesDropdown2 = (initialPageSize?: number) => {
+  const [facultySearch, setFacultySearch] = useState<string>('');
+  const faculties = useLoadMore<Faculty>({
+    queryKey: ['faculties', 'dropdown'],
+    fetchFn: (page, size, searchQuery) =>
+      facultyService.getFaculties({
+        page,
+        size,
+        sortName: 'name',
+        sortType: 'asc',
+        search: searchQuery,
+      }),
+    mapFn: (faculty: Faculty) => ({
+      id: faculty.id,
+      label: faculty.name,
+      value: faculty.id,
+    }),
+    searchQuery: facultySearch,
+    initialPageSize,
+  });
+
+  return {
+    ...faculties,
+    setFacultySearch,
+  };
+};
+
 export const useFaculty = (id: string) => {
   return useQuery({
     queryKey: ['faculty', id],

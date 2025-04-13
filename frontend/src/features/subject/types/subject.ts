@@ -13,7 +13,7 @@ export interface CreateSubjectDTO {
   code: string;
   credits: number;
   description?: string;
-  faculty?: string;
+  facultyId?: string;
   prerequisites?: string[];
 }
 
@@ -22,16 +22,23 @@ export interface UpdateSubjectDTO {
   code?: string;
   credits?: number;
   description?: string;
-  faculty?: string;
+  facultyId?: string;
   prerequisites?: string[];
 }
 
 export const mapToSubject = (data: any): Subject => ({
-  id: data.id as string,
+  id: data.id.toString(),
   name: data.name,
   code: data.code,
   credits: data.credits,
   description: data.description,
   faculty: data.faculty,
-  prerequisites: data.prerequisitesSubjects,
+  prerequisites: data.prerequisitesSubjects?.map((subject: any) => ({
+    id: subject.id.toString(),
+    name: subject.name,
+    code: subject.code,
+    credits: subject.credits,
+    description: subject.description,
+    faculty: subject.faculty,
+  })),
 });

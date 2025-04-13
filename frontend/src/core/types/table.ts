@@ -85,6 +85,14 @@ export interface FormComponentProps<T> {
   isEditing?: boolean;
 }
 
+export interface FormComponentPropsWithoutType {
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+  id?: string;
+  isLoading?: boolean;
+  isEditing?: boolean;
+}
+
 export interface DetailComponentProps {
   id?: string;
 }

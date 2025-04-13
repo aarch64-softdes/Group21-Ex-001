@@ -19,8 +19,14 @@ import {
   useSubject,
   useSubjectsForPrerequisites,
 } from '@subject/api/useSubjectApi';
-import Subject, { CreateSubjectDTO } from '@subject/types/subject';
-import { FormComponentProps } from '@/core/types/table';
+import Subject, {
+  CreateSubjectDTO,
+  UpdateSubjectDTO,
+} from '@subject/types/subject';
+import {
+  FormComponentProps,
+  FormComponentPropsWithoutType,
+} from '@/core/types/table';
 import { Loader2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import LoadingButton from '@ui/loadingButton';
@@ -39,7 +45,7 @@ import {
 } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
-import { useFacultiesDropdown } from '@faculty/api/useFacultyApi';
+import { useFacultiesDropdown2 } from '@faculty/api/useFacultyApi';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 
 // Define schema
@@ -61,13 +67,13 @@ export const SubjectFormSchema = z.object({
     .string()
     .max(1000, 'Description must be less than 1000 characters')
     .optional(),
-  faculty: z.string().optional(),
-  prerequisites: z.array(z.string()).optional().default([]),
+  facultyId: z.string().optional(),
+  prerequisitesId: z.array(z.string()).optional().default([]),
 });
 
 export type SubjectFormValues = z.infer<typeof SubjectFormSchema>;
 
-const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
+const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
   onSubmit,
   onCancel,
   id,
@@ -77,7 +83,7 @@ const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
   const { data: subjectData, isLoading: isLoadingSubject } = useSubject(
     id || '',
   );
-  const faculties = useFacultiesDropdown(5);
+  const faculties = useFacultiesDropdown2(isEditing ? 100 : 5);
   const subjectsQuery = useSubjectsForPrerequisites(id);
 
   // Store all subjects for displaying names in the UI
@@ -105,8 +111,8 @@ const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
       code: '',
       credits: 3,
       description: '',
-      faculty: '',
-      prerequisites: [],
+      facultyId: '',
+      prerequisitesId: [],
     },
   });
 
@@ -118,14 +124,28 @@ const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
         code: subjectData.code || '',
         credits: subjectData.credits || 3,
         description: subjectData.description || '',
-        faculty: subjectData.faculty || '',
-        prerequisites: subjectData.prerequisites || [],
+        prerequisitesId:
+          subjectData.prerequisites?.map((subject) => subject.id) || [],
       });
     }
   }, [subjectData, id, form]);
 
+  useEffect(() => {
+    if (faculties.items.length > 0 && subjectData?.faculty) {
+      const matchingFaculty = faculties.items.find(
+        (f) => f.name === subjectData.faculty,
+      );
+      if (matchingFaculty) {
+        form.setValue('facultyId', matchingFaculty.id.toString());
+      }
+    }
+  }, [faculties.items, subjectData, form]);
+
   const handleSubmit = (values: SubjectFormValues) => {
-    onSubmit(values as unknown as CreateSubjectDTO);
+    onSubmit({
+      ...values,
+      prerequisitesId: values.prerequisitesId || [],
+    });
   };
 
   // Determine if we should show loading state
@@ -238,7 +258,7 @@ const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
 
                     <FormField
                       control={form.control}
-                      name='faculty'
+                      name='facultyId'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Faculty</FormLabel>
@@ -263,7 +283,7 @@ const SubjectForm: React.FC<FormComponentProps<Subject>> = ({
 
                     <FormField
                       control={form.control}
-                      name='prerequisites'
+                      name='prerequisitesId'
                       render={({ field }) => (
                         <FormItem className='col-span-2'>
                           <FormLabel>Prerequisites</FormLabel>

@@ -79,6 +79,25 @@ CREATE TABLE status_transitions (
     CONSTRAINT fk_status_transitions_to_status FOREIGN KEY (to_status_id) REFERENCES statuses (id)
 );
 
+CREATE TABLE subjects (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT,
+    credits INTEGER NOT NULL,
+    faculty_id INTEGER,
+    deleted_at DATE,
+    CONSTRAINT fk_subjects_faculty FOREIGN KEY (faculty_id) REFERENCES faculties (id)
+);
+
+CREATE TABLE subject_prerequisites (
+    subject_id INTEGER NOT NULL,
+    prerequisite_id INTEGER NOT NULL,
+    CONSTRAINT pk_subject_prerequisites PRIMARY KEY (subject_id, prerequisite_id),
+    CONSTRAINT fk_subject_prerequisites_subject FOREIGN KEY (subject_id) REFERENCES subjects (id),
+    CONSTRAINT fk_subject_prerequisites_prerequisite FOREIGN KEY (prerequisite_id) REFERENCES subjects (id)
+);
+
 -- Add constraints to students table
 ALTER TABLE students
     ADD CONSTRAINT uc_students_email UNIQUE (email);
@@ -422,3 +441,50 @@ INSERT INTO students (
     'MAIL010',
     'ID010'
 );
+
+-- Insert sample subjects
+INSERT INTO subjects (name, code, description, credits, faculty_id) VALUES
+-- Computer Science subjects
+('Introduction to Computer Science', 'CS101', 'A basic introduction to computer science principles', 3, 1),
+('Data Structures and Algorithms', 'CS201', 'Study of data structures and fundamental algorithms', 4, 1),
+('Database Management Systems', 'CS301', 'Design and implementation of database systems', 3, 1),
+('Operating Systems', 'CS302', 'Principles of operating systems design and implementation', 3, 1),
+('Software Engineering', 'CS401', 'Software development life cycle, project management, and best practices', 4, 1),
+-- Mathematics subjects
+('Calculus I', 'MATH101', 'Limits, derivatives, and basic integration', 3, 2),
+('Calculus II', 'MATH102', 'Integration techniques, series, and parametric equations', 3, 2), 
+('Linear Algebra', 'MATH201', 'Vector spaces, matrices, and linear transformations', 3, 2),
+('Differential Equations', 'MATH301', 'Ordinary differential equations and applications', 3, 2),
+('Advanced Mathematics', 'MATH401', 'Advanced topics in mathematics including calculus and linear algebra', 4, 2),
+-- Physics subjects
+('Introduction to Physics', 'PHYS101', 'Basic principles of physics and mechanics', 3, 3),
+('Electricity and Magnetism', 'PHYS201', 'Principles of electricity, magnetism, and electromagnetic waves', 4, 3),
+('Thermodynamics', 'PHYS301', 'Laws of thermodynamics and statistical mechanics', 3, 3),
+-- Business subjects
+('Introduction to Business', 'BUS101', 'Basic principles of business and entrepreneurship', 3, 4),
+('Marketing Principles', 'BUS201', 'Core concepts of marketing and consumer behavior', 3, 4);
+
+-- Add prerequisites relationships
+-- CS201 requires CS101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (2, 1);
+-- CS301 requires CS101 and CS201
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (3, 1), (3, 2);
+-- CS302 requires CS101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (4, 1);
+-- CS401 requires CS201, CS301, and CS302
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (5, 2), (5, 3), (5, 4);
+
+-- MATH102 requires MATH101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (7, 6);
+-- MATH301 requires MATH102 and MATH201
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (9, 7), (9, 8);
+-- MATH401 requires MATH301
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (10, 9);
+
+-- PHYS201 requires PHYS101 and MATH101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (12, 11), (12, 6);
+-- PHYS301 requires PHYS201
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (13, 12);
+
+-- BUS201 requires BUS101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (15, 14);
