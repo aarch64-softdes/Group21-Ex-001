@@ -105,4 +105,9 @@ public class SubjectRepositoryImpl implements SubjectRepository {
     public boolean isPrerequisiteForOtherSubjects(Integer subjectId) {
         return jpaRepository.isPrerequisitesForOtherSubjects(subjectId);
     }
+
+    @Override
+    public boolean existsCourseForSubject(Integer subjectId) {
+        return jpaRepository.existsCourseForSubject(subjectId);
+    }
 }

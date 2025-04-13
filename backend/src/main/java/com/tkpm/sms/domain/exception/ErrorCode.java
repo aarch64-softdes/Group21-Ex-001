@@ -34,8 +34,7 @@ public enum ErrorCode {
 
     // Subject Errors
     INVALID_SUBJECT_CREDITS("Subject credits must be greater or equals {value}"),
-    SUBJECT_DELETION_TIME_CONSTRAINT("Subject can only be deleted within 30 minutes after creation"),
-    SUBJECT_DELETION_PREREQUISITE_CONSTRAINT("Subject is a prerequisite for other subjects"),
+    SUBJECT_DELETION_CONSTRAINT("Subject cannot be deleted"),
 
     // Resource Errors
     NOT_FOUND("Resource not found"),
