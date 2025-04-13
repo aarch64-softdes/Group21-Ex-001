@@ -15,6 +15,7 @@ public class Subject {
     Integer id;
     String name;
     String code;
+    boolean isActive;
     String description;
     Integer credits;
     Faculty faculty;

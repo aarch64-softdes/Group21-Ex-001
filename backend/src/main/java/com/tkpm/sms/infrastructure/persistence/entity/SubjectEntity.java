@@ -26,10 +26,11 @@ public class SubjectEntity {
 
     @NotNull
     String code;
+    @Column(name = "is_active")
+    boolean isActive;
     String description;
 
     @NotNull
-    @Min(2)
     Integer credits;
 
     // many-to-one relationship with faculty
