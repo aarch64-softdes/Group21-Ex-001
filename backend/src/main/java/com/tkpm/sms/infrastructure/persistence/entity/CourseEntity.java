@@ -20,6 +20,7 @@ public class CourseEntity {
     Integer id;
     int year;
     int semester;
+    String code;
     String lecturer;
 
     @Column(name = "max_student")

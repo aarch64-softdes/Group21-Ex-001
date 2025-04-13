@@ -16,8 +16,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CourseDto {
+    Integer id;
     String code;
     String subject;
+    String subjectCode;
     String program;
     String lecturer;
     int credits;

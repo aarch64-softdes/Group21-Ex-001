@@ -14,12 +14,10 @@ import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +48,7 @@ public class CourseServiceImpl implements CourseService {
     public Course getCourseById(Integer id) {
         var course = courseRepository.findById(id);
         if (course.isEmpty()) {
-            throw new EntityNotFoundException(
+            throw new ResourceNotFoundException(
                     String.format("Course with id %s not found", id)
             );
         }
@@ -79,6 +77,7 @@ public class CourseServiceImpl implements CourseService {
         course.setSubject(subject);
 
         courseValidator.validateRoomAndCourseSchedule(course.getRoom(), course.getSchedule());
+        courseValidator.validateCodeAndSubject(course.getCode(), subject.getId());
 
         return courseRepository.save(course);
     }
@@ -86,7 +85,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public Course updateCourse(Integer id, CourseUpdateRequestDto updateRequestDto) {
-        var course = courseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+        var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 String.format("Course with id %s not found", id)
         ));
 
@@ -94,6 +93,11 @@ public class CourseServiceImpl implements CourseService {
                 id,
                 updateRequestDto.getRoom(),
                 updateRequestDto.getSchedule().toString()
+        );
+        courseValidator.validateCodeAndSubjectForUpdate(
+                id,
+                updateRequestDto.getCode(),
+                course.getSubject().getId()
         );
 
         courseMapper.toDomain(course, updateRequestDto);

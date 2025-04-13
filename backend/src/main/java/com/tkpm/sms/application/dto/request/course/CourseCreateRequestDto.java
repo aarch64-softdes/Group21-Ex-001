@@ -16,21 +16,23 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CourseCreateRequestDto {
     int year;
-    @RequiredConstraint(field = "Course semester")
+    @RequiredConstraint(field = "Semester")
     int semester;
+    @RequiredConstraint(field = "Code")
+    String code;
     @RequiredConstraint(field = "Lecturer")
     String lecturer;
     @RequiredConstraint(field = "Max student")
     int maxStudent;
-    @RequiredConstraint(field = "Course room")
+    @RequiredConstraint(field = "Room")
     String room;
 
     @Valid
     @CourseScheduleConstraint
-    @RequiredConstraint(field = "Course schedule")
+    @RequiredConstraint(field = "Schedule")
     CourseScheduleDto schedule;
 
-    @RequiredConstraint(field = "Course start date")
+    @RequiredConstraint(field = "Start date")
     LocalDate startDate;
 
     @RequiredConstraint(field = "Program id")

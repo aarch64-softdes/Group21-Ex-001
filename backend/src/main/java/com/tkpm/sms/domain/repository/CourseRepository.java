@@ -15,9 +15,11 @@ public interface CourseRepository {
 
     void deleteById(Integer id);
 
-    boolean existsByCourseSchedule(String schedule);
-
     boolean existsByRoomAndCourseSchedule(String room, String schedule);
 
     boolean existsByIdNotAndRoomAndCourseSchedule(Integer id, String room, String schedule);
+
+    boolean existsByCodeAndSubjectId(String code, Integer subjectId);
+
+    boolean existsByCodeAndSubjectIdAndIdNot(String code, Integer subjectId, Integer id);
 }

@@ -1,11 +1,11 @@
 package com.tkpm.sms.infrastructure.persistence.repository;
 
 import com.tkpm.sms.domain.common.PageResponse;
+import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.infrastructure.persistence.jpa.CourseJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.CoursePersistenceMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -49,16 +49,11 @@ public class CourseRepositoryImpl implements CourseRepository {
 
     @Override
     public void deleteById(Integer id) {
-        var course = courseJpaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+        var course = courseJpaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 "Course not found with id: " + id
         ));
 
-        courseJpaRepository.deleteById(id);
-    }
-
-    @Override
-    public boolean existsByCourseSchedule(String schedule) {
-        return courseJpaRepository.existsBySchedule(schedule);
+        courseJpaRepository.delete(course);
     }
 
     @Override
@@ -69,5 +64,15 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public boolean existsByIdNotAndRoomAndCourseSchedule(Integer id, String room, String schedule) {
         return courseJpaRepository.existsByIdNotAndRoomAndSchedule(id, room, schedule);
+    }
+
+    @Override
+    public boolean existsByCodeAndSubjectId(String code, Integer subjectId) {
+        return courseJpaRepository.existsByCodeAndSubjectId(code, subjectId);
+    }
+
+    @Override
+    public boolean existsByCodeAndSubjectIdAndIdNot(String code, Integer subjectId, Integer id) {
+        return courseJpaRepository.existsByCodeAndSubjectIdAndIdNot(code, subjectId, id);
     }
 }

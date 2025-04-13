@@ -19,12 +19,12 @@ public interface CourseMapperImpl extends CourseMapper {
     void toDomain(@MappingTarget Course course, CourseUpdateRequestDto updateRequestDto);
 
     @Mapping(target = "subject", source = "subject.name")
-    @Mapping(target = "code", source = "subject.code")
+    @Mapping(target = "subjectCode", source = "subject.code")
     @Mapping(target = "program", source = "program.name")
     @Mapping(target = "credits", source = "subject.credits")
     CourseDto toDto(Course entity);
 
     @Mapping(target = "subject", source = "subject.name")
-    @Mapping(target = "code", source = "subject.code")
+    @Mapping(target = "subjectCode", source = "subject.code")
     CourseMinimalDto toMinimalDto(Course entity);
 }
