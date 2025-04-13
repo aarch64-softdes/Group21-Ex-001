@@ -98,6 +98,24 @@ CREATE TABLE subject_prerequisites (
     CONSTRAINT fk_subject_prerequisites_prerequisite FOREIGN KEY (prerequisite_id) REFERENCES subjects (id)
 );
 
+-- Create courses table
+CREATE TABLE courses (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    code VARCHAR(50) NOT NULL,
+    year INTEGER NOT NULL,
+    semester INTEGER NOT NULL,
+    lecturer VARCHAR(255) NOT NULL,
+    max_student INTEGER NOT NULL,
+    room VARCHAR(50) NOT NULL,
+    schedule VARCHAR(50) NOT NULL,
+    start_date DATE NOT NULL,
+    program_id INTEGER NOT NULL,
+    subject_id INTEGER NOT NULL,
+    CONSTRAINT fk_courses_program FOREIGN KEY (program_id) REFERENCES programs (id),
+    CONSTRAINT fk_courses_subject FOREIGN KEY (subject_id) REFERENCES subjects (id),
+    CONSTRAINT uc_courses_code UNIQUE (code)
+);
+
 -- Add constraints to students table
 ALTER TABLE students
     ADD CONSTRAINT uc_students_email UNIQUE (email);
@@ -488,3 +506,22 @@ INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (13, 12);
 
 -- BUS201 requires BUS101
 INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (15, 14);
+
+-- Add sample course data
+INSERT INTO courses (code, year, semester, lecturer, max_student, room, schedule, start_date, program_id, subject_id) VALUES
+-- Computer Science Courses
+('CS101-01', 2025, 1, 'Dr. John Smith', 40, 'A101', 'T2(3-6)', '2025-01-15', 1, 1),
+('CS101-02', 2025, 1, 'Dr. Sarah Johnson', 35, 'B202', 'T4(1-4)', '2025-01-15', 1, 1),
+('CS201-01', 2025, 1, 'Dr. Emily Chen', 45, 'A105', 'T5(4-7)', '2025-01-17', 1, 2),
+('CS301-01', 2025, 1, 'Prof. Robert Davis', 30, 'C303', 'T3(1-4)', '2025-01-16', 1, 3),
+('CS302-01', 2025, 2, 'Dr. Michael Wilson', 25, 'A203', 'T6(3-6)', '2025-06-15', 1, 4),
+-- Mathematics Courses
+('MATH101-01', 2025, 1, 'Dr. Jennifer White', 50, 'D404', 'T2(8-11)', '2025-01-14', 2, 6),
+('MATH201-01', 2025, 1, 'Prof. David Brown', 40, 'E501', 'T4(6-9)', '2025-01-16', 2, 8),
+('MATH301-01', 2025, 2, 'Prof. David Williams', 30, 'C303', 'T3(6-9)', '2025-06-10', 2, 9),
+-- Physics Courses
+('PHYS101-01', 2025, 1, 'Prof. Michael Brown', 50, 'D404', 'T6(1-4)', '2025-01-18', 3, 11),
+('PHYS201-01', 2025, 2, 'Dr. Elizabeth Taylor', 35, 'B205', 'T5(8-11)', '2025-06-12', 3, 12),
+-- Business Courses
+('BUS101-01', 2025, 1, 'Prof. Catherine Jones', 60, 'F601', 'T3(3-6)', '2025-01-15', 4, 14),
+('BUS201-01', 2025, 2, 'Dr. James Anderson', 45, 'E505', 'T2(1-4)', '2025-06-14', 4, 15);
