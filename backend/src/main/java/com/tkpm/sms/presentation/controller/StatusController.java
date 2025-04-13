@@ -4,14 +4,13 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.status.StatusRequestDto;
 import com.tkpm.sms.application.dto.request.status.StatusVerificationDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.application.dto.response.common.ListResponse;
-import com.tkpm.sms.application.dto.response.common.PageDto;
 import com.tkpm.sms.application.dto.response.status.AllowedTransitionDto;
 import com.tkpm.sms.application.dto.response.status.StatusDto;
 import com.tkpm.sms.application.mapper.StatusMapper;
 import com.tkpm.sms.application.service.interfaces.StatusService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Status;
+import com.tkpm.sms.domain.utils.ListUtils;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,30 +33,12 @@ public class StatusController {
     StatusMapper statusMapper;
 
     @GetMapping
-    public ResponseEntity<ApplicationResponseDto<ListResponse<StatusDto>>> getAllStatuses(
+    public ResponseEntity<ApplicationResponseDto<PageResponse<StatusDto>>> getAllStatuses(
             @ModelAttribute BaseCollectionRequest search
     ) {
         PageResponse<Status> pageResponse = statusService.getAllStatuses(search);
-
-        // Map domain entities to DTOs
-        List<StatusDto> statusDtos = pageResponse.getContent().stream()
-                .map(statusMapper::toStatusDto)
-                .collect(Collectors.toList());
-
-        // Create page info
-        var pageDto = PageDto.builder()
-                .totalElements(pageResponse.getTotalElements())
-                .pageSize(pageResponse.getPageSize())
-                .pageNumber(pageResponse.getPageNumber())
-                .totalPages(pageResponse.getTotalPages())
-                .build();
-
-        // Create response
-        var listResponse = ListResponse.<StatusDto>builder()
-                .page(pageDto)
-                .data(statusDtos)
-                .build();
-
+        List<StatusDto> statusDtos = ListUtils.transform(pageResponse.getData(), statusMapper::toStatusDto);
+        PageResponse<StatusDto> listResponse = PageResponse.of(pageResponse, statusDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 

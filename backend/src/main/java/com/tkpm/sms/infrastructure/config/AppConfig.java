@@ -37,4 +37,9 @@ public class AppConfig {
     public StatusDomainValidator statusValidator(StatusRepository statusRepository) {
         return new StatusDomainValidator(statusRepository);
     }
+
+    @Bean
+    public CourseDomainValidator courseValidator(CourseRepository courseRepository) {
+        return new CourseDomainValidator(courseRepository);
+    }
 }
