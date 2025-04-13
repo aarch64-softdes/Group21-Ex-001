@@ -16,4 +16,8 @@ public interface SubjectService {
     Subject updateSubject(Integer id, SubjectUpdateRequestDto updateRequestDto);
 
     void deleteSubject(Integer id);
+
+    void deactivateSubject(Integer id);
+
+    void activateSubject(Integer id);
 }

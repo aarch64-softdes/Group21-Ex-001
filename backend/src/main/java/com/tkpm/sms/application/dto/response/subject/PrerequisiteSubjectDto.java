@@ -13,4 +13,5 @@ public class PrerequisiteSubjectDto {
     Integer id;
     String name;
     String code;
+    String description;
 }
