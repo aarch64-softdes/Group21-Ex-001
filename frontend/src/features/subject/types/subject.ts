@@ -5,7 +5,7 @@ export default interface Subject {
   credits: number;
   description?: string;
   faculty?: string;
-  prerequisites?: string[];
+  prerequisites?: Partial<Subject>[];
 }
 
 export interface CreateSubjectDTO {
@@ -33,5 +33,5 @@ export const mapToSubject = (data: any): Subject => ({
   credits: data.credits,
   description: data.description,
   faculty: data.faculty,
-  prerequisites: data.prerequisites || [],
+  prerequisites: data.prerequisitesSubjects,
 });

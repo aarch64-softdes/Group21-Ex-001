@@ -71,11 +71,11 @@ const SubjectDetail: React.FC<DetailComponentProps> = ({ id: subjectId }) => {
                   Prerequisites
                 </h3>
                 <div className='flex flex-wrap gap-2'>
-                  {subject.prerequisiteNames &&
-                  subject.prerequisiteNames.length > 0 ? (
-                    subject.prerequisiteNames.map((name, index) => (
+                  {subject.prerequisites && subject.prerequisites.length > 0 ? (
+                    subject.prerequisites.map((prerequisite, index) => (
                       <Badge key={index} variant='secondary'>
-                        {name}
+                        {prerequisite.name || 'Unknown'} -{' '}
+                        {prerequisite.code || 'N/A'}
                       </Badge>
                     ))
                   ) : (

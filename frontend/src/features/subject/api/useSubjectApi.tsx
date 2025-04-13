@@ -7,8 +7,6 @@ import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { showErrorToast } from '@/shared/lib/toast-utils';
 import { getErrorMessage } from '@/shared/lib/utils';
-import programService from '@/features/program/api/programService';
-import Program from '@/features/program/types/program';
 import { useLoadMore } from '@/shared/hooks/useLoadMore';
 import { useState } from 'react';
 
@@ -38,8 +36,8 @@ export const useSubjects = (params: QueryHookParams) => {
       subjectService.getSubjects({
         page,
         size: pageSize,
-        sortName,
-        sortType,
+        sortBy: sortName,
+        sortDirection: sortType,
         search,
         faculty,
       }),
@@ -54,8 +52,8 @@ export const useSubjectsDropdown = (initialPageSize?: number) => {
       subjectService.getSubjects({
         page,
         size,
-        sortName: 'name',
-        sortType: 'asc',
+        sortBy: 'name',
+        sortDirection: 'asc',
         search: searchQuery,
       }),
     mapFn: (subject: Subject) => ({
