@@ -45,7 +45,7 @@ import {
 } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
-import { useFacultiesDropdown2 } from '@faculty/api/useFacultyApi';
+import { useFacultiesDropdown } from '@faculty/api/useFacultyApi';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 
 // Define schema
@@ -83,7 +83,12 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
   const { data: subjectData, isLoading: isLoadingSubject } = useSubject(
     id || '',
   );
-  const faculties = useFacultiesDropdown2(isEditing ? 100 : 5);
+  const faculties = useFacultiesDropdown(isEditing ? 100 : 5, (faculty) => ({
+    id: faculty.id,
+    label: faculty.name,
+    value: faculty.id,
+  }));
+
   const subjectsQuery = useSubjectsForPrerequisites(id);
 
   // Store all subjects for displaying names in the UI
