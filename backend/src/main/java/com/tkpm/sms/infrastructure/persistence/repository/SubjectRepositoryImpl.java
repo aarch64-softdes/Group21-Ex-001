@@ -1,6 +1,5 @@
 package com.tkpm.sms.infrastructure.persistence.repository;
 
-import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Subject;
@@ -9,15 +8,18 @@ import com.tkpm.sms.infrastructure.persistence.entity.SubjectEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.SubjectJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.SubjectPersistenceMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class SubjectRepositoryImpl implements SubjectRepository {
@@ -97,5 +99,10 @@ public class SubjectRepositoryImpl implements SubjectRepository {
     @Override
     public boolean existsByCodeAndIdNot(String code, Integer id) {
         return jpaRepository.existsByCodeAndIdNot(code, id);
+    }
+
+    @Override
+    public boolean isPrerequisiteForOtherSubjects(Integer subjectId) {
+        return jpaRepository.isPrerequisitesForOtherSubjects(subjectId);
     }
 }

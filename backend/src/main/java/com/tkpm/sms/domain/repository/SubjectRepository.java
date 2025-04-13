@@ -25,4 +25,6 @@ public interface SubjectRepository {
     boolean existsByNameAndIdNot(String name, Integer id);
 
     boolean existsByCodeAndIdNot(String code, Integer id);
+
+    boolean isPrerequisiteForOtherSubjects(Integer subjectId);
 }
