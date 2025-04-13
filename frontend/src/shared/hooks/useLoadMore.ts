@@ -7,11 +7,13 @@ interface UseLoadMoreOptions<T> {
     page: number,
     pageSize: number,
     searchQuery?: string,
+    initialId?: string,
   ) => Promise<{
     data: T[];
     totalItems: number;
   }>;
   mapFn: (item: T) => SelectItem;
+  initialItem?: SelectItem;
   initialPageSize?: number;
   searchQuery?: string;
   enabled?: boolean;
@@ -21,6 +23,7 @@ export function useLoadMore<T>({
   queryKey,
   fetchFn,
   mapFn,
+  initialItem,
   initialPageSize = 5,
   searchQuery = '',
   enabled = true,
@@ -49,14 +52,25 @@ export function useLoadMore<T>({
   const items = infiniteQuery.data?.pages.flatMap((page) => page.data) || [];
 
   // Map items to SelectItem format for use in dropdowns
-  const selectItems: SelectItem[] = items.map(mapFn);
+  const mappedItems: SelectItem[] = items.map(mapFn);
+
+  // Include initialItem at the beginning of the selectItems array if provided
+  const selectItems: SelectItem[] = initialItem
+    ? [initialItem, ...mappedItems]
+    : mappedItems;
+
+  // If duplicated items exist, filter it out
+  const uniqueSelectItems = selectItems.filter(
+    (item, index) =>
+      selectItems.findIndex((i) => i.value === item.value) === index,
+  );
 
   // Calculate if there are more items to load
   const hasMore = infiniteQuery.hasNextPage || false;
 
   return {
     items,
-    selectItems,
+    selectItems: uniqueSelectItems,
     hasMore,
     isLoading: infiniteQuery.isLoading,
     isLoadingMore: infiniteQuery.isFetchingNextPage,

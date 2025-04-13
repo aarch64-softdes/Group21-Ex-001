@@ -43,16 +43,18 @@ export const useFacultiesDropdown = (
   mapFn?: (arg0: Faculty) => SelectItem,
 ) => {
   const [facultySearch, setFacultySearch] = useState<string>('');
+  const [item, setItem] = useState<SelectItem | undefined>(undefined);
   const faculties = useLoadMore<Faculty>({
     queryKey: ['faculties', 'dropdown'],
-    fetchFn: (page, size, searchQuery) =>
+    fetchFn: (page, size, search) =>
       facultyService.getFaculties({
         page,
         size,
         sortName: 'name',
         sortType: 'asc',
-        search: searchQuery,
+        search,
       }),
+    initialItem: item,
     mapFn:
       mapFn ||
       ((faculty: Faculty) => ({
@@ -67,6 +69,7 @@ export const useFacultiesDropdown = (
   return {
     ...faculties,
     setFacultySearch,
+    setItem,
   };
 };
 

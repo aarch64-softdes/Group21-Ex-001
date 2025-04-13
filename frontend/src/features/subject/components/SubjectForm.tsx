@@ -45,7 +45,7 @@ import {
 } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
-import { useFacultiesDropdown } from '@faculty/api/useFacultyApi';
+import { useFacultiesDropdown, useFaculty } from '@faculty/api/useFacultyApi';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 
 // Define schema
@@ -83,7 +83,7 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
   const { data: subjectData, isLoading: isLoadingSubject } = useSubject(
     id || '',
   );
-  const faculties = useFacultiesDropdown(isEditing ? 100 : 5, (faculty) => ({
+  const faculties = useFacultiesDropdown(5, (faculty) => ({
     id: faculty.id,
     label: faculty.name,
     value: faculty.id,
@@ -129,22 +129,20 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
         code: subjectData.code || '',
         credits: subjectData.credits || 3,
         description: subjectData.description || '',
+        facultyId: subjectData.faculty.id || '',
         prerequisitesId:
           subjectData.prerequisites?.map((subject) => subject.id) || [],
       });
-    }
-  }, [subjectData, id, form]);
 
-  useEffect(() => {
-    if (faculties.items.length > 0 && subjectData?.faculty) {
-      const matchingFaculty = faculties.items.find(
-        (f) => f.name === subjectData.faculty,
-      );
-      if (matchingFaculty) {
-        form.setValue('facultyId', matchingFaculty.id.toString());
+      if (subjectData.faculty.id) {
+        faculties.setItem({
+          id: subjectData.faculty.id,
+          label: subjectData.faculty.name || '',
+          value: subjectData.faculty.id,
+        });
       }
     }
-  }, [faculties.items, subjectData, form]);
+  }, [subjectData, id, form]);
 
   const handleSubmit = (values: SubjectFormValues) => {
     onSubmit({

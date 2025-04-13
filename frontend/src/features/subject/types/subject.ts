@@ -1,10 +1,12 @@
+import Faculty from '@/features/faculty/types/faculty';
+
 export default interface Subject {
   id: string;
   name: string;
   code: string;
   credits: number;
   description?: string;
-  faculty?: string;
+  faculty: Partial<Faculty>;
   prerequisites?: Partial<Subject>[];
 }
 
@@ -32,7 +34,15 @@ export const mapToSubject = (data: any): Subject => ({
   code: data.code,
   credits: data.credits,
   description: data.description,
-  faculty: data.faculty,
+  faculty:
+    data.faculty && data.faculty.id
+      ? {
+          id: data.faculty.id.toString(),
+          name: data.faculty.name,
+        }
+      : {
+          name: data.faculty || '',
+        },
   prerequisites: data.prerequisitesSubjects?.map((subject: any) => ({
     id: subject.id.toString(),
     name: subject.name,

@@ -51,7 +51,8 @@ const SubjectPage: React.FC = () => {
       },
       {
         header: 'Faculty',
-        key: 'faculty',
+        key: 'faculty.name',
+        nested: true,
       },
     ],
     [],

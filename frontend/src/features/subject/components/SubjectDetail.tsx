@@ -61,7 +61,7 @@ const SubjectDetail: React.FC<DetailComponentProps> = ({ id: subjectId }) => {
                     <School className='h-4 w-4' />
                     Faculty
                   </h3>
-                  <p>{subject.faculty}</p>
+                  <p>{subject.faculty.name}</p>
                 </div>
               )}
 
