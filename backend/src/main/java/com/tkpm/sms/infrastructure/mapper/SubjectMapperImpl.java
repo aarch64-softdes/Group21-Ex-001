@@ -16,7 +16,6 @@ public interface SubjectMapperImpl extends SubjectMapper {
     Subject toSubject(SubjectRequestDto subjectRequestDto);
 
     @Override
-    @Mapping(target = "faculty", source = "faculty.name")
     SubjectDto toSubjectDto(Subject subject);
 
     @Override
