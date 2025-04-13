@@ -16,17 +16,12 @@ import { BookOpen, Users } from 'lucide-react';
 import CourseForm from './components/CourseForm';
 import CourseDetail from './components/CourseDetail';
 
-interface ExtendedCourse extends Course {
-  subjectName?: string;
-  programName?: string;
-}
-
 const CoursePage: React.FC = () => {
   const createCourse = useCreateCourse();
   const updateCourse = useUpdateCourse();
   const deleteCourse = useDeleteCourse();
 
-  const columns: Column<ExtendedCourse>[] = React.useMemo(
+  const columns: Column<Course>[] = React.useMemo(
     () => [
       {
         header: 'Course Code',
@@ -37,13 +32,11 @@ const CoursePage: React.FC = () => {
       },
       {
         header: 'Subject',
-        key: 'subject.name',
-        nested: true,
+        key: 'subject',
       },
       {
         header: 'Program',
-        key: 'program.name',
-        nested: true,
+        key: 'program',
       },
       {
         header: 'Lecturer',
@@ -74,7 +67,14 @@ const CoursePage: React.FC = () => {
         header: 'Year',
         key: 'year',
         style: {
-          width: '80px',
+          width: '60px',
+        },
+      },
+      {
+        header: 'Sem',
+        key: 'semester',
+        style: {
+          width: '50px',
         },
       },
     ],
@@ -99,30 +99,6 @@ const CoursePage: React.FC = () => {
     [updateCourse, createCourse, deleteCourse],
   );
 
-  const searchCodeFilterOption: SearchFilterOption = {
-    id: 'search',
-    label: 'Search by code or room',
-    labelIcon: BookOpen,
-    placeholder: 'Enter code or room',
-    type: 'search',
-  };
-
-  const searchLecturerFilterOption: SearchFilterOption = {
-    id: 'lecturer',
-    label: 'Search by lecturer',
-    labelIcon: Users,
-    placeholder: 'Enter lecturer name',
-    type: 'search',
-  };
-
-  const searchSubjectFilterOption: SearchFilterOption = {
-    id: 'subject',
-    label: 'Search by subject',
-    labelIcon: BookOpen,
-    placeholder: 'Enter subject name',
-    type: 'search',
-  };
-
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
@@ -138,11 +114,7 @@ const CoursePage: React.FC = () => {
           delete: false,
         }}
         requireDeleteConfirmation={true}
-        filterOptions={[
-          searchCodeFilterOption,
-          searchLecturerFilterOption,
-          searchSubjectFilterOption,
-        ]}
+        filterOptions={[]}
       />
     </div>
   );

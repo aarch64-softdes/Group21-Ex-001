@@ -11,22 +11,10 @@ import { getErrorMessage } from '@/shared/lib/utils';
 const courseService = new CourseService();
 
 export const useCourses = (params: QueryHookParams) => {
-  let { page, pageSize, filters, sort } = params;
+  let { page, pageSize, sort } = params;
 
-  let search = '';
-  let subject = '';
-  let lecturer = '';
-
-  if (filters.search && typeof filters.search === 'string') {
-    search = filters.search;
-  }
-
-  if (filters.subject && typeof filters.subject === 'string') {
-    subject = filters.subject;
-  }
-
-  if (filters.lecturer && typeof filters.lecturer === 'string') {
-    lecturer = filters.lecturer;
+  if (page < 1) {
+    page = 1;
   }
 
   // Map sort config to API parameters
@@ -34,25 +22,13 @@ export const useCourses = (params: QueryHookParams) => {
   const sortType = sort.direction || 'asc';
 
   return useQuery({
-    queryKey: [
-      'courses',
-      page,
-      pageSize,
-      search,
-      subject,
-      lecturer,
-      sortName,
-      sortType,
-    ],
+    queryKey: ['courses', page, pageSize, sortName, sortType],
     queryFn: () =>
       courseService.getCourses({
         page,
         size: pageSize,
         sortName,
         sortType,
-        search,
-        subject,
-        lecturer,
       }),
   });
 };

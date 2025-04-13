@@ -1,54 +1,53 @@
 import Program from '@/features/program/types/program';
 import Subject from '@/features/subject/types/subject';
+import { CourseScheduleDto } from './courseSchedule.ts';
 
 export default interface Course {
   id: string;
-  subjectId: string;
-  code: string;
+  code?: string;
   year: number;
-  startAt: Date;
+  semester: number;
   lecturer: string;
   maxStudent: number;
-  schedule: string;
   room: string;
+  schedule: string;
+  startDate: Date;
   subject?: Subject;
-  program?: Program | string;
+  program?: Program;
 }
 
 export interface CreateCourseDTO {
   subjectId: string;
   programId: string;
-  code: string;
   year: number;
-  startAt: Date;
+  semester: number;
   lecturer: string;
   maxStudent: number;
-  schedule: string;
   room: string;
+  schedule: CourseScheduleDto;
+  startDate: Date;
 }
 
 export interface UpdateCourseDTO {
-  subjectId?: string;
-  programId?: string;
-  code?: string;
-  year?: number;
-  startAt?: Date;
-  lecturer?: string;
-  maxStudent?: number;
-  schedule?: string;
-  room?: string;
+  year: number;
+  semester: number;
+  lecturer: string;
+  maxStudent: number;
+  room: string;
+  schedule: CourseScheduleDto;
+  startDate: Date;
 }
 
 export const mapToCourse = (data: any): Course => ({
-  id: data.id as string,
-  subjectId: data.subjectId as string,
-  code: data.code,
+  id: data.id.toString(),
+  code: `${data.subject?.code}-${data.id.toString().padStart(2, '0')}`,
   year: data.year,
-  startAt: new Date(data.startAt),
+  semester: data.semester,
   lecturer: data.lecturer,
   maxStudent: data.maxStudent,
-  schedule: data.schedule,
   room: data.room,
+  schedule: data.schedule,
+  startDate: data.startDate ? new Date(data.startDate) : new Date(),
   subject: data.subject,
   program: data.program,
 });

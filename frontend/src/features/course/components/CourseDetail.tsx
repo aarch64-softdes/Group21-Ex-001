@@ -12,6 +12,7 @@ import {
   MapPin,
   User,
   GraduationCap,
+  CalendarRange,
 } from 'lucide-react';
 import React from 'react';
 
@@ -80,14 +81,14 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
           <div className='flex justify-between items-start'>
             <div>
               <CardTitle className='text-2xl font-bold'>
-                {courseData.code}
+                {courseData.code || `Course #${courseData.id}`}
               </CardTitle>
               <p className='text-muted-foreground text-sm'>
                 {courseData.subject?.name}
               </p>
             </div>
             <Badge variant='secondary' className='px-3 py-1'>
-              {courseData.year}
+              {courseData.year} - Semester {courseData.semester}
             </Badge>
           </div>
           <Separator />
@@ -108,7 +109,7 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
                   <GraduationCap className='h-4 w-4' />
                   Program
                 </h3>
-                <p>{courseData.program?.name || courseData.program}</p>
+                <p>{courseData.program?.name}</p>
               </div>
 
               <div>
@@ -129,10 +130,12 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
 
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
-                  <GraduationCap className='h-4 w-4' />
-                  Academic Year
+                  <CalendarRange className='h-4 w-4' />
+                  Academic Year and Semester
                 </h3>
-                <p>{courseData.year}</p>
+                <p>
+                  Year {courseData.year}, Semester {courseData.semester}
+                </p>
               </div>
             </div>
 
@@ -142,7 +145,7 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
                   <Calendar className='h-4 w-4' />
                   Start Date
                 </h3>
-                <p>{formatDate(courseData.startAt)}</p>
+                <p>{formatDate(courseData.startDate)}</p>
               </div>
 
               <div>

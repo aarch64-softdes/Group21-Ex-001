@@ -1,7 +1,6 @@
 import {
   Activity,
   Bookmark,
-  BookOpen,
   FileText,
   GraduationCap,
   Library,
@@ -48,8 +47,8 @@ const items = [
     icon: Bookmark,
   },
   {
-    title: 'Class',
-    url: 'class',
+    title: 'Course',
+    url: 'course',
     icon: FileText,
   },
   {

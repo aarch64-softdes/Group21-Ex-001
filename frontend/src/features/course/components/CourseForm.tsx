@@ -16,13 +16,17 @@ import { Input } from '@ui/input';
 import { Separator } from '@ui/separator';
 import { useCourse } from '@/features/course/api/useCourseApi';
 import { useProgramsDropdown } from '@/features/program/api/useProgramApi';
-import Course, { CreateCourseDTO } from '@/features/course/types/course';
-import { FormComponentProps } from '@/core/types/table';
+import {
+  CreateCourseDTO,
+  UpdateCourseDTO,
+} from '@/features/course/types/course';
+import { FormComponentPropsWithoutType } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 import LoadingButton from '@ui/loadingButton';
 import { useSubjectsDropdown } from '@/features/subject/api/useSubjectApi';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
+import { parseSchedule } from '../types/courseSchedule';
 
 // Schedule validation pattern - ex: T2(3-6)
 const schedulePattern = /^T[2-7]\([1-9]-([1-9]|1[0-2])\)$/;
@@ -30,17 +34,18 @@ const schedulePattern = /^T[2-7]\([1-9]-([1-9]|1[0-2])\)$/;
 // Define schema
 export const CourseFormSchema = z.object({
   subjectId: z.string().min(1, 'Subject is required'),
-  program: z.string().min(1, 'Program is required'),
-  code: z
-    .string()
-    .min(1, 'Code is required')
-    .max(20, 'Code must be less than 20 characters'),
+  programId: z.string().min(1, 'Program is required'),
   year: z
     .number()
     .min(2020, 'Year must be 2020 or later')
     .max(2050, 'Year must be before 2050')
     .or(z.string().regex(/^\d+$/).transform(Number)),
-  startAt: z.string().min(1, 'Start date is required'),
+  semester: z
+    .number()
+    .min(1, 'Semester must be at least 1')
+    .max(3, 'Semester must be at most 3')
+    .or(z.string().regex(/^\d+$/).transform(Number)),
+  startDate: z.string().min(1, 'Start date is required'),
   lecturer: z
     .string()
     .min(1, 'Lecturer name is required')
@@ -65,7 +70,7 @@ export const CourseFormSchema = z.object({
 
 export type CourseFormValues = z.infer<typeof CourseFormSchema>;
 
-const CourseForm: React.FC<FormComponentProps<Course>> = ({
+const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
   onSubmit,
   onCancel,
   id,
@@ -80,10 +85,10 @@ const CourseForm: React.FC<FormComponentProps<Course>> = ({
     resolver: zodResolver(CourseFormSchema),
     defaultValues: {
       subjectId: '',
-      program: '',
-      code: '',
+      programId: '',
       year: new Date().getFullYear(),
-      startAt: '',
+      semester: 1,
+      startDate: '',
       lecturer: '',
       maxStudent: 30,
       schedule: '',
@@ -101,27 +106,32 @@ const CourseForm: React.FC<FormComponentProps<Course>> = ({
   useEffect(() => {
     if (courseData && id) {
       form.reset({
-        subjectId: courseData.subjectId || '',
-        program: courseData.program?.toString() || '',
-        code: courseData.code || '',
-        year: courseData.year || new Date().getFullYear(),
-        startAt: formatDateForInput(courseData.startAt),
-        lecturer: courseData.lecturer || '',
-        maxStudent: courseData.maxStudent || 30,
-        schedule: courseData.schedule || '',
-        room: courseData.room || '',
+        year: courseData.year,
+        semester: courseData.semester,
+        startDate: formatDateForInput(courseData.startDate),
+        lecturer: courseData.lecturer,
+        maxStudent: courseData.maxStudent,
+        schedule: courseData.schedule,
+        room: courseData.room,
       });
     }
   }, [courseData, id, form]);
 
   const handleSubmit = (values: CourseFormValues) => {
-    // Transform the string date to a Date object before submitting
+    // Transform the data for the backend
     const submissionValues = {
       ...values,
-      startAt: new Date(values.startAt),
+      subjectId: values.subjectId,
+      programId: values.programId,
+      startDate: new Date(values.startDate),
+      schedule: parseSchedule(values.schedule),
     };
 
-    onSubmit(submissionValues as unknown as CreateCourseDTO);
+    if (isEditing) {
+      onSubmit(submissionValues as UpdateCourseDTO);
+    } else {
+      onSubmit(submissionValues as CreateCourseDTO);
+    }
   };
 
   // Determine if we should show loading state
@@ -165,7 +175,7 @@ const CourseForm: React.FC<FormComponentProps<Course>> = ({
                         <FormItem>
                           <FormLabel>Subject</FormLabel>
                           <LoadMoreSelect
-                            value={field.value || ''}
+                            value={field.value}
                             onValueChange={field.onChange}
                             placeholder='Select subject'
                             items={subjects.selectItems}
@@ -173,10 +183,10 @@ const CourseForm: React.FC<FormComponentProps<Course>> = ({
                             isLoadingMore={subjects.isLoadingMore}
                             hasMore={subjects.hasMore}
                             onLoadMore={subjects.loadMore}
-                            disabled={subjects.isLoading}
                             emptyMessage='No subjects found.'
                             searchPlaceholder='Search subject...'
                             onSearch={subjects.setSubjectSearch}
+                            disabled={isEditing || isLoading}
                           />
                           <FormMessage />
                         </FormItem>
@@ -185,12 +195,12 @@ const CourseForm: React.FC<FormComponentProps<Course>> = ({
 
                     <FormField
                       control={form.control}
-                      name='program'
+                      name='programId'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Program</FormLabel>
                           <LoadMoreSelect
-                            value={field.value || ''}
+                            value={field.value}
                             onValueChange={field.onChange}
                             placeholder='Select program'
                             items={programs.selectItems}
@@ -198,34 +208,11 @@ const CourseForm: React.FC<FormComponentProps<Course>> = ({
                             isLoadingMore={programs.isLoadingMore}
                             hasMore={programs.hasMore}
                             onLoadMore={programs.loadMore}
-                            disabled={programs.isLoading}
                             emptyMessage='No programs found.'
                             searchPlaceholder='Search programs...'
                             onSearch={programs.setProgramSearch}
+                            disabled={isEditing || isLoading}
                           />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name='code'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Course Code</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder='e.g. CS101-01'
-                              {...field}
-                              autoComplete='off'
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -261,7 +248,35 @@ const CourseForm: React.FC<FormComponentProps<Course>> = ({
 
                     <FormField
                       control={form.control}
-                      name='startAt'
+                      name='semester'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Semester</FormLabel>
+                          <FormControl>
+                            <Input
+                              type='number'
+                              min={1}
+                              max={3}
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(parseInt(e.target.value, 10))
+                              }
+                              autoComplete='off'
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name='startDate'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Start Date</FormLabel>
