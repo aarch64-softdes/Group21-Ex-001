@@ -1,10 +1,7 @@
-package com.tkpm.sms.domain.model;
+package com.tkpm.sms.application.dto.response.subject;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -12,10 +9,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Faculty {
+public class PrerequisiteSubjectDto {
     Integer id;
     String name;
-    LocalDate deletedAt;
-    Set<Student> students;
-    Set<Subject> subjects;
+    String code;
 }

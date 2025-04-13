@@ -3,8 +3,7 @@ package com.tkpm.sms.domain.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,10 +11,12 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Faculty {
+public class Subject {
     Integer id;
     String name;
-    LocalDate deletedAt;
-    Set<Student> students;
-    Set<Subject> subjects;
+    String code;
+    String description;
+    Integer credits;
+    Faculty faculty;
+    List<Integer> prerequisitesId;
 }
