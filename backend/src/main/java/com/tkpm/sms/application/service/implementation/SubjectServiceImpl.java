@@ -1,7 +1,8 @@
 package com.tkpm.sms.application.service.implementation;
 
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
-import com.tkpm.sms.application.dto.request.subject.SubjectRequestDto;
+import com.tkpm.sms.application.dto.request.subject.SubjectCreateRequestDto;
+import com.tkpm.sms.application.dto.request.subject.SubjectUpdateRequestDto;
 import com.tkpm.sms.application.mapper.SubjectMapper;
 import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.application.service.interfaces.SubjectService;
@@ -16,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -52,7 +51,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Subject createSubject(SubjectRequestDto subjectRequestDto) {
+    public Subject createSubject(SubjectCreateRequestDto subjectRequestDto) {
         subjectValidator.validateSubjectCodeUniqueness(subjectRequestDto.getCode());
         subjectValidator.validateSubjectNameUniqueness(subjectRequestDto.getName());
 
@@ -63,16 +62,15 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Subject updateSubject(Integer id, SubjectRequestDto subjectRequestDto) {
-        subjectValidator.validateSubjectNameUniquenessForUpdate(subjectRequestDto.getName(), id);
-        subjectValidator.validateSubjectCodeUniquenessForUpdate(subjectRequestDto.getCode(), id);
+    public Subject updateSubject(Integer id, SubjectUpdateRequestDto updateRequestDto) {
+        subjectValidator.validateSubjectNameUniquenessForUpdate(updateRequestDto.getName(), id);
 
         Subject subject = subjectRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
 
 
-        subjectMapper.updateSubjectFromDto(subjectRequestDto, subject);
+        subjectMapper.updateSubjectFromDto(subject, updateRequestDto);
 
         return subjectRepository.save(subject);
     }

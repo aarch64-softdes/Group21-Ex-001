@@ -1,7 +1,8 @@
 package com.tkpm.sms.presentation.controller;
 
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
-import com.tkpm.sms.application.dto.request.subject.SubjectRequestDto;
+import com.tkpm.sms.application.dto.request.subject.SubjectCreateRequestDto;
+import com.tkpm.sms.application.dto.request.subject.SubjectUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.subject.PrerequisiteSubjectDto;
 import com.tkpm.sms.application.dto.response.subject.SubjectDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
@@ -82,7 +83,7 @@ public class SubjectController {
 
     @PostMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<SubjectDto>> createSubject(
-            @Valid @RequestBody SubjectRequestDto subjectRequestDto,
+            @Valid @RequestBody SubjectCreateRequestDto subjectRequestDto,
             UriComponentsBuilder uriComponentsBuilder
     ) {
         Subject createdSubject = subjectService.createSubject(subjectRequestDto);
@@ -94,9 +95,9 @@ public class SubjectController {
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<SubjectDto>> updateSubject(
             @PathVariable Integer id,
-            @Valid @RequestBody SubjectRequestDto subjectRequestDto
+            @Valid @RequestBody SubjectUpdateRequestDto updateRequestDto
     ) {
-        Subject updatedSubject = subjectService.updateSubject(id, subjectRequestDto);
+        Subject updatedSubject = subjectService.updateSubject(id, updateRequestDto);
         SubjectDto updatedSubjectDto = subjectMapper.toSubjectDto(updatedSubject);
         return ResponseEntity.ok(ApplicationResponseDto.success(updatedSubjectDto));
     }
