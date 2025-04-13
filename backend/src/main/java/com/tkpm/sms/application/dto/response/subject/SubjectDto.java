@@ -18,6 +18,7 @@ public class SubjectDto {
     String name;
     String code;
     String description;
+    boolean isActive;
     Integer credits;
     String faculty;
     List<PrerequisiteSubjectDto> prerequisitesSubjects;

@@ -4,6 +4,7 @@ import com.tkpm.sms.application.dto.request.subject.SubjectCreateRequestDto;
 import com.tkpm.sms.application.dto.request.subject.SubjectUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.subject.SubjectDto;
 import com.tkpm.sms.domain.model.Subject;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 public interface SubjectMapper {

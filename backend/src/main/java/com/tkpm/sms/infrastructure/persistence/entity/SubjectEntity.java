@@ -1,13 +1,12 @@
 package com.tkpm.sms.infrastructure.persistence.entity;
 
-import com.tkpm.sms.domain.model.Faculty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "subjects")
@@ -26,24 +25,27 @@ public class SubjectEntity {
 
     @NotNull
     String code;
-    @Column(name = "is_active")
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     boolean isActive;
     String description;
 
     @NotNull
     Integer credits;
 
+    @Column(name = "create_at")
+    LocalDateTime createdAt;
+
     // many-to-one relationship with faculty
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     FacultyEntity faculty;
 
-    // relationship with prerequisite subjects
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
+    // many-to-many relationship with subject
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
             name = "subject_prerequisites",
-            joinColumns = @JoinColumn(name = "subject_id")
+            joinColumns = @JoinColumn(name = "subject_id"),
+            inverseJoinColumns = @JoinColumn(name = "prerequisite_id")
     )
-    @Column(name = "prerequisite_id")
-    List<Integer> prerequisitesId;
+    Set<SubjectEntity> prerequisites;
 }

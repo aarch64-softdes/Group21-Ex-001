@@ -3,6 +3,7 @@ package com.tkpm.sms.domain.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,7 +18,8 @@ public class Subject {
     String code;
     boolean isActive;
     String description;
+    LocalDateTime createdAt;
     Integer credits;
     Faculty faculty;
-    List<Integer> prerequisitesId;
+    List<Subject> prerequisites;
 }
