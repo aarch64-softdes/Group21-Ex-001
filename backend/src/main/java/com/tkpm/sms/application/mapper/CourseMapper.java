@@ -9,7 +9,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
 public interface CourseMapper {
     @Mapping(target = "schedule", expression = "java(createRequestDto.getSchedule().toString())")
     Course toDomain(CourseCreateRequestDto createRequestDto);
