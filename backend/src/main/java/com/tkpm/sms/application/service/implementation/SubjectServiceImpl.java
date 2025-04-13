@@ -9,7 +9,7 @@ import com.tkpm.sms.application.service.interfaces.SubjectService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
-import com.tkpm.sms.domain.exception.SubjectDeletionTimeConstraintException;
+import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.SubjectRepository;
 import com.tkpm.sms.domain.service.validators.SubjectDomainValidator;
@@ -95,15 +95,16 @@ public class SubjectServiceImpl implements SubjectService {
             // in minutes
             int MINIMUM_TIME_GAP_FOR_SUBJECT_TOBE_DELETED = 30;
             if (timeGap > MINIMUM_TIME_GAP_FOR_SUBJECT_TOBE_DELETED) {
-                throw new SubjectDeletionTimeConstraintException(
+                throw new SubjectDeletionConstraintException(
                         String.format("Subject with id %s cannot be deleted after 30 minutes of creation. You can deactivate it instead.", id));
             }
         }
 
-        subjectValidator.validateSubjectIsPrerequisiteForOtherSubjects(id);
+        if (subject.getPrerequisites() != null) {
+            subjectValidator.validateSubjectIsPrerequisiteForOtherSubjects(id);
+        }
 
-        // TODO: Check if there is any course which is opened with this subject
-        // Wait for PR CRUD Course to be merged.
+        subjectValidator.validateSubjectHasCourse(id);
 
         subjectRepository.delete(subject);
     }

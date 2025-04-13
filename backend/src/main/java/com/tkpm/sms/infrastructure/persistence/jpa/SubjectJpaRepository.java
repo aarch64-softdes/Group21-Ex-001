@@ -15,4 +15,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectEntity, Integ
 
     @Query("SELECT COUNT(s) > 0 FROM SubjectEntity s JOIN s.prerequisites p WHERE p.id = :subjectId")
     boolean isPrerequisitesForOtherSubjects(Integer subjectId);
+
+    @Query("SELECT COUNT(c) > 0 FROM CourseEntity c WHERE c.subject.id = :subjectId")
+    boolean existsCourseForSubject(Integer subjectId);
 }

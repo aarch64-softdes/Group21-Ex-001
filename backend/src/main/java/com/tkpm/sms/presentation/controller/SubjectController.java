@@ -103,7 +103,7 @@ public class SubjectController {
     public ResponseEntity<ApplicationResponseDto<Void>> activateSubject(
             @PathVariable Integer id
     ) {
-        subjectService.deactivateSubject(id);
+        subjectService.activateSubject(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
