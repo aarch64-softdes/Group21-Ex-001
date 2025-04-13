@@ -35,15 +35,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public PageResponse<Subject> findAll(BaseCollectionRequest request) {
-        PageRequest pageRequest = PageRequest.builder()
-                .pageNumber(request.getPage())
-                .pageSize(request.getSize())
-                .sortBy(request.getSortBy())
-                .sortDirection("asc".equalsIgnoreCase(request.getSortDirection())
-                        ? PageRequest.SortDirection.ASC
-                        : PageRequest.SortDirection.DESC)
-                .build();
-
+        PageRequest pageRequest = PageRequest.from(request);
         return subjectRepository.findAll(pageRequest);
     }
 
