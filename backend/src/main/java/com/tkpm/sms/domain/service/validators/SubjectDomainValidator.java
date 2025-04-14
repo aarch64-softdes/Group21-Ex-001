@@ -1,6 +1,9 @@
 package com.tkpm.sms.domain.service.validators;
 
-import com.tkpm.sms.domain.exception.*;
+import com.tkpm.sms.domain.exception.DuplicateResourceException;
+import com.tkpm.sms.domain.exception.ResourceNotFoundException;
+import com.tkpm.sms.domain.exception.SubjectDeactivatedException;
+import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -63,9 +66,9 @@ public class SubjectDomainValidator {
         var prerequisites = subjectRepository.findAllByIds(ids);
 
         if (prerequisites.size() != ids.size()) {
-            List<Integer> missingPrerequisites = ids.stream()
-                    .filter(id -> subjectRepository.findAllByIds(ids).stream().noneMatch(subject -> subject.getId().equals(id)))
-                    .toList();
+            var missingPrerequisites = ids.stream().filter(
+                    id -> prerequisites.stream().noneMatch(subject -> subject.getId().equals(id))
+            );
 
             throw new ResourceNotFoundException(
                     String.format("Subject with id %s does not exist", missingPrerequisites)
