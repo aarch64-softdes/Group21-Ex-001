@@ -42,4 +42,9 @@ public class AppConfig {
     public CourseDomainValidator courseValidator(CourseRepository courseRepository) {
         return new CourseDomainValidator(courseRepository);
     }
+
+    @Bean
+    public SubjectDomainValidator subjectValidator(SubjectRepository subjectRepository) {
+        return new SubjectDomainValidator(subjectRepository);
+    }
 }

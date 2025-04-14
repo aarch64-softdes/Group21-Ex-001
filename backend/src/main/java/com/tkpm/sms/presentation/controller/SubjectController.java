@@ -1,10 +1,11 @@
 package com.tkpm.sms.presentation.controller;
 
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
-import com.tkpm.sms.application.dto.request.subject.SubjectRequestDto;
+import com.tkpm.sms.application.dto.request.subject.SubjectCreateRequestDto;
+import com.tkpm.sms.application.dto.request.subject.SubjectUpdateRequestDto;
+import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.application.dto.response.subject.PrerequisiteSubjectDto;
 import com.tkpm.sms.application.dto.response.subject.SubjectDto;
-import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.application.mapper.SubjectMapper;
 import com.tkpm.sms.application.service.interfaces.SubjectService;
 import com.tkpm.sms.domain.common.PageResponse;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/subjects")
@@ -46,15 +49,10 @@ public class SubjectController {
     ) {
         Subject subject = subjectService.getSubjectById(id);
 
-        List<PrerequisiteSubjectDto> prerequisitesSubjects = subject.getPrerequisitesId().stream()
-                .map(prerequisiteId -> {
-                    Subject prerequisiteSubject = subjectService.getSubjectById(prerequisiteId);
-                    return new PrerequisiteSubjectDto(
-                            prerequisiteId,
-                            prerequisiteSubject.getName(),
-                            prerequisiteSubject.getCode());
-                })
-                .toList();
+        List<PrerequisiteSubjectDto> prerequisitesSubjects = ListUtils.transform(
+                subject.getPrerequisites(),
+                subjectMapper::toPrerequisiteSubjectDto
+        );
 
         SubjectDto subjectDto = subjectMapper.toSubjectDto(subject);
         subjectDto.setPrerequisitesSubjects(prerequisitesSubjects);
@@ -63,7 +61,7 @@ public class SubjectController {
 
     @PostMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<SubjectDto>> createSubject(
-            @Valid @RequestBody SubjectRequestDto subjectRequestDto,
+            @Valid @RequestBody SubjectCreateRequestDto subjectRequestDto,
             UriComponentsBuilder uriComponentsBuilder
     ) {
         Subject createdSubject = subjectService.createSubject(subjectRequestDto);
@@ -75,9 +73,9 @@ public class SubjectController {
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<SubjectDto>> updateSubject(
             @PathVariable Integer id,
-            @Valid @RequestBody SubjectRequestDto subjectRequestDto
+            @Valid @RequestBody SubjectUpdateRequestDto updateRequestDto
     ) {
-        Subject updatedSubject = subjectService.updateSubject(id, subjectRequestDto);
+        Subject updatedSubject = subjectService.updateSubject(id, updateRequestDto);
         SubjectDto updatedSubjectDto = subjectMapper.toSubjectDto(updatedSubject);
         return ResponseEntity.ok(ApplicationResponseDto.success(updatedSubjectDto));
     }
@@ -87,6 +85,22 @@ public class SubjectController {
             @PathVariable Integer id
     ) {
         subjectService.deleteSubject(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<ApplicationResponseDto<Void>> deactivateSubject(
+            @PathVariable Integer id
+    ) {
+        subjectService.deactivateSubject(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<ApplicationResponseDto<Void>> activateSubject(
+            @PathVariable Integer id
+    ) {
+        subjectService.activateSubject(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
