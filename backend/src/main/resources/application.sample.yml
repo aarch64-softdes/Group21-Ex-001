@@ -22,3 +22,7 @@ elasticsearch:
 logging:
   controller:
     logger-type: ELASTICSEARCH
+
+app:
+  constraint:
+    deletable-duration: 30 # in minutes

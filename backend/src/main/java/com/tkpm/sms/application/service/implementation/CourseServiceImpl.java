@@ -7,6 +7,7 @@ import com.tkpm.sms.application.mapper.CourseMapper;
 import com.tkpm.sms.application.service.interfaces.CourseService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
+import com.tkpm.sms.domain.exception.SubjectDeactivatedException;
 import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.model.Program;
 import com.tkpm.sms.domain.model.Subject;
@@ -70,6 +71,12 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Subject with id " + createRequestDto.getSubjectId() + " not found"
                 ));
+
+        if (!subject.isActive()) {
+            throw new SubjectDeactivatedException(
+                    "Subject with id " + createRequestDto.getSubjectId() + " is not active"
+            );
+        }
 
         // Map DTO to domain object (excluding foreign keys)
         Course course = courseMapper.toDomain(createRequestDto);

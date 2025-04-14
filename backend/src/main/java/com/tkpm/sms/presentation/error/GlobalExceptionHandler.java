@@ -25,6 +25,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     static String VALUES_ATTRIBUTE = "values";
     static String FIELD_ATTRIBUTE = "field";
+    static String MIN_VALUE_ATTRIBUTE = "value";
 
     ErrorCodeStatusMapper errorCodeStatusMapper;
 
@@ -102,6 +103,7 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException exception,
             String enumKey
     ) {
+        log.info("Enum key: {}", enumKey);
         try {
             ConstraintViolation<?> constraintViolation = exception
                     .getBindingResult()
@@ -112,7 +114,10 @@ public class GlobalExceptionHandler {
             Map<String, Object> attributes =
                     constraintViolation.getConstraintDescriptor().getAttributes();
 
+            log.info("Attributes: {}", attributes);
+
             ErrorCode error = ErrorCode.valueOf(enumKey);
+            log.info("Error code: {}", error);
             String formattedMessage = error.getDefaultMessage();
 
             if (attributes.containsKey(FIELD_ATTRIBUTE)) {
@@ -123,6 +128,11 @@ public class GlobalExceptionHandler {
             if (attributes.containsKey(VALUES_ATTRIBUTE)) {
                 String[] values = (String[]) attributes.get(VALUES_ATTRIBUTE);
                 formattedMessage = formatEnumValues(formattedMessage, values);
+            }
+
+            if (attributes.containsKey(MIN_VALUE_ATTRIBUTE)) {
+                String value = String.valueOf(attributes.get(MIN_VALUE_ATTRIBUTE));
+                formattedMessage = formatMinValue(formattedMessage, value);
             }
 
             return new ErrorResponseInfo(error, formattedMessage);
@@ -144,10 +154,18 @@ public class GlobalExceptionHandler {
     }
 
     private String formatEnumValues(String message, String[] values) {
-        return message.replace("{values}", Arrays.toString(values));
+        return message.replace(
+                String.format("{%s}", VALUES_ATTRIBUTE), Arrays.toString(values));
     }
 
     private String formatRequiredMessage(String requiredField) {
         return String.format("%s is required", requiredField);
+    }
+
+    private String formatMinValue(String message, String minValue) {
+        log.info("Min value: {}", minValue);
+        log.info("Message: {}", message);
+        return message.replace(
+                String.format("{%s}", MIN_VALUE_ATTRIBUTE), minValue);
     }
 }
