@@ -6,6 +6,7 @@ export default interface Subject {
   code: string;
   credits: number;
   description?: string;
+  isActive: boolean;
   faculty: Partial<Faculty>;
   prerequisites?: Partial<Subject>[];
 }
@@ -34,6 +35,7 @@ export const mapToSubject = (data: any): Subject => ({
   code: data.code,
   credits: data.credits,
   description: data.description,
+  isActive: data.active,
   faculty:
     data.faculty && data.faculty.id
       ? {

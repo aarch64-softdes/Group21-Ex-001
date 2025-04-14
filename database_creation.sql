@@ -84,6 +84,7 @@ CREATE TABLE subjects (
     name VARCHAR(255) NOT NULL,
     code VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
     credits INTEGER NOT NULL,
     faculty_id INTEGER,
     deleted_at DATE,

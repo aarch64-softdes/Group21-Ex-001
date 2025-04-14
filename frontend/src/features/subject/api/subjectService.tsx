@@ -58,4 +58,12 @@ export default class SubjectService {
   deleteSubject = async (id: string): Promise<void> => {
     await api.delete(`/api/subjects/${id}`);
   };
+
+  activateSubject = async (id: string): Promise<void> => {
+    await api.post(`/api/subjects/${id}/activate`);
+  };
+
+  deactivateSubject = async (id: string): Promise<void> => {
+    await api.post(`/api/subjects/${id}/deactivate`);
+  };
 }

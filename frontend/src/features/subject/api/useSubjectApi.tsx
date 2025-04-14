@@ -133,3 +133,31 @@ export const useDeleteSubject = () => {
     },
   });
 };
+
+export const useActivateSubject = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => subjectService.activateSubject(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] });
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
+  });
+};
+
+export const useDeactivateSubject = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => subjectService.deactivateSubject(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] });
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
+  });
+};

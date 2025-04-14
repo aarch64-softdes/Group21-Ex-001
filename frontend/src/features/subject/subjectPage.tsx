@@ -1,6 +1,8 @@
 import GenericTable from '@components/table/GenericTable';
 import {
+  useActivateSubject,
   useCreateSubject,
+  useDeactivateSubject,
   useDeleteSubject,
   useSubjects,
   useUpdateSubject,
@@ -11,8 +13,6 @@ import Subject, {
 } from '@/features/subject/types/subject';
 import { Column } from '@/core/types/table';
 import React from 'react';
-import { SearchFilterOption } from '@/core/types/filter';
-import { BookOpen, FileSearch } from 'lucide-react';
 import SubjectForm from '@subject/components/SubjectForm';
 import SubjectDetail from '@subject/components/SubjectDetail';
 
@@ -20,6 +20,8 @@ const SubjectPage: React.FC = () => {
   const createSubject = useCreateSubject();
   const updateSubject = useUpdateSubject();
   const deleteSubject = useDeleteSubject();
+  const activateSubject = useActivateSubject();
+  const deactivateSubject = useDeactivateSubject();
 
   const columns: Column<Subject>[] = React.useMemo(
     () => [
@@ -53,6 +55,16 @@ const SubjectPage: React.FC = () => {
         header: 'Faculty',
         key: 'faculty.name',
         nested: true,
+      },
+      {
+        header: 'Status',
+        key: 'isActive',
+        style: {
+          width: '100px',
+        },
+        transform: (value: boolean) => {
+          return value ? 'Active' : 'Inactive';
+        },
       },
     ],
     [],
@@ -92,6 +104,20 @@ const SubjectPage: React.FC = () => {
         }}
         requireDeleteConfirmation={true}
         filterOptions={[]}
+        additionalActions={[
+          {
+            label: 'Activate',
+            handler: async (id: string) => {
+              await activateSubject.mutateAsync(id);
+            },
+          },
+          {
+            label: 'Deactivate',
+            handler: async (id: string) => {
+              await deactivateSubject.mutateAsync(id);
+            },
+          },
+        ]}
       />
     </div>
   );
