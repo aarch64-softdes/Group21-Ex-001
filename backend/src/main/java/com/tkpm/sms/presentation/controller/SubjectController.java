@@ -49,13 +49,10 @@ public class SubjectController {
     ) {
         Subject subject = subjectService.getSubjectById(id);
 
-        List<PrerequisiteSubjectDto> prerequisitesSubjects = subject.getPrerequisites().stream()
-                .map(prerequisiteSubject -> new PrerequisiteSubjectDto(
-                        prerequisiteSubject.getId(),
-                        prerequisiteSubject.getName(),
-                        prerequisiteSubject.getCode(),
-                        prerequisiteSubject.getDescription()))
-                .toList();
+        List<PrerequisiteSubjectDto> prerequisitesSubjects = ListUtils.transform(
+                subject.getPrerequisites(),
+                subjectMapper::toPrerequisiteSubjectDto
+        );
 
         SubjectDto subjectDto = subjectMapper.toSubjectDto(subject);
         subjectDto.setPrerequisitesSubjects(prerequisitesSubjects);

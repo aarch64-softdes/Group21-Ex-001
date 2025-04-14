@@ -2,9 +2,9 @@ package com.tkpm.sms.application.mapper;
 
 import com.tkpm.sms.application.dto.request.subject.SubjectCreateRequestDto;
 import com.tkpm.sms.application.dto.request.subject.SubjectUpdateRequestDto;
+import com.tkpm.sms.application.dto.response.subject.PrerequisiteSubjectDto;
 import com.tkpm.sms.application.dto.response.subject.SubjectDto;
 import com.tkpm.sms.domain.model.Subject;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 public interface SubjectMapper {
@@ -13,4 +13,6 @@ public interface SubjectMapper {
     SubjectDto toSubjectDto(Subject subject);
 
     void updateSubjectFromDto(@MappingTarget Subject subject, SubjectUpdateRequestDto subjectRequestDto);
+
+    PrerequisiteSubjectDto toPrerequisiteSubjectDto(Subject subject);
 }
