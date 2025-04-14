@@ -16,7 +16,9 @@ import com.tkpm.sms.domain.service.validators.SubjectDomainValidator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,6 +35,10 @@ public class SubjectServiceImpl implements SubjectService {
 
     FacultyService facultyService;
 
+    @NonFinal
+    @Value("${app.constraint.deletable-duration}")
+    int deletableDuration;
+
     @Override
     public PageResponse<Subject> findAll(BaseCollectionRequest request) {
         PageRequest pageRequest = PageRequest.from(request);
@@ -47,21 +53,19 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Subject createSubject(SubjectCreateRequestDto subjectRequestDto) {
-        subjectValidator.validateSubjectCodeUniqueness(subjectRequestDto.getCode());
-        subjectValidator.validateSubjectNameUniqueness(subjectRequestDto.getName());
+    public Subject createSubject(SubjectCreateRequestDto createRequestDto) {
+        subjectValidator.validateSubjectCodeUniqueness(createRequestDto.getCode());
+        subjectValidator.validateSubjectNameUniqueness(createRequestDto.getName());
 
-        Subject subject = subjectMapper.toSubject(subjectRequestDto);
-        subject.setFaculty(facultyService.getFacultyById(subjectRequestDto.getFacultyId()));
-        subject.setPrerequisites(
-                subjectRequestDto.getPrerequisitesId().stream()
-                        .map(
-                                subjectId -> subjectRepository.findById(subjectId)
-                                        .orElseThrow(() -> new ResourceNotFoundException(
-                                                String.format("Subject with id %s not found", subjectId)))
-                        )
-                        .toList()
+        Subject subject = subjectMapper.toSubject(createRequestDto);
+        subject.setFaculty(facultyService.getFacultyById(createRequestDto.getFacultyId()));
+
+        subjectValidator.validatePrerequisites(
+                createRequestDto.getPrerequisitesId()
         );
+
+        var prerequisites = subjectRepository.findAllByIds(createRequestDto.getPrerequisitesId());
+        subject.setPrerequisites(prerequisites);
         subject.setCreatedAt(LocalDateTime.now());
         subject.setActive(true);
 
@@ -76,8 +80,14 @@ public class SubjectServiceImpl implements SubjectService {
                 orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
 
+        subjectValidator.validatePrerequisites(
+                updateRequestDto.getPrerequisitesId()
+        );
 
         subjectMapper.updateSubjectFromDto(subject, updateRequestDto);
+
+        var prerequisites = subjectRepository.findAllByIds(updateRequestDto.getPrerequisitesId());
+        subject.setPrerequisites(prerequisites);
 
         return subjectRepository.save(subject);
     }
@@ -93,18 +103,13 @@ public class SubjectServiceImpl implements SubjectService {
         if (createdAt != null) {
             var timeGap = ChronoUnit.MINUTES.between(createdAt, LocalDateTime.now());
             // in minutes
-            int MINIMUM_TIME_GAP_FOR_SUBJECT_TOBE_DELETED = 30;
-            if (timeGap > MINIMUM_TIME_GAP_FOR_SUBJECT_TOBE_DELETED) {
+            if (timeGap > deletableDuration) {
                 throw new SubjectDeletionConstraintException(
                         String.format("Subject with id %s cannot be deleted after 30 minutes of creation. You can deactivate it instead.", id));
             }
         }
 
-        if (subject.getPrerequisites() != null) {
-            subjectValidator.validateSubjectIsPrerequisiteForOtherSubjects(id);
-        }
-
-        subjectValidator.validateSubjectHasCourse(id);
+        subjectValidator.validateSubjectForDeletion(id);
 
         subjectRepository.delete(subject);
     }

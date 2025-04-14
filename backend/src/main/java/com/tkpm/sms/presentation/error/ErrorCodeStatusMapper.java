@@ -39,6 +39,7 @@ public class ErrorCodeStatusMapper {
 
         // Subject Errors (4xx)
         mappings.put(ErrorCode.SUBJECT_DELETION_CONSTRAINT, HttpStatus.BAD_REQUEST);
+        mappings.put(ErrorCode.SUBJECT_DEACTIVATED, HttpStatus.BAD_REQUEST);
     }
 
     public HttpStatus getStatus(ErrorCode errorCode) {

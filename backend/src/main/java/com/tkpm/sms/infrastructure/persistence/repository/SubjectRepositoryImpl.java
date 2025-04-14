@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,6 +62,13 @@ public class SubjectRepositoryImpl implements SubjectRepository {
                 page.getTotalElements(),
                 page.getTotalPages()
         );
+    }
+
+    @Override
+    public List<Subject> findAllByIds(Iterable<Integer> ids) {
+        return jpaRepository.findAllById(ids).stream().map(
+                mapper::toDomain
+        ).collect(Collectors.toList());
     }
 
     @Override
