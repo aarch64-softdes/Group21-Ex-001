@@ -13,48 +13,37 @@ public interface DocumentTemplateProcessingService {
     InputStream loadTemplate(String templateFilePath);
 
     /**
-     * Processes a template with the given data and returns the result as PDF
-     * 
-     * @param templateFilePath path to the template file
-     * @param data             data to be used in the template
-     * @return byte array of the generated PDF
+     * Converts a document to HTML format
+     *
+     * @param documentBytes document to be converted
+     * @param sourceFormat  the source document format extension (.docx, .odt)
+     * @return HTML content as string
      */
-    byte[] processTemplateAsPdf(String templateFilePath, Map<String, Object> data);
+    String convertDocumentToHtml(byte[] documentBytes, String sourceFormat);
 
     /**
-     * Processes a `docx` or `odt` template with the given data
-     * 
-     * @param templateInputStream template input stream
-     * @param data                data to be used in the template
-     * @param isDocx              true if template is docx, false if odt
-     * @return byte array of the processed document
+     * Processes HTML content with template data
+     *
+     * @param htmlContent HTML content with template placeholders
+     * @param data        data to merge into the template
+     * @return processed HTML content
      */
-    byte[] processDocumentTemplate(InputStream templateInputStream, Map<String, Object> data, boolean isDocx);
+    String processHtmlTemplate(String htmlContent, Map<String, Object> data);
 
     /**
-     * Converts a `docx` or `odt` document to PDF.
-     * 
-     * @param document document to be converted
-     * @param isDocx   true if document is docx, false if odt
-     * @return byte array of the PDF
+     * Converts HTML to PDF
+     *
+     * @param htmlContent HTML content to convert
+     * @return PDF as byte array
      */
-    byte[] convertDocumentToPdf(byte[] document, boolean isDocx);
+    byte[] convertHtmlToPdf(String htmlContent);
 
     /**
-     * Processes an Excel template with the given data
+     * Process template as HTML and convert to PDF
      * 
-     * @param excelTemplate Excel template as byte array
-     * @param data          data to be used in the template
-     * @return byte array of the processed Excel document
+     * @param templatePath path to the template file
+     * @param data         data to be used in the template
+     * @return PDF as byte array
      */
-    public byte[] processExcelTemplate(byte[] excelTemplate, Map<String, Object> data);
-
-    /**
-     * Converts an Excel document to PDF
-     * 
-     * @param excelBytes Excel document as byte array
-     * @return byte array of the PDF
-     */
-    public byte[] convertExcelToPdf(byte[] excelBytes);
-
+    byte[] processTemplateAsHtmlToPdf(String templatePath, Map<String, Object> data);
 }

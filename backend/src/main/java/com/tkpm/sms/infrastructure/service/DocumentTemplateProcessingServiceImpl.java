@@ -4,35 +4,42 @@ import com.tkpm.sms.application.service.interfaces.DocumentTemplateProcessingSer
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
 
-import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
-import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfWriter;
+// import com.itextpdf.tool.xml.XMLWorkerHelper;
+
+import org.xhtmlrenderer.context.StylesheetFactoryImpl;
+import org.xhtmlrenderer.extend.FontResolver;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLConverter;
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLOptions;
 import fr.opensagres.xdocreport.converter.ConverterTypeTo;
 import fr.opensagres.xdocreport.converter.ConverterTypeVia;
 import fr.opensagres.xdocreport.converter.Options;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
-import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.jodconverter.core.office.OfficeManager;
-import org.jodconverter.local.JodConverter;
-import org.jodconverter.local.office.LocalOfficeManager;
-import org.jxls.common.Context;
-import org.jxls.util.JxlsHelper;
+import org.jsoup.Jsoup;
+// import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -42,12 +49,11 @@ import java.util.Map;
 public class DocumentTemplateProcessingServiceImpl implements DocumentTemplateProcessingService {
 
     ResourceLoader resourceLoader;
-    String configuredLibreOfficeHome;
+    TemplateEngine templateEngine;
 
-    public DocumentTemplateProcessingServiceImpl(@Value("${app.libreoffice.home:}") String configuredLibreOfficeHome,
-            ResourceLoader resourceLoader) {
-        this.configuredLibreOfficeHome = configuredLibreOfficeHome;
+    public DocumentTemplateProcessingServiceImpl(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
+        this.templateEngine = new TemplateEngine();
     }
 
     @Override
@@ -61,187 +67,119 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
     }
 
     @Override
-    public byte[] processTemplateAsPdf(String templatePath, Map<String, Object> data) {
-        String fileExtension = templatePath.substring(templatePath.lastIndexOf("."));
-        try (InputStream is = loadTemplate(templatePath)) {
-            switch (fileExtension) {
-                case ".xlsx":
-                    byte[] processedTemplate = processExcelTemplate(is.readAllBytes(), data);
-                    return convertExcelToPdf(processedTemplate);
-                case ".docx":
-                case ".odt":
-                    boolean isDocx = fileExtension.equals(".docx");
-                    InputStream templateInputStream = loadTemplate(templatePath);
-                    byte[] processedDocument = processDocumentTemplate(templateInputStream, data, isDocx);
-                    return convertDocumentToPdf(processedDocument, isDocx);
-                default:
-                    log.error("Unsupported file extension: {}", fileExtension);
-                    throw new FileProcessingException("Unsupported file format",
-                            ErrorCode.FAIL_TO_EXPORT_FILE);
-            }
-        } catch (IOException e) {
-            log.error("Failed to process {} template as PDF", fileExtension, e);
-            throw new FileProcessingException("Failed to process template as PDF",
-                    ErrorCode.FAIL_TO_EXPORT_FILE);
-        }
-
-    }
-
-    @Override
-    public byte[] processDocumentTemplate(InputStream templateInputStream, Map<String, Object> data, boolean isDocx) {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            IXDocReport report = XDocReportRegistry.getRegistry().loadReport(
-                    templateInputStream,
-                    isDocx ? TemplateEngineKind.Freemarker : TemplateEngineKind.Velocity);
-
-            IContext context = report.createContext();
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
-                context.put(entry.getKey(), entry.getValue());
-            }
-
-            report.process(context, out);
-            return out.toByteArray();
-        } catch (IOException | XDocReportException e) {
-            log.error("Failed to process template", e);
-            throw new FileProcessingException("Failed to process template", ErrorCode.FAIL_TO_EXPORT_FILE);
-        }
-    }
-
-    @Override
-    public byte[] convertDocumentToPdf(byte[] document, boolean isDocx) {
-        if (isDocx) {
-            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(document);
-                    XWPFDocument docxDocument = new XWPFDocument(inputStream);
-                    ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream()) {
-
-                PdfOptions options = PdfOptions.create();
-                PdfConverter.getInstance().convert(docxDocument, pdfOutputStream, options);
-
-                return pdfOutputStream.toByteArray();
+    public String convertDocumentToHtml(byte[] documentBytes, String sourceFormat) {
+        if (sourceFormat.endsWith(".html")) {
+            try {
+                return new String(documentBytes, "UTF-8");
             } catch (IOException e) {
-                log.error("Failed to convert DOCX to PDF", e);
-                throw new FileProcessingException("Failed to convert DOCX to PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
+                log.error("Failed to convert HTML bytes to string", e);
+                throw new FileProcessingException("Failed to process HTML", ErrorCode.FAIL_TO_EXPORT_FILE);
             }
-        } else {
-            // Handle ODT conversion
-            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(document);
-                    ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream()) {
+        } else if (sourceFormat.endsWith(".docx")) {
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(documentBytes);
+                    XWPFDocument document = new XWPFDocument(inputStream);
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+                XHTMLOptions options = XHTMLOptions.create();
+                XHTMLConverter.getInstance().convert(document, outputStream, options);
+
+                return outputStream.toString("UTF-8");
+            } catch (IOException e) {
+                log.error("Failed to convert DOCX to HTML", e);
+                throw new FileProcessingException("Failed to convert DOCX to HTML",
+                        ErrorCode.FAIL_TO_EXPORT_FILE);
+            }
+        } else if (sourceFormat.endsWith(".odt")) {
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(documentBytes);
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
                 IXDocReport report = XDocReportRegistry.getRegistry().loadReport(inputStream,
-                        TemplateEngineKind.Freemarker);
+                        TemplateEngineKind.Velocity);
 
-                Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM);
-                report.convert(report.createContext(), options, pdfOutputStream);
+                Options options = Options.getTo(ConverterTypeTo.XHTML).via(ConverterTypeVia.ODFDOM);
+                report.convert(report.createContext(), options, outputStream);
 
-                return pdfOutputStream.toByteArray();
+                return outputStream.toString("UTF-8");
             } catch (IOException | XDocReportException e) {
-                log.error("Failed to convert ODT to PDF", e);
-                throw new FileProcessingException("Failed to convert ODT to PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
+                log.error("Failed to convert ODT to HTML", e);
+                throw new FileProcessingException("Failed to convert ODT to HTML",
+                        ErrorCode.FAIL_TO_EXPORT_FILE);
             }
+        } else {
+            log.error("Unsupported source format for HTML conversion: {}", sourceFormat);
+            throw new FileProcessingException("Unsupported source format for HTML conversion",
+                    ErrorCode.FAIL_TO_EXPORT_FILE);
         }
     }
 
     @Override
-    public byte[] processExcelTemplate(byte[] excelTemplate, Map<String, Object> data) {
-        log.info("Processing Excel template with JXLS 2.14.0...");
-        try (InputStream templateStream = new ByteArrayInputStream(excelTemplate);
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-
-            Context context = new Context();
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
-                context.putVar(entry.getKey(), entry.getValue());
-            }
-
-            JxlsHelper.getInstance().processTemplate(templateStream, outputStream, context);
-            return outputStream.toByteArray();
-        } catch (IOException e) {
-            log.error("Failed to process Excel template", e);
-            throw new FileProcessingException("Failed to process Excel template", ErrorCode.FAIL_TO_EXPORT_FILE);
-        }
-    }
-
-    @Override
-    public byte[] convertExcelToPdf(byte[] excelBytes) {
+    public String processHtmlTemplate(String htmlContent, Map<String, Object> data) {
         try {
-            // Create Office Manager for LibreOffice
-            OfficeManager officeManager = LocalOfficeManager.builder()
-                    .install()
-                    .officeHome(getLibreOfficeHome())
-                    .build();
+            log.info("Processing HTML template with Thymeleaf...");
+            var document = Jsoup.parse(htmlContent);
 
-            try {
-                officeManager.start();
-
-                Path tempInputFile = Files.createTempFile("document_", ".xlsx");
-                Path tempOutputFile = Files.createTempFile("document_", ".pdf");
-
-                try {
-                    Files.write(tempInputFile, excelBytes);
-                    JodConverter.convert(tempInputFile.toFile())
-                            .to(tempOutputFile.toFile())
-                            .execute();
-
-                    return Files.readAllBytes(tempOutputFile);
-                } finally {
-                    try {
-                        Files.deleteIfExists(tempInputFile);
-                        Files.deleteIfExists(tempOutputFile);
-                    } catch (IOException e) {
-                        log.warn("Failed to delete temporary files", e);
-                    }
-                }
-            } finally {
-                officeManager.stop();
-            }
+            org.thymeleaf.context.Context thymeleafContext = new org.thymeleaf.context.Context();
+            data.forEach(thymeleafContext::setVariable);
+            return templateEngine.process(document.html(), thymeleafContext);
         } catch (Exception e) {
-            log.error("Error converting Excel to PDF", e);
-            throw new FileProcessingException("Failed to convert Excel to PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
+            log.error("Failed to process HTML template", e);
+            throw new FileProcessingException("Failed to process HTML template", ErrorCode.FAIL_TO_EXPORT_FILE);
         }
     }
 
-    public byte[] convertDocumentToPdf(byte[] documentBytes, String sourceFormat) {
-        if (sourceFormat.endsWith(".xlsx")) {
-            return convertExcelToPdf(documentBytes);
-        } else {
-            boolean isDocx = sourceFormat.endsWith(".docx");
-            return convertDocumentToPdf(documentBytes, isDocx);
+    @Override
+    public byte[] convertHtmlToPdf(String htmlContent) {
+        try {
+            String filePath = "html_content.html";
+            File htmlFile = new File(filePath);
+            Files.writeString(htmlFile.toPath(), htmlContent);
+            log.info("Converting HTML to PDF using Flying Saucer");
+            log.debug("HTML content to convert: {}", htmlContent.substring(0, Math.min(500, htmlContent.length())));
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            org.jsoup.nodes.Document doc = Jsoup.parse(htmlContent);
+
+            doc.outputSettings()
+                    .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+                    .escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml);
+            doc.select("html").first().attr("xmlns", "http://www.w3.org/1999/xhtml");
+
+            String html = doc.outerHtml();
+
+            ITextRenderer renderer = new ITextRenderer();
+
+            renderer.setDocumentFromString(html);
+            renderer.layout();
+            renderer.createPDF(baos);
+
+            byte[] pdfBytes = baos.toByteArray();
+            log.info("Successfully converted HTML to PDF, size: {} bytes",
+                    pdfBytes.length);
+
+            return pdfBytes;
+        } catch (Exception e) {
+            log.error("Failed to convert HTML to PDF: {}", e.getMessage());
+            log.error("Error details:", e);
+            throw new FileProcessingException("Failed to convert HTML to PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
         }
     }
 
-    private String getLibreOfficeHome() {
-        final String DEFAULT_LIBREOFFICE_WINDOWS_PATH = "C:/Program Files/LibreOffice";
-        final String DEFAULT_LIBREOFFICE_MAC_PATH = "/Applications/LibreOffice.app";
-        final String DEFAULT_LIBREOFFICE_LINUX_PATH = "/usr/lib/libreoffice";
+    @Override
+    public byte[] processTemplateAsHtmlToPdf(String templatePath, Map<String, Object> data) {
+        log.info("Processing template {} as HTML to PDF", templatePath);
+        String fileExtension = templatePath.substring(templatePath.lastIndexOf("."));
 
-        if (configuredLibreOfficeHome != null && !configuredLibreOfficeHome.isEmpty()) {
-            if (Files.exists(Paths.get(configuredLibreOfficeHome))) {
-                return configuredLibreOfficeHome;
-            }
-            log.warn("Configured LibreOffice home does not exist: {}, using default paths", configuredLibreOfficeHome);
-        }
+        try (InputStream is = loadTemplate(templatePath)) {
+            byte[] documentBytes = is.readAllBytes();
 
-        String os = System.getProperty("os.name").toLowerCase();
-
-        if (os.contains("win")) {
-            return DEFAULT_LIBREOFFICE_WINDOWS_PATH;
-        } else if (os.contains("mac")) {
-            return DEFAULT_LIBREOFFICE_MAC_PATH;
-        } else {
-            String[] possiblePaths = {
-                    "/usr/lib/libreoffice",
-                    "/usr/lib64/libreoffice",
-                    "/opt/libreoffice",
-                    "/usr/lib/openoffice",
-                    "/usr/lib64/openoffice"
-            };
-
-            for (String path : possiblePaths) {
-                if (Files.exists(Paths.get(path))) {
-                    return path;
-                }
-            }
-
-            return DEFAULT_LIBREOFFICE_LINUX_PATH;
+            String html = convertDocumentToHtml(documentBytes, fileExtension);
+            String processedHtml = processHtmlTemplate(html, data);
+            return convertHtmlToPdf(processedHtml);
+        } catch (IOException e) {
+            log.error("Failed to process template as HTML to PDF", e);
+            throw new FileProcessingException("Failed to process template as HTML to PDF",
+                    ErrorCode.FAIL_TO_EXPORT_FILE);
         }
     }
 }

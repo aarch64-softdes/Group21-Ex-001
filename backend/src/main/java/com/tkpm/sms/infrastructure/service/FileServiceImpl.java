@@ -16,12 +16,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,6 +40,9 @@ public class FileServiceImpl implements FileService {
     StudentService studentService;
     FileStrategyFactory fileStrategyFactory;
     StudentDomainValidator studentDomainValidator;
+
+    // @Value("${app.academic_transcript_template.path:templates/template.xlsx}")
+    // private String templatePath;
 
     @Override
     public byte[] exportStudentFile(String format) {
@@ -93,4 +96,5 @@ public class FileServiceImpl implements FileService {
 
         return fileStrategyFactory.getStrategy("pdf").toBytes(data);
     }
+
 }

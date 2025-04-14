@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +19,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PdfStrategy implements FileStrategy {
     private final DocumentTemplateProcessingService templateService;
-
-    @Value("${app.academic_transcript_template.path:templates/template.xlsx}")
-    private String templatePath;
 
     /*
      * Convert the input data to a PDF file
@@ -37,7 +33,6 @@ public class PdfStrategy implements FileStrategy {
     public byte[] toBytes(Iterable<?> data) {
         try {
             if (!(data instanceof List<?> dataList) || dataList.size() != 2) {
-                log.error("You are here!");
                 throw new IllegalArgumentException("Data must be a List containing exactly 2 elements");
             }
 
@@ -45,7 +40,6 @@ public class PdfStrategy implements FileStrategy {
             Object second = ((List<?>) data).get(1);
 
             if (!(first instanceof String) || !(second instanceof Map)) {
-                log.error("{}, {}", first instanceof String, second instanceof Map);
                 throw new IllegalArgumentException("First element must be String, second must be Map");
             }
 
@@ -53,33 +47,49 @@ public class PdfStrategy implements FileStrategy {
             @SuppressWarnings("unchecked")
             Map<String, Object> templateData = (Map<String, Object>) second;
 
-            return templateService.processTemplateAsPdf(templatePath, templateData);
+            // TODO: Add sample subjects data if not already present
+            // TODO: (This can be removed once actual data is provided externally)
+            if (!templateData.containsKey("subjects")) {
+                List<Map<String, Object>> subjects = List.of(
+                        Map.of(
+                                "courseId", "MATH101",
+                                "name", "Mathematics",
+                                "finalScore", 85.5),
+                        Map.of(
+                                "courseId", "LIT201",
+                                "name", "Literature",
+                                "finalScore", 92.0),
+                        Map.of(
+                                "courseId", "HIS301",
+                                "name", "History",
+                                "finalScore", 88.0),
+                        Map.of(
+                                "courseId", "PHY401",
+                                "name", "Physics",
+                                "finalScore", 90.0),
+                        Map.of(
+                                "courseId", "CHE501",
+                                "name", "Chemistry",
+                                "finalScore", 95.0),
+                        Map.of(
+                                "courseId", "BIO601",
+                                "name", "Biology",
+                                "finalScore", 89.0),
+                        Map.of(
+                                "courseId", "ENG701",
+                                "name", "English",
+                                "finalScore", 91.0));
+
+                // Add the subjects to the template data
+                templateData.put("subjects", subjects);
+            }
+
+            // Use the HTML processing approach
+            return templateService.processTemplateAsHtmlToPdf(templatePath, templateData);
         } catch (Exception e) {
             log.error("Failed to export with PDF format", e);
             throw new FileProcessingException("Failed to export with PDF format", ErrorCode.FAIL_TO_EXPORT_FILE);
         }
-    }
-
-    /**
-     * Creates the template data model from the input data collection
-     */
-    private Map<String, Object> createTemplateDataModel(Iterable<?> data) {
-        Map<String, Object> templateData = new HashMap<>();
-
-        // Add core data
-        templateData.put("items", data);
-        templateData.put("timestamp", java.time.LocalDateTime.now().toString());
-        templateData.put("reportTitle", "Academic Transcript");
-
-        // Add sample student data (in a real app, this would come from the controller)
-        templateData.put("studentName", "Nguyen Van A");
-        templateData.put("studentId", "2012345");
-        templateData.put("className", "12A1");
-        templateData.put("semester", "HK1 2023-2024");
-        templateData.put("gpa", 8.64);
-        templateData.put("rank", "Excellent");
-
-        return templateData;
     }
 
     @Override
@@ -91,5 +101,4 @@ public class PdfStrategy implements FileStrategy {
     public String getFormat() {
         return "pdf";
     }
-
 }
