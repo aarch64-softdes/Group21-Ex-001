@@ -1,7 +1,7 @@
 package com.tkpm.sms.application.dto.response.enrollment;
 
 import com.tkpm.sms.application.dto.response.course.CourseDto;
-import com.tkpm.sms.application.dto.response.student.StudentDto;
+import com.tkpm.sms.application.dto.response.student.StudentMinimalDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,8 +10,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EnrollmentDto {
+public class EnrollmentListDto {
     Integer id;
-    StudentDto student;
     CourseDto course;
 }

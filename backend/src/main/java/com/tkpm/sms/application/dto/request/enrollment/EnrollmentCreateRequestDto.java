@@ -14,5 +14,5 @@ public class EnrollmentCreateRequestDto {
     String studentId;
 
     @RequiredConstraint(field = "courseId", message = "Course ID is required")
-    String CourseId;
+    Integer courseId;
 }
