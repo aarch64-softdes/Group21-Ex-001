@@ -47,14 +47,12 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getCourseById(Integer id) {
-        var course = courseRepository.findById(id);
-        if (course.isEmpty()) {
-            throw new ResourceNotFoundException(
-                    String.format("Course with id %s not found", id)
-            );
-        }
-
-        return course.get();
+        var course = courseRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(
+                        String.format("Course with id %s not found", id)
+                )
+        );
+        return course;
     }
 
     @Override
