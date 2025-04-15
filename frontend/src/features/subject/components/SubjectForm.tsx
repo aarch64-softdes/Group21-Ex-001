@@ -66,7 +66,7 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
   }));
 
   // Use the subjects dropdown hook
-  const subjects = useSubjectsDropdown(isEditing ? 100 : 5, id);
+  const subjects = useSubjectsDropdown(isEditing ? 100 : 5, undefined, id);
 
   // Store selected prerequisites
   const [selectedPrerequisites, setSelectedPrerequisites] = useState<

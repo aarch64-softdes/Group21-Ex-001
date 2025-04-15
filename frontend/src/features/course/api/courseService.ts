@@ -47,6 +47,7 @@ export default class CourseService {
   getCourse = async (id: string): Promise<Course> => {
     try {
       const response = await api.get(`/api/courses/${id}`);
+
       return mapToCourse(response.data.content);
     } catch (error) {
       console.error('Error fetching course:', error);

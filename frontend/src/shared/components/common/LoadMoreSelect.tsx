@@ -18,6 +18,7 @@ export interface SelectItem {
   id: string;
   label: string;
   value: string;
+  metadata?: any;
 }
 
 interface LoadMoreSelectProps {
@@ -34,6 +35,7 @@ interface LoadMoreSelectProps {
   searchPlaceholder?: string;
   className?: string;
   onSearch?: (value: string) => void;
+  disabledItems?: (metadata: any) => boolean;
 }
 
 export function LoadMoreSelect({
@@ -50,6 +52,7 @@ export function LoadMoreSelect({
   searchPlaceholder = 'Search...',
   className,
   onSearch,
+  disabledItems = () => false,
 }: LoadMoreSelectProps) {
   const [open, setOpen] = React.useState(false);
   const [localSearch, setLocalSearch] = React.useState('');
@@ -117,6 +120,7 @@ export function LoadMoreSelect({
                         onValueChange(item.value);
                         setOpen(false);
                       }}
+                      disabled={disabledItems(item.metadata)}
                     >
                       <Check
                         className={cn(

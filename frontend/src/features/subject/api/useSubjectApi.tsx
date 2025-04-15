@@ -9,6 +9,7 @@ import { showErrorToast } from '@/shared/lib/toast-utils';
 import { getErrorMessage } from '@/shared/lib/utils';
 import { useLoadMore } from '@/shared/hooks/useLoadMore';
 import { useState } from 'react';
+import { SelectItem } from '@/components/common/LoadMoreSelect';
 
 const subjectService = new SubjectService();
 
@@ -46,6 +47,7 @@ export const useSubjects = (params: QueryHookParams) => {
 
 export const useSubjectsDropdown = (
   initialPageSize?: number,
+  mapFn?: (subject: Subject) => SelectItem,
   excludeId?: string,
 ) => {
   const [subjectSearch, setSubjectSearch] = useState<string>('');
@@ -68,11 +70,13 @@ export const useSubjectsDropdown = (
         totalItems,
       };
     },
-    mapFn: (subject: Subject) => ({
-      id: subject.id,
-      label: subject.name,
-      value: subject.id,
-    }),
+    mapFn:
+      mapFn ||
+      ((subject: Subject) => ({
+        id: subject.id,
+        label: subject.name,
+        value: subject.id,
+      })),
     searchQuery: subjectSearch,
     initialPageSize,
   });

@@ -59,5 +59,10 @@ export const mapToCourse = (data: any): Course => ({
           name: data.subject.name,
           code: data.subject.code,
         },
-  program: data.program,
+  program:
+    typeof data.program === 'string'
+      ? {
+          name: data.program,
+        }
+      : data.program,
 });

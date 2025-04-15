@@ -15,7 +15,10 @@ import {
 import { Input } from '@ui/input';
 import { Separator } from '@ui/separator';
 import { useCourse } from '@/features/course/api/useCourseApi';
-import { useProgramsDropdown } from '@/features/program/api/useProgramApi';
+import {
+  useProgram,
+  useProgramsDropdown,
+} from '@/features/program/api/useProgramApi';
 import {
   CreateCourseDTO,
   UpdateCourseDTO,
@@ -24,7 +27,10 @@ import { FormComponentPropsWithoutType } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 import LoadingButton from '@ui/loadingButton';
-import { useSubjectsDropdown } from '@/features/subject/api/useSubjectApi';
+import {
+  useSubject,
+  useSubjectsDropdown,
+} from '@/features/subject/api/useSubjectApi';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 import { parseSchedule } from '../types/courseSchedule';
 
@@ -78,8 +84,15 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
   isEditing = false,
 }) => {
   const { data: courseData, isLoading: isLoadingCourse } = useCourse(id || '');
-  const subjects = useSubjectsDropdown(5);
-  const programs = useProgramsDropdown(5);
+  const subjects = useSubjectsDropdown(isEditing ? 100 : 5, (subject) => ({
+    id: subject.id,
+    label: subject.name,
+    value: subject.name,
+    metadata: {
+      isActive: subject.isActive,
+    },
+  }));
+  const programs = useProgramsDropdown(isEditing ? 100 : 5);
 
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(CourseFormSchema),
@@ -187,6 +200,9 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                             searchPlaceholder='Search subject...'
                             onSearch={subjects.setSubjectSearch}
                             disabled={isEditing || isLoading}
+                            disabledItems={(metadata) =>
+                              metadata.isActive === false
+                            }
                           />
                           <FormMessage />
                         </FormItem>
