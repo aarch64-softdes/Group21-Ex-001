@@ -110,11 +110,17 @@ const SubjectPage: React.FC = () => {
             handler: async (id: string) => {
               await activateSubject.mutateAsync(id);
             },
+            disabled: (row: Subject) => {
+              return row.isActive;
+            },
           },
           {
             label: 'Deactivate',
             handler: async (id: string) => {
               await deactivateSubject.mutateAsync(id);
+            },
+            disabled: (row: Subject) => {
+              return !row.isActive;
             },
           },
         ]}

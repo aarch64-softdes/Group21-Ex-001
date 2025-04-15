@@ -59,11 +59,13 @@ export interface TablePaginationProps {
 export interface AdditionalAction {
   label: string;
   handler: (id: string) => void;
+  disabled?: (data: any) => boolean;
 }
 
 export interface AdditionalActionItem {
   label: string;
   handler: () => void;
+  disabled?: boolean;
 }
 
 export type QueryHook<T> = (

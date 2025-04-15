@@ -151,6 +151,7 @@ const GenericTable = <T extends { id: string }>({
                 additionalActions={additionalActions.map((action) => ({
                   label: action.label,
                   handler: () => action.handler(cell.id),
+                  disabled: action.disabled ? action.disabled(cell) : false,
                 }))}
               />
             </TableCell>
