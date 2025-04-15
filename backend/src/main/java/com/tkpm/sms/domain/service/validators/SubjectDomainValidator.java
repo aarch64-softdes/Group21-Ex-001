@@ -7,7 +7,6 @@ import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class SubjectDomainValidator {
         }
     }
 
-    public void validateSubjectForDeletion(Integer id) {
+    public void validateSubjectForDeletionAndDeactivation(Integer id) {
         var subject = subjectRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)
