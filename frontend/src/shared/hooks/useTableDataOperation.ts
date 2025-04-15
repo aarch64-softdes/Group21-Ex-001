@@ -11,8 +11,8 @@ export const useTableAdd = <T extends { id: string }>(
   const handleAdd = async (value: Partial<T>) => {
     try {
       setIsAdding(true);
-      setDialogOpen(false);
       await actions?.onAdd?.(value);
+      setDialogOpen(false);
     } catch (error) {
       console.error(error);
     } finally {

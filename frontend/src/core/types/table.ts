@@ -40,7 +40,7 @@ export interface TableFileOptions {
   onImportSuccess?: () => void;
 }
 
-// Must use "any" here because the type of the data is not known
+// NOTE: Must use "any" here because the type of the data is not known
 export interface TableActions {
   onSave?: (id: string, updatedData: any) => void | Promise<void>;
   onDelete?: (id: string) => void | Promise<void>;
