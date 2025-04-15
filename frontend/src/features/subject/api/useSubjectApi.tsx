@@ -35,7 +35,7 @@ export const useSubjects = (params: QueryHookParams) => {
     queryKey: ['subjects', page, pageSize, search, faculty, sortName, sortType],
     queryFn: () =>
       subjectService.getSubjects({
-        page,
+        page: page || 1,
         size: pageSize,
         sortBy: sortName,
         sortDirection: sortType,
