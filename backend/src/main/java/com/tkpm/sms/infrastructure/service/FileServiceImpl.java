@@ -6,12 +6,15 @@ import com.tkpm.sms.application.service.interfaces.FileService;
 import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
+import com.tkpm.sms.domain.exception.ResourceNotFoundException;
+import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.infrastructure.factories.FileStrategyFactory;
 import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
 import com.tkpm.sms.infrastructure.persistence.entity.StudentEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.StudentJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.StudentPersistenceMapper;
+import com.tkpm.sms.application.service.interfaces.DocumentTemplateProcessingService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,12 +25,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -40,9 +43,7 @@ public class FileServiceImpl implements FileService {
     StudentService studentService;
     FileStrategyFactory fileStrategyFactory;
     StudentDomainValidator studentDomainValidator;
-
-    // @Value("${app.academic_transcript_template.path:templates/template.xlsx}")
-    // private String templatePath;
+    DocumentTemplateProcessingService documentService;
 
     @Override
     public byte[] exportStudentFile(String format) {
@@ -83,18 +84,67 @@ public class FileServiceImpl implements FileService {
         studentService.saveListStudentFromFile(students);
     }
 
-    public byte[] exportTranscript(@PathVariable String id) {
-        var student = studentService.getStudentDetail(id);
-        var studentData = studentMapper.toStudentDto(student);
-
-        List<Object> data = new ArrayList<>();
-        data.add("templates/template.xlsx");
-
-        var studentDataMap = new HashMap<String, Object>();
-        studentDataMap.put("student", studentData);
-        data.add(studentDataMap);
-
-        return fileStrategyFactory.getStrategy("pdf").toBytes(data);
+    @Override
+    public byte[] exportTranscript(String studentId) {
+        try {
+            Map<String, Object> data = getStudentTranscriptData(studentId);
+            return documentService.processTemplateAsHtmlToPdf("templates/template.html", data);
+        } catch (Exception e) {
+            log.error("Failed to generate transcript PDF for student {}", studentId, e);
+            throw new FileProcessingException("Failed to generate transcript PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
+        }
     }
 
+    @Override
+    public Map<String, Object> getStudentTranscriptData(String studentId) {
+        var student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Student with id %s not found", studentId)));
+
+        var studentDomain = studentPersistenceMapper.toDomain(student);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("studentId", studentDomain.getStudentId());
+        data.put("studentName", studentDomain.getName());
+        data.put("className", studentDomain.getFaculty().getName());
+        data.put("birthDate", studentDomain.getDob().toString());
+        data.put("semester", "Spring 2025"); // TODO: Get from current academic term
+
+        // TODO: Calculate actual GPA from student's courses
+        data.put("gpa", calculateGPA(studentDomain));
+
+        // TODO: Get actual course data from student's enrollment
+        List<Map<String, Object>> subjects = getStudentCourses(studentDomain);
+        data.put("subjects", subjects);
+
+        data.put("totalCredits", calculateTotalCredits(subjects));
+
+        return data;
+    }
+
+    private Double calculateGPA(Student student) {
+        // TODO: Implement actual GPA calculation from student's courses
+        return 3.85; // Placeholder
+    }
+
+    private List<Map<String, Object>> getStudentCourses(Student student) {
+        // TODO: Get actual course data from student's enrollment
+        return List.of(
+                Map.of(
+                        "courseId", "MATH101",
+                        "name", "Mathematics",
+                        "credits", 4,
+                        "finalScore", 85.5),
+                Map.of(
+                        "courseId", "COMP201",
+                        "name", "Data Structures",
+                        "credits", 3,
+                        "finalScore", 92.0));
+    }
+
+    private Integer calculateTotalCredits(List<Map<String, Object>> subjects) {
+        return subjects.stream()
+                .mapToInt(subject -> (Integer) subject.get("credits"))
+                .sum();
+    }
 }

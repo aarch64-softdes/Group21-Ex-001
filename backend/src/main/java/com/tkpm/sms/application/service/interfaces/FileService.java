@@ -1,11 +1,13 @@
 package com.tkpm.sms.application.service.interfaces;
 
-import org.springframework.web.bind.annotation.PathVariable;
+import java.util.Map;
 
 public interface FileService {
     byte[] exportStudentFile(String format);
 
     void importStudentFile(String format, Object multipartFile);
 
-    byte[] exportTranscript(@PathVariable String id);
+    byte[] exportTranscript(String studentId);
+
+    Map<String, Object> getStudentTranscriptData(String studentId);
 }

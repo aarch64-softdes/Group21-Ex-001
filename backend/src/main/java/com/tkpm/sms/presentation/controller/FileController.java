@@ -72,8 +72,6 @@ public class FileController {
             data = getSampleData();
             byte[] pdfBytes = documentService.processTemplateAsHtmlToPdf("templates/template.html", data);
 
-            // byte[] pdfBytes = new byte[] { 1, 2, 3, 4, 5 }; // Placeholder for actual PDF
-            // bytes
             String timestamp = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
             String filename = "academic_record_" + (studentId != null ? studentId + "_" : "") + timestamp + ".pdf";
 

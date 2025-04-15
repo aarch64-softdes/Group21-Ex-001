@@ -23,7 +23,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -98,12 +101,21 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/transcript")
-    public ResponseEntity<byte[]> getTranscript(
-            @PathVariable String id) {
-        byte[] transcript = fileService.exportTranscript(id);
-        return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=transcript.pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(transcript);
+    public ResponseEntity<byte[]> getTranscript(@PathVariable String id) {
+        try {
+            // TODO: Replace with actual student data retrieval
+            Map<String, Object> data = fileService.getStudentTranscriptData(id);
+            byte[] pdfBytes = fileService.exportTranscript(id);
+
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
+            String filename = "academic_record_" + id + "_" + timestamp + ".pdf";
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfBytes);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate transcript from HTML template", e);
+        }
     }
 }
