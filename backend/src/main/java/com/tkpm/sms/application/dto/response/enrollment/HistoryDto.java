@@ -13,6 +13,5 @@ import lombok.experimental.FieldDefaults;
 public class HistoryDto {
     String id;
     String actionType;
-    StudentDto student;
     CourseDto course;
 }

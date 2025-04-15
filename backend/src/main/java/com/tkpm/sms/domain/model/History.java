@@ -20,14 +20,6 @@ public class History {
 
     @Getter
     public enum ActionType {
-        ENROLLMENT("enrollment"),
-        DELETED("deleted")
-        ;
-
-        private final String value;
-
-        ActionType(String value) {
-            this.value = value;
-        }
+        ENROLLED, DELETED;
     }
 }
