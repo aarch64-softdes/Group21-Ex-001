@@ -43,7 +43,7 @@ export const SubjectFormSchema = z.object({
     .string()
     .max(1000, 'Description must be less than 1000 characters')
     .optional(),
-  facultyId: z.string().optional(),
+  facultyId: z.string().min(1, 'Faculty is required'),
   prerequisitesId: z.array(z.string()).optional().default([]),
 });
 
@@ -66,7 +66,15 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
   }));
 
   // Use the subjects dropdown hook
-  const subjects = useSubjectsDropdown(isEditing ? 100 : 5, undefined, id);
+  const subjects = useSubjectsDropdown(
+    isEditing ? 100 : 5,
+    (subject) => ({
+      id: subject.id,
+      label: `${subject.code} - ${subject.name}`,
+      value: subject.id,
+    }),
+    id,
+  );
 
   // Store selected prerequisites
   const [selectedPrerequisites, setSelectedPrerequisites] = useState<
@@ -121,7 +129,7 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
   const handleSubmit = (values: SubjectFormValues) => {
     onSubmit({
       ...values,
-      prerequisitesId: values.prerequisitesId || [],
+      prerequisitesId: selectedPrerequisites.map((item) => item.id),
     });
   };
 
