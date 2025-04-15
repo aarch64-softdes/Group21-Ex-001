@@ -48,15 +48,21 @@ public class SubjectDomainValidator {
     }
 
     public void validateSubjectForDeletion(Integer id) {
+        var subject = subjectRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(
+                        String.format("Subject with id %s not found", id)
+                )
+        );
+
         if (subjectRepository.existsCourseForSubject(id)) {
             throw new SubjectDeletionConstraintException(
-                    String.format("Subject with id %d has courses associated with it", id)
+                    String.format("Subject with name %s has courses associated with it", subject.getName())
             );
         }
 
         if (subjectRepository.isPrerequisiteForOtherSubjects(id)) {
             throw new SubjectDeletionConstraintException(
-                    String.format("Subject with id %d is a prerequisite for other subjects", id)
+                   String.format( "Subject with name %s is a prerequisite for other subjects", subject.getName())
             );
         }
     }
