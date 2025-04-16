@@ -19,7 +19,7 @@ public class HistoryEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    ActionType actionType;
+    String actionType;
     LocalDate createdAt;
 
     @ManyToOne
@@ -29,9 +29,4 @@ public class HistoryEntity {
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     CourseEntity course;
-
-    @Getter
-    public enum ActionType {
-        ENROLLED, DELETED;
-    }
 }

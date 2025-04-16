@@ -81,7 +81,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
     @Override
     public Optional<Enrollment> findEnrollmentByStudentIdAndCourseId(String studentId, Integer courseId) {
-        var enrollment = enrollmentJpaRepository.findByStudent_IdAndCourse_Id(studentId, courseId);
+        var enrollment = enrollmentJpaRepository.findByStudentIdAndCourseId(studentId, courseId);
 
         return Optional.ofNullable(enrollment)
                 .map(enrollmentPersistenceMapper::toDomain);
@@ -96,7 +96,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                 student(enrollmentEntity.getStudent()).
                 course(enrollmentEntity.getCourse()).
                 createdAt(LocalDate.now()).
-                actionType(HistoryEntity.ActionType.ENROLLED).
+                actionType(History.ActionType.ENROLLED.toString()).
                 build();
         historyJpaRepository.save(historyEntity);
 
@@ -111,7 +111,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                 student(enrollmentEntity.getStudent()).
                 course(enrollmentEntity.getCourse()).
                 createdAt(LocalDate.now()).
-                actionType(HistoryEntity.ActionType.DELETED).
+                actionType(History.ActionType.DELETED.toString()).
                 build();
         historyJpaRepository.save(historyEntity);
 
@@ -120,11 +120,11 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
     @Override
     public boolean existsByStudentIdAndCourseId(String studentId, Integer courseId) {
-        return enrollmentJpaRepository.existsByStudent_IdAndCourse_Id(studentId, courseId);
+        return enrollmentJpaRepository.existsByStudentIdAndCourseId(studentId, courseId);
     }
 
     @Override
     public Integer countStudentsByCourseId(Integer courseId) {
-        return enrollmentJpaRepository.countAllByCourse_Id(courseId);
+        return enrollmentJpaRepository.countAllByCourseId(courseId);
     }
 }

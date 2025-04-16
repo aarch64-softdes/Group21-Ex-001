@@ -13,9 +13,9 @@ public interface EnrollmentJpaRepository extends JpaRepository<EnrollmentEntity,
     @Query("select e from EnrollmentEntity e where e.student.id = ?1")
     Page<EnrollmentEntity> findAllEnrollmentOfStudent(String studentId, Pageable pageable);
 
-    EnrollmentEntity findByStudent_IdAndCourse_Id(String studentId, Integer courseId);
+    EnrollmentEntity findByStudentIdAndCourseId(String studentId, Integer courseId);
 
-    boolean existsByStudent_IdAndCourse_Id(String studentId, Integer courseId);
+    boolean existsByStudentIdAndCourseId(String studentId, Integer courseId);
 
-    Integer countAllByCourse_Id(Integer courseId);
+    Integer countAllByCourseId(Integer courseId);
 }
