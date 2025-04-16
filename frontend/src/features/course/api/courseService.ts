@@ -32,11 +32,9 @@ export default class CourseService {
       // Handle the response based on the API structure
       return {
         data: response.data.content.data.map(mapToCourse),
-        totalItems:
-          response.data.content.totalElements ||
-          response.data.content.data.length,
-        totalPages: response.data.content.totalPages || 1,
-        currentPage: response.data.content.pageNumber || page,
+        totalItems: response.data.content.totalElements,
+        totalPages: response.data.content.totalPages,
+        currentPage: response.data.content.pageNumber,
       };
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -57,13 +55,7 @@ export default class CourseService {
 
   addCourse = async (data: CreateCourseDTO): Promise<void> => {
     try {
-      // Format the data for the backend
-      const requestData = {
-        ...data,
-        schedule: formatSchedule(data.schedule),
-      };
-
-      await api.post('/api/courses', requestData);
+      await api.post('/api/courses', data);
     } catch (error) {
       console.error('Error adding course:', error);
       throw error;
@@ -72,13 +64,7 @@ export default class CourseService {
 
   updateCourse = async (id: string, data: UpdateCourseDTO): Promise<void> => {
     try {
-      // Format the data for the backend
-      const requestData = {
-        ...data,
-        schedule: formatSchedule(data.schedule),
-      };
-
-      await api.put(`/api/courses/${id}`, requestData);
+      await api.put(`/api/courses/${id}`, data);
     } catch (error) {
       console.error('Error updating course:', error);
       throw error;

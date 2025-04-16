@@ -88,6 +88,7 @@ CREATE TABLE subjects (
     credits INTEGER NOT NULL,
     faculty_id INTEGER,
     deleted_at DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_subjects_faculty FOREIGN KEY (faculty_id) REFERENCES faculties (id)
 );
 
@@ -509,7 +510,7 @@ INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (13, 12);
 INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (15, 14);
 
 -- Add sample course data
-INSERT INTO courses (course_id, code, year, semester, lecturer, max_student, room, schedule, start_date, program_id, subject_id) VALUES
+INSERT INTO courses (id, code, year, semester, lecturer, max_student, room, schedule, start_date, program_id, subject_id) VALUES
 -- Computer Science Courses
 (1, 'CS101-01', 2025, 1, 'Dr. John Smith', 40, 'A101', 'T2(3-6)', '2025-01-15', 1, 1),
 (2, 'CS101-02', 2025, 1, 'Dr. Sarah Johnson', 35, 'B202', 'T4(1-4)', '2025-01-15', 1, 1),

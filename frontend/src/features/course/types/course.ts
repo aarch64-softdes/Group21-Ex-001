@@ -55,14 +55,21 @@ export const mapToCourse = (data: any): Course => ({
           code: data.subjectCode,
         }
       : {
-          id: data.subject.id,
+          id: data.subject.id.toString(),
           name: data.subject.name,
           code: data.subject.code,
         },
-  program:
-    typeof data.program === 'string'
+  program: data.program
+    ? typeof data.program === 'string'
       ? {
           name: data.program,
         }
-      : data.program,
+      : {
+          id: data.program.id.toString(),
+          name: data.program.name,
+        }
+    : {
+        id: '',
+        name: '',
+      },
 });

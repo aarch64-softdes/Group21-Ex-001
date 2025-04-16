@@ -10,6 +10,7 @@ import { getErrorMessage } from '@/shared/lib/utils';
 import Program from '@/features/faculty/types/faculty';
 import { useLoadMore } from '@/shared/hooks/useLoadMore';
 import { useState } from 'react';
+import { SelectItem } from '@/components/common/LoadMoreSelect';
 
 const programService = new ProgramService();
 
@@ -38,7 +39,10 @@ export const usePrograms = (params: QueryHookParams) => {
   });
 };
 
-export const useProgramsDropdown = (initialPageSize?: number) => {
+export const useProgramsDropdown = (
+  initialPageSize?: number,
+  mapFn?: (p: Program) => SelectItem,
+) => {
   const [programSearch, setProgramSearch] = useState<string>('');
   const programs = useLoadMore<Program>({
     queryKey: ['programs', 'dropdown'],
@@ -50,11 +54,13 @@ export const useProgramsDropdown = (initialPageSize?: number) => {
         sortType: 'asc',
         search: searchQuery,
       }),
-    mapFn: (program: Program) => ({
-      id: program.id,
-      label: program.name,
-      value: program.name,
-    }),
+    mapFn:
+      mapFn ||
+      ((program: Program) => ({
+        id: program.id,
+        label: program.name,
+        value: program.name,
+      })),
     searchQuery: programSearch,
     initialPageSize,
   });

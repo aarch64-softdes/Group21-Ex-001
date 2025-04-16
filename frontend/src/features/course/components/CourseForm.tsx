@@ -41,6 +41,7 @@ const schedulePattern = /^T[2-7]\([1-9]-([1-9]|1[0-2])\)$/;
 export const CourseFormSchema = z.object({
   subjectId: z.string().min(1, 'Subject is required'),
   programId: z.string().min(1, 'Program is required'),
+  code: z.string().min(1, 'Code is required'),
   year: z
     .number()
     .min(2020, 'Year must be 2020 or later')
@@ -87,18 +88,23 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
   const subjects = useSubjectsDropdown(isEditing ? 100 : 5, (subject) => ({
     id: subject.id,
     label: subject.name,
-    value: subject.name,
+    value: subject.id,
     metadata: {
       isActive: subject.isActive,
     },
   }));
-  const programs = useProgramsDropdown(isEditing ? 100 : 5);
+  const programs = useProgramsDropdown(isEditing ? 100 : 5, (program) => ({
+    id: program.id,
+    label: program.name,
+    value: program.id,
+  }));
 
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(CourseFormSchema),
     defaultValues: {
       subjectId: '',
       programId: '',
+      code: '',
       year: new Date().getFullYear(),
       semester: 1,
       startDate: '',
@@ -119,6 +125,9 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
   useEffect(() => {
     if (courseData && id) {
       form.reset({
+        subjectId: courseData.subject?.id,
+        programId: courseData.program?.id,
+        code: courseData.code,
         year: courseData.year,
         semester: courseData.semester,
         startDate: formatDateForInput(courseData.startDate),
@@ -141,7 +150,8 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
     };
 
     if (isEditing) {
-      onSubmit(submissionValues as UpdateCourseDTO);
+      const { subjectId, programId, ...updateData } = submissionValues;
+      onSubmit(updateData as UpdateCourseDTO);
     } else {
       onSubmit(submissionValues as CreateCourseDTO);
     }
@@ -229,6 +239,29 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                             onSearch={programs.setProgramSearch}
                             disabled={isEditing || isLoading}
                           />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name='code'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Code</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder='e.g. CS101'
+                              {...field}
+                              autoComplete='off'
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
