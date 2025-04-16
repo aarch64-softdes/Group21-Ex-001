@@ -20,4 +20,6 @@ public interface EnrollmentRepository {
     void delete(Enrollment enrollment);
 
     boolean existsByStudentIdAndCourseId(String studentId, Integer courseId);
+
+    Integer countStudentsByCourseId(Integer courseId);
 }

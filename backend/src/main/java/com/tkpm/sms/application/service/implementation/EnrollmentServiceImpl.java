@@ -33,6 +33,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Override
     public PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId, BaseCollectionRequest request) {
         PageRequest pageRequest = PageRequest.from(request);
+
         return enrollmentRepository.findAllEnrollmentsOfStudent(studentId, pageRequest);
     }
 
@@ -50,6 +51,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         enrollmentDomainValidator.validateEnrollmentUniqueness(
                 enrollmentCreateRequestDto.getStudentId(),
                 enrollmentCreateRequestDto.getCourseId());
+        courseDomainValidator.validateCourseCapacity(enrollmentCreateRequestDto.getCourseId());
 
         Enrollment enrollment = enrollmentMapper.toEnrollment(enrollmentCreateRequestDto);
         enrollment.setStudent(studentService.getStudentDetail(enrollmentCreateRequestDto.getStudentId()));

@@ -122,4 +122,9 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     public boolean existsByStudentIdAndCourseId(String studentId, Integer courseId) {
         return enrollmentJpaRepository.existsByStudent_IdAndCourse_Id(studentId, courseId);
     }
+
+    @Override
+    public Integer countStudentsByCourseId(Integer courseId) {
+        return enrollmentJpaRepository.countAllByCourse_Id(courseId);
+    }
 }
