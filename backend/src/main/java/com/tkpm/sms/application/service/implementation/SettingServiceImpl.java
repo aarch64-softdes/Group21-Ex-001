@@ -95,8 +95,8 @@ public class SettingServiceImpl implements SettingService {
     ) {
         Setting setting = settingRepository.findByName(SettingType.ADJUSTMENT_DURATION.getValue())
                 .orElseThrow(() -> new ResourceNotFoundException("Adjustment duration setting not found"));
-        String adjustmentDuration = setting.getDetails();
-        setting.setDetails(adjustmentDuration);
+
+        setting.setDetails(adjustmentDurationSettingRequestDto.getAdjustmentDuration());
 
         var savedSetting = settingRepository.save(setting);
         return  new AdjustmentDurationSettingDto(savedSetting.getDetails());

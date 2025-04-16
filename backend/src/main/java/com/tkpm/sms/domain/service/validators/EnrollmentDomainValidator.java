@@ -1,5 +1,6 @@
 package com.tkpm.sms.domain.service.validators;
 
+import com.tkpm.sms.domain.exception.DuplicateResourceException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ public class EnrollmentDomainValidator {
 
     public void validateEnrollmentUniqueness(String studentId, Integer courseId) {
         if (enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
-            throw new ResourceNotFoundException("Enrollment already existed for studentId: " + studentId +
+            throw new DuplicateResourceException("Enrollment already existed for studentId: " + studentId +
                     " and courseId: " + courseId);
         }
     }
