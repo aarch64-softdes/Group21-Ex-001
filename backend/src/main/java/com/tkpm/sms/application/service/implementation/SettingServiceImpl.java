@@ -2,8 +2,10 @@ package com.tkpm.sms.application.service.implementation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tkpm.sms.application.dto.request.setting.AdjustmentDurationSettingRequestDto;
 import com.tkpm.sms.application.dto.request.setting.EmailDomainSettingRequestDto;
 import com.tkpm.sms.application.dto.request.setting.PhoneSettingRequestDto;
+import com.tkpm.sms.application.dto.response.setting.AdjustmentDurationSettingDto;
 import com.tkpm.sms.application.dto.response.setting.EmailDomainSettingDto;
 import com.tkpm.sms.application.dto.response.setting.PhoneSettingDto;
 import com.tkpm.sms.application.service.interfaces.SettingService;
@@ -79,5 +81,24 @@ public class SettingServiceImpl implements SettingService {
         } catch (JsonProcessingException e) {
             throw new GenericDomainException("Error processing phone setting", ErrorCode.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public AdjustmentDurationSettingDto getAdjustmentDurationSetting() {
+
+        return new AdjustmentDurationSettingDto(settingRepository.getAdjustmentDurationSetting());
+    }
+
+    @Override
+    public AdjustmentDurationSettingDto updateAdjustmentDurationSetting(
+            AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto
+    ) {
+        Setting setting = settingRepository.findByName(SettingType.ADJUSTMENT_DURATION.getValue())
+                .orElseThrow(() -> new ResourceNotFoundException("Adjustment duration setting not found"));
+        String adjustmentDuration = setting.getDetails();
+        setting.setDetails(adjustmentDuration);
+
+        var savedSetting = settingRepository.save(setting);
+        return  new AdjustmentDurationSettingDto(savedSetting.getDetails());
     }
 }

@@ -15,4 +15,6 @@ public interface SettingRepository {
     String getFirstPhoneSetting();
 
     String getEmailSetting();
+
+    String getAdjustmentDurationSetting();
 }
