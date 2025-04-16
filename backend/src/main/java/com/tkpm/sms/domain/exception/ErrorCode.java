@@ -31,6 +31,7 @@ public enum ErrorCode {
             "Invalid identity number, with Passport the number should contain first 2 uppercase letter and 7 digits"),
     INVALID_IDENTITY_ISSUED_DATE("Identity issued date must be before expired date"),
     FIELD_REQUIRED("{field} must be filled in"),
+    COURSE_EXPIRED("Course expired"),
 
     // Resource Errors
     NOT_FOUND("Resource not found"),

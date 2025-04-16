@@ -15,6 +15,7 @@ import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
+import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import com.tkpm.sms.domain.service.validators.EnrollmentDomainValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private final StudentService studentService;
     private final CourseService courseService;
     private final EnrollmentDomainValidator enrollmentDomainValidator;
+    private final CourseDomainValidator courseDomainValidator;
 
     @Override
     public PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId, BaseCollectionRequest request) {
@@ -44,6 +46,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     public Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto) {
+        courseDomainValidator.validateCourseInTimePeriod(enrollmentCreateRequestDto.getCourseId());
         enrollmentDomainValidator.validateEnrollmentUniqueness(
                 enrollmentCreateRequestDto.getStudentId(),
                 enrollmentCreateRequestDto.getCourseId());
@@ -57,6 +60,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     public void deleteEnrollment(EnrollmentDeleteRequestDto enrollmentDeleteRequestDto) {
+        courseDomainValidator.validateCourseInTimePeriod(enrollmentDeleteRequestDto.getCourseId());
 
         var enrollment = enrollmentRepository.findEnrollmentByStudentIdAndCourseId(
                 enrollmentDeleteRequestDto.getStudentId(),
