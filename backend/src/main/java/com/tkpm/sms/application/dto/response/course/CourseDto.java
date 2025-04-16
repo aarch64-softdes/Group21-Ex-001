@@ -1,7 +1,5 @@
 package com.tkpm.sms.application.dto.response.course;
 
-import com.tkpm.sms.application.annotation.RequiredConstraint;
-import com.tkpm.sms.application.dto.request.course.CourseScheduleDto;
 import com.tkpm.sms.application.dto.response.ProgramDto;
 import com.tkpm.sms.application.dto.response.subject.SubjectDto;
 import lombok.*;
@@ -18,9 +16,8 @@ import java.time.LocalDate;
 public class CourseDto {
     Integer id;
     String code;
-    String subject;
-    String subjectCode;
-    String program;
+    SubjectDto subject;
+    ProgramDto program;
     String lecturer;
     int credits;
     int year;
