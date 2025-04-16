@@ -1,16 +1,22 @@
 package com.tkpm.sms.infrastructure.persistence.repository;
 
+import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.repository.CourseRepository;
+import com.tkpm.sms.infrastructure.persistence.entity.CourseEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.CourseJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.CoursePersistenceMapper;
+import com.tkpm.sms.infrastructure.utils.PagingUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -20,17 +26,23 @@ public class CourseRepositoryImpl implements CourseRepository {
     private final CoursePersistenceMapper coursePersistenceMapper;
 
     @Override
-    public PageResponse<Course> findAll(PageRequest pageRequest) {
-        var courses = courseJpaRepository.findAll(pageRequest).stream()
+    public PageResponse<Course> findAll(PageRequest request) {
+        // Convert domain PageRequest to Spring Pageable
+        Pageable pageable = PagingUtils.toSpringPageable(request);
+
+        Page<CourseEntity> page = courseJpaRepository.findAll(pageable);
+
+        // Convert Spring Page to domain PageResponse
+        List<Course> subjects = page.getContent().stream()
                 .map(coursePersistenceMapper::toDomain)
-                .toList();
+                .collect(Collectors.toList());
 
         return PageResponse.of(
-                courses,
-                courses.size(),
-                pageRequest.getPageNumber(),
-                pageRequest.getPageSize(),
-                courses.size() / pageRequest.getPageSize()
+                subjects,
+                page.getNumber() + 1, // Convert 0-based to 1-based
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
         );
     }
 

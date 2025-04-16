@@ -8,6 +8,7 @@ import com.tkpm.sms.infrastructure.persistence.entity.StudentEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.StudentJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.StudentPersistenceMapper;
 import com.tkpm.sms.infrastructure.persistence.specifications.StudentSpecifications;
+import com.tkpm.sms.infrastructure.utils.PagingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -97,14 +98,7 @@ public class StudentRepositoryImpl implements StudentRepository {
     @Override
     public PageResponse<Student> findWithFilters(String search, String faculty, PageRequest pageRequest) {
         // Convert domain PageRequest to Spring Pageable
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                pageRequest.getPageNumber() - 1,
-                pageRequest.getPageSize(),
-                pageRequest.getSortDirection() == PageRequest.SortDirection.DESC
-                        ? Sort.Direction.DESC
-                        : Sort.Direction.ASC,
-                pageRequest.getSortBy()
-        );
+        Pageable pageable = PagingUtils.toSpringPageable(pageRequest);
 
         // Apply specifications for filtering
         Page<StudentEntity> page = jpaRepository.findAll(

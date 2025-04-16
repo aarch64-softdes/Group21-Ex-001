@@ -5,6 +5,7 @@ import com.tkpm.sms.application.dto.request.course.CourseCreateRequestDto;
 import com.tkpm.sms.application.dto.request.course.CourseUpdateRequestDto;
 import com.tkpm.sms.application.mapper.CourseMapper;
 import com.tkpm.sms.application.service.interfaces.CourseService;
+import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.exception.SubjectDeactivatedException;
@@ -18,8 +19,6 @@ import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,15 +33,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public PageResponse<Course> findAll(BaseCollectionRequest request) {
-        Sort.Direction direction = Sort.Direction.valueOf(request.getSortDirection().toUpperCase());
-
-        return courseRepository.findAll(
-                PageRequest.of(
-                        request.getPage() - 1,
-                        request.getSize(),
-                        Sort.by(direction, request.getSortBy())
-                )
-        );
+        PageRequest pageRequest = PageRequest.from(request);
+        return courseRepository.findAll(pageRequest);
     }
 
     @Override
