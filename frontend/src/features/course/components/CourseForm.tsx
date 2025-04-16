@@ -43,12 +43,12 @@ export const CourseFormSchema = z.object({
   programId: z.string().min(1, 'Program is required'),
   code: z.string().min(1, 'Code is required'),
   year: z
-    .number()
+    .number({ invalid_type_error: 'Year must be a number' })
     .min(2020, 'Year must be 2020 or later')
     .max(2050, 'Year must be before 2050')
     .or(z.string().regex(/^\d+$/).transform(Number)),
   semester: z
-    .number()
+    .number({ invalid_type_error: 'Semester must be a number' })
     .min(1, 'Semester must be at least 1')
     .max(3, 'Semester must be at most 3')
     .or(z.string().regex(/^\d+$/).transform(Number)),
@@ -58,7 +58,7 @@ export const CourseFormSchema = z.object({
     .min(1, 'Lecturer name is required')
     .max(100, 'Lecturer name must be less than 100 characters'),
   maxStudent: z
-    .number()
+    .number({ invalid_type_error: 'Max students must be a number' })
     .min(1, 'Max students must be at least 1')
     .max(200, 'Max students must be at most 200')
     .or(z.string().regex(/^\d+$/).transform(Number)),

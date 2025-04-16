@@ -35,7 +35,7 @@ export const SubjectFormSchema = z.object({
     .min(1, 'Code is required')
     .max(20, 'Code must be less than 20 characters'),
   credits: z
-    .number()
+    .number({ invalid_type_error: 'Credits must be a number' })
     .min(2, 'Credits must be at least 2')
     .max(10, 'Credits must be at most 10')
     .or(z.string().regex(/^\d+$/).transform(Number)),
@@ -72,6 +72,9 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
       id: subject.id,
       label: `${subject.code} - ${subject.name}`,
       value: subject.id,
+      metadata: {
+        isActive: subject.isActive,
+      },
     }),
     id,
   );
@@ -346,6 +349,9 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                                 emptyMessage='No prerequisites found.'
                                 searchPlaceholder='Search prerequisites...'
                                 onSearch={subjects.setSubjectSearch}
+                                disabledItems={(metadata) => {
+                                  return !metadata.isActive;
+                                }}
                               />
                               <FormMessage />
                             </div>
