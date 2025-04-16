@@ -17,6 +17,7 @@ import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import com.tkpm.sms.domain.service.validators.EnrollmentDomainValidator;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,12 +47,14 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    @Transactional
     public Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto) {
-        courseDomainValidator.validateCourseInTimePeriod(enrollmentCreateRequestDto.getCourseId());
+        var course = courseService.getCourseById(enrollmentCreateRequestDto.getCourseId());
+        courseDomainValidator.validateCourseInTimePeriod(course);
+        courseDomainValidator.validateCourseIsMaxCapacity(course);
         enrollmentDomainValidator.validateEnrollmentUniqueness(
                 enrollmentCreateRequestDto.getStudentId(),
                 enrollmentCreateRequestDto.getCourseId());
-        courseDomainValidator.validateCourseCapacity(enrollmentCreateRequestDto.getCourseId());
 
         Enrollment enrollment = enrollmentMapper.toEnrollment(enrollmentCreateRequestDto);
         enrollment.setStudent(studentService.getStudentDetail(enrollmentCreateRequestDto.getStudentId()));
@@ -61,8 +64,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    @Transactional
     public void deleteEnrollment(EnrollmentDeleteRequestDto enrollmentDeleteRequestDto) {
-        courseDomainValidator.validateCourseInTimePeriod(enrollmentDeleteRequestDto.getCourseId());
+        var course = courseService.getCourseById(enrollmentDeleteRequestDto.getCourseId());
+        courseDomainValidator.validateCourseInTimePeriod(course);
 
         var enrollment = enrollmentRepository.findEnrollmentByStudentIdAndCourseId(
                 enrollmentDeleteRequestDto.getStudentId(),

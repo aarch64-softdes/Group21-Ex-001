@@ -1,8 +1,8 @@
 package com.tkpm.sms.domain.service.validators;
 
-import com.tkpm.sms.domain.exception.InvalidCourseException;
+import com.tkpm.sms.domain.exception.UnenrollableCourseException;
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
-import com.tkpm.sms.domain.exception.ResourceNotFoundException;
+import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.repository.SettingRepository;
@@ -32,30 +32,22 @@ public class CourseDomainValidator {
         }
     }
 
-    public void validateCourseInTimePeriod(Integer id) {
-        var course = courseRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Course with id %s not found", id))
-        );
+    public void validateCourseInTimePeriod(Course course) {
 
         var adjustmentDuration = settingRepository.getAdjustmentDurationSetting();
 
         if(LocalDate.now().isAfter(course.getStartDate().plusDays(Integer.parseInt(adjustmentDuration)))) {
-            throw new InvalidCourseException(
-                    String.format("Course with id %s is expired", id)
+            throw new UnenrollableCourseException(
+                    String.format("Course with id %s is expired", course.getId())
             );
         }
     }
 
-    public void validateCourseCapacity(Integer id) {
-        var course = courseRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Course with id %s not found", id))
-        );
-
-        var currentCapacity = enrollmentRepository.countStudentsByCourseId(id);
-
+    public void validateCourseIsMaxCapacity(Course course) {
+        var currentCapacity = enrollmentRepository.countStudentsByCourseId(course.getId());
         if(currentCapacity >= course.getMaxStudent()){
-            throw new InvalidCourseException(
-                    String.format("Course with id %s is already full ", id)
+            throw new UnenrollableCourseException(
+                    String.format("Course with id %s is already full ", course.getId())
             );
         }
     }
