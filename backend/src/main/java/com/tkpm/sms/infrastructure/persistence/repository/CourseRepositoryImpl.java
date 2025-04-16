@@ -33,12 +33,12 @@ public class CourseRepositoryImpl implements CourseRepository {
         Page<CourseEntity> page = courseJpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Course> subjects = page.getContent().stream()
+        List<Course> courses = page.getContent().stream()
                 .map(coursePersistenceMapper::toDomain)
                 .collect(Collectors.toList());
 
         return PageResponse.of(
-                subjects,
+                courses,
                 page.getNumber() + 1, // Convert 0-based to 1-based
                 page.getSize(),
                 page.getTotalElements(),
