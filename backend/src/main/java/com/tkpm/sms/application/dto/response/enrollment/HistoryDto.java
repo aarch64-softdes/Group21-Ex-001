@@ -5,6 +5,9 @@ import com.tkpm.sms.application.dto.response.student.StudentDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,4 +17,5 @@ public class HistoryDto {
     String id;
     String actionType;
     CourseDto course;
+    LocalDateTime createdAt;
 }

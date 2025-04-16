@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "histories")
@@ -20,7 +20,7 @@ public class HistoryEntity {
     String id;
 
     String actionType;
-    LocalDate createdAt;
+    LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)

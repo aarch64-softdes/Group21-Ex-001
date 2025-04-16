@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -95,7 +96,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         var historyEntity = HistoryEntity.builder().
                 student(enrollmentEntity.getStudent()).
                 course(enrollmentEntity.getCourse()).
-                createdAt(LocalDate.now()).
+                createdAt(LocalDateTime.now()).
                 actionType(History.ActionType.ENROLLED.toString()).
                 build();
         historyJpaRepository.save(historyEntity);
@@ -110,7 +111,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         var historyEntity = HistoryEntity.builder().
                 student(enrollmentEntity.getStudent()).
                 course(enrollmentEntity.getCourse()).
-                createdAt(LocalDate.now()).
+                createdAt(LocalDateTime.now()).
                 actionType(History.ActionType.DELETED.toString()).
                 build();
         historyJpaRepository.save(historyEntity);
