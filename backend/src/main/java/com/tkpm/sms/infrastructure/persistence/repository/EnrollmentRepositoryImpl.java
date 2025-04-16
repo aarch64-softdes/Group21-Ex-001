@@ -97,7 +97,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                 student(enrollmentEntity.getStudent()).
                 course(enrollmentEntity.getCourse()).
                 createdAt(LocalDateTime.now()).
-                actionType(History.ActionType.ENROLLED.toString()).
+                actionType(History.ActionType.ENROLLED.name()).
                 build();
         historyJpaRepository.save(historyEntity);
 
@@ -112,7 +112,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                 student(enrollmentEntity.getStudent()).
                 course(enrollmentEntity.getCourse()).
                 createdAt(LocalDateTime.now()).
-                actionType(History.ActionType.DELETED.toString()).
+                actionType(History.ActionType.DELETED.name()).
                 build();
         historyJpaRepository.save(historyEntity);
 

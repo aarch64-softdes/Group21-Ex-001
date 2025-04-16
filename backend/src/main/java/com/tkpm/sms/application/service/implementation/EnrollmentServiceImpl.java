@@ -15,6 +15,7 @@ import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
+import com.tkpm.sms.domain.repository.StudentRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import com.tkpm.sms.domain.service.validators.EnrollmentDomainValidator;
 import jakarta.transaction.Transactional;
@@ -35,6 +36,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId, BaseCollectionRequest request) {
         PageRequest pageRequest = PageRequest.from(request);
 
+        // it will throw ResourceNotFoundException when there is no student with studentId-parameter
+        studentService.getStudentDetail(studentId);
+
         return enrollmentRepository.findAllEnrollmentsOfStudent(studentId, pageRequest);
     }
 
@@ -44,6 +48,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         request.setSortDirection("desc");
         PageRequest pageRequest = PageRequest.from(request);
 
+        // it will throw ResourceNotFoundException when there is no student with studentId-parameter
+        studentService.getStudentDetail(studentId);
+
         return enrollmentRepository.findEnrollmentHistoryOfStudent(studentId, pageRequest);
     }
 
@@ -52,10 +59,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto) {
         var course = courseService.getCourseById(enrollmentCreateRequestDto.getCourseId());
         courseDomainValidator.validateCourseInTimePeriod(course);
-        courseDomainValidator.validateCourseIsMaxCapacity(course);
         enrollmentDomainValidator.validateEnrollmentUniqueness(
                 enrollmentCreateRequestDto.getStudentId(),
                 enrollmentCreateRequestDto.getCourseId());
+        courseDomainValidator.validateCourseIsMaxCapacity(course);
 
         Enrollment enrollment = enrollmentMapper.toEnrollment(enrollmentCreateRequestDto);
         enrollment.setStudent(studentService.getStudentDetail(enrollmentCreateRequestDto.getStudentId()));
