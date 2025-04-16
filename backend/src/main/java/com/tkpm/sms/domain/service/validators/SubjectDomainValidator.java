@@ -55,13 +55,13 @@ public class SubjectDomainValidator {
 
         if (subjectRepository.existsCourseForSubject(id)) {
             throw new SubjectDeletionConstraintException(
-                    String.format("Subject with name %s has courses associated with it", subject.getName())
+                    String.format("Subject with code %s has courses associated with it", subject.getCode())
             );
         }
 
         if (subjectRepository.isPrerequisiteForOtherSubjects(id)) {
             throw new SubjectDeletionConstraintException(
-                   String.format( "Subject with name %s is a prerequisite for other subjects", subject.getName())
+                   String.format( "Subject with code %s is a prerequisite for other subjects", subject.getCode())
             );
         }
     }
