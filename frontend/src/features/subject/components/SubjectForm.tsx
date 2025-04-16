@@ -127,10 +127,15 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
   }, [subjectData, id, form]);
 
   const handleSubmit = (values: SubjectFormValues) => {
-    onSubmit({
-      ...values,
-      prerequisitesId: selectedPrerequisites.map((item) => item.id),
-    });
+    if (isEditing) {
+      let { code, ...updateData } = values;
+      onSubmit(updateData);
+    } else {
+      onSubmit({
+        ...values,
+        prerequisitesId: selectedPrerequisites.map((item) => item.id),
+      });
+    }
   };
 
   // Handle adding a prerequisite

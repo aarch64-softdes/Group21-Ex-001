@@ -5,7 +5,7 @@ import Subject, {
 } from '@/features/subject/types/subject';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { showErrorToast } from '@/shared/lib/toast-utils';
+import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
 import { getErrorMessage } from '@/shared/lib/utils';
 import { useLoadMore } from '@/shared/hooks/useLoadMore';
 import { useState } from 'react';
@@ -102,6 +102,7 @@ export const useCreateSubject = () => {
     mutationFn: (data: CreateSubjectDTO) => subjectService.addNewSubject(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      showSuccessToast('Subject added successfully');
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -117,6 +118,7 @@ export const useUpdateSubject = () => {
       subjectService.updateSubject(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      showSuccessToast('Subject updated successfully');
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -131,6 +133,7 @@ export const useDeleteSubject = () => {
     mutationFn: (id: string) => subjectService.deleteSubject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      showSuccessToast('Subject deleted successfully');
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -145,6 +148,7 @@ export const useActivateSubject = () => {
     mutationFn: (id: string) => subjectService.activateSubject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      showSuccessToast('Subject activated successfully');
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -159,6 +163,7 @@ export const useDeactivateSubject = () => {
     mutationFn: (id: string) => subjectService.deactivateSubject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      showSuccessToast('Subject deactivated successfully');
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
