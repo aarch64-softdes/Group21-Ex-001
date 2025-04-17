@@ -15,7 +15,6 @@ import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -75,7 +74,7 @@ class CourseServiceTest {
     void testGetCourseById_NotFound() {
         when(courseRepository.findById(1)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> courseService.getCourseById(1));
+        assertThrows(ResourceNotFoundException.class, () -> courseService.getCourseById(1));
     }
 
     @Test
@@ -108,7 +107,7 @@ class CourseServiceTest {
         when(courseRepository.findById(1)).thenReturn(Optional.empty());
 
         CourseUpdateRequestDto updateRequestDto = new CourseUpdateRequestDto();
-        assertThrows(EntityNotFoundException.class, () -> courseService.updateCourse(1, updateRequestDto));
+        assertThrows(ResourceNotFoundException.class, () -> courseService.updateCourse(1, updateRequestDto));
     }
 
     @Test
