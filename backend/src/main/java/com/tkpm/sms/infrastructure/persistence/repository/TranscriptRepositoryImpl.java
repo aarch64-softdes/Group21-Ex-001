@@ -23,7 +23,9 @@ public class TranscriptRepositoryImpl implements TranscriptRepository {
 
     @Override
     public Transcript save(Transcript transcript) {
-        return null;
+        var transcriptEntity = mapper.toEntity(transcript);
+
+        return mapper.toDomain(jpaRepository.save(transcriptEntity));
     }
 
     @Override

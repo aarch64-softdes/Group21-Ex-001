@@ -3,7 +3,6 @@ package com.tkpm.sms.infrastructure.persistence.repository;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.GenericDomainException;
-import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.model.Subject;
@@ -32,7 +31,6 @@ import java.util.Optional;
 public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     EnrollmentJpaRepository enrollmentJpaRepository;
     HistoryJpaRepository historyJpaRepository;
-    TranscriptJpaRepository transcriptJpaRepository;
     EnrollmentPersistenceMapper enrollmentPersistenceMapper;
     HistoryPersistenceMapper historyPersistenceMapper;
     SubjectRepositoryImpl subjectRepository;
@@ -164,7 +162,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
             var subjects = subjectRepository.findAllByIds(missingSubjectIds).stream().map(
                     Subject::getName
-            );
+            ).toList();
 
             // TODO: create a new exception class for this
             throw new GenericDomainException("Student has not passed the following subjects: " + String.join(", ", subjects));

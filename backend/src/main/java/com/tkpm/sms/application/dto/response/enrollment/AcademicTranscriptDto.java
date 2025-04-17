@@ -16,7 +16,6 @@ public class AcademicTranscriptDto {
     String studentId;
     String studentName;
     String courseName;
-    Integer semester;
     LocalDate studentDob;
     Double gpa;
 
