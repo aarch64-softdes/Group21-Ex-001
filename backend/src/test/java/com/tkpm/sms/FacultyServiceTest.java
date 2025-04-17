@@ -24,7 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class FacultyServiceImplTest {
+class FacultyServiceTest {
 
     @Mock
     private FacultyRepository facultyRepository;
@@ -45,12 +45,13 @@ class FacultyServiceImplTest {
     // BaseCollectionRequest request = new BaseCollectionRequest(1, 10, "id",
     // "ASC");
     // Page<Faculty> page = new PageImpl<>(Collections.emptyList());
-    // when(facultyRepository.findAll(any(PageRequest.class))).thenReturn(page);
+    // when(facultyRepository.findAll(any(PageRequest.class))).thenReturn(new
+    // PageResponse<>(page));
 
     // PageResponse<Faculty> response = facultyService.getAllFaculties(request);
 
     // assertNotNull(response);
-    // verify(facultyRepository, times(1)).findAll(any(PageRequest.class));
+    // verify(facultyRepository).findAll(any(PageRequest.class));
     // }
 
     @Test
@@ -61,10 +62,32 @@ class FacultyServiceImplTest {
     }
 
     @Test
+    void testGetFacultyById_Success() {
+        Faculty faculty = new Faculty();
+        when(facultyRepository.findById(1)).thenReturn(Optional.of(faculty));
+
+        Faculty result = facultyService.getFacultyById(1);
+
+        assertNotNull(result);
+        verify(facultyRepository).findById(1);
+    }
+
+    @Test
     void testGetFacultyByName_NotFound() {
         when(facultyRepository.findByName("Test Faculty")).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> facultyService.getFacultyByName("Test Faculty"));
+    }
+
+    @Test
+    void testGetFacultyByName_Success() {
+        Faculty faculty = new Faculty();
+        when(facultyRepository.findByName("Test Faculty")).thenReturn(Optional.of(faculty));
+
+        Faculty result = facultyService.getFacultyByName("Test Faculty");
+
+        assertNotNull(result);
+        verify(facultyRepository).findByName("Test Faculty");
     }
 
     @Test
@@ -84,6 +107,22 @@ class FacultyServiceImplTest {
     }
 
     @Test
+    void testCreateFaculty_Success() {
+        FacultyRequestDto requestDto = new FacultyRequestDto();
+        requestDto.setName("New Faculty");
+
+        Faculty faculty = Faculty.builder().name("New Faculty").build();
+        when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
+
+        Faculty result = facultyService.createFaculty(requestDto);
+
+        assertNotNull(result);
+        assertEquals("New Faculty", result.getName());
+        verify(facultyValidator).validateNameUniqueness("New Faculty");
+        verify(facultyRepository).save(any(Faculty.class));
+    }
+
+    @Test
     void testUpdateFaculty_NotFound() {
         when(facultyRepository.findById(1)).thenReturn(Optional.empty());
 
@@ -91,6 +130,23 @@ class FacultyServiceImplTest {
         requestDto.setName("Updated Faculty");
 
         assertThrows(ResourceNotFoundException.class, () -> facultyService.updateFaculty(1, requestDto));
+    }
+
+    @Test
+    void testUpdateFaculty_Success() {
+        FacultyRequestDto requestDto = new FacultyRequestDto();
+        requestDto.setName("Updated Faculty");
+
+        Faculty faculty = Faculty.builder().id(1).name("Old Faculty").build();
+        when(facultyRepository.findById(1)).thenReturn(Optional.of(faculty));
+        when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
+
+        Faculty result = facultyService.updateFaculty(1, requestDto);
+
+        assertNotNull(result);
+        assertEquals("Updated Faculty", result.getName());
+        verify(facultyValidator).validateNameUniquenessForUpdate("Updated Faculty", 1);
+        verify(facultyRepository).save(any(Faculty.class));
     }
 
     @Test

@@ -32,7 +32,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CourseServiceImplTest {
+class CourseServiceTest {
 
     @Mock
     private CourseMapper courseMapper;
@@ -59,10 +59,11 @@ class CourseServiceImplTest {
 
     // @Test
     // void testFindAll() {
-    // // BaseCollectionRequest request = new BaseCollectionRequest(1, 10, "id",
-    // // "ASC");
+    // BaseCollectionRequest request = new BaseCollectionRequest(1, 10, "id",
+    // "ASC");
     // Page<Course> page = new PageImpl<>(Collections.emptyList());
-    // when(courseRepository.findAll(any(PageRequest.class))).thenReturn(page);
+    // when(courseRepository.findAll(any(PageRequest.class))).thenReturn(new
+    // PageResponse<>(page));
 
     // PageResponse<Course> response = courseService.findAll(request);
 
@@ -75,6 +76,17 @@ class CourseServiceImplTest {
         when(courseRepository.findById(1)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> courseService.getCourseById(1));
+    }
+
+    @Test
+    void testGetCourseById_Success() {
+        Course course = new Course();
+        when(courseRepository.findById(1)).thenReturn(Optional.of(course));
+
+        Course result = courseService.getCourseById(1);
+
+        assertNotNull(result);
+        verify(courseRepository).findById(1);
     }
 
     @Test
