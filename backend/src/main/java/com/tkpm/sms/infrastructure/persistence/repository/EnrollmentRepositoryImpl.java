@@ -2,7 +2,7 @@ package com.tkpm.sms.infrastructure.persistence.repository;
 
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
-import com.tkpm.sms.domain.exception.GenericDomainException;
+import com.tkpm.sms.domain.exception.StudentPrerequisitesNotSatisfiedException;
 import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.model.Subject;
@@ -10,7 +10,6 @@ import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.HistoryEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.EnrollmentJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.jpa.HistoryJpaRepository;
-import com.tkpm.sms.infrastructure.persistence.jpa.TranscriptJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.EnrollmentPersistenceMapper;
 import com.tkpm.sms.infrastructure.persistence.mapper.HistoryPersistenceMapper;
 import lombok.AccessLevel;
@@ -164,8 +163,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                     Subject::getName
             ).toList();
 
-            // TODO: create a new exception class for this
-            throw new GenericDomainException("Student has not passed the following subjects: " + String.join(", ", subjects));
+            throw new StudentPrerequisitesNotSatisfiedException("Student has not passed the following subjects: " + String.join(", ", subjects));
         }
 
         return enrollments.stream()
