@@ -6,9 +6,7 @@ import { Loader2 } from 'lucide-react';
 import React from 'react';
 
 const FacultyDetail: React.FC<DetailComponentProps> = ({ id: facultyId }) => {
-  const { data: faculty, isLoading } = useFaculty(
-    facultyId ? parseInt(facultyId as string, 10) : 0,
-  );
+  const { data: faculty, isLoading } = useFaculty(facultyId as string);
 
   if (isLoading) {
     return (

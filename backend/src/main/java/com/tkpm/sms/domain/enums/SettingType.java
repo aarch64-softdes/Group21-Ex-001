@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum SettingType {
     EMAIL("email"),
-    PHONE_NUMBER("phonenumber");
+    PHONE_NUMBER("phonenumber"),
+    ADJUSTMENT_DURATION("adjustmentduration"),;
 
     private final String value;
 

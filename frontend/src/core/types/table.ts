@@ -23,12 +23,12 @@ export type ColumnStyle = {
 
 export interface Column<T> {
   header: string;
-  key: keyof T;
+  key: keyof T | string;
+  nested?: boolean;
   isDefaultSort?: boolean;
   sortable?: boolean;
   style?: ColumnStyle;
-  validate?: (value: T[keyof T]) => string | null;
-  transform?: (value: T[keyof T]) => string;
+  transform?: (value: any) => string; // Use any to allow for any type of value
 }
 
 export interface TableFileOptions {
@@ -40,7 +40,7 @@ export interface TableFileOptions {
   onImportSuccess?: () => void;
 }
 
-// Must use "any" here because the type of the data is not known
+// NOTE: Must use "any" here because the type of the data is not known
 export interface TableActions {
   onSave?: (id: string, updatedData: any) => void | Promise<void>;
   onDelete?: (id: string) => void | Promise<void>;
@@ -59,11 +59,13 @@ export interface TablePaginationProps {
 export interface AdditionalAction {
   label: string;
   handler: (id: string) => void;
+  disabled?: (data: any) => boolean;
 }
 
 export interface AdditionalActionItem {
   label: string;
   handler: () => void;
+  disabled?: boolean;
 }
 
 export type QueryHook<T> = (
@@ -79,6 +81,14 @@ export type QueryHookParams = {
 
 export interface FormComponentProps<T> {
   onSubmit: (data: Partial<T>) => void;
+  onCancel: () => void;
+  id?: string;
+  isLoading?: boolean;
+  isEditing?: boolean;
+}
+
+export interface FormComponentPropsWithoutType {
+  onSubmit: (data: any) => void;
   onCancel: () => void;
   id?: string;
   isLoading?: boolean;

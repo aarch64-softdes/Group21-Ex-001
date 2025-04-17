@@ -66,4 +66,11 @@ public class SettingRepositoryImpl implements SettingRepository {
 
         return setting.getDetails();
     }
+
+    @Override
+    public String getAdjustmentDurationSetting() {
+        var setting = jpaRepository.findAdjustmentDurationSetting();
+
+        return setting.getDetails();
+    }
 }

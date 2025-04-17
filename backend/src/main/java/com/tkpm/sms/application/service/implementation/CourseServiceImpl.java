@@ -5,6 +5,7 @@ import com.tkpm.sms.application.dto.request.course.CourseCreateRequestDto;
 import com.tkpm.sms.application.dto.request.course.CourseUpdateRequestDto;
 import com.tkpm.sms.application.mapper.CourseMapper;
 import com.tkpm.sms.application.service.interfaces.CourseService;
+import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.exception.SubjectDeactivatedException;
@@ -15,13 +16,9 @@ import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,27 +33,18 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public PageResponse<Course> findAll(BaseCollectionRequest request) {
-        Sort.Direction direction = Sort.Direction.valueOf(request.getSortDirection().toUpperCase());
-
-        return courseRepository.findAll(
-                PageRequest.of(
-                        request.getPage() - 1,
-                        request.getSize(),
-                        Sort.by(direction, request.getSortBy())
-                )
-        );
+        PageRequest pageRequest = PageRequest.from(request);
+        return courseRepository.findAll(pageRequest);
     }
 
     @Override
     public Course getCourseById(Integer id) {
-        var course = courseRepository.findById(id);
-        if (course.isEmpty()) {
-            throw new EntityNotFoundException(
-                    String.format("Course with id %s not found", id)
-            );
-        }
-
-        return course.get();
+        var course = courseRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(
+                        String.format("Course with id %s not found", id)
+                )
+        );
+        return course;
     }
 
     @Override
@@ -86,6 +74,7 @@ public class CourseServiceImpl implements CourseService {
         course.setSubject(subject);
 
         courseValidator.validateRoomAndCourseSchedule(course.getRoom(), course.getSchedule());
+        courseValidator.validateCodeAndSubject(course.getCode(), subject.getId());
 
         return courseRepository.save(course);
     }
@@ -93,7 +82,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public Course updateCourse(Integer id, CourseUpdateRequestDto updateRequestDto) {
-        var course = courseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+        var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 String.format("Course with id %s not found", id)
         ));
 
@@ -101,6 +90,11 @@ public class CourseServiceImpl implements CourseService {
                 id,
                 updateRequestDto.getRoom(),
                 updateRequestDto.getSchedule().toString()
+        );
+        courseValidator.validateCodeAndSubjectForUpdate(
+                id,
+                updateRequestDto.getCode(),
+                course.getSubject().getId()
         );
 
         courseMapper.toDomain(course, updateRequestDto);
