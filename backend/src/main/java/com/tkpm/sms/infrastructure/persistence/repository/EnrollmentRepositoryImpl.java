@@ -174,7 +174,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
         return enrollments.stream()
                 .allMatch(enrollmentEntity -> {
-                    var transcript = enrollmentEntity.getTranscript();
+                    var transcript = enrollmentEntity.getScore();
                     return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() >= failingGrade;
                 });
     }

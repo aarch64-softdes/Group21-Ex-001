@@ -1,15 +1,16 @@
-package com.tkpm.sms.application.dto.response.enrollment;
+package com.tkpm.sms.domain.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TranscriptMinimalDto {
+public class Score {
+    Integer id;
     String grade;
     Double gpa;
 }

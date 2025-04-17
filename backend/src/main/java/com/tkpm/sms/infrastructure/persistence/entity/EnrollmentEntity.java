@@ -26,6 +26,6 @@ public class EnrollmentEntity {
     CourseEntity course;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "transcript_id", referencedColumnName = "id")
-    TranscriptEntity transcript;
+    @JoinColumn(name = "score_id", referencedColumnName = "id")
+    ScoreEntity score;
 }

@@ -1,19 +1,18 @@
 package com.tkpm.sms.infrastructure.persistence.entity;
 
-import com.tkpm.sms.domain.model.Enrollment;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "transcripts")
+@Table(name = "scores")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TranscriptEntity {
+public class ScoreEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;

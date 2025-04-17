@@ -1,9 +1,9 @@
 package com.tkpm.sms.infrastructure.persistence.repository;
 
-import com.tkpm.sms.domain.model.Transcript;
+import com.tkpm.sms.domain.model.Score;
 import com.tkpm.sms.domain.repository.TranscriptRepository;
 import com.tkpm.sms.infrastructure.persistence.jpa.TranscriptJpaRepository;
-import com.tkpm.sms.infrastructure.persistence.mapper.TranscriptPersistenceMapper;
+import com.tkpm.sms.infrastructure.persistence.mapper.ScorePersistenceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,16 +13,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TranscriptRepositoryImpl implements TranscriptRepository {
     private final TranscriptJpaRepository jpaRepository;
-    private final TranscriptPersistenceMapper mapper;
+    private final ScorePersistenceMapper mapper;
 
     @Override
-    public List<Transcript> findAllByStudentId(String studentId) {
+    public List<Score> findAllByStudentId(String studentId) {
         return jpaRepository.findAllByStudentId(studentId).stream().map(mapper::toDomain).toList();
     }
 
     @Override
-    public Transcript save(Transcript transcript) {
-        var transcriptEntity = mapper.toEntity(transcript);
+    public Score save(Score score) {
+        var transcriptEntity = mapper.toEntity(score);
 
         return mapper.toDomain(jpaRepository.save(transcriptEntity));
     }

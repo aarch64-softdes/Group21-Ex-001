@@ -6,6 +6,7 @@ import com.tkpm.sms.application.dto.response.enrollment.EnrollmentMinimalDto;
 import com.tkpm.sms.application.dto.response.enrollment.HistoryDto;
 import com.tkpm.sms.application.mapper.CourseMapper;
 import com.tkpm.sms.application.mapper.EnrollmentMapper;
+import com.tkpm.sms.application.mapper.ScoreMapper;
 import com.tkpm.sms.application.mapper.StudentMapper;
 import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.History;
@@ -15,6 +16,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {
         StudentMapper.class,
         CourseMapper.class,
+        ScoreMapper.class
 })
 public interface EnrollmentMapperImpl extends EnrollmentMapper {
     @Override

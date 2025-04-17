@@ -8,7 +8,7 @@ import com.tkpm.sms.application.dto.request.enrollment.TranscriptUpdateRequestDt
 import com.tkpm.sms.application.dto.response.enrollment.AcademicTranscriptDto;
 import com.tkpm.sms.application.dto.response.enrollment.TranscriptDto;
 import com.tkpm.sms.application.mapper.EnrollmentMapper;
-import com.tkpm.sms.application.mapper.TranscriptMapper;
+import com.tkpm.sms.application.mapper.ScoreMapper;
 import com.tkpm.sms.application.service.interfaces.CourseService;
 import com.tkpm.sms.application.service.interfaces.EnrollmentService;
 import com.tkpm.sms.application.service.interfaces.StudentService;
@@ -37,7 +37,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     TranscriptRepository transcriptRepository;
 
     EnrollmentMapper enrollmentMapper;
-    TranscriptMapper transcriptMapper;
+    ScoreMapper scoreMapper;
 
     StudentService studentService;
     CourseService courseService;
@@ -53,7 +53,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         // it will throw ResourceNotFoundException when there is no student with studentId-parameter
         studentService.getStudentDetail(studentId);
 
-        return enrollmentRepository.findAllEnrollmentsOfStudentWithPaging(studentId, pageRequest);
+        var debug = enrollmentRepository.findAllEnrollmentsOfStudentWithPaging(studentId, pageRequest);
+        return debug;
     }
 
     @Override
@@ -80,8 +81,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Student %s is not enrolled into course %s", student.getStudentId(), course.getCode())));
 
-        var transcript = transcriptMapper.toTranscript(transcriptUpdateRequestDto);
-        enrollment.setTranscript(
+        var transcript = scoreMapper.toScore(transcriptUpdateRequestDto);
+        enrollment.setScore(
                 transcriptRepository.save(transcript)
         );
 
@@ -131,8 +132,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Enrollment enrollment = enrollmentMapper.toEnrollment(enrollmentCreateRequestDto);
         enrollment.setStudent(studentService.getStudentDetail(enrollmentCreateRequestDto.getStudentId()));
         enrollment.setCourse(courseService.getCourseById(enrollmentCreateRequestDto.getCourseId()));
-        enrollment.setTranscript(
-                transcriptRepository.save(new Transcript())
+        enrollment.setScore(
+                transcriptRepository.save(new Score())
         );
 
         return enrollmentRepository.save(enrollment);
@@ -162,19 +163,16 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         // it will throw ResourceNotFoundException when there is no student with studentId-parameter
         var student = studentService.getStudentDetail(studentId);
         List<Enrollment> enrollments = enrollmentRepository.findAllEnrollmentsOfStudent(studentId).stream().filter(
-                enrollment -> enrollment.getTranscript().getGpa() != null
+                enrollment -> enrollment.getScore() != null &&
+                        enrollment.getScore().getGrade() != null &&
+                        !enrollment.getScore().getGrade().isEmpty()
         ).toList();
-
-        var gpa = enrollments.stream()
-                .map(Enrollment::getTranscript)
-                .map(Transcript::getGpa)
-                .reduce(0.0, Double::sum) / enrollments.size();
 
         var academicTranscript = AcademicTranscriptDto.builder()
                 .studentId(student.getId())
                 .studentName(student.getName())
                 .studentDob(student.getDob())
-                .gpa(gpa)
+                .gpa(getTotalGpa(enrollments))
                 .courseName(student.getFaculty().getName())
                 .transcriptList(
                         enrollments.stream()
@@ -185,8 +183,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                                     return TranscriptDto.builder()
                                             .subjectName(subject.getName())
                                             .subjectCode(subject.getCode())
-                                            .grade(enrollment.getTranscript().getGrade())
-                                            .gpa(enrollment.getTranscript().getGpa())
+                                            .grade(enrollment.getScore().getGrade())
+                                            .gpa(enrollment.getScore().getGpa())
                                             .build();
                                 })
                                 .toList()
@@ -194,5 +192,22 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .build();
 
         return academicTranscript;
+    }
+
+    private Double getTotalGpa(List<Enrollment> enrollments) {
+        if (enrollments.isEmpty()) {
+            return 0.0;
+        }
+
+        double gpa = enrollments.stream()
+                .mapToDouble(enrollment -> {
+                    var score = enrollment.getScore();
+                    return score.getGpa() * enrollment.getCourse().getSubject().getCredits();
+                })
+                .sum() / enrollments.stream()
+                .mapToDouble(enrollment -> enrollment.getCourse().getSubject().getCredits())
+                .sum();
+
+        return Math.ceil(gpa * 100.0) / 100.0;
     }
 }

@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = {
         StudentPersistenceMapper.class,
         CoursePersistenceMapper.class,
-        TranscriptPersistenceMapper.class
+        ScorePersistenceMapper.class
 })
 public interface EnrollmentPersistenceMapper {
     EnrollmentEntity toEntity(Enrollment enrollment);

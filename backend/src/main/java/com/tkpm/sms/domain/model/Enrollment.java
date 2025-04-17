@@ -13,5 +13,5 @@ public class Enrollment {
     Integer id;
     Student student;
     Course course;
-    Transcript transcript;
+    Score score;
 }
