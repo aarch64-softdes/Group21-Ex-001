@@ -1,8 +1,9 @@
 package com.tkpm.sms.presentation.controller;
 
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.application.service.interfaces.DocumentTemplateProcessingService;
 import com.tkpm.sms.application.service.interfaces.FileService;
+import com.tkpm.sms.infrastructure.service.DocumentTemplateProcessingService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
