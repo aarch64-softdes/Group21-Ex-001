@@ -6,8 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
 
 public interface EnrollmentJpaRepository extends JpaRepository<EnrollmentEntity, Integer> {
     @Query("select e from EnrollmentEntity e where e.student.id = ?1")
@@ -18,4 +17,6 @@ public interface EnrollmentJpaRepository extends JpaRepository<EnrollmentEntity,
     boolean existsByStudentIdAndCourseId(String studentId, Integer courseId);
 
     Integer countAllByCourseId(Integer courseId);
+
+    Collection<EnrollmentEntity> findAllByStudentId(String studentId);
 }

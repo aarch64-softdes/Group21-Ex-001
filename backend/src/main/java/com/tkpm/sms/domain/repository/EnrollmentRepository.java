@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EnrollmentRepository {
-    PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId, PageRequest pageRequest);
+    PageResponse<Enrollment> findAllEnrollmentsOfStudentWithPaging(String studentId, PageRequest pageRequest);
 
     PageResponse<History> findEnrollmentHistoryOfStudent(String studentId, PageRequest pageRequest);
+
+    List<Enrollment> findAllEnrollmentsOfStudent(String studentId);
 
     Optional<Enrollment> findEnrollmentByStudentIdAndCourseId(String studentId, Integer courseId);
 
@@ -22,4 +24,6 @@ public interface EnrollmentRepository {
     boolean existsByStudentIdAndCourseId(String studentId, Integer courseId);
 
     Integer countStudentsByCourseId(Integer courseId);
+
+    boolean isStudentPassedSubjects(String studentId, List<Integer> subjectIds);
 }
