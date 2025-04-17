@@ -10,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TranscriptDto {
+    String subjectCode;
+    String subjectName;
     String grade;
     Double gpa;
 }

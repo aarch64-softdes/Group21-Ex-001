@@ -9,9 +9,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Enrollment {
+public class Transcript {
     Integer id;
-    Student student;
-    Course course;
-    Transcript transcript;
+    String grade;
+    Double gpa;
 }
