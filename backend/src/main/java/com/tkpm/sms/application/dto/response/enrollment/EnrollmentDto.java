@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EnrollmentCreatedDto {
+public class EnrollmentDto {
     Integer id;
     StudentMinimalDto student;
     CourseDto course;

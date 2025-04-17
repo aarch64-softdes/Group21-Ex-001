@@ -4,8 +4,8 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentDeleteRequestDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.application.dto.response.enrollment.EnrollmentCreatedDto;
-import com.tkpm.sms.application.dto.response.enrollment.EnrollmentListDto;
+import com.tkpm.sms.application.dto.response.enrollment.EnrollmentDto;
+import com.tkpm.sms.application.dto.response.enrollment.EnrollmentMinimalDto;
 import com.tkpm.sms.application.dto.response.enrollment.HistoryDto;
 import com.tkpm.sms.application.mapper.EnrollmentMapper;
 import com.tkpm.sms.application.service.interfaces.EnrollmentService;
@@ -29,18 +29,18 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
     private final EnrollmentMapper enrollmentMapper;
 
-    @GetMapping("/{studentId}/get-all-enrollments")
-    public ResponseEntity<ApplicationResponseDto<PageResponse<EnrollmentListDto>>> getAllEnrollmentsOfStudent(
+    @GetMapping("/{studentId}")
+    public ResponseEntity<ApplicationResponseDto<PageResponse<EnrollmentMinimalDto>>> getAllEnrollmentsOfStudent(
             @PathVariable String studentId,
             @ModelAttribute BaseCollectionRequest baseCollectionRequest
     ) {
         PageResponse<Enrollment> pageResponse = enrollmentService.findAllEnrollmentsOfStudent(studentId, baseCollectionRequest);
-        List<EnrollmentListDto> enrollmentDtos = ListUtils.transform(pageResponse.getData(), enrollmentMapper::toEnrollmentListDto);
-        PageResponse<EnrollmentListDto> listResponse = PageResponse.of(pageResponse, enrollmentDtos);
+        List<EnrollmentMinimalDto> enrollmentDtos = ListUtils.transform(pageResponse.getData(), enrollmentMapper::toEnrollmentListDto);
+        PageResponse<EnrollmentMinimalDto> listResponse = PageResponse.of(pageResponse, enrollmentDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
-    @GetMapping("/{studentId}/get-enrollment-history")
+    @GetMapping("/{studentId}/history")
     public ResponseEntity<ApplicationResponseDto<PageResponse<HistoryDto>>> getEnrollmentHistoryOfStudent(
             @PathVariable String studentId,
             @ModelAttribute BaseCollectionRequest baseCollectionRequest
@@ -52,19 +52,19 @@ public class EnrollmentController {
     }
 
     @PostMapping("/enroll")
-    public ResponseEntity<ApplicationResponseDto<EnrollmentCreatedDto>> enrollStudent(
+    public ResponseEntity<ApplicationResponseDto<EnrollmentDto>> enrollStudent(
             @RequestBody EnrollmentCreateRequestDto enrollmentCreateRequestDto,
             UriComponentsBuilder uriComponentsBuilder
     ) {
         Enrollment enrollment = enrollmentService.createEnrollment(enrollmentCreateRequestDto);
-        EnrollmentCreatedDto enrollmentDto = enrollmentMapper.toEnrollmentCreatedDto(enrollment);
+        EnrollmentDto enrollmentDto = enrollmentMapper.toEnrollmentCreatedDto(enrollment);
         var locationOfNewUser = uriComponentsBuilder.path("api/enrollments/{id}").buildAndExpand(enrollment.getId()).toUri();
 
         return ResponseEntity.created(locationOfNewUser).body(ApplicationResponseDto.success(enrollmentDto));
     }
 
     @DeleteMapping("/unenroll")
-    public ResponseEntity<?> unenrollStudent(@RequestBody EnrollmentDeleteRequestDto enrollmentDeleteRequestDto) {
+    public ResponseEntity<Void> unenrollStudent(@RequestBody EnrollmentDeleteRequestDto enrollmentDeleteRequestDto) {
         enrollmentService.deleteEnrollment(enrollmentDeleteRequestDto);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
