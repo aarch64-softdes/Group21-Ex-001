@@ -7,6 +7,8 @@ import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
+import com.tkpm.sms.domain.repository.SettingRepository;
+import com.tkpm.sms.domain.repository.SubjectRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.HistoryEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.EnrollmentJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.jpa.HistoryJpaRepository;
@@ -30,9 +32,11 @@ import java.util.Optional;
 public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     EnrollmentJpaRepository enrollmentJpaRepository;
     HistoryJpaRepository historyJpaRepository;
+    SettingRepository settingRepository;
+    SubjectRepository subjectRepository;
+
     EnrollmentPersistenceMapper enrollmentPersistenceMapper;
     HistoryPersistenceMapper historyPersistenceMapper;
-    SubjectRepositoryImpl subjectRepository;
 
     @Override
     public PageResponse<Enrollment> findAllEnrollmentsOfStudentWithPaging(String studentId, PageRequest pageRequest) {
@@ -144,6 +148,8 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
     @Override
     public boolean isStudentPassedSubjects(String studentId, List<Integer> subjectIds) {
+        var failingGrade = settingRepository.getFailingGradeSetting();
+
         var enrollments = enrollmentJpaRepository.findAllByStudentId(studentId)
                 .stream().filter(
                         enrollmentEntity -> {
@@ -160,16 +166,16 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                     .toList();
 
             var subjects = subjectRepository.findAllByIds(missingSubjectIds).stream().map(
-                    Subject::getName
+                    Subject::getCode
             ).toList();
 
-            throw new StudentPrerequisitesNotSatisfiedException("Student has not passed the following subjects: " + String.join(", ", subjects));
+            throw new StudentPrerequisitesNotSatisfiedException("Student has not finished the following subjects: " + String.join(", ", subjects));
         }
 
         return enrollments.stream()
                 .allMatch(enrollmentEntity -> {
                     var transcript = enrollmentEntity.getTranscript();
-                    return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() >= 2.0;
+                    return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() >= failingGrade;
                 });
     }
 }

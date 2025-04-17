@@ -4,7 +4,7 @@ import com.tkpm.sms.domain.model.Transcript;
 import com.tkpm.sms.infrastructure.persistence.entity.TranscriptEntity;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TranscriptPersistenceMapper {
     Transcript toDomain(TranscriptEntity entity);
 

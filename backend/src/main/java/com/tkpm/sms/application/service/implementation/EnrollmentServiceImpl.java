@@ -74,12 +74,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Course course = courseService.getCourseById(courseId);
         courseDomainValidator.validateCourseInTimePeriod(course);
 
+        Student student = studentService.getStudentDetail(studentId);
+
         var enrollment = enrollmentRepository.findEnrollmentByStudentIdAndCourseId(studentId, courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Enrollment not found for studentId: %s and courseId: %s", studentId, courseId)));
+                        String.format("Student %s is not enrolled into course %s", student.getStudentId(), course.getCode())));
 
-        // Course and student will be immutable
-        // Only update transcript
         var transcript = transcriptMapper.toTranscript(transcriptUpdateRequestDto);
         enrollment.setTranscript(
                 transcriptRepository.save(transcript)
@@ -94,7 +94,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         enrollmentFileImportDtos.forEach(
                 enrollmentFileImportDto -> {
                     var transcriptUpdateDto = TranscriptUpdateRequestDto.builder()
-                            .grade(enrollmentFileImportDto.getGrade())
+                            .grade(enrollmentFileImportDto.getGrade().trim())
                             .gpa(enrollmentFileImportDto.getGpa())
                             .build();
 
@@ -108,7 +108,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
-
     public Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto) {
         var course = courseService.getCourseById(enrollmentCreateRequestDto.getCourseId());
 
