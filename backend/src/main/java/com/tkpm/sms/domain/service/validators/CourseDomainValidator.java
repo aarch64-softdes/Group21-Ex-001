@@ -5,6 +5,7 @@ import com.tkpm.sms.domain.exception.DuplicateResourceException;
 import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
+import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.repository.SettingRepository;
