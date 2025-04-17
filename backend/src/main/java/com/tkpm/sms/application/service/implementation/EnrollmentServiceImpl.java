@@ -3,6 +3,7 @@ package com.tkpm.sms.application.service.implementation;
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentDeleteRequestDto;
+import com.tkpm.sms.application.dto.request.enrollment.EnrollmentFileImportDto;
 import com.tkpm.sms.application.dto.request.enrollment.TranscriptUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.enrollment.AcademicTranscriptDto;
 import com.tkpm.sms.application.dto.response.enrollment.TranscriptDto;
@@ -17,28 +18,33 @@ import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.*;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
+import com.tkpm.sms.domain.repository.TranscriptRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import com.tkpm.sms.domain.service.validators.EnrollmentDomainValidator;
 import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EnrollmentServiceImpl implements EnrollmentService {
-    private final EnrollmentRepository enrollmentRepository;
+    EnrollmentRepository enrollmentRepository;
+    TranscriptRepository transcriptRepository;
 
-    private final EnrollmentMapper enrollmentMapper;
-    private final TranscriptMapper transcriptMapper;
+    EnrollmentMapper enrollmentMapper;
+    TranscriptMapper transcriptMapper;
 
-    private final StudentService studentService;
-    private final CourseService courseService;
-    private final SubjectService subjectService;
+    StudentService studentService;
+    CourseService courseService;
+    SubjectService subjectService;
 
-    private final EnrollmentDomainValidator enrollmentDomainValidator;
-    private final CourseDomainValidator courseDomainValidator;
+    EnrollmentDomainValidator enrollmentDomainValidator;
+    CourseDomainValidator courseDomainValidator;
 
     @Override
     public PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId, BaseCollectionRequest request) {
@@ -67,6 +73,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public Enrollment updateTranscriptOfEnrollment(String studentId, Integer courseId, TranscriptUpdateRequestDto transcriptUpdateRequestDto) {
         Course course = courseService.getCourseById(courseId);
         courseDomainValidator.validateCourseInTimePeriod(course);
+
         var enrollment = enrollmentRepository.findEnrollmentByStudentIdAndCourseId(studentId, courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Enrollment not found for studentId: %s and courseId: %s", studentId, courseId)));
@@ -74,9 +81,30 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         // Course and student will be immutable
         // Only update transcript
         var transcript = transcriptMapper.toTranscript(transcriptUpdateRequestDto);
-        enrollment.setTranscript(transcript);
+        enrollment.setTranscript(
+                transcriptRepository.save(transcript)
+        );
 
         return enrollmentRepository.save(enrollment);
+    }
+
+    @Override
+    @Transactional
+    public void updateTranscripts(List<EnrollmentFileImportDto> enrollmentFileImportDtos) {
+        enrollmentFileImportDtos.forEach(
+                enrollmentFileImportDto -> {
+                    var transcriptUpdateDto = TranscriptUpdateRequestDto.builder()
+                            .grade(enrollmentFileImportDto.getGrade())
+                            .gpa(enrollmentFileImportDto.getGpa())
+                            .build();
+
+                    updateTranscriptOfEnrollment(
+                            enrollmentFileImportDto.getStudentId(),
+                            enrollmentFileImportDto.getCourseId(),
+                            transcriptUpdateDto
+                    );
+                }
+        );
     }
 
     @Override
@@ -104,7 +132,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Enrollment enrollment = enrollmentMapper.toEnrollment(enrollmentCreateRequestDto);
         enrollment.setStudent(studentService.getStudentDetail(enrollmentCreateRequestDto.getStudentId()));
         enrollment.setCourse(courseService.getCourseById(enrollmentCreateRequestDto.getCourseId()));
-        enrollment.setTranscript(new Transcript());
+        enrollment.setTranscript(
+                transcriptRepository.save(new Transcript())
+        );
 
         return enrollmentRepository.save(enrollment);
     }
@@ -132,7 +162,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public AcademicTranscriptDto getAcademicTranscriptOfStudent(String studentId) {
         // it will throw ResourceNotFoundException when there is no student with studentId-parameter
         var student = studentService.getStudentDetail(studentId);
-        List<Enrollment> enrollments = enrollmentRepository.findAllEnrollmentsOfStudent(studentId);
+        List<Enrollment> enrollments = enrollmentRepository.findAllEnrollmentsOfStudent(studentId).stream().filter(
+                enrollment -> enrollment.getTranscript().getGpa() != null
+        ).toList();
 
         var gpa = enrollments.stream()
                 .map(Enrollment::getTranscript)

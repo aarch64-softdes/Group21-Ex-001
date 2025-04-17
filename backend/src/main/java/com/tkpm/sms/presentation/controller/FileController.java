@@ -55,4 +55,13 @@ public class FileController {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
         return "students" + "_" + timestamp + "." + extension;
     }
+
+    @PostMapping("/import/transcript")
+    public ResponseEntity<ApplicationResponseDto<Void>> importTranscriptFile(
+            @RequestParam("format") String format,
+            @RequestParam("file") MultipartFile multipartFile
+    ) {
+        fileService.importTranscriptFile(format, multipartFile);
+        return ResponseEntity.ok().body(ApplicationResponseDto.success());
+    }
 }
