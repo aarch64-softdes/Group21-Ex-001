@@ -29,6 +29,7 @@ public class ErrorCodeStatusMapper {
         mappings.put(ErrorCode.INVALID_IDENTITY_ISSUED_DATE, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.FIELD_REQUIRED, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_FILE_FORMAT, HttpStatus.BAD_REQUEST);
+        mappings.put(ErrorCode.UNENROLLABLE_COURSE, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_SUBJECT_CREDITS, HttpStatus.BAD_REQUEST);
 
         // Resource Errors (4xx)

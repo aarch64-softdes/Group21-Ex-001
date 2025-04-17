@@ -2,9 +2,11 @@ package com.tkpm.sms.presentation.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tkpm.sms.application.dto.request.setting.AdjustmentDurationSettingRequestDto;
 import com.tkpm.sms.application.dto.request.setting.EmailDomainSettingRequestDto;
 import com.tkpm.sms.application.dto.request.setting.PhoneSettingRequestDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
+import com.tkpm.sms.application.dto.response.setting.AdjustmentDurationSettingDto;
 import com.tkpm.sms.application.dto.response.setting.EmailDomainSettingDto;
 import com.tkpm.sms.application.dto.response.setting.PhoneSettingDto;
 import com.tkpm.sms.application.service.interfaces.SettingService;
@@ -52,6 +54,20 @@ public class SettingController {
             @RequestBody PhoneSettingRequestDto phoneSettingRequestDto
     ) {
         var updatedSetting = settingService.updatePhoneSetting(phoneSettingRequestDto);
+        return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
+    }
+
+    @GetMapping("/adjustment-duration")
+    public ResponseEntity<ApplicationResponseDto<AdjustmentDurationSettingDto>> getAdjustmentDurationSetting() {
+        var setting = settingService.getAdjustmentDurationSetting();
+        return ResponseEntity.ok(ApplicationResponseDto.success(setting));
+    }
+
+    @PutMapping("/adjustment-duration")
+    public ResponseEntity<ApplicationResponseDto<AdjustmentDurationSettingDto>> updateAdjustmentDurationSetting(
+            @RequestBody AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto
+    ) {
+        var updatedSetting = settingService.updateAdjustmentDurationSetting(adjustmentDurationSettingRequestDto);
         return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
     }
 }

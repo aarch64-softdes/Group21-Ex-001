@@ -14,4 +14,7 @@ public interface SettingJpaRepository extends JpaRepository<SettingEntity, Strin
 
     @Query("SELECT s FROM SettingEntity s WHERE s.name = 'email'")
     SettingEntity findEmailSetting();
+
+    @Query("SELECT s FROM SettingEntity s WHERE s.name = 'adjustmentduration'")
+    SettingEntity findAdjustmentDurationSetting();
 }

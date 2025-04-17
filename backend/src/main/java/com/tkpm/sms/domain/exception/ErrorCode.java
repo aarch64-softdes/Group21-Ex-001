@@ -31,6 +31,7 @@ public enum ErrorCode {
             "Invalid identity number, with Passport the number should contain first 2 uppercase letter and 7 digits"),
     INVALID_IDENTITY_ISSUED_DATE("Identity issued date must be before expired date"),
     FIELD_REQUIRED("{field} must be filled in"),
+    UNENROLLABLE_COURSE("Unenrollable course"),
 
     // Subject Errors
     INVALID_SUBJECT_CREDITS("Subject credits must be greater or equals {value}"),
