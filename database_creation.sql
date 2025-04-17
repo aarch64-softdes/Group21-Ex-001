@@ -165,7 +165,9 @@ ALTER TABLE students
 -- Insert settings records
 INSERT INTO settings (id, name, details) VALUES
 ('d5a2c7e1-3b4f-48ae-90d5-8f6e7a9c1b2d', 'phonenumber', '["VN"]'),
-('f8e7d6c5-b4a3-42d1-90e8-7f6d5c4b3a2e', 'email', '@student.hcmus.edu.vn');
+('f8e7d6c5-b4a3-42d1-90e8-7f6d5c4b3a2e', 'email', '@student.hcmus.edu.vn'),
+('a2b3c4d5-e6f7-48a8-90d1-2e3f4g5h6i7j', 'adjustmentduration', '10');
+
 
 -- Seed faculties data based on the existing student data (uppercase)
 INSERT INTO faculties (name) VALUES

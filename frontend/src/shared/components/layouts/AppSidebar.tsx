@@ -1,6 +1,7 @@
 import {
   Activity,
   Bookmark,
+  ClipboardList,
   FileText,
   GraduationCap,
   Library,
