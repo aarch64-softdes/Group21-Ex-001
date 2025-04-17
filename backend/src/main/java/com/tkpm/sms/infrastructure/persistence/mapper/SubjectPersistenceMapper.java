@@ -9,7 +9,9 @@ import org.mapstruct.Mapping;
         FacultyPersistenceMapper.class
 })
 public interface SubjectPersistenceMapper {
-    SubjectEntity toEntity(Subject domain);
-
+    @Mapping(target = "isActive", source = "active")
     Subject toDomain(SubjectEntity entity);
+
+    @Mapping(target = "isActive", source = "active")
+    SubjectEntity toEntity(Subject domain);
 }

@@ -33,6 +33,11 @@ public enum ErrorCode {
     FIELD_REQUIRED("{field} must be filled in"),
     UNENROLLABLE_COURSE("Unenrollable course"),
 
+    // Subject Errors
+    INVALID_SUBJECT_CREDITS("Subject credits must be greater or equals {value}"),
+    SUBJECT_DELETION_CONSTRAINT("Subject cannot be deleted"),
+    SUBJECT_DEACTIVATED("Subject is deactivated"),
+
     // Resource Errors
     NOT_FOUND("Resource not found"),
     DUPLICATE_RESOURCE("Resource already existed"),
