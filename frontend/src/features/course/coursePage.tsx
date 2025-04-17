@@ -11,12 +11,13 @@ import Course, {
 } from '@/features/course/types/course';
 import { Column } from '@/core/types/table';
 import React from 'react';
-import { SearchFilterOption } from '@/core/types/filter';
-import { BookOpen, Users } from 'lucide-react';
 import CourseForm from './components/CourseForm';
 import CourseDetail from './components/CourseDetail';
+import { useNavigate } from 'react-router-dom';
 
 const CoursePage: React.FC = () => {
+  const navigate = useNavigate();
+
   const createCourse = useCreateCourse();
   const updateCourse = useUpdateCourse();
   const deleteCourse = useDeleteCourse();
@@ -101,6 +102,14 @@ const CoursePage: React.FC = () => {
         }}
         requireDeleteConfirmation={true}
         filterOptions={[]}
+        additionalActions={[
+          {
+            label: 'Enrollment',
+            handler(id) {
+              navigate(`/course/${id}/enrollments`);
+            },
+          },
+        ]}
       />
     </div>
   );
