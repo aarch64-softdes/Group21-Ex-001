@@ -3,6 +3,7 @@ package com.tkpm.sms.application.service.implementation;
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentDeleteRequestDto;
+import com.tkpm.sms.application.dto.request.enrollment.TranscriptUpdateRequestDto;
 import com.tkpm.sms.application.mapper.EnrollmentMapper;
 import com.tkpm.sms.application.service.interfaces.CourseService;
 import com.tkpm.sms.application.service.interfaces.EnrollmentService;
@@ -56,6 +57,20 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     @Transactional
+    public Enrollment updateTranscriptOfEnrollment(String studentId, Integer courseId, TranscriptUpdateRequestDto transcriptUpdateRequestDto) {
+        courseDomainValidator.validateCourseInTimePeriod(courseId);
+        var enrollment = enrollmentRepository.findEnrollmentByStudentIdAndCourseId(studentId, courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Enrollment not found for studentId: %s and courseId: %s", studentId, courseId)));
+
+        // Course and student will be immutable
+        // Only update transcript
+
+        return null;
+    }
+
+    @Override
+
     public Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto) {
         var course = courseService.getCourseById(enrollmentCreateRequestDto.getCourseId());
         courseDomainValidator.validateCourseInTimePeriod(course);

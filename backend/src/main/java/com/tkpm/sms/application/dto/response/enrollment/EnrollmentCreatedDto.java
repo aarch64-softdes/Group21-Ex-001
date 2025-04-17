@@ -14,4 +14,6 @@ public class EnrollmentCreatedDto {
     Integer id;
     StudentMinimalDto student;
     CourseDto course;
+
+    TranscriptDto transcript;
 }

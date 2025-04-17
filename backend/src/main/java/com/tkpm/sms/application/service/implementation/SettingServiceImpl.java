@@ -54,7 +54,7 @@ public class SettingServiceImpl implements SettingService {
         setting.setDetails(domain);
 
         var savedSetting = settingRepository.save(setting);
-        return  new EmailDomainSettingDto(savedSetting.getDetails());
+        return new EmailDomainSettingDto(savedSetting.getDetails());
     }
 
     @Override
