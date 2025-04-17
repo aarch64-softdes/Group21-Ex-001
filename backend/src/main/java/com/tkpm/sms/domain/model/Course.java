@@ -15,6 +15,7 @@ public class Course {
     Integer id;
     int year;
     int semester;
+    String code;
     String lecturer;
     int maxStudent;
     String room;

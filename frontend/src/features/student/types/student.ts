@@ -64,8 +64,8 @@ export interface Phone {
 
 export const mapToStudent = (data: any): Student => {
   const res = {
-    id: data.id,
-    studentId: data.studentId,
+    id: data.id as string,
+    studentId: data.studentId as string,
     name: data.name,
     dob: data.dob ? new Date(data.dob) : new Date(),
     gender: data.gender,

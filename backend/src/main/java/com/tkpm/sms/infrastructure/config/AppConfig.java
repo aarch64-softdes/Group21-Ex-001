@@ -46,4 +46,9 @@ public class AppConfig {
     ) {
         return new CourseDomainValidator(courseRepository, settingRepository, enrollmentRepository);
     }
+
+    @Bean
+    public SubjectDomainValidator subjectValidator(SubjectRepository subjectRepository) {
+        return new SubjectDomainValidator(subjectRepository);
+    }
 }

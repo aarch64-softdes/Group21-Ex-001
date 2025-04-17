@@ -73,13 +73,6 @@ const StudentPage: React.FC = () => {
         },
       },
       {
-        header: 'Program',
-        key: 'program',
-        style: {
-          width: '150px',
-        },
-      },
-      {
         header: 'Status',
         key: 'status',
         style: {

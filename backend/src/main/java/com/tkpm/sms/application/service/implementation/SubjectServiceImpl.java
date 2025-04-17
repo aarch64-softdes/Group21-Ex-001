@@ -36,7 +36,7 @@ public class SubjectServiceImpl implements SubjectService {
     FacultyService facultyService;
 
     @NonFinal
-    @Value("${app.constraint.deletable-duration}")
+    @Value("${app.constraint.deletable-duration:30}")
     int deletableDuration;
 
     @Override
@@ -105,11 +105,11 @@ public class SubjectServiceImpl implements SubjectService {
             // in minutes
             if (timeGap > deletableDuration) {
                 throw new SubjectDeletionConstraintException(
-                        String.format("Subject with id %s cannot be deleted after 30 minutes of creation. You can deactivate it instead.", id));
+                        "Target subject cannot be deleted after 30 minutes of creation. You can deactivate it instead.");
             }
         }
 
-        subjectValidator.validateSubjectForDeletion(id);
+        subjectValidator.validateSubjectForDeletionAndDeactivation(id);
 
         subjectRepository.delete(subject);
     }
@@ -119,6 +119,8 @@ public class SubjectServiceImpl implements SubjectService {
         Subject subject = subjectRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
+
+        subjectValidator.validateSubjectForDeletionAndDeactivation(id);
 
         subject.setActive(false);
 

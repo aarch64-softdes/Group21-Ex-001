@@ -30,15 +30,17 @@ export default class StatusService {
       },
     });
 
+    console.log(response.data);
+
     return {
       data: response.data.content.data.map(mapToStatus),
-      totalItems: response.data.content.data.length,
-      totalPages: 1, // Since pagination is not implemented in these entities
-      currentPage: page,
+      totalItems: response.data.content.totalElements,
+      totalPages: response.data.content.totalPages,
+      currentPage: response.data.content.pageNumber,
     };
   };
 
-  getStatus = async (id: number): Promise<Status> => {
+  getStatus = async (id: string): Promise<Status> => {
     const response = await api.get(`/api/statuses/${id}`);
 
     return mapToStatus(response.data.content);
@@ -51,14 +53,14 @@ export default class StatusService {
     });
   };
 
-  updateStatus = async (id: number, data: UpdateStatusDTO): Promise<void> => {
+  updateStatus = async (id: string, data: UpdateStatusDTO): Promise<void> => {
     await api.put(`/api/statuses/${id}`, {
       name: data.name,
       validTransitionIds: data.allowedTransitions?.map((t) => t.id) || [],
     });
   };
 
-  deleteStatus = async (id: number): Promise<void> => {
+  deleteStatus = async (id: string): Promise<void> => {
     await api.delete(`/api/statuses/${id}`);
   };
 }

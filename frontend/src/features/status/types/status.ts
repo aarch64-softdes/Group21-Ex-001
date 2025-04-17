@@ -1,5 +1,5 @@
 export default interface Status {
-  id: number;
+  id: string;
   name: string;
   allowedTransitions?: Status[];
 }
@@ -15,7 +15,10 @@ export interface UpdateStatusDTO {
 }
 
 export const mapToStatus = (data: any): Status => ({
-  id: data.id,
+  id: data.id as string,
   name: data.name,
-  allowedTransitions: data.allowedTransitions,
+  allowedTransitions: data.allowedTransitions?.map((t: any) => ({
+    id: (t.id || t.toId) as string,
+    name: t.name,
+  })),
 });

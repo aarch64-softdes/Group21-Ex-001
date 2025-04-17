@@ -6,9 +6,7 @@ import { Loader2 } from 'lucide-react';
 import React from 'react';
 
 const ProgramDetail: React.FC<DetailComponentProps> = ({ id: programId }) => {
-  const { data: program, isLoading } = useProgram(
-    programId ? parseInt(programId as string, 10) : 0,
-  );
+  const { data: program, isLoading } = useProgram(programId as string);
 
   if (isLoading) {
     return (
