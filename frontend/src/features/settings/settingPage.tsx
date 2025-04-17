@@ -1,6 +1,7 @@
 import EmailDomainSettings from '@settings/components/EmailDomainSettings';
 import PhoneSettings from '@settings/components/PhoneSettings';
 import React from 'react';
+import AdjustmentDurationSettings from './components/AdjustmentDurationSetting';
 
 const SettingPage: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const SettingPage: React.FC = () => {
       <div className='space-y-4'>
         <EmailDomainSettings />
         <PhoneSettings />
+        <AdjustmentDurationSettings />
       </div>
     </div>
   );

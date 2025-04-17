@@ -118,6 +118,28 @@ CREATE TABLE courses (
     CONSTRAINT uc_courses_code UNIQUE (code)
 );
 
+-- Create enrollments table
+CREATE TABLE enrollments (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    student_id VARCHAR(255) NOT NULL,
+    course_id INTEGER NOT NULL,
+    CONSTRAINT fk_enrollments_student FOREIGN KEY (student_id) REFERENCES students (id),
+    CONSTRAINT fk_enrollments_course FOREIGN KEY (course_id) REFERENCES courses (id),
+    CONSTRAINT uc_enrollments_student_course UNIQUE (student_id, course_id)
+);
+
+-- Create histories table to track enrollment actions
+CREATE TABLE histories (
+    id VARCHAR(255) PRIMARY KEY,
+    action_type VARCHAR(50) NOT NULL, -- ENROLLED or DELETED
+    created_at TIMESTAMP NOT NULL,
+    student_id VARCHAR(255) NOT NULL,
+    course_id INTEGER NOT NULL,
+    CONSTRAINT fk_histories_student FOREIGN KEY (student_id) REFERENCES students (id),
+    CONSTRAINT fk_histories_course FOREIGN KEY (course_id) REFERENCES courses (id)
+);
+
+
 -- Add constraints to students table
 ALTER TABLE students
     ADD CONSTRAINT uc_students_email UNIQUE (email);
@@ -529,3 +551,69 @@ INSERT INTO courses (code, year, semester, lecturer, max_student, room, schedule
 -- Business Courses
 ( 'BUS101-01', 2025, 1, 'Prof. Catherine Jones', 60, 'F601', 'T3(3-6)', '2025-01-15', 4, 14),
 ('BUS201-01', 2025, 2, 'Dr. James Anderson', 45, 'E505', 'T2(1-4)', '2025-06-14', 4, 15);
+
+
+-- Insert sample enrollment data (students enrolling in courses)
+INSERT INTO enrollments (student_id, course_id) VALUES
+-- Student 1 (John Smith) enrolled in 3 courses
+('ST001_ID', 1), -- Intro to Computer Science
+('ST001_ID', 6), -- Calculus I
+('ST001_ID', 11), -- Intro to Business
+
+-- Student 2 (Emily Johnson) enrolled in 2 courses
+('ST002_ID', 2), -- Another CS101 section
+('ST002_ID', 9), -- Physics
+
+-- Student 3 (Michael Brown) - graduated student
+('ST003_ID', 3), -- Data Structures
+('ST003_ID', 7), -- Linear Algebra
+
+-- Student 4 (Sarah Davis)
+('ST004_ID', 4), -- Database Management
+('ST004_ID', 10), -- Electricity and Magnetism
+
+-- Student 6 (Jennifer Taylor)
+('ST006_ID', 5), -- Operating Systems
+('ST006_ID', 8), -- Differential Equations
+
+-- Student 7 (James Anderson)
+('ST007_ID', 12), -- Marketing Principles
+
+-- Student 9 (Robert Thompson)
+('ST009_ID', 1), -- Intro to Computer Science (same as Student 1)
+('ST009_ID', 3); -- Data Structures (same as Student 3)
+
+-- Insert enrollment history records (these would typically be generated automatically)
+INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
+-- Enrollment actions
+('hist_001', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST001_ID', 1),
+('hist_002', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST001_ID', 6),
+('hist_003', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST001_ID', 11),
+('hist_004', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST002_ID', 2),
+('hist_005', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST002_ID', 9),
+('hist_006', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '15 days', 'ST003_ID', 3),
+('hist_007', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '15 days', 'ST003_ID', 7),
+('hist_008', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '7 days', 'ST004_ID', 4),
+('hist_009', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '7 days', 'ST004_ID', 10),
+('hist_010', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '6 days', 'ST006_ID', 5),
+('hist_011', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '6 days', 'ST006_ID', 8),
+('hist_012', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '5 days', 'ST007_ID', 12),
+('hist_013', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '5 days', 'ST009_ID', 1),
+('hist_014', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '5 days', 'ST009_ID', 3),
+
+-- Some enrollment deletions/drops
+('hist_015', 'DELETED', CURRENT_TIMESTAMP - INTERVAL '2 days', 'ST001_ID', 6),
+('hist_016', 'DELETED', CURRENT_TIMESTAMP - INTERVAL '3 days', 'ST002_ID', 9),
+('hist_017', 'DELETED', CURRENT_TIMESTAMP - INTERVAL '1 day', 'ST004_ID', 10),
+
+-- Re-enrollments
+('hist_018', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '1 day', 'ST001_ID', 6);
+
+-- Now delete the enrollments that correspond to the DELETED actions
+DELETE FROM enrollments WHERE student_id = 'ST001_ID' AND course_id = 6;
+DELETE FROM enrollments WHERE student_id = 'ST002_ID' AND course_id = 9;
+DELETE FROM enrollments WHERE student_id = 'ST004_ID' AND course_id = 10;
+
+-- And add back the one re-enrollment
+INSERT INTO enrollments (student_id, course_id) VALUES
+('ST001_ID', 6);
