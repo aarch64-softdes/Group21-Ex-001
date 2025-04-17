@@ -3,14 +3,6 @@ package com.tkpm.sms.infrastructure.service;
 import com.tkpm.sms.application.service.interfaces.DocumentTemplateProcessingService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfWriter;
-// import com.itextpdf.tool.xml.XMLWorkerHelper;
-
 import org.xhtmlrenderer.context.StylesheetFactoryImpl;
 import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -29,18 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.jsoup.Jsoup;
 // import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Map;
 
 @Slf4j
@@ -130,9 +118,6 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
     @Override
     public byte[] convertHtmlToPdf(String htmlContent) {
         try {
-            String filePath = "html_content.html";
-            File htmlFile = new File(filePath);
-            Files.writeString(htmlFile.toPath(), htmlContent);
             log.info("Converting HTML to PDF using Flying Saucer");
             log.debug("HTML content to convert: {}", htmlContent.substring(0, Math.min(500, htmlContent.length())));
 
