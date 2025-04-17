@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class AddressServiceImplTest {
+class AddressServiceTest {
 
     @Mock
     private AddressRepository addressRepository;

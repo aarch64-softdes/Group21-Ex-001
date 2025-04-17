@@ -25,7 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class ProgramServiceImplTest {
+class ProgramServiceTest {
 
     @Mock
     private ProgramRepository programRepository;
@@ -49,9 +49,10 @@ class ProgramServiceImplTest {
     // BaseCollectionRequest request = new BaseCollectionRequest(1, 10, "id",
     // "ASC");
     // Page<Program> page = new PageImpl<>(Collections.emptyList());
-    // when(programRepository.findAll(any(PageRequest.class))).thenReturn(page);
+    // when(programRepository.findAll(any(PageRequest.class))).thenReturn(new
+    // PageResponse<>(page));
 
-    // PageResp// onse<Program> response = programService.getAllPrograms(request);
+    // PageResponse<Program> response = programService.getAllPrograms(request);
 
     // assertNotNull(response);
     // verify(programRepository, times(1)).findAll(any(PageRequest.class));
