@@ -19,6 +19,7 @@ export default defineConfig({
       '@hooks': path.resolve(__dirname, './src/shared/hooks'),
 
       '@student': path.resolve(__dirname, './src/features/student'),
+      '@enrollment': path.resolve(__dirname, './src/features/enrollment'),
       '@faculty': path.resolve(__dirname, './src/features/faculty'),
       '@program': path.resolve(__dirname, './src/features/program'),
       '@status': path.resolve(__dirname, './src/features/status'),
