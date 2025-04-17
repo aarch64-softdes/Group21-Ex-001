@@ -14,7 +14,6 @@ import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
 import com.tkpm.sms.infrastructure.persistence.entity.StudentEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.StudentJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.StudentPersistenceMapper;
-import com.tkpm.sms.application.service.interfaces.DocumentTemplateProcessingService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

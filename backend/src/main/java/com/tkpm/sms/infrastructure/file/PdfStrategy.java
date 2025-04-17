@@ -1,10 +1,11 @@
 package com.tkpm.sms.infrastructure.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tkpm.sms.application.service.interfaces.DocumentTemplateProcessingService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.service.FileStrategy;
+import com.tkpm.sms.infrastructure.service.DocumentTemplateProcessingService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -1,8 +1,8 @@
 package com.tkpm.sms.infrastructure.service;
 
-import com.tkpm.sms.application.service.interfaces.DocumentTemplateProcessingService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
+
 import org.xhtmlrenderer.context.StylesheetFactoryImpl;
 import org.xhtmlrenderer.extend.FontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -34,17 +34,16 @@ import java.util.Map;
 @Slf4j
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class DocumentTemplateProcessingServiceImpl implements DocumentTemplateProcessingService {
+public class DocumentTemplateProcessingService {
 
     ResourceLoader resourceLoader;
     TemplateEngine templateEngine;
 
-    public DocumentTemplateProcessingServiceImpl(ResourceLoader resourceLoader) {
+    public DocumentTemplateProcessingService(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
         this.templateEngine = new TemplateEngine();
     }
 
-    @Override
     public InputStream loadTemplate(String templatePath) {
         try {
             return resourceLoader.getResource("classpath:" + templatePath).getInputStream();
@@ -54,7 +53,6 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
         }
     }
 
-    @Override
     public String convertDocumentToHtml(byte[] documentBytes, String sourceFormat) {
         if (sourceFormat.endsWith(".html")) {
             try {
@@ -100,7 +98,6 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
         }
     }
 
-    @Override
     public String processHtmlTemplate(String htmlContent, Map<String, Object> data) {
         try {
             log.info("Processing HTML template with Thymeleaf...");
@@ -115,7 +112,6 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
         }
     }
 
-    @Override
     public byte[] convertHtmlToPdf(String htmlContent) {
         try {
             log.info("Converting HTML to PDF using Flying Saucer");
@@ -150,7 +146,6 @@ public class DocumentTemplateProcessingServiceImpl implements DocumentTemplatePr
         }
     }
 
-    @Override
     public byte[] processTemplateAsHtmlToPdf(String templatePath, Map<String, Object> data) {
         log.info("Processing template {} as HTML to PDF", templatePath);
         String fileExtension = templatePath.substring(templatePath.lastIndexOf("."));
