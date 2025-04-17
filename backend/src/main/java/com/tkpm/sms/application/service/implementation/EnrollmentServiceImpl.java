@@ -58,7 +58,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Override
     @Transactional
     public Enrollment updateTranscriptOfEnrollment(String studentId, Integer courseId, TranscriptUpdateRequestDto transcriptUpdateRequestDto) {
-        courseDomainValidator.validateCourseInTimePeriod(courseId);
+        Course course = courseService.getCourseById(courseId);
+        courseDomainValidator.validateCourseInTimePeriod(course);
         var enrollment = enrollmentRepository.findEnrollmentByStudentIdAndCourseId(studentId, courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Enrollment not found for studentId: %s and courseId: %s", studentId, courseId)));
