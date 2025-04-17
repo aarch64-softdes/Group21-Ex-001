@@ -6,6 +6,8 @@ import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class EnrollmentDomainValidator {
@@ -15,6 +17,12 @@ public class EnrollmentDomainValidator {
         if (enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
             throw new DuplicateResourceException("Enrollment already existed for studentId: " + studentId +
                     " and courseId: " + courseId);
+        }
+    }
+
+    public void validateStudentPassedPrerequisitesSubject(String studentId, List<Integer> subjectIds) {
+        if (!enrollmentRepository.isStudentPassedSubjects(studentId, subjectIds)) {
+            throw new ResourceNotFoundException("This student has not passed this course yet.");
         }
     }
 }
