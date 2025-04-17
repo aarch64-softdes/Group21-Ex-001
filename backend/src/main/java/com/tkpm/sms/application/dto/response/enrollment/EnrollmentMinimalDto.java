@@ -1,6 +1,7 @@
 package com.tkpm.sms.application.dto.response.enrollment;
 
 import com.tkpm.sms.application.dto.response.course.CourseDto;
+import com.tkpm.sms.application.dto.response.course.CourseMinimalDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,5 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EnrollmentMinimalDto {
     Integer id;
-    CourseDto course;
+    CourseMinimalDto course;
+
+    TranscriptMinimalDto transcript;
 }
