@@ -1,4 +1,4 @@
-import { showSuccessToast } from '@/shared/lib/toast-utils';
+import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
 import ProgramService from '@/features/program/api/programService';
 import {
   CreateProgramDTO,
@@ -6,6 +6,11 @@ import {
 } from '@/features/program/types/program';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getErrorMessage } from '@/shared/lib/utils';
+import Program from '@/features/faculty/types/faculty';
+import { useLoadMore } from '@/shared/hooks/useLoadMore';
+import { useState } from 'react';
+import { SelectItem } from '@/components/common/LoadMoreSelect';
 
 const programService = new ProgramService();
 
@@ -34,7 +39,39 @@ export const usePrograms = (params: QueryHookParams) => {
   });
 };
 
-export const useProgram = (id: number) => {
+export const useProgramsDropdown = (
+  initialPageSize?: number,
+  mapFn?: (p: Program) => SelectItem,
+) => {
+  const [programSearch, setProgramSearch] = useState<string>('');
+  const programs = useLoadMore<Program>({
+    queryKey: ['programs', 'dropdown'],
+    fetchFn: (page, size, searchQuery) =>
+      programService.getPrograms({
+        page,
+        size,
+        sortName: 'name',
+        sortType: 'asc',
+        search: searchQuery,
+      }),
+    mapFn:
+      mapFn ||
+      ((program: Program) => ({
+        id: program.id,
+        label: program.name,
+        value: program.name,
+      })),
+    searchQuery: programSearch,
+    initialPageSize,
+  });
+
+  return {
+    ...programs,
+    setProgramSearch,
+  };
+};
+
+export const useProgram = (id: string) => {
   return useQuery({
     queryKey: ['program', id],
     queryFn: () => programService.getProgram(id),
@@ -51,6 +88,9 @@ export const useCreateProgram = () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
       showSuccessToast('Program created successfully');
     },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -58,11 +98,14 @@ export const useUpdateProgram = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateProgramDTO }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateProgramDTO }) =>
       programService.updateProgram(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
       showSuccessToast('Program updated successfully');
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };
@@ -71,10 +114,13 @@ export const useDeleteProgram = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => programService.deleteProgram(id),
+    mutationFn: (id: string) => programService.deleteProgram(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
       showSuccessToast('Program deleted successfully');
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };

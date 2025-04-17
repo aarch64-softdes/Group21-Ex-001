@@ -1,7 +1,9 @@
 import {
   Activity,
-  BookOpen,
+  Bookmark,
+  FileText,
   GraduationCap,
+  Library,
   Settings,
   Users,
 } from 'lucide-react';
@@ -32,12 +34,22 @@ const items = [
   {
     title: 'Program',
     url: 'program',
-    icon: BookOpen,
+    icon: Library,
   },
   {
     title: 'Status',
     url: 'status',
     icon: Activity,
+  },
+  {
+    title: 'Subject',
+    url: 'subject',
+    icon: Bookmark,
+  },
+  {
+    title: 'Course',
+    url: 'course',
+    icon: FileText,
   },
   {
     title: 'Setting',

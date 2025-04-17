@@ -32,6 +32,7 @@
       "@course/*": ["./src/features/course/*"],
       "@faculty/*": ["./src/features/faculty/*"],
       "@status/*": ["./src/features/status/*"],
+      "@subject/*": ["./src/features/subject/*"],
       "@settings/*": ["./src/features/settings/*"],
       "@metadata/*": ["./src/features/metadata/*"],
 

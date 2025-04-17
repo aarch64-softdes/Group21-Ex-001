@@ -1,17 +1,17 @@
 export default interface Program {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 }
 
 export interface CreateProgramDTO {
-    name: string;
+  name: string;
 }
 
 export interface UpdateProgramDTO {
-    name: string;
+  name: string;
 }
 
 export const mapToProgram = (data: any): Program => ({
-    id: data.id,
-    name: data.name,
+  id: data.id.toString(),
+  name: data.name,
 });

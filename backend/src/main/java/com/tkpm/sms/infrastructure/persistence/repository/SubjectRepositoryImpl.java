@@ -7,11 +7,11 @@ import com.tkpm.sms.domain.repository.SubjectRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.SubjectEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.SubjectJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.SubjectPersistenceMapper;
+import com.tkpm.sms.infrastructure.utils.PagingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -39,14 +39,7 @@ public class SubjectRepositoryImpl implements SubjectRepository {
     @Override
     public PageResponse<Subject> findAll(PageRequest request) {
         // Convert domain PageRequest to Spring Pageable
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                request.getPageNumber() - 1,
-                request.getPageSize(),
-                request.getSortDirection() == PageRequest.SortDirection.DESC
-                        ? Sort.Direction.DESC
-                        : Sort.Direction.ASC,
-                request.getSortBy()
-        );
+        Pageable pageable = PagingUtils.toSpringPageable(request);
 
         Page<SubjectEntity> page = jpaRepository.findAll(pageable);
 
