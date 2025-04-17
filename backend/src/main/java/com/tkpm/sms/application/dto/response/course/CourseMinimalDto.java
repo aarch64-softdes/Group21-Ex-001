@@ -13,7 +13,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CourseMinimalDto {
+    Integer id;
     String code;
+    String subjectCode;
     String subject;
     int year;
     int semester;

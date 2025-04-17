@@ -1,11 +1,15 @@
-import { showSuccessToast } from '@/shared/lib/toast-utils';
-import FacultyService from '@/features/faculty/api/facultyService';
-import {
+import { showSuccessToast, showErrorToast } from '@/shared/lib/toast-utils';
+import FacultyService from '@faculty/api/facultyService';
+import Faculty, {
   CreateFacultyDTO,
   UpdateFacultyDTO,
-} from '@/features/faculty/types/faculty';
+} from '@faculty/types/faculty';
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getErrorMessage } from '@/shared/lib/utils';
+import { useLoadMore } from '@/shared/hooks/useLoadMore';
+import { useState } from 'react';
+import { SelectItem } from '@/components/common/LoadMoreSelect';
 
 const facultyService = new FacultyService();
 
@@ -34,7 +38,42 @@ export const useFaculties = (params: QueryHookParams) => {
   });
 };
 
-export const useFaculty = (id: number) => {
+export const useFacultiesDropdown = (
+  initialPageSize?: number,
+  mapFn?: (arg0: Faculty) => SelectItem,
+) => {
+  const [facultySearch, setFacultySearch] = useState<string>('');
+  const [item, setItem] = useState<SelectItem | undefined>(undefined);
+  const faculties = useLoadMore<Faculty>({
+    queryKey: ['faculties', 'dropdown'],
+    fetchFn: (page, size, search) =>
+      facultyService.getFaculties({
+        page,
+        size,
+        sortName: 'name',
+        sortType: 'asc',
+        search,
+      }),
+    initialItem: item,
+    mapFn:
+      mapFn ||
+      ((faculty: Faculty) => ({
+        id: faculty.id,
+        label: faculty.name,
+        value: faculty.name,
+      })),
+    searchQuery: facultySearch,
+    initialPageSize,
+  });
+
+  return {
+    ...faculties,
+    setFacultySearch,
+    setItem,
+  };
+};
+
+export const useFaculty = (id: string) => {
   return useQuery({
     queryKey: ['faculty', id],
     queryFn: () => facultyService.getFaculty(id),
@@ -51,6 +90,9 @@ export const useCreateFaculty = () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
       showSuccessToast('Faculty added successfully');
     },
+    onError: (error: any) => {
+      showErrorToast(getErrorMessage(error));
+    },
   });
 };
 
@@ -58,11 +100,14 @@ export const useUpdateFaculty = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateFacultyDTO }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateFacultyDTO }) =>
       facultyService.updateFaculty(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
       showSuccessToast('Faculty updated successfully');
+    },
+    onError: (error: any) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };
@@ -71,10 +116,13 @@ export const useDeleteFaculty = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => facultyService.deleteFaculty(id),
+    mutationFn: (id: string) => facultyService.deleteFaculty(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
       showSuccessToast('Faculty deleted successfully');
+    },
+    onError: (error: any) => {
+      showErrorToast(getErrorMessage(error));
     },
   });
 };

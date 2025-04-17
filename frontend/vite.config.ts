@@ -22,6 +22,8 @@ export default defineConfig({
       '@faculty': path.resolve(__dirname, './src/features/faculty'),
       '@program': path.resolve(__dirname, './src/features/program'),
       '@status': path.resolve(__dirname, './src/features/status'),
+      '@subject': path.resolve(__dirname, './src/features/subject'),
+      '@course': path.resolve(__dirname, './src/features/course'),
       '@settings': path.resolve(__dirname, './src/features/settings'),
       '@metadata': path.resolve(__dirname, './src/features/metadata'),
 

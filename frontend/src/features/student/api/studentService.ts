@@ -36,9 +36,9 @@ export default class StudentService {
     // Assuming the API returns a list of students
     return {
       data: response.data.content.data.map(mapToStudent),
-      totalItems: response.data.content.page.totalElements,
-      totalPages: response.data.content.page.totalPages,
-      currentPage: page,
+      totalItems: response.data.content.totalElements,
+      totalPages: response.data.content.totalPages,
+      currentPage: response.data.content.pageNumber,
     };
   };
 

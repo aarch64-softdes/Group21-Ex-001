@@ -58,7 +58,7 @@ api.interceptors.response.use(
       case 500:
       case 502:
       case 503:
-        return Promise.reject(new ServerError(responseData));
+        return Promise.reject(new ServerError(responseData.message));
       default:
         return Promise.reject(
           new ApiError(`Request failed with status ${status}`),

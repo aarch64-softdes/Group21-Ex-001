@@ -21,6 +21,8 @@ import SettingPage from '@settings/settingPage';
 import ErrorBoundary from '@components/error/ErrorBoundary';
 import { ApiError } from '@lib/errors';
 import { showErrorToast } from '@lib/toast-utils';
+import SubjectPage from '@subject/subjectPage';
+import CoursePage from '@/features/course/coursePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +52,8 @@ function App() {
                 <Route path='/faculty' element={<FacultyPage />} />
                 <Route path='/program' element={<ProgramPage />} />
                 <Route path='/status' element={<StatusPage />} />
+                <Route path='/subject' element={<SubjectPage />} />
+                <Route path='/course' element={<CoursePage />} />
                 <Route path='/setting' element={<SettingPage />} />
                 <Route path='*' element={<Navigate to='/' replace />} />
               </Routes>

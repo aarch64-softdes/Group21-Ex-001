@@ -79,6 +79,45 @@ CREATE TABLE status_transitions (
     CONSTRAINT fk_status_transitions_to_status FOREIGN KEY (to_status_id) REFERENCES statuses (id)
 );
 
+CREATE TABLE subjects (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    credits INTEGER NOT NULL,
+    faculty_id INTEGER,
+    deleted_at DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_subjects_faculty FOREIGN KEY (faculty_id) REFERENCES faculties (id)
+);
+
+CREATE TABLE subject_prerequisites (
+    subject_id INTEGER NOT NULL,
+    prerequisite_id INTEGER NOT NULL,
+    CONSTRAINT pk_subject_prerequisites PRIMARY KEY (subject_id, prerequisite_id),
+    CONSTRAINT fk_subject_prerequisites_subject FOREIGN KEY (subject_id) REFERENCES subjects (id),
+    CONSTRAINT fk_subject_prerequisites_prerequisite FOREIGN KEY (prerequisite_id) REFERENCES subjects (id)
+);
+
+-- Create courses table
+CREATE TABLE courses (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    code VARCHAR(50) NOT NULL,
+    year INTEGER NOT NULL,
+    semester INTEGER NOT NULL,
+    lecturer VARCHAR(255) NOT NULL,
+    max_student INTEGER NOT NULL,
+    room VARCHAR(50) NOT NULL,
+    schedule VARCHAR(50) NOT NULL,
+    start_date DATE NOT NULL,
+    program_id INTEGER NOT NULL,
+    subject_id INTEGER NOT NULL,
+    CONSTRAINT fk_courses_program FOREIGN KEY (program_id) REFERENCES programs (id),
+    CONSTRAINT fk_courses_subject FOREIGN KEY (subject_id) REFERENCES subjects (id),
+    CONSTRAINT uc_courses_code UNIQUE (code)
+);
+
 -- Add constraints to students table
 ALTER TABLE students
     ADD CONSTRAINT uc_students_email UNIQUE (email);
@@ -422,3 +461,69 @@ INSERT INTO students (
     'MAIL010',
     'ID010'
 );
+
+-- Insert sample subjects
+INSERT INTO subjects (name, code, description, credits, faculty_id) VALUES
+-- Computer Science subjects
+('Introduction to Computer Science', 'CS101', 'A basic introduction to computer science principles', 3, 1),
+('Data Structures and Algorithms', 'CS201', 'Study of data structures and fundamental algorithms', 4, 1),
+('Database Management Systems', 'CS301', 'Design and implementation of database systems', 3, 1),
+('Operating Systems', 'CS302', 'Principles of operating systems design and implementation', 3, 1),
+('Software Engineering', 'CS401', 'Software development life cycle, project management, and best practices', 4, 1),
+-- Mathematics subjects
+('Calculus I', 'MATH101', 'Limits, derivatives, and basic integration', 3, 2),
+('Calculus II', 'MATH102', 'Integration techniques, series, and parametric equations', 3, 2), 
+('Linear Algebra', 'MATH201', 'Vector spaces, matrices, and linear transformations', 3, 2),
+('Differential Equations', 'MATH301', 'Ordinary differential equations and applications', 3, 2),
+('Advanced Mathematics', 'MATH401', 'Advanced topics in mathematics including calculus and linear algebra', 4, 2),
+-- Physics subjects
+('Introduction to Physics', 'PHYS101', 'Basic principles of physics and mechanics', 3, 3),
+('Electricity and Magnetism', 'PHYS201', 'Principles of electricity, magnetism, and electromagnetic waves', 4, 3),
+('Thermodynamics', 'PHYS301', 'Laws of thermodynamics and statistical mechanics', 3, 3),
+-- Business subjects
+('Introduction to Business', 'BUS101', 'Basic principles of business and entrepreneurship', 3, 4),
+('Marketing Principles', 'BUS201', 'Core concepts of marketing and consumer behavior', 3, 4);
+
+-- Add prerequisites relationships
+-- CS201 requires CS101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (2, 1);
+-- CS301 requires CS101 and CS201
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (3, 1), (3, 2);
+-- CS302 requires CS101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (4, 1);
+-- CS401 requires CS201, CS301, and CS302
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (5, 2), (5, 3), (5, 4);
+
+-- MATH102 requires MATH101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (7, 6);
+-- MATH301 requires MATH102 and MATH201
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (9, 7), (9, 8);
+-- MATH401 requires MATH301
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (10, 9);
+
+-- PHYS201 requires PHYS101 and MATH101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (12, 11), (12, 6);
+-- PHYS301 requires PHYS201
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (13, 12);
+
+-- BUS201 requires BUS101
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES (15, 14);
+
+-- Add sample course data
+INSERT INTO courses (id, code, year, semester, lecturer, max_student, room, schedule, start_date, program_id, subject_id) VALUES
+-- Computer Science Courses
+(1, 'CS101-01', 2025, 1, 'Dr. John Smith', 40, 'A101', 'T2(3-6)', '2025-01-15', 1, 1),
+(2, 'CS101-02', 2025, 1, 'Dr. Sarah Johnson', 35, 'B202', 'T4(1-4)', '2025-01-15', 1, 1),
+(3, 'CS201-01', 2025, 1, 'Dr. Emily Chen', 45, 'A105', 'T5(4-7)', '2025-01-17', 1, 2),
+(4, 'CS301-01', 2025, 1, 'Prof. Robert Davis', 30, 'C303', 'T3(1-4)', '2025-01-16', 1, 3),
+(5, 'CS302-01', 2025, 2, 'Dr. Michael Wilson', 25, 'A203', 'T6(3-6)', '2025-06-15', 1, 4),
+-- Mathematics Courses
+(6, 'MATH101-01', 2025, 1, 'Dr. Jennifer White', 50, 'D404', 'T2(8-11)', '2025-01-14', 2, 6),
+(7, 'MATH201-01', 2025, 1, 'Prof. David Brown', 40, 'E501', 'T4(6-9)', '2025-01-16', 2, 8),
+(8, 'MATH301-01', 2025, 2, 'Prof. David Williams', 30, 'C303', 'T3(6-9)', '2025-06-10', 2, 9),
+-- Physics Courses
+(9, 'PHYS101-01', 2025, 1, 'Prof. Michael Brown', 50, 'D404', 'T6(1-4)', '2025-01-18', 3, 11),
+(10, 'PHYS201-01', 2025, 2, 'Dr. Elizabeth Taylor', 35, 'B205', 'T5(8-11)', '2025-06-12', 3, 12),
+-- Business Courses
+(11, 'BUS101-01', 2025, 1, 'Prof. Catherine Jones', 60, 'F601', 'T3(3-6)', '2025-01-15', 4, 14),
+(12, 'BUS201-01', 2025, 2, 'Dr. James Anderson', 45, 'E505', 'T2(1-4)', '2025-06-14', 4, 15);

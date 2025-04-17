@@ -40,7 +40,7 @@ const ProgramPage: React.FC = () => {
     () => ({
       onSave: async (id: string, value: UpdateProgramDTO) => {
         await updateProgram.mutateAsync({
-          id: parseInt(id, 10),
+          id: id,
           data: value,
         });
       },
@@ -48,7 +48,7 @@ const ProgramPage: React.FC = () => {
         await createProgram.mutateAsync(value);
       },
       onDelete: async (id: string) => {
-        await deleteProgram.mutateAsync(parseInt(id, 10));
+        await deleteProgram.mutateAsync(id);
       },
     }),
     [updateProgram, createProgram, deleteProgram],
@@ -70,7 +70,6 @@ const ProgramPage: React.FC = () => {
         }}
         requireDeleteConfirmation={true}
         filterOptions={[]}
-        disablePagination={true}
       />
     </div>
   );

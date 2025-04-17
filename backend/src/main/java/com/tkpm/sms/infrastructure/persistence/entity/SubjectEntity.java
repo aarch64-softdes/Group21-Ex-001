@@ -32,7 +32,7 @@ public class SubjectEntity {
     @NotNull
     Integer credits;
 
-    @Column(name = "create_at")
+    @Column(name = "created_at")
     LocalDateTime createdAt;
 
     // many-to-one relationship with faculty
