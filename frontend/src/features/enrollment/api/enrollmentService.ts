@@ -1,11 +1,14 @@
 import api from '@/core/config/api';
 import { ApiResponse } from '@/core/types/apiResponse';
 import {
+  AcademicTranscript,
   CreateEnrollmentDTO,
   DeleteEnrollmentDTO,
   Enrollment,
   EnrollmentHistory,
   EnrollmentMinimal,
+  UpdateTranscriptDTO,
+  mapToAcademicTranscript,
   mapToEnrollment,
   mapToEnrollmentHistory,
   mapToEnrollmentMinimal,
@@ -50,6 +53,21 @@ export default class EnrollmentService {
       totalPages: response.data.content.totalPages,
       currentPage: response.data.content.pageNumber,
     };
+  };
+
+  getAcademicTranscript = async (
+    studentId: string,
+  ): Promise<AcademicTranscript> => {
+    const response = await api.get(`/api/enrollments/${studentId}/transcript`);
+    return mapToAcademicTranscript(response.data.content);
+  };
+
+  updateTranscript = async (data: UpdateTranscriptDTO): Promise<Enrollment> => {
+    const response = await api.put(
+      `/api/enrollments/${data.studentId}/courses/${data.courseId}/transcript`,
+      data.transcript,
+    );
+    return mapToEnrollment(response.data.content);
   };
 
   enrollCourse = async (data: CreateEnrollmentDTO): Promise<Enrollment> => {

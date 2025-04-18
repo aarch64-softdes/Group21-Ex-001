@@ -1,6 +1,11 @@
+// src/features/enrollment/api/useEnrollmentApi.ts
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import EnrollmentService from './enrollmentService';
-import { CreateEnrollmentDTO, DeleteEnrollmentDTO } from '../types/enrollment';
+import {
+  CreateEnrollmentDTO,
+  DeleteEnrollmentDTO,
+  UpdateTranscriptDTO,
+} from '../types/enrollment';
 import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
 import { getErrorMessage } from '@/shared/lib/utils';
 
@@ -32,6 +37,35 @@ export const useEnrollmentHistory = (
   });
 };
 
+export const useAcademicTranscript = (studentId: string) => {
+  return useQuery({
+    queryKey: ['academicTranscript', studentId],
+    queryFn: () => enrollmentService.getAcademicTranscript(studentId),
+    enabled: !!studentId,
+  });
+};
+
+export const useUpdateTranscript = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateTranscriptDTO) =>
+      enrollmentService.updateTranscript(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['enrollments'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['academicTranscript'],
+      });
+      showSuccessToast('Successfully updated transcript');
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
+  });
+};
+
 export const useEnrollCourse = () => {
   const queryClient = useQueryClient();
 
@@ -39,7 +73,12 @@ export const useEnrollCourse = () => {
     mutationFn: (data: CreateEnrollmentDTO) =>
       enrollmentService.enrollCourse(data),
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({
+        queryKey: ['enrollments'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['enrollmentHistory'],
+      });
       showSuccessToast('Successfully enrolled in course');
     },
     onError: (error) => {
@@ -55,7 +94,12 @@ export const useUnenrollCourse = () => {
     mutationFn: (data: DeleteEnrollmentDTO) =>
       enrollmentService.unenrollCourse(data),
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({
+        queryKey: ['enrollments'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['enrollmentHistory'],
+      });
       showSuccessToast('Successfully unenrolled from course');
     },
     onError: (error) => {
