@@ -97,7 +97,7 @@
     <div class="container">
       <div class="header">
         <h1>Academic Transcript</h1>
-        <h2>Spring University</h2>
+        <h2>University of Science - VNUHCM</h2>
       </div>
 
       <div class="student-info">
@@ -111,14 +111,14 @@
               <td th:text="${studentName}">John Doe</td>
             </tr>
             <tr>
-              <td>Class:</td>
-              <td th:text="${className}">Computer Science</td>
+              <td>Class of:</td>
+              <td th:text="${courseName}">Computer Science</td>
               <td>Date of Birth:</td>
-              <td th:text="${birthDate}">2000-01-01</td>
+              <td th:text="${studentDob}">2000-01-01</td>
             </tr>
             <tr>
-              <td>Semester:</td>
-              <td th:text="${semester}">Spring 2025</td>
+              <!-- <td>Semester:</td>
+              <td th:text="${semester}">Spring 2025</td> -->
               <td>GPA:</td>
               <td th:text="${gpa}">3.85</td>
             </tr>
@@ -133,16 +133,18 @@
             <tr>
               <th>Course ID</th>
               <th>Course Name</th>
-              <th>Credits</th>
               <th>Final Score</th>
+              <th>Credits</th>
             </tr>
           </thead>
           <tbody>
-            <tr th:each="subject : ${subjects}">
-              <td th:text="${subject.courseId}">COMP101</td>
-              <td th:text="${subject.name}">Introduction to Programming</td>
-              <td th:text="${subject.credits}">3</td>
-              <td th:text="${subject.finalScore}">95.0</td>
+            <tr th:each="subject : ${transcriptList}">
+              <td th:text="${subject.subjectCode}">COMP101</td>
+              <td th:text="${subject.subjectName}">
+                Introduction to Programming
+              </td>
+              <td th:text="${subject.gpa}">3</td>
+              <td th:text="${subject.grade}">95.0</td>
             </tr>
             <tr th:if="${subjects == null || subjects.isEmpty()}">
               <td colspan="4" style="text-align: center">
@@ -150,20 +152,20 @@
               </td>
             </tr>
           </tbody>
-          <tfoot>
+          <!-- <tfoot>
             <tr>
               <td colspan="2"><strong>Total Credits:</strong></td>
               <td th:text="${totalCredits}" colspan="2">14</td>
             </tr>
-          </tfoot>
+          </tfoot> -->
         </table>
       </div>
 
       <div class="footer">
-        <p>
+        <!-- <p>
           This document is an official academic record issued by Spring
           University.
-        </p>
+        </p> -->
         <p>
           Date of Issue:
           <span th:text="${#dates.format(#dates.createNow(), 'MMMM dd, yyyy')}"
