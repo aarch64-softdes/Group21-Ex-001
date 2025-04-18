@@ -109,6 +109,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    @Transactional
     public Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto) {
         var course = courseService.getCourseById(enrollmentCreateRequestDto.getCourseId());
 
@@ -159,6 +160,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    @Transactional
     public AcademicTranscriptDto getAcademicTranscriptOfStudent(String studentId) {
         // it will throw ResourceNotFoundException when there is no student with studentId-parameter
         var student = studentService.getStudentDetail(studentId);

@@ -92,6 +92,7 @@ public class SettingServiceImpl implements SettingService {
     }
 
     @Override
+    @Transactional
     public AdjustmentDurationSettingDto updateAdjustmentDurationSetting(
             AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto
     ) {
