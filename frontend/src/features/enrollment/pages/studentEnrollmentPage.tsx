@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useStudent } from '@/features/student/api/useStudentApi';
 import AvailableCoursesTable from '../components/AvailableCoursesTable';
 import CurrentEnrollmentsTable from '../components/CurrentEnrollmentsTable';
 import EnrollmentHistoryTable from '../components/EnrollmentHistoryTable';
-import { Loader2 } from 'lucide-react';
+import { ChevronLeft, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const StudentEnrollmentPage: React.FC = () => {
+  const navigate = useNavigate();
   const { studentId } = useParams<{ studentId: string }>();
   const { data: student, isLoading } = useStudent(studentId || '');
   const [activeTab, setActiveTab] = useState('available');
@@ -30,11 +32,24 @@ const StudentEnrollmentPage: React.FC = () => {
 
   return (
     <div className='container mx-auto p-6'>
-      <div className='mb-6'>
-        <h1 className='text-2xl font-bold mb-2'>Course Enrollment</h1>
-        <p className='text-muted-foreground'>
-          Student: {student.name} ({student.studentId})
-        </p>
+      <div className='mb-6 flex items-center justify-between'>
+        <div>
+          <h1 className='text-2xl font-bold mb-2'>Course Enrollment</h1>
+          <p className='text-muted-foreground'>
+            Student: {student.name} ({student.studentId})
+          </p>
+        </div>
+
+        <Button
+          className='w-32 mr-4'
+          variant='outline'
+          onClick={() => {
+            navigate('/student');
+          }}
+        >
+          <ChevronLeft className='mr-2 h-4 w-4' />
+          Return
+        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>

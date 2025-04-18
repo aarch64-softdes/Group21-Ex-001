@@ -1,10 +1,12 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCourse } from '@/features/course/api/useCourseApi';
 import AvailableStudentsTable from '../components/AvailableStudentsTable';
-import { Loader2 } from 'lucide-react';
+import { ChevronLeft, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const CourseEnrollmentPage: React.FC = () => {
+  const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
   const { data: course, isLoading } = useCourse(courseId || '');
 
@@ -26,15 +28,28 @@ const CourseEnrollmentPage: React.FC = () => {
 
   return (
     <div className='container mx-auto p-6'>
-      <div className='mb-6'>
-        <h1 className='text-2xl font-bold mb-2'>Course Student Management</h1>
-        <p className='text-muted-foreground'>
-          Course: {course.subject?.name} ({course.code})
-        </p>
-        <p className='text-sm text-muted-foreground'>
-          Semester: {course.year}, Semester {course.semester} | Room:{' '}
-          {course.room} | Schedule: {course.schedule}
-        </p>
+      <div className='mb-6 flex items-center justify-between'>
+        <div>
+          <h1 className='text-2xl font-bold mb-2'>Course Student Management</h1>
+          <p className='text-muted-foreground'>
+            Course: {course.subject?.name} ({course.code})
+          </p>
+          <p className='text-sm text-muted-foreground'>
+            Semester: {course.year}, Semester {course.semester} | Room:{' '}
+            {course.room} | Schedule: {course.schedule}
+          </p>
+        </div>
+
+        <Button
+          className='w-32 mr-4'
+          variant='outline'
+          onClick={() => {
+            navigate('/course');
+          }}
+        >
+          <ChevronLeft className='mr-2 h-4 w-4' />
+          Return
+        </Button>
       </div>
 
       <AvailableStudentsTable courseId={courseId} />

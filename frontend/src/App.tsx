@@ -26,7 +26,6 @@ import CoursePage from '@/features/course/coursePage';
 import StudentEnrollmentPage from './features/enrollment/pages/studentEnrollmentPage';
 import CourseEnrollmentPage from './features/enrollment/pages/courseEnrollmentPage';
 import AcademicTranscriptPage from './features/enrollment/pages/academicTranscriptPage';
-import GradeManagementPage from './features/enrollment/pages/gradeManagmentPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -69,10 +68,6 @@ function App() {
                 <Route
                   path='/student/:studentId/transcript'
                   element={<AcademicTranscriptPage />}
-                />
-                <Route
-                  path='/student/:studentId/grades'
-                  element={<GradeManagementPage />}
                 />
                 <Route path='/setting' element={<SettingPage />} />
                 <Route path='*' element={<Navigate to='/' replace />} />
