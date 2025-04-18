@@ -85,7 +85,7 @@ public class FileController {
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(pdfBytes);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to    from HTML template", e);
+            throw new RuntimeException("Failed to export from HTML template", e);
         }
     }
 
