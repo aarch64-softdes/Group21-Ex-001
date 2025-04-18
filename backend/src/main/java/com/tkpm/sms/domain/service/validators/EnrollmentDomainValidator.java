@@ -36,17 +36,15 @@ public class EnrollmentDomainValidator {
 
     public void validateStudentSatisfiedPrerequisitesSubject(String studentId, List<Integer> subjectIds) {
 
-        var missingEnrollments = enrollmentRepository.getUnenrolledCourseOfSubjects(studentId, subjectIds);
+        var missingEnrollments = enrollmentRepository.getUnenrolledOrUnfinishedCourseOfSubjects(studentId, subjectIds);
         if (!missingEnrollments.isEmpty()) {
-            List<String> subjects = subjectIds.stream()
-                    .map(subjectId -> enrollmentRepository.findEnrollmentByStudentIdAndCourseId(studentId, subjectId)
-                            .orElseThrow(() -> new StudentPrerequisitesNotSatisfiedException("Subject not found for student: " + studentId)))
-                    .map(subject -> subject.getCourse().getSubject().getName())
+            List<String> subjects = missingEnrollments.stream()
+                    .map(enrollment -> enrollment.getCourse().getSubject().getName())
                     .toList();
 
             throw new StudentPrerequisitesNotSatisfiedException("Student has not finished the following subjects: " + String.join(", ",
                     missingEnrollments.stream().map(
-                            enrollment -> enrollment.getCourse().getSubject().getName()).toList()));
+                            enrollment -> enrollment.getCourse().getSubject().getCode()).toList()));
         }
 
         var failedSubjects = enrollmentRepository.getFailedSubjectsOfStudent(studentId, subjectIds);

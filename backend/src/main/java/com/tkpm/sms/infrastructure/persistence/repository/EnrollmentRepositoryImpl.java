@@ -166,14 +166,14 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public List<Enrollment> getUnenrolledCourseOfSubjects(String studentId, List<Integer> subjectIds) {
+    public List<Enrollment> getUnenrolledOrUnfinishedCourseOfSubjects(String studentId, List<Integer> subjectIds) {
 
         return enrollmentJpaRepository.findAllByStudentId(studentId)
                 .stream().filter(
                         enrollmentEntity -> {
                             var subject = enrollmentEntity.getCourse().getSubject();
 
-                            return !subjectIds.contains(subject.getId());
+                            return !subjectIds.contains(subject.getId()) || Objects.isNull(enrollmentEntity.getScore().getGpa());
                         }
                 ).map(enrollmentPersistenceMapper::toDomain).toList();
     }
