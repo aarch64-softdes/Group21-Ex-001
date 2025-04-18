@@ -127,7 +127,6 @@ CREATE TABLE enrollments (
     CONSTRAINT fk_enrollments_student FOREIGN KEY (student_id) REFERENCES students (id),
     CONSTRAINT fk_enrollments_course FOREIGN KEY (course_id) REFERENCES courses (id),
     CONSTRAINT uc_enrollments_student_course UNIQUE (student_id, course_id)
-    CONSTRAINT fk_enrollments_score FOREIGN KEY (score_id) REFERENCES scores (id)
 );
 
 -- Create histories table to track enrollment actions
@@ -583,32 +582,27 @@ INSERT INTO courses (code, year, semester, lecturer, max_student, room, schedule
 ( 'BUS101_01', 2025, 1, 'Prof. Catherine Jones', 60, 'F601', 'T3(3-6)', '2025-01-15', 4, 14),
 ( 'BUS201_01', 2025, 2, 'Dr. James Anderson', 45, 'E505', 'T2(1-4)', '2025-06-14', 4, 15);
 
+
 -- Insert sample enrollment data (students enrolling in courses)
 INSERT INTO enrollments (student_id, course_id) VALUES
 -- Student 1 (John Smith) enrolled in 3 courses
 ('ST001_ID', 1), -- Intro to Computer Science
 ('ST001_ID', 6), -- Calculus I
 ('ST001_ID', 11), -- Intro to Business
-
 -- Student 2 (Emily Johnson) enrolled in 2 courses
 ('ST002_ID', 2), -- Another CS101 section
 ('ST002_ID', 9), -- Physics
-
 -- Student 3 (Michael Brown) - graduated student
 ('ST003_ID', 3), -- Data Structures
 ('ST003_ID', 7), -- Linear Algebra
-
 -- Student 4 (Sarah Davis)
 ('ST004_ID', 4), -- Database Management
 ('ST004_ID', 10), -- Electricity and Magnetism
-
 -- Student 6 (Jennifer Taylor)
 ('ST006_ID', 5), -- Operating Systems
 ('ST006_ID', 8), -- Differential Equations
-
 -- Student 7 (James Anderson)
 ('ST007_ID', 12), -- Marketing Principles
-
 -- Student 9 (Robert Thompson)
 ('ST009_ID', 1), -- Intro to Computer Science (same as Student 1)
 ('ST009_ID', 3); -- Data Structures (same as Student 3)
@@ -630,12 +624,10 @@ INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUE
 ('hist_012', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '5 days', 'ST007_ID', 12),
 ('hist_013', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '5 days', 'ST009_ID', 1),
 ('hist_014', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '5 days', 'ST009_ID', 3),
-
 -- Some enrollment deletions/drops
 ('hist_015', 'DELETED', CURRENT_TIMESTAMP - INTERVAL '2 days', 'ST001_ID', 6),
 ('hist_016', 'DELETED', CURRENT_TIMESTAMP - INTERVAL '3 days', 'ST002_ID', 9),
 ('hist_017', 'DELETED', CURRENT_TIMESTAMP - INTERVAL '1 day', 'ST004_ID', 10),
-
 -- Re-enrollments
 ('hist_018', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '1 day', 'ST001_ID', 6);
 
@@ -647,63 +639,72 @@ DELETE FROM enrollments WHERE student_id = 'ST004_ID' AND course_id = 10;
 -- And add back the one re-enrollment
 INSERT INTO enrollments (student_id, course_id) VALUES
 ('ST001_ID', 6);
--- Insert sample score records
 
-INSERT INTO scores (grade, gpa) VALUES 
-    ('A+', 4.0),   -- id 1
-    ('A', 4.0),    -- id 2
-    ('A-', 3.7),   -- id 3
-    ('B+', 3.3),   -- id 4
-    ('B', 3.0),    -- id 5
-    ('B-', 2.7),   -- id 6
-    ('C+', 2.3),   -- id 7
-    ('C', 2.0),    -- id 8
-    ('C-', 1.7),   -- id 9
-    ('D+', 1.3),   -- id 10
-    ('D', 1.0),    -- id 11
-    ('F', 0.0);    -- id 12
-
--- Update enrollments with score_id references
+-- Insert unique scores for each enrollment
 -- Student 1 (John Smith)
-UPDATE enrollments SET score_id = 2 WHERE student_id = 'ST001_ID' AND course_id = 1; -- A in CS101
-UPDATE enrollments SET score_id = 4 WHERE student_id = 'ST001_ID' AND course_id = 6; -- B+ in Calculus I
-UPDATE enrollments SET score_id = 3 WHERE student_id = 'ST001_ID' AND course_id = 11; -- A- in Intro to Business
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- CS101
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST001_ID' AND course_id = 1;
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Calculus I (re-enrolled)
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST001_ID' AND course_id = 6;
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- Intro to Business
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST001_ID' AND course_id = 11;
 
 -- Student 2 (Emily Johnson)
-UPDATE enrollments SET score_id = 5 WHERE student_id = 'ST002_ID' AND course_id = 2; -- B in CS101 (different section)
+INSERT INTO scores (grade, gpa) VALUES ('B', 3.0); -- CS101 (different section)
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST002_ID' AND course_id = 2;
 
--- Student 3 (Michael Brown) - graduated student, good grades
-UPDATE enrollments SET score_id = 1 WHERE student_id = 'ST003_ID' AND course_id = 3; -- A+ in Data Structures
-UPDATE enrollments SET score_id = 2 WHERE student_id = 'ST003_ID' AND course_id = 7; -- A in Linear Algebra
+-- Student 3 (Michael Brown) - graduated with good grades
+INSERT INTO scores (grade, gpa) VALUES ('A+', 4.0); -- Data Structures
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST003_ID' AND course_id = 3;
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Linear Algebra
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST003_ID' AND course_id = 7;
 
 -- Student 4 (Sarah Davis)
-UPDATE enrollments SET score_id = 5 WHERE student_id = 'ST004_ID' AND course_id = 4; -- B in Database Management
+INSERT INTO scores (grade, gpa) VALUES ('B', 3.0); -- Database Management
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST004_ID' AND course_id = 4;
 
 -- Student 6 (Jennifer Taylor) - struggling in technical courses
-UPDATE enrollments SET score_id = 9 WHERE student_id = 'ST006_ID' AND course_id = 5; -- C- in Operating Systems
-UPDATE enrollments SET score_id = 10 WHERE student_id = 'ST006_ID' AND course_id = 8; -- D+ in Differential Equations
+INSERT INTO scores (grade, gpa) VALUES ('C-', 1.7); -- Operating Systems
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST006_ID' AND course_id = 5;
+INSERT INTO scores (grade, gpa) VALUES ('D+', 1.3); -- Differential Equations
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST006_ID' AND course_id = 8;
 
 -- Student 7 (James Anderson)
-UPDATE enrollments SET score_id = 4 WHERE student_id = 'ST007_ID' AND course_id = 12; -- B+ in Marketing Principles
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Marketing Principles
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST007_ID' AND course_id = 12;
 
 -- Student 9 (Robert Thompson) - mixed performance
-UPDATE enrollments SET score_id = 7 WHERE student_id = 'ST009_ID' AND course_id = 1; -- C+ in Intro to Computer Science
-UPDATE enrollments SET score_id = 11 WHERE student_id = 'ST009_ID' AND course_id = 3; -- D in Data Structures
+INSERT INTO scores (grade, gpa) VALUES ('C+', 2.3); -- Intro to Computer Science
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST009_ID' AND course_id = 1;
+INSERT INTO scores (grade, gpa) VALUES ('D', 1.0); -- Data Structures
+UPDATE enrollments SET score_id = currval('scores_id_seq') 
+    WHERE student_id = 'ST009_ID' AND course_id = 3;
 
--- Add some failing grades for academic probation demonstration
-INSERT INTO scores (grade, gpa) VALUES ('F', 0.0), ('F', 0.0);
-
--- Create a new enrollment just to demonstrate a failing grade
+-- Add failing grades for additional students
+-- David Wilson (suspended)
+INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- Electricity & Magnetism
 INSERT INTO enrollments (student_id, course_id, score_id) VALUES
-('ST005_ID', 10, 13); -- David Wilson (suspended) failed Electricity & Magnetism
+('ST005_ID', 10, currval('scores_id_seq'));
 
 -- Add a history record for this enrollment
 INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
 ('hist_019', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '20 days', 'ST005_ID', 10);
 
--- Add a failing grade for Linda Martinez (dropped student)
+-- Linda Martinez (dropped student)
+INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- Intro to Business
 INSERT INTO enrollments (student_id, course_id, score_id) VALUES
-('ST008_ID', 11, 14); -- Linda Martinez failed Intro to Business
+('ST008_ID', 11, currval('scores_id_seq'));
 
 -- Add a history record for this enrollment
 INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES

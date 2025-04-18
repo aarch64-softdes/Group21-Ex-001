@@ -23,8 +23,9 @@ import { ApiError } from '@lib/errors';
 import { showErrorToast } from '@lib/toast-utils';
 import SubjectPage from '@subject/subjectPage';
 import CoursePage from '@/features/course/coursePage';
-import StudentEnrollmentPage from './features/enrollment/studentEnrollmentPage';
-import CourseEnrollmentPage from './features/enrollment/courseEnrollmentPage';
+import StudentEnrollmentPage from './features/enrollment/pages/studentEnrollmentPage';
+import CourseEnrollmentPage from './features/enrollment/pages/courseEnrollmentPage';
+import AcademicTranscriptPage from './features/enrollment/pages/academicTranscriptPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,6 +64,10 @@ function App() {
                 <Route
                   path='/course/:courseId/enrollments'
                   element={<CourseEnrollmentPage />}
+                />
+                <Route
+                  path='/student/:studentId/transcript'
+                  element={<AcademicTranscriptPage />}
                 />
                 <Route path='/setting' element={<SettingPage />} />
                 <Route path='*' element={<Navigate to='/' replace />} />

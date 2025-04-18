@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs';
 import { useParams } from 'react-router-dom';
 import { useStudent } from '@/features/student/api/useStudentApi';
-import AvailableCoursesTable from './components/AvailableCoursesTable';
-import CurrentEnrollmentsTable from './components/CurrentEnrollmentsTable';
-import EnrollmentHistoryTable from './components/EnrollmentHistoryTable';
+import AvailableCoursesTable from '../components/AvailableCoursesTable';
+import CurrentEnrollmentsTable from '../components/CurrentEnrollmentsTable';
+import EnrollmentHistoryTable from '../components/EnrollmentHistoryTable';
 import { Loader2 } from 'lucide-react';
 
 const StudentEnrollmentPage: React.FC = () => {

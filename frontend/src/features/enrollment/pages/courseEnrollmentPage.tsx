@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useCourse } from '@/features/course/api/useCourseApi';
-import AvailableStudentsTable from './components/AvailableStudentsTable';
+import AvailableStudentsTable from '../components/AvailableStudentsTable';
 import { Loader2 } from 'lucide-react';
 
 const CourseEnrollmentPage: React.FC = () => {
