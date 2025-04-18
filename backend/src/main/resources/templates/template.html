@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Student Academic Record</title>
+    <style type="text/css">
+      @page {
+        size: A4;
+        margin: 1.5cm;
+        @top-center {
+          content: "Academic Transcript";
+        }
+        @bottom-center {
+          content: "Page " counter(page);
+        }
+      }
+      body {
+        font-family: "Times New Roman", Times, serif;
+        font-size: 12pt;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+        color: #333333;
+      }
+      .container {
+        width: 98%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 12px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #dddddd;
+        padding-bottom: 10px;
+      }
+      h1 {
+        color: #000000;
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+      h2 {
+        color: #000000;
+        font-size: 18px;
+        font-weight: normal;
+      }
+      h3 {
+        color: #000000;
+        border-bottom: 1px solid #eeeeee;
+        padding-bottom: 5px;
+        font-size: 16px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        page-break-inside: avoid;
+      }
+      .student-info table {
+        border: none;
+      }
+      .student-info td {
+        padding: 8px;
+        vertical-align: top;
+      }
+      .student-info td:first-child {
+        font-weight: bold;
+        width: 120px;
+      }
+      .courses table {
+        border: 1px solid #000000;
+      }
+      .courses th,
+      .courses td {
+        border: 1px solid #000000;
+        padding: 2px 4px;
+        text-align: left;
+      }
+      .courses th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+      }
+      .courses tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+      .footer {
+        margin-top: 30px;
+        text-align: center;
+        font-style: italic;
+        color: #7f8c8d;
+        border-top: 1px solid #eeeeee;
+        padding-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Academic Transcript</h1>
+        <h2>University of Science - VNUHCM</h2>
+      </div>
+
+      <div class="student-info">
+        <h3>Student Information</h3>
+        <table>
+          <tbody>
+            <tr>
+              <td>Student ID:</td>
+              <td th:text="${studentId}">SV001</td>
+              <td>Name:</td>
+              <td th:text="${studentName}">John Doe</td>
+            </tr>
+            <tr>
+              <td>Class of:</td>
+              <td th:text="${courseName}">Computer Science</td>
+              <td>Date of Birth:</td>
+              <td th:text="${studentDob}">2000-01-01</td>
+            </tr>
+            <tr>
+              <!-- <td>Semester:</td>
+              <td th:text="${semester}">Spring 2025</td> -->
+              <td>GPA:</td>
+              <td th:text="${gpa}">3.85</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="courses">
+        <h3>Course Information</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Course ID</th>
+              <th>Course Name</th>
+              <th>Final Score</th>
+              <th>Credits</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="subject : ${transcriptList}">
+              <td th:text="${subject.subjectCode}">COMP101</td>
+              <td th:text="${subject.subjectName}">
+                Introduction to Programming
+              </td>
+              <td th:text="${subject.gpa}">3</td>
+              <td th:text="${subject.grade}">95.0</td>
+            </tr>
+            <tr th:if="${subjects == null || subjects.isEmpty()}">
+              <td colspan="4" style="text-align: center">
+                No course data available
+              </td>
+            </tr>
+          </tbody>
+          <!-- <tfoot>
+            <tr>
+              <td colspan="2"><strong>Total Credits:</strong></td>
+              <td th:text="${totalCredits}" colspan="2">14</td>
+            </tr>
+          </tfoot> -->
+        </table>
+      </div>
+
+      <div class="footer">
+        <!-- <p>
+          This document is an official academic record issued by Spring
+          University.
+        </p> -->
+        <p>
+          Date of Issue:
+          <span th:text="${#dates.format(#dates.createNow(), 'MMMM dd, yyyy')}"
+            >April 14, 2025</span
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
