@@ -125,12 +125,13 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   };
 
   // Remove a status from allowedTransitions
-  const removeStatus = (statusId: string) => {
+  const removeStatus = (statusId: number) => {
     if (!statusId) {
       return;
     }
 
     const currentTransitions = form.getValues('allowedTransitions') || [];
+    console.log(currentTransitions);
     const newTransitions = currentTransitions.filter(
       (status) => status?.id !== statusId,
     );
@@ -225,6 +226,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                                   key={status.id}
                                   variant='secondary'
                                   className='flex items-center gap-1'
+                                  onClick={() => removeStatus(status.id)}
                                 >
                                   {status.name}
                                   <button

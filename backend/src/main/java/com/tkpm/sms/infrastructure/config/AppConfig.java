@@ -55,7 +55,9 @@ public class AppConfig {
     }
 
     @Bean
-    public EnrollmentDomainValidator enrollmentValidator(EnrollmentRepository enrollmentRepository) {
-        return new EnrollmentDomainValidator(enrollmentRepository);
+    public EnrollmentDomainValidator enrollmentValidator(EnrollmentRepository enrollmentRepository,
+                                                         StudentRepository studentRepository,
+                                                         CourseRepository courseRepository) {
+        return new EnrollmentDomainValidator(enrollmentRepository, studentRepository, courseRepository);
     }
 }
