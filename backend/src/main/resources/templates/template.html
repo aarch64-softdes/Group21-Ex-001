@@ -146,7 +146,7 @@
               <td th:text="${subject.gpa}">3</td>
               <td th:text="${subject.grade}">95.0</td>
             </tr>
-            <tr th:if="${subjects == null || subjects.isEmpty()}">
+            <tr th:if="${transcriptList == null || transcriptList.isEmpty()}">
               <td colspan="4" style="text-align: center">
                 No course data available
               </td>
