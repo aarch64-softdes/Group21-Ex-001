@@ -2,10 +2,8 @@ package com.tkpm.sms.infrastructure.persistence.repository;
 
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
-import com.tkpm.sms.domain.exception.StudentPrerequisitesNotSatisfiedException;
 import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.History;
-import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
@@ -148,7 +146,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
 
     @Override
-    public boolean isStudentPassedSubjects(String studentId, List<Integer> subjectIds) {
+    public List<Enrollment> getFailedSubjectsOfStudent(String studentId, List<Integer> subjectIds) {
         var failingGrade = settingRepository.getFailingGradeSetting();
         var enrollments = enrollmentJpaRepository.findAllByStudentId(studentId)
                 .stream().filter(
@@ -159,36 +157,24 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                         }
                 ).toList();
         return enrollments.stream()
-                .allMatch(enrollmentEntity -> {
+                .filter(enrollmentEntity -> {
                     var transcript = enrollmentEntity.getScore();
-                    return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() >= failingGrade;
-                });
+                    return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() < failingGrade;
+                }).map(
+                        enrollmentPersistenceMapper::toDomain
+                ).toList();
     }
 
     @Override
-    public boolean isStudentEnrolledCourseOfSubjects(String studentId, List<Integer> subjectIds) {
-        var enrollments = enrollmentJpaRepository.findAllByStudentId(studentId)
+    public List<Enrollment> getUnenrolledCourseOfSubjects(String studentId, List<Integer> subjectIds) {
+
+        return enrollmentJpaRepository.findAllByStudentId(studentId)
                 .stream().filter(
                         enrollmentEntity -> {
                             var subject = enrollmentEntity.getCourse().getSubject();
 
-                            return subjectIds.contains(subject.getId());
+                            return !subjectIds.contains(subject.getId());
                         }
-                ).toList();
-
-        if (enrollments.size() != subjectIds.size()) {
-            var missingSubjectIds = subjectIds.stream()
-                    .filter(subjectId -> enrollments.stream()
-                            .noneMatch(enrollmentEntity -> enrollmentEntity.getCourse().getSubject().getId().equals(subjectId)))
-                    .toList();
-
-            var subjects = subjectRepository.findAllByIds(missingSubjectIds).stream().map(
-                    Subject::getCode
-            ).toList();
-
-            return false;
-        }
-
-        return true;
+                ).map(enrollmentPersistenceMapper::toDomain).toList();
     }
 }

@@ -25,7 +25,7 @@ public interface EnrollmentRepository {
 
     Integer countStudentsByCourseId(Integer courseId);
 
-    boolean isStudentPassedSubjects(String studentId, List<Integer> subjectIds);
+    List<Enrollment> getFailedSubjectsOfStudent(String studentId, List<Integer> subjectIds);
 
-    boolean isStudentEnrolledCourseOfSubjects(String studentId, List<Integer> subjectIds);
+    List<Enrollment> getUnenrolledCourseOfSubjects(String studentId, List<Integer> subjectIds);
 }
