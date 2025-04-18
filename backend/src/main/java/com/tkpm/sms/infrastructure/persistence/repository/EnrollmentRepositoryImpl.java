@@ -146,10 +146,27 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         return enrollmentJpaRepository.countAllByCourseId(courseId);
     }
 
+
     @Override
     public boolean isStudentPassedSubjects(String studentId, List<Integer> subjectIds) {
         var failingGrade = settingRepository.getFailingGradeSetting();
+        var enrollments = enrollmentJpaRepository.findAllByStudentId(studentId)
+                .stream().filter(
+                        enrollmentEntity -> {
+                            var subject = enrollmentEntity.getCourse().getSubject();
 
+                            return subjectIds.contains(subject.getId());
+                        }
+                ).toList();
+        return enrollments.stream()
+                .allMatch(enrollmentEntity -> {
+                    var transcript = enrollmentEntity.getScore();
+                    return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() >= failingGrade;
+                });
+    }
+
+    @Override
+    public boolean isStudentEnrolledCourseOfSubjects(String studentId, List<Integer> subjectIds) {
         var enrollments = enrollmentJpaRepository.findAllByStudentId(studentId)
                 .stream().filter(
                         enrollmentEntity -> {
@@ -169,13 +186,9 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                     Subject::getCode
             ).toList();
 
-            throw new StudentPrerequisitesNotSatisfiedException("Student has not finished the following subjects: " + String.join(", ", subjects));
+            return false;
         }
 
-        return enrollments.stream()
-                .allMatch(enrollmentEntity -> {
-                    var transcript = enrollmentEntity.getScore();
-                    return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() >= failingGrade;
-                });
+        return true;
     }
 }

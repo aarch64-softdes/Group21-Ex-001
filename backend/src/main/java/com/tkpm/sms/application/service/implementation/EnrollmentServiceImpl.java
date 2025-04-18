@@ -122,7 +122,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         var subject = subjectService.getSubjectById(course.getSubject().getId());
 
         if (!subject.getPrerequisites().isEmpty()) {
-            enrollmentDomainValidator.validateStudentPassedPrerequisitesSubject(
+            enrollmentDomainValidator.validateStudentSatisfiedPrerequisitesSubject(
                     enrollmentCreateRequestDto.getStudentId(),
                     subject.getPrerequisites().stream()
                             .map(Subject::getId)
