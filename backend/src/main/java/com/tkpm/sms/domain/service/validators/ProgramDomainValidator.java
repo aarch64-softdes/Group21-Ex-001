@@ -5,7 +5,6 @@ import com.tkpm.sms.domain.repository.ProgramRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class ProgramDomainValidator {
     private final ProgramRepository programRepository;
