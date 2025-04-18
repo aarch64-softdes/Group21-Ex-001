@@ -1,5 +1,6 @@
 import api from '@/core/config/api';
 import {
+  AdjustmentDurationSetting,
   EmailDomainSetting,
   PhoneSetting,
   PhoneSettingRequest,
@@ -32,5 +33,19 @@ export default class SettingsService {
   ): Promise<PhoneSetting> => {
     const response = await api.put('/api/settings/phone-number', data);
     return response.data.content.supportedCountryCodes;
+  };
+
+  // Adjustment duration settings
+  getAdjustmentDurationSetting =
+    async (): Promise<AdjustmentDurationSetting> => {
+      const response = await api.get('/api/settings/adjustment-duration');
+      return response.data.content;
+    };
+
+  updateAdjustmentDurationSetting = async (
+    data: AdjustmentDurationSetting,
+  ): Promise<AdjustmentDurationSetting> => {
+    const response = await api.put('/api/settings/adjustment-duration', data);
+    return response.data.content;
   };
 }

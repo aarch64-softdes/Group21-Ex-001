@@ -15,10 +15,10 @@ export interface UpdateStatusDTO {
 }
 
 export const mapToStatus = (data: any): Status => ({
-  id: data.id as string,
+  id: data.id.toString(),
   name: data.name,
   allowedTransitions: data.allowedTransitions?.map((t: any) => ({
-    id: (t.id || t.toId) as string,
+    id: (t.id || t.toId).toString(),
     name: t.name,
   })),
 });

@@ -28,4 +28,6 @@ public interface EnrollmentRepository {
     List<Enrollment> getFailedSubjectsOfStudent(String studentId, List<Integer> subjectIds);
 
     List<Enrollment> getUnenrolledOrUnfinishedCourseOfSubjects(String studentId, List<Integer> subjectIds);
+
+    boolean existsByCourseId(Integer courseId);
 }

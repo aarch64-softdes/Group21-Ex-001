@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import SettingsService from '@/features/settings/api/settingService';
 import {
+  AdjustmentDurationSetting,
   EmailDomainSetting,
   PhoneSetting,
   PhoneSettingRequest,
@@ -50,6 +51,31 @@ export const useUpdatePhoneSetting = () => {
       settingsService.updatePhoneSetting(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['phoneSetting'] });
+    },
+    onError: (error) => {
+      showErrorToast(getErrorMessage(error));
+    },
+  });
+};
+
+// Adjustment Duration Settings Hooks
+export const useAdjustmentDurationSetting = () => {
+  return useQuery({
+    queryKey: ['adjustmentDurationSetting'],
+    queryFn: () => settingsService.getAdjustmentDurationSetting(),
+  });
+};
+
+export const useUpdateAdjustmentDurationSetting = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: AdjustmentDurationSetting) =>
+      settingsService.updateAdjustmentDurationSetting(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['adjustmentDurationSetting'],
+      });
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));

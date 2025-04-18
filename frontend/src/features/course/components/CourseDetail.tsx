@@ -13,10 +13,15 @@ import {
   User,
   GraduationCap,
   CalendarRange,
+  CornerUpRight,
 } from 'lucide-react';
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
+  const navigate = useNavigate();
+
   const { data: courseData, isLoading } = useCourse(courseId as string);
 
   if (isLoading) {
@@ -87,9 +92,19 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
                 {courseData.subject?.name}
               </p>
             </div>
-            <Badge variant='secondary' className='px-3 py-1'>
-              {courseData.year} - Semester {courseData.semester}
-            </Badge>
+            <div className='flex flex-col gap-3 items-end'>
+              <Badge variant='secondary' className='px-3 py-1'>
+                {courseData.year} - Semester {courseData.semester}
+              </Badge>
+              <Button
+                variant='outline'
+                className='mt-2 md:mt-0'
+                onClick={() => navigate(`/course/${courseId}/enrollments`)}
+              >
+                Enrollments for {courseData.code}
+                <CornerUpRight className='ml-2 h-4 w-4' />
+              </Button>
+            </div>
           </div>
           <Separator />
         </CardHeader>

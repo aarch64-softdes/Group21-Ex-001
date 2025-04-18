@@ -177,4 +177,9 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                         }
                 ).map(enrollmentPersistenceMapper::toDomain).toList();
     }
+
+    @Override
+    public boolean existsByCourseId(Integer courseId) {
+        return enrollmentJpaRepository.existsByCourseId(courseId);
+    }
 }

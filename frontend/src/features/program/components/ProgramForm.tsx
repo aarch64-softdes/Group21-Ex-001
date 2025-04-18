@@ -119,8 +119,7 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
                         </FormItem>
                       )}
                     />
-                  </CardContent>{' '}
-                  id ? id : '',
+                  </CardContent>
                 </Card>
 
                 <div className='flex justify-end gap-2 pt-4'>
