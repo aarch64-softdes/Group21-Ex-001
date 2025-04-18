@@ -37,6 +37,7 @@ public enum ErrorCode {
     INVALID_SUBJECT_CREDITS("Subject credits must be greater or equals {value}"),
     SUBJECT_DELETION_CONSTRAINT("Subject cannot be deleted"),
     SUBJECT_DEACTIVATED("Subject is deactivated"),
+    STUDENT_PREREQUISITES_NOT_SATISFIED("Student has not passed the necessary prerequisite subjects"),
 
     // Resource Errors
     NOT_FOUND("Resource not found"),

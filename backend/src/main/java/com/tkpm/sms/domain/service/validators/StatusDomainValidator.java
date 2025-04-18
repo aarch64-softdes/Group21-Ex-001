@@ -6,7 +6,6 @@ import com.tkpm.sms.domain.repository.StatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class StatusDomainValidator {
     private final StatusRepository statusRepository;

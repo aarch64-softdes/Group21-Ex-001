@@ -2,34 +2,42 @@ package com.tkpm.sms.infrastructure.persistence.repository;
 
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
-import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
+import com.tkpm.sms.domain.repository.SettingRepository;
+import com.tkpm.sms.domain.repository.SubjectRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.HistoryEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.EnrollmentJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.jpa.HistoryJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.EnrollmentPersistenceMapper;
 import com.tkpm.sms.infrastructure.persistence.mapper.HistoryPersistenceMapper;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EnrollmentRepositoryImpl implements EnrollmentRepository {
-    private final EnrollmentJpaRepository enrollmentJpaRepository;
-    private final HistoryJpaRepository historyJpaRepository;
-    private final EnrollmentPersistenceMapper enrollmentPersistenceMapper;
-    private final HistoryPersistenceMapper historyPersistenceMapper;
+    EnrollmentJpaRepository enrollmentJpaRepository;
+    HistoryJpaRepository historyJpaRepository;
+    SettingRepository settingRepository;
+    SubjectRepository subjectRepository;
+
+    EnrollmentPersistenceMapper enrollmentPersistenceMapper;
+    HistoryPersistenceMapper historyPersistenceMapper;
 
     @Override
-    public PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId, PageRequest pageRequest) {
+    public PageResponse<Enrollment> findAllEnrollmentsOfStudentWithPaging(String studentId, PageRequest pageRequest) {
         Pageable pageable = org.springframework.data.domain.PageRequest.of(
                 pageRequest.getPageNumber() - 1,
                 pageRequest.getPageSize(),
@@ -81,6 +89,13 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
+    public List<Enrollment> findAllEnrollmentsOfStudent(String studentId) {
+        return enrollmentJpaRepository.findAllByStudentId(studentId).stream()
+                .map(enrollmentPersistenceMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public Optional<Enrollment> findEnrollmentByStudentIdAndCourseId(String studentId, Integer courseId) {
         var enrollment = enrollmentJpaRepository.findByStudentIdAndCourseId(studentId, courseId);
 
@@ -127,5 +142,39 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     @Override
     public Integer countStudentsByCourseId(Integer courseId) {
         return enrollmentJpaRepository.countAllByCourseId(courseId);
+    }
+
+
+    @Override
+    public List<Enrollment> getFailedSubjectsOfStudent(String studentId, List<Integer> subjectIds) {
+        var failingGrade = settingRepository.getFailingGradeSetting();
+        var enrollments = enrollmentJpaRepository.findAllByStudentId(studentId)
+                .stream().filter(
+                        enrollmentEntity -> {
+                            var subject = enrollmentEntity.getCourse().getSubject();
+
+                            return subjectIds.contains(subject.getId());
+                        }
+                ).toList();
+        return enrollments.stream()
+                .filter(enrollmentEntity -> {
+                    var transcript = enrollmentEntity.getScore();
+                    return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() < failingGrade;
+                }).map(
+                        enrollmentPersistenceMapper::toDomain
+                ).toList();
+    }
+
+    @Override
+    public List<Enrollment> getUnenrolledOrUnfinishedCourseOfSubjects(String studentId, List<Integer> subjectIds) {
+
+        return enrollmentJpaRepository.findAllByStudentId(studentId)
+                .stream().filter(
+                        enrollmentEntity -> {
+                            var subject = enrollmentEntity.getCourse().getSubject();
+
+                            return !subjectIds.contains(subject.getId()) || Objects.isNull(enrollmentEntity.getScore().getGpa());
+                        }
+                ).map(enrollmentPersistenceMapper::toDomain).toList();
     }
 }

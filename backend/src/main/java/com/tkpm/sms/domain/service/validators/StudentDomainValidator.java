@@ -7,12 +7,12 @@ import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.repository.StudentRepository;
+import com.tkpm.sms.infrastructure.persistence.entity.StudentEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
 @RequiredArgsConstructor
 public class StudentDomainValidator {
     private final StudentRepository studentRepository;
@@ -57,7 +57,7 @@ public class StudentDomainValidator {
 
         if (!email.endsWith(validDomain)) {
             throw new UnsupportedEmailException(
-                    String.format("Email domain is not supported, only %s is allowed", validDomain)
+                    String.format("This %s email domain is not supported, only %s is allowed", email, validDomain)
             );
         }
     }
