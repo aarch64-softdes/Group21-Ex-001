@@ -24,4 +24,8 @@ public class EnrollmentEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id", nullable = false)
     CourseEntity course;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "score_id", referencedColumnName = "id")
+    ScoreEntity score;
 }

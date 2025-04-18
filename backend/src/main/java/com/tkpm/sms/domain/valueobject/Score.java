@@ -1,6 +1,5 @@
-package com.tkpm.sms.domain.model;
+package com.tkpm.sms.domain.valueobject;
 
-import com.tkpm.sms.domain.valueobject.Score;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,9 +9,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Enrollment {
+public class Score {
     Integer id;
-    Student student;
-    Course course;
-    Score score;
+    String grade;
+    Double gpa;
 }

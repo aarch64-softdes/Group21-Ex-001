@@ -1,9 +1,11 @@
 package com.tkpm.sms.domain.service;
 
-public interface FileStrategy {
-    byte[] export(Iterable<?> data);
+import java.util.List;
 
-    void importFile(Object file);
+public interface FileStrategy {
+    byte[] toBytes(Iterable<?> data);
+
+    <T> List<T> convert(Object file, Class<T> clazz);
 
     String getFormat();
 }

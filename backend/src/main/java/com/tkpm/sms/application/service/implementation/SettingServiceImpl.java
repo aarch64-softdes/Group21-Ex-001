@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tkpm.sms.application.dto.request.setting.AdjustmentDurationSettingRequestDto;
 import com.tkpm.sms.application.dto.request.setting.EmailDomainSettingRequestDto;
+import com.tkpm.sms.application.dto.request.setting.FailingGradeSettingRequestDto;
 import com.tkpm.sms.application.dto.request.setting.PhoneSettingRequestDto;
 import com.tkpm.sms.application.dto.response.setting.AdjustmentDurationSettingDto;
 import com.tkpm.sms.application.dto.response.setting.EmailDomainSettingDto;
+import com.tkpm.sms.application.dto.response.setting.FailingGradeSettingDto;
 import com.tkpm.sms.application.dto.response.setting.PhoneSettingDto;
 import com.tkpm.sms.application.service.interfaces.SettingService;
 import com.tkpm.sms.domain.enums.SettingType;
@@ -54,7 +56,7 @@ public class SettingServiceImpl implements SettingService {
         setting.setDetails(domain);
 
         var savedSetting = settingRepository.save(setting);
-        return  new EmailDomainSettingDto(savedSetting.getDetails());
+        return new EmailDomainSettingDto(savedSetting.getDetails());
     }
 
     @Override
@@ -90,6 +92,7 @@ public class SettingServiceImpl implements SettingService {
     }
 
     @Override
+    @Transactional
     public AdjustmentDurationSettingDto updateAdjustmentDurationSetting(
             AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto
     ) {
@@ -99,6 +102,27 @@ public class SettingServiceImpl implements SettingService {
         setting.setDetails(adjustmentDurationSettingRequestDto.getAdjustmentDuration());
 
         var savedSetting = settingRepository.save(setting);
-        return  new AdjustmentDurationSettingDto(savedSetting.getDetails());
+        return new AdjustmentDurationSettingDto(savedSetting.getDetails());
+    }
+
+    @Override
+    public FailingGradeSettingDto getFailingGradeSetting() {
+        return new FailingGradeSettingDto(settingRepository.getFailingGradeSetting());
+    }
+
+    @Override
+    public FailingGradeSettingDto updateFailingGradeSetting(FailingGradeSettingRequestDto failingGradeSettingRequestDto) {
+        Setting setting = settingRepository.findByName(SettingType.FAILING_GRADE.getValue())
+                .orElseThrow(() -> new ResourceNotFoundException("Failing grade setting not found"));
+
+        // TODO: check if the value is valid
+        Double failingGrade = failingGradeSettingRequestDto.getFailingGrade();
+        setting.setDetails(failingGrade.toString());
+
+        var savedSetting = settingRepository.save(setting);
+
+        return new FailingGradeSettingDto(
+                Double.parseDouble(savedSetting.getDetails())
+        );
     }
 }

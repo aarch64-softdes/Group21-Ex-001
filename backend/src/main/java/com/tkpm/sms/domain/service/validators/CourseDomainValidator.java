@@ -2,6 +2,8 @@ package com.tkpm.sms.domain.service.validators;
 
 import com.tkpm.sms.domain.exception.UnenrollableCourseException;
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
+import com.tkpm.sms.domain.model.Course;
+import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.repository.CourseRepository;
@@ -11,11 +13,9 @@ import com.tkpm.sms.domain.repository.SubjectRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-
 
 import java.time.LocalDate;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,6 +38,26 @@ public class CourseDomainValidator {
         if (courseRepository.existsByIdNotAndRoomAndCourseSchedule(id, room, schedule)) {
             throw new DuplicateResourceException(
                     String.format("Another course with room %s and schedule %s already exists", room, schedule)
+            );
+        }
+    }
+
+    public void validateCourseInTimePeriod(Course course) {
+
+        var adjustmentDuration = settingRepository.getAdjustmentDurationSetting();
+
+        if(LocalDate.now().isAfter(course.getStartDate().plusDays(Integer.parseInt(adjustmentDuration)))) {
+            throw new UnenrollableCourseException(
+                    String.format("Course with id %s is expired", course.getId())
+            );
+        }
+    }
+
+    public void validateCourseIsMaxCapacity(Course course) {
+        var currentCapacity = enrollmentRepository.countStudentsByCourseId(course.getId());
+        if(currentCapacity >= course.getMaxStudent()){
+            throw new UnenrollableCourseException(
+                    String.format("Course with id %s is already full ", course.getId())
             );
         }
     }
@@ -67,26 +87,6 @@ public class CourseDomainValidator {
             log.info("Validating course code and subject id for update: code={}, subjectCode={}", code, course.getSubject().getCode());
             throw new DuplicateResourceException(
                     String.format("Another course with code %s and subject id %s already exists", code, course.getSubject().getCode())
-            );
-        }
-    }
-
-    public void validateCourseInTimePeriod(Course course) {
-
-        var adjustmentDuration = settingRepository.getAdjustmentDurationSetting();
-
-        if(LocalDate.now().isAfter(course.getStartDate().plusDays(Integer.parseInt(adjustmentDuration)))) {
-            throw new UnenrollableCourseException(
-                    String.format("Course with id %s is expired", course.getId())
-            );
-        }
-    }
-
-    public void validateCourseIsMaxCapacity(Course course) {
-        var currentCapacity = enrollmentRepository.countStudentsByCourseId(course.getId());
-        if(currentCapacity >= course.getMaxStudent()){
-            throw new UnenrollableCourseException(
-                    String.format("Course with id %s is already full ", course.getId())
             );
         }
     }

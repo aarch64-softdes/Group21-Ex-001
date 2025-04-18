@@ -1,24 +1,21 @@
 package com.tkpm.sms.presentation.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tkpm.sms.application.dto.request.setting.AdjustmentDurationSettingRequestDto;
 import com.tkpm.sms.application.dto.request.setting.EmailDomainSettingRequestDto;
+import com.tkpm.sms.application.dto.request.setting.FailingGradeSettingRequestDto;
 import com.tkpm.sms.application.dto.request.setting.PhoneSettingRequestDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.application.dto.response.setting.AdjustmentDurationSettingDto;
 import com.tkpm.sms.application.dto.response.setting.EmailDomainSettingDto;
+import com.tkpm.sms.application.dto.response.setting.FailingGradeSettingDto;
 import com.tkpm.sms.application.dto.response.setting.PhoneSettingDto;
 import com.tkpm.sms.application.service.interfaces.SettingService;
-import com.tkpm.sms.domain.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -68,6 +65,20 @@ public class SettingController {
             @RequestBody AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto
     ) {
         var updatedSetting = settingService.updateAdjustmentDurationSetting(adjustmentDurationSettingRequestDto);
+        return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
+    }
+
+    @GetMapping("/failing-grade")
+    public ResponseEntity<ApplicationResponseDto<FailingGradeSettingDto>> getFailingGradeSetting() {
+        var setting = settingService.getFailingGradeSetting();
+        return ResponseEntity.ok(ApplicationResponseDto.success(setting));
+    }
+
+    @PutMapping("/failing-grade")
+    public ResponseEntity<ApplicationResponseDto<FailingGradeSettingDto>> updateFailingGradeSetting(
+            @RequestBody FailingGradeSettingRequestDto failingGradeSettingRequestDto
+    ) {
+        var updatedSetting = settingService.updateFailingGradeSetting(failingGradeSettingRequestDto);
         return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
     }
 }

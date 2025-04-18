@@ -61,7 +61,7 @@ public class SubjectDomainValidator {
 
         if (subjectRepository.isPrerequisiteForOtherSubjects(id)) {
             throw new SubjectDeletionConstraintException(
-                   String.format( "Subject with code %s is a prerequisite for other subjects", subject.getCode())
+                    String.format("Subject with code %s is a prerequisite for other subjects", subject.getCode())
             );
         }
     }
@@ -70,12 +70,12 @@ public class SubjectDomainValidator {
         var prerequisites = subjectRepository.findAllByIds(ids);
 
         if (prerequisites.size() != ids.size()) {
-            var missingPrerequisites = ids.stream().filter(
-                    id -> prerequisites.stream().noneMatch(subject -> subject.getId().equals(id))
+            var missingPrerequisites = prerequisites.stream().filter(
+                    subject -> !ids.contains(subject.getId())
             );
 
             throw new ResourceNotFoundException(
-                    String.format("Subject with id %s does not exist", missingPrerequisites)
+                    String.format("The following subjects are not exists: %s", missingPrerequisites.map(Subject::getCode).toList())
             );
         }
 
@@ -84,7 +84,7 @@ public class SubjectDomainValidator {
                 .toList();
         if (!inactivePrerequisites.isEmpty()) {
             throw new SubjectDeactivatedException(
-                    String.format("Some prerequisites with ids %s are not active", inactivePrerequisites.stream().map(Subject::getId).toList())
+                    String.format("The following subjects are inactive: %s", inactivePrerequisites.stream().map(Subject::getCode).toList())
             );
         }
     }

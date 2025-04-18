@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -27,7 +28,7 @@ public class CsvStrategy implements FileStrategy {
     private final StudentService studentService;
 
     @Override
-    public byte[] export(Iterable<?> data) {
+    public byte[] toBytes(Iterable<?> data) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         try {
@@ -42,27 +43,22 @@ public class CsvStrategy implements FileStrategy {
     }
 
     @Override
-    public void importFile(Object file) {
+    public <T> List<T> convert(Object file, Class<T> clazz) {
         if (!(file instanceof MultipartFile multipartFile)) {
             throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
+        CsvSchema schema = csvMapper.schemaFor(clazz).withHeader();
 
-        List<StudentFileDto> students;
         try {
-            students = csvMapper.readerFor(StudentFileDto.class)
-                    .with(csvSchema)
-                    .<StudentFileDto>readValues(multipartFile.getInputStream())
-                    .readAll().stream().toList();
-
+            // Read values using the schema
+            var iterator = csvMapper.readerFor(clazz).with(schema)
+                    .<T>readValues(multipartFile.getInputStream());
+            return iterator.readAll();
         } catch (IOException e) {
-            log.info("Error reading file", e);
-
-            throw new FileProcessingException("Error reading file", ErrorCode.FAIL_TO_IMPORT_FILE);
+            log.info("Error reading CSV file", e);
+            throw new FileProcessingException("Error reading CSV file", ErrorCode.FAIL_TO_IMPORT_FILE);
         }
-
-        studentService.saveListStudentFromFile(students);
     }
-
     @Override
     public String getFormat() {
         return "csv";
