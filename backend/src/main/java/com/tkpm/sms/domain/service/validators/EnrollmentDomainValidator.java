@@ -6,7 +6,6 @@ import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class EnrollmentDomainValidator {
     private final EnrollmentRepository enrollmentRepository;

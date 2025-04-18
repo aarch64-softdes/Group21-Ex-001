@@ -7,7 +7,11 @@ import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.repository.SettingRepository;
+import com.tkpm.sms.domain.repository.SubjectRepository;
+
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -15,10 +19,12 @@ import java.time.LocalDate;
 
 @Slf4j
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CourseDomainValidator {
-    private final CourseRepository courseRepository;
-    private final SettingRepository settingRepository;
-    private final EnrollmentRepository enrollmentRepository;
+    CourseRepository courseRepository;
+    SubjectRepository subjectRepository;
+    SettingRepository settingRepository;
+    EnrollmentRepository enrollmentRepository;
 
     public void validateRoomAndCourseSchedule(String room, String schedule) {
         if (courseRepository.existsByRoomAndCourseSchedule(room, schedule)) {
@@ -37,16 +43,16 @@ public class CourseDomainValidator {
     }
 
     public void validateCodeAndSubject(String code, Integer subjectId) {
-        var course = courseRepository.findById(subjectId).orElseThrow(
+        var subject = subjectRepository.findById(subjectId).orElseThrow(
                 () -> new ResourceNotFoundException(
-                        String.format("Course with id %s not found", subjectId)
+                        String.format("Subject with id %s not found", subjectId)
                 )
         );
 
         log.info("Validating course code and subject id: code={}, subjectId={}", code, subjectId);
         if (courseRepository.existsByCodeAndSubjectId(code, subjectId)) {
             throw new DuplicateResourceException(
-                    String.format("Course with code %s for subject %s already exists", code, course.getSubject().getCode())
+                    String.format("Course with code %s for subject %s already exists", code, subject.getCode())
             );
         }
     }
