@@ -709,3 +709,558 @@ INSERT INTO enrollments (student_id, course_id, score_id) VALUES
 -- Add a history record for this enrollment
 INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
 ('hist_020', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '25 days', 'ST008_ID', 11);
+
+
+
+
+
+-- ===============================
+-- ADDITIONAL SUBJECTS
+-- ===============================
+
+-- More subjects for Faculty of Business English (id=1)
+INSERT INTO subjects (name, code, description, credits, faculty_id) VALUES
+('Business Ethics', 'BUS301', 'Ethical principles and moral issues in business decisions', 3, 1),
+('International Marketing', 'MKT301', 'Marketing strategies for global markets and cross-cultural consumer behavior', 4, 1),
+('Organizational Behavior', 'MGT201', 'Human behavior in organizational settings', 3, 1),
+('Business Communication', 'COMM201', 'Professional communication skills for business environments', 3, 1),
+('Strategic Management', 'MGT401', 'Long-term planning and strategy formulation for organizations', 4, 1);
+
+-- More subjects for Faculty of Law (id=2)
+INSERT INTO subjects (name, code, description, credits, faculty_id) VALUES
+('Constitutional Law', 'LAW201', 'Fundamental principles of government structure and individual rights', 4, 2),
+('Criminal Law', 'LAW301', 'Principles, theories and problems of criminal law and punishment', 4, 2),
+('International Law', 'LAW401', 'Legal relationships between nations and international entities', 3, 2),
+('Contract Law', 'LAW202', 'Formation and enforcement of agreements between private parties', 3, 2),
+('Property Law', 'LAW302', 'Legal relationships between persons and property', 3, 2);
+
+-- More subjects for Faculty of Japanese (id=3)
+INSERT INTO subjects (name, code, description, credits, faculty_id) VALUES
+('Japanese Grammar', 'JPN201', 'Advanced Japanese language structure and grammar patterns', 4, 3),
+('Japanese History', 'JPN301', 'Historical development of Japan from ancient times to present', 3, 3),
+('Japanese Society', 'JPN302', 'Contemporary social issues and cultural aspects of Japan', 3, 3),
+('Business Japanese', 'JPN401', 'Japanese language skills for business and professional settings', 4, 3),
+('Japanese Film Studies', 'JPN402', 'Analysis of Japanese cinema and its cultural context', 3, 3);
+
+-- More subjects for Faculty of French (id=4)
+INSERT INTO subjects (name, code, description, credits, faculty_id) VALUES
+('French Grammar', 'FRN201', 'Advanced French language structure and grammar patterns', 4, 4),
+('French Literature', 'FRN301', 'Major works and movements in French literature', 3, 4),
+('French Culture', 'FRN302', 'Contemporary social issues and cultural aspects of France', 3, 4),
+('Business French', 'FRN401', 'French language skills for business and professional settings', 4, 4),
+('French Film Studies', 'FRN402', 'Analysis of French cinema and its cultural context', 3, 4);
+
+-- Add additional prerequisites
+-- Business Ethics requires Intro to Business
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES 
+((SELECT id FROM subjects WHERE code = 'BUS301'), (SELECT id FROM subjects WHERE code = 'BUS101'));
+
+-- International Marketing requires Marketing Principles
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES 
+((SELECT id FROM subjects WHERE code = 'MKT301'), (SELECT id FROM subjects WHERE code = 'BUS201'));
+
+-- Strategic Management requires Business Ethics and Organizational Behavior
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES 
+((SELECT id FROM subjects WHERE code = 'MGT401'), (SELECT id FROM subjects WHERE code = 'BUS301')),
+((SELECT id FROM subjects WHERE code = 'MGT401'), (SELECT id FROM subjects WHERE code = 'MGT201'));
+
+-- Criminal Law requires Constitutional Law
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES 
+((SELECT id FROM subjects WHERE code = 'LAW301'), (SELECT id FROM subjects WHERE code = 'LAW201'));
+
+-- International Law requires Constitutional Law
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES 
+((SELECT id FROM subjects WHERE code = 'LAW401'), (SELECT id FROM subjects WHERE code = 'LAW201'));
+
+-- Business Japanese requires Japanese Grammar
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES 
+((SELECT id FROM subjects WHERE code = 'JPN401'), (SELECT id FROM subjects WHERE code = 'JPN201'));
+
+-- Japanese Film Studies requires Japanese Society
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES 
+((SELECT id FROM subjects WHERE code = 'JPN402'), (SELECT id FROM subjects WHERE code = 'JPN302'));
+
+-- Business French requires French Grammar
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES 
+((SELECT id FROM subjects WHERE code = 'FRN401'), (SELECT id FROM subjects WHERE code = 'FRN201'));
+
+-- French Film Studies requires French Culture
+INSERT INTO subject_prerequisites (subject_id, prerequisite_id) VALUES 
+((SELECT id FROM subjects WHERE code = 'FRN402'), (SELECT id FROM subjects WHERE code = 'FRN302'));
+
+-- ===============================
+-- ADDITIONAL COURSES
+-- ===============================
+
+-- More courses for existing subjects (additional sections)
+INSERT INTO courses (code, year, semester, lecturer, max_student, room, schedule, start_date, program_id, subject_id) VALUES
+-- Additional Computer Science course sections
+('CS101_03', 2025, 2, 'Dr. Alice Cooper', 35, 'B204', 'T3(7-10)', '2025-09-10', 1, 1),
+('CS201_02', 2025, 2, 'Prof. Mark Johnson', 40, 'A102', 'T4(7-10)', '2025-09-12', 1, 2),
+-- Additional Mathematics course sections
+('MATH101_02', 2025, 2, 'Dr. Thomas Lee', 45, 'C101', 'T5(1-4)', '2025-09-15', 2, 6),
+('MATH201_02', 2025, 2, 'Prof. Susan Kim', 35, 'D303', 'T2(4-7)', '2025-09-11', 2, 8);
+
+-- New courses for Business subjects
+INSERT INTO courses (code, year, semester, lecturer, max_student, room, schedule, start_date, program_id, subject_id) VALUES
+('BUS301_01', 2025, 1, 'Dr. Patricia Adams', 50, 'E201', 'T3(4-7)', '2025-04-16', 1, (SELECT id FROM subjects WHERE code = 'BUS301')),
+('BUS301_02', 2025, 2, 'Prof. Richard Scott', 45, 'F302', 'T6(7-10)', '2025-09-14', 5, (SELECT id FROM subjects WHERE code = 'BUS301')),
+('MKT301_01', 2025, 1, 'Dr. William Chen', 40, 'E202', 'T4(4-7)', '2025-04-17', 5, (SELECT id FROM subjects WHERE code = 'MKT301')),
+('MGT201_01', 2025, 1, 'Prof. Lisa Wang', 55, 'F101', 'T5(1-4)', '2025-04-18', 10, (SELECT id FROM subjects WHERE code = 'MGT201')),
+('COMM201_01', 2025, 2, 'Dr. Kevin Rodriguez', 50, 'E101', 'T2(7-10)', '2025-09-16', 10, (SELECT id FROM subjects WHERE code = 'COMM201')),
+('MGT401_01', 2025, 2, 'Prof. Emma Wilson', 35, 'F303', 'T3(1-4)', '2025-09-17', 1, (SELECT id FROM subjects WHERE code = 'MGT401'));
+
+-- New courses for Law subjects
+INSERT INTO courses (code, year, semester, lecturer, max_student, room, schedule, start_date, program_id, subject_id) VALUES
+('LAW201_01', 2025, 1, 'Prof. George Martinez', 60, 'G201', 'T2(4-7)', '2025-04-15', 2, (SELECT id FROM subjects WHERE code = 'LAW201')),
+('LAW301_01', 2025, 1, 'Dr. Victoria Taylor', 50, 'G301', 'T4(1-4)', '2025-04-17', 2, (SELECT id FROM subjects WHERE code = 'LAW301')),
+('LAW401_01', 2025, 2, 'Prof. Charles Wright', 40, 'G401', 'T6(4-7)', '2025-09-13', 7, (SELECT id FROM subjects WHERE code = 'LAW401')),
+('LAW202_01', 2025, 2, 'Dr. Olivia Davis', 55, 'G202', 'T5(7-10)', '2025-09-18', 7, (SELECT id FROM subjects WHERE code = 'LAW202')),
+('LAW302_01', 2025, 2, 'Prof. James Lee', 45, 'G302', 'T3(4-7)', '2025-09-19', 2, (SELECT id FROM subjects WHERE code = 'LAW302'));
+
+-- New courses for Japanese subjects
+INSERT INTO courses (code, year, semester, lecturer, max_student, room, schedule, start_date, program_id, subject_id) VALUES
+('JPN201_01', 2025, 1, 'Prof. Hiroshi Tanaka', 40, 'H201', 'T3(1-4)', '2025-04-16', 3, (SELECT id FROM subjects WHERE code = 'JPN201')),
+('JPN301_01', 2025, 1, 'Dr. Akiko Sato', 35, 'H301', 'T5(4-7)', '2025-04-18', 3, (SELECT id FROM subjects WHERE code = 'JPN301')),
+('JPN302_01', 2025, 2, 'Prof. Takashi Yamamoto', 45, 'H302', 'T2(1-4)', '2025-09-15', 6, (SELECT id FROM subjects WHERE code = 'JPN302')),
+('JPN401_01', 2025, 2, 'Dr. Yuki Nakamura', 30, 'H401', 'T4(4-7)', '2025-09-17', 9, (SELECT id FROM subjects WHERE code = 'JPN401')),
+('JPN402_01', 2025, 2, 'Prof. Keiko Suzuki', 25, 'H402', 'T6(1-4)', '2025-09-19', 3, (SELECT id FROM subjects WHERE code = 'JPN402'));
+
+-- New courses for French subjects
+INSERT INTO courses (code, year, semester, lecturer, max_student, room, schedule, start_date, program_id, subject_id) VALUES
+('FRN201_01', 2025, 1, 'Prof. Pierre Dubois', 40, 'J201', 'T4(4-7)', '2025-04-17', 4, (SELECT id FROM subjects WHERE code = 'FRN201')),
+('FRN301_01', 2025, 1, 'Dr. Sophie Martin', 35, 'J301', 'T6(7-10)', '2025-04-19', 4, (SELECT id FROM subjects WHERE code = 'FRN301')),
+('FRN302_01', 2025, 2, 'Prof. Jean Lefebvre', 45, 'J302', 'T3(7-10)', '2025-09-16', 8, (SELECT id FROM subjects WHERE code = 'FRN302')),
+('FRN401_01', 2025, 2, 'Dr. Marie Roux', 30, 'J401', 'T5(4-7)', '2025-09-18', 4, (SELECT id FROM subjects WHERE code = 'FRN401')),
+('FRN402_01', 2025, 2, 'Prof. Claude Moreau', 25, 'J402', 'T2(7-10)', '2025-09-20', 8, (SELECT id FROM subjects WHERE code = 'FRN402'));
+
+-- ===============================
+-- ADDITIONAL ENROLLMENTS AND SCORES
+-- ===============================
+
+-- Student 1 (John Smith - Business English) - additional enrollments
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- Business Ethics
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST001_ID', (SELECT id FROM courses WHERE code = 'BUS301_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Organizational Behavior
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST001_ID', (SELECT id FROM courses WHERE code = 'MGT201_01'), currval('scores_id_seq'));
+
+-- Student 2 (Emily Johnson - Law) - additional enrollments
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Constitutional Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST002_ID', (SELECT id FROM courses WHERE code = 'LAW201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Criminal Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST002_ID', (SELECT id FROM courses WHERE code = 'LAW301_01'), currval('scores_id_seq'));
+
+-- Student 3 (Michael Brown - Japanese) - additional enrollments (graduated)
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Japanese Grammar
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST003_ID', (SELECT id FROM courses WHERE code = 'JPN201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- Japanese History
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST003_ID', (SELECT id FROM courses WHERE code = 'JPN301_01'), currval('scores_id_seq'));
+
+-- Student 4 (Sarah Davis - French) - additional enrollments
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- French Grammar
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST004_ID', (SELECT id FROM courses WHERE code = 'FRN201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- French Literature
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST004_ID', (SELECT id FROM courses WHERE code = 'FRN301_01'), currval('scores_id_seq'));
+
+-- Student 5 (David Wilson - Business English, Suspended) - additional enrollments
+INSERT INTO scores (grade, gpa) VALUES ('D', 1.0); -- International Marketing
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST005_ID', (SELECT id FROM courses WHERE code = 'MKT301_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- Business Ethics
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST005_ID', (SELECT id FROM courses WHERE code = 'BUS301_01'), currval('scores_id_seq'));
+
+-- Student 6 (Jennifer Taylor - Japanese) - additional enrollments
+INSERT INTO scores (grade, gpa) VALUES ('C', 2.0); -- Japanese Grammar
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST006_ID', (SELECT id FROM courses WHERE code = 'JPN201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('C+', 2.3); -- Japanese Society
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST006_ID', (SELECT id FROM courses WHERE code = 'JPN302_01'), currval('scores_id_seq'));
+
+-- Student 7 (James Anderson - Law) - additional enrollments
+INSERT INTO scores (grade, gpa) VALUES ('B', 3.0); -- Constitutional Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST007_ID', (SELECT id FROM courses WHERE code = 'LAW201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B-', 2.7); -- Property Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST007_ID', (SELECT id FROM courses WHERE code = 'LAW302_01'), currval('scores_id_seq'));
+
+-- Student 8 (Linda Martinez - French, Dropped) - additional enrollments
+INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- French Grammar
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST008_ID', (SELECT id FROM courses WHERE code = 'FRN201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('D-', 0.7); -- French Culture
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST008_ID', (SELECT id FROM courses WHERE code = 'FRN302_01'), currval('scores_id_seq'));
+
+-- Student 9 (Robert Thompson - Japanese) - additional enrollments
+INSERT INTO scores (grade, gpa) VALUES ('C', 2.0); -- Japanese History
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST009_ID', (SELECT id FROM courses WHERE code = 'JPN301_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B-', 2.7); -- Japanese Society
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST009_ID', (SELECT id FROM courses WHERE code = 'JPN302_01'), currval('scores_id_seq'));
+
+-- Student 10 (Elizabeth Garcia - Business English) - additional enrollments
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Business Ethics
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST010_ID', (SELECT id FROM courses WHERE code = 'BUS301_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- International Marketing
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST010_ID', (SELECT id FROM courses WHERE code = 'MKT301_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Organizational Behavior
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST010_ID', (SELECT id FROM courses WHERE code = 'MGT201_01'), currval('scores_id_seq'));
+
+-- ===============================
+-- HISTORY RECORDS FOR NEW ENROLLMENTS
+-- ===============================
+
+-- Add history records for all new enrollments
+INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
+-- Student 1 new enrollments history
+('hist_021', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'BUS301_01')),
+('hist_022', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'MGT201_01')),
+
+-- Student 2 new enrollments history
+('hist_023', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW201_01')),
+('hist_024', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW301_01')),
+
+-- Student 3 new enrollments history
+('hist_025', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN201_01')),
+('hist_026', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN301_01')),
+
+-- Student 4 new enrollments history
+('hist_027', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN201_01')),
+('hist_028', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN301_01')),
+
+-- Student 5 new enrollments history
+('hist_029', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '18 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'MKT301_01')),
+('hist_030', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '18 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'BUS301_01')),
+
+-- Student 6 new enrollments history
+('hist_031', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN201_01')),
+('hist_032', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN302_01')),
+
+-- Student 7 new enrollments history
+('hist_033', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW201_01')),
+('hist_034', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW302_01')),
+
+-- Student 8 new enrollments history
+('hist_035', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '22 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'FRN201_01')),
+('hist_036', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '22 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'FRN302_01')),
+
+-- Student 9 new enrollments history
+('hist_037', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'JPN301_01')),
+('hist_038', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'JPN302_01')),
+
+-- Student 10 new enrollments history
+('hist_039', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '7 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'BUS301_01')),
+('hist_040', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '7 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'MKT301_01')),
+('hist_041', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '7 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'MGT201_01'));
+
+-- ===============================
+-- ADDITIONAL ENROLLMENTS AND SCORES FOR EXISTING STUDENTS
+-- ===============================
+
+-- More enrollments for second semester courses
+-- Student 1 (John Smith - Business English)
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Strategic Management
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST001_ID', (SELECT id FROM courses WHERE code = 'MGT401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Business Communication
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST001_ID', (SELECT id FROM courses WHERE code = 'COMM201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- CS201 (second section)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST001_ID', (SELECT id FROM courses WHERE code = 'CS201_02'), currval('scores_id_seq'));
+
+-- Student 2 (Emily Johnson - Law)
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- International Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST002_ID', (SELECT id FROM courses WHERE code = 'LAW401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B', 3.0); -- Contract Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST002_ID', (SELECT id FROM courses WHERE code = 'LAW202_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Property Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST002_ID', (SELECT id FROM courses WHERE code = 'LAW302_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('C+', 2.3); -- Business Ethics
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST002_ID', (SELECT id FROM courses WHERE code = 'BUS301_02'), currval('scores_id_seq'));
+
+-- Student 3 (Michael Brown - Japanese, graduated)
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Business Japanese
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST003_ID', (SELECT id FROM courses WHERE code = 'JPN401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Japanese Film Studies
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST003_ID', (SELECT id FROM courses WHERE code = 'JPN402_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- Japanese Society
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST003_ID', (SELECT id FROM courses WHERE code = 'JPN302_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Organizational Behavior
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST003_ID', (SELECT id FROM courses WHERE code = 'MGT201_01'), currval('scores_id_seq'));
+
+-- Student 4 (Sarah Davis - French)
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- French Culture
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST004_ID', (SELECT id FROM courses WHERE code = 'FRN302_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Business French
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST004_ID', (SELECT id FROM courses WHERE code = 'FRN401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- French Film Studies
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST004_ID', (SELECT id FROM courses WHERE code = 'FRN402_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('C+', 2.3); -- Calculus I (additional section)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST004_ID', (SELECT id FROM courses WHERE code = 'MATH101_02'), currval('scores_id_seq'));
+
+-- Student 5 (David Wilson - Business English, Suspended)
+INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- Business Communication
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST005_ID', (SELECT id FROM courses WHERE code = 'COMM201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- Strategic Management
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST005_ID', (SELECT id FROM courses WHERE code = 'MGT401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('D-', 0.7); -- CS101 (third section)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST005_ID', (SELECT id FROM courses WHERE code = 'CS101_03'), currval('scores_id_seq'));
+
+-- Student 6 (Jennifer Taylor - Japanese)
+INSERT INTO scores (grade, gpa) VALUES ('D+', 1.3); -- Business Japanese
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST006_ID', (SELECT id FROM courses WHERE code = 'JPN401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('C', 2.0); -- Japanese Film Studies
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST006_ID', (SELECT id FROM courses WHERE code = 'JPN402_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('C+', 2.3); -- Japanese History
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST006_ID', (SELECT id FROM courses WHERE code = 'JPN301_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('D', 1.0); -- Intro to Business
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST006_ID', (SELECT id FROM courses WHERE code = 'BUS101_01'), currval('scores_id_seq'));
+
+-- Student 7 (James Anderson - Law)
+INSERT INTO scores (grade, gpa) VALUES ('B', 3.0); -- Criminal Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST007_ID', (SELECT id FROM courses WHERE code = 'LAW301_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B-', 2.7); -- International Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST007_ID', (SELECT id FROM courses WHERE code = 'LAW401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- Contract Law
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST007_ID', (SELECT id FROM courses WHERE code = 'LAW202_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Intro to Computer Science (section 3)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST007_ID', (SELECT id FROM courses WHERE code = 'CS101_03'), currval('scores_id_seq'));
+
+-- Student 8 (Linda Martinez - French, Dropped)
+INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- French Film Studies
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST008_ID', (SELECT id FROM courses WHERE code = 'FRN402_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- Business French
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST008_ID', (SELECT id FROM courses WHERE code = 'FRN401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('D-', 0.7); -- Intro to Computer Science (section 3)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST008_ID', (SELECT id FROM courses WHERE code = 'CS101_03'), currval('scores_id_seq'));
+
+-- Student 9 (Robert Thompson - Japanese)
+INSERT INTO scores (grade, gpa) VALUES ('C+', 2.3); -- Business Japanese
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST009_ID', (SELECT id FROM courses WHERE code = 'JPN401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B-', 2.7); -- Japanese Film Studies
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST009_ID', (SELECT id FROM courses WHERE code = 'JPN402_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('C', 2.0); -- Linear Algebra (section 2)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST009_ID', (SELECT id FROM courses WHERE code = 'MATH201_02'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B-', 2.7); -- Intro to Business
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST009_ID', (SELECT id FROM courses WHERE code = 'BUS101_01'), currval('scores_id_seq'));
+
+-- Student 10 (Elizabeth Garcia - Business English)
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Business Communication
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST010_ID', (SELECT id FROM courses WHERE code = 'COMM201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- Strategic Management
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST010_ID', (SELECT id FROM courses WHERE code = 'MGT401_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Intro to Computer Science (section 3)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST010_ID', (SELECT id FROM courses WHERE code = 'CS101_03'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Linear Algebra (section 2)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST010_ID', (SELECT id FROM courses WHERE code = 'MATH201_02'), currval('scores_id_seq'));
+
+-- ===============================
+-- EVEN MORE ENROLLMENTS (THIRD ROUND)
+-- ===============================
+
+-- Student 1 (John Smith - Business English)
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- Marketing Principles
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST001_ID', (SELECT id FROM courses WHERE code = 'BUS201_01'), currval('scores_id_seq'));
+
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Linear Algebra (section 2)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST001_ID', (SELECT id FROM courses WHERE code = 'MATH201_02'), currval('scores_id_seq'));
+
+-- Student 2 (Emily Johnson - Law)
+INSERT INTO scores (grade, gpa) VALUES ('A-', 3.7); -- Marketing Principles
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST002_ID', (SELECT id FROM courses WHERE code = 'BUS201_01'), currval('scores_id_seq'));
+
+-- Student 3 (Michael Brown - Japanese, graduated)
+INSERT INTO scores (grade, gpa) VALUES ('A', 4.0); -- Intro to Computer Science (section 3)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST003_ID', (SELECT id FROM courses WHERE code = 'CS101_03'), currval('scores_id_seq'));
+
+-- Student 4 (Sarah Davis - French)
+INSERT INTO scores (grade, gpa) VALUES ('B', 3.0); -- Intro to Computer Science (section 3)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST004_ID', (SELECT id FROM courses WHERE code = 'CS101_03'), currval('scores_id_seq'));
+
+-- Student 6 (Jennifer Taylor - Japanese)
+INSERT INTO scores (grade, gpa) VALUES ('C-', 1.7); -- Linear Algebra (section 2)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST006_ID', (SELECT id FROM courses WHERE code = 'MATH201_02'), currval('scores_id_seq'));
+
+-- Student 7 (James Anderson - Law)
+INSERT INTO scores (grade, gpa) VALUES ('B', 3.0); -- Business Ethics (section 2)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST007_ID', (SELECT id FROM courses WHERE code = 'BUS301_02'), currval('scores_id_seq'));
+
+-- Student 9 (Robert Thompson - Japanese)
+INSERT INTO scores (grade, gpa) VALUES ('C+', 2.3); -- Marketing Principles
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST009_ID', (SELECT id FROM courses WHERE code = 'BUS201_01'), currval('scores_id_seq'));
+
+-- Student 10 (Elizabeth Garcia - Business English)
+INSERT INTO scores (grade, gpa) VALUES ('B+', 3.3); -- Data Structures (section 2)
+INSERT INTO enrollments (student_id, course_id, score_id) VALUES
+('ST010_ID', (SELECT id FROM courses WHERE code = 'CS201_02'), currval('scores_id_seq'));
+
+-- ===============================
+-- HISTORY RECORDS FOR ALL NEW ENROLLMENTS
+-- ===============================
+
+-- Add history records for the second batch of enrollments
+INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
+-- Student 1 new enrollments history
+('hist_042', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '15 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'MGT401_01')),
+('hist_043', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '15 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'COMM201_01')),
+('hist_044', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '15 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'CS201_02')),
+
+-- Student 2 new enrollments history
+('hist_045', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW401_01')),
+('hist_046', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW202_01')),
+('hist_047', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW302_01')),
+('hist_048', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'BUS301_02')),
+
+-- Student 3 new enrollments history
+('hist_049', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '17 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN401_01')),
+('hist_050', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '17 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN402_01')),
+('hist_051', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '17 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN302_01')),
+('hist_052', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '17 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'MGT201_01')),
+
+-- Student 4 new enrollments history
+('hist_053', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '13 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN302_01')),
+('hist_054', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '13 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN401_01')),
+('hist_055', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '13 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN402_01')),
+('hist_056', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '13 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'MATH101_02')),
+
+-- Student 5 new enrollments history
+('hist_057', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '19 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'COMM201_01')),
+('hist_058', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '19 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'MGT401_01')),
+('hist_059', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '19 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
+
+-- Student 6 new enrollments history
+('hist_060', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN401_01')),
+('hist_061', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN402_01')),
+('hist_062', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN301_01')),
+('hist_063', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'BUS101_01')),
+
+-- Student 7 new enrollments history
+('hist_064', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW301_01')),
+('hist_065', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW401_01')),
+('hist_066', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW202_01')),
+('hist_067', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
+
+-- Student 8 new enrollments history
+('hist_068', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '21 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'FRN402_01')),
+('hist_069', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '21 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'FRN401_01')),
+('hist_070', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '21 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
+
+-- Student 9 new enrollments history
+('hist_071', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'JPN401_01')),
+('hist_072', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'JPN402_01')),
+('hist_073', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'MATH201_02')),
+('hist_074', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'BUS101_01')),
+
+-- Student 10 new enrollments history
+('hist_075', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'COMM201_01')),
+('hist_076', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'MGT401_01')),
+('hist_077', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
+('hist_078', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'MATH201_02'));
+
+-- Add history records for the third batch of enrollments
+INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
+('hist_079', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'BUS201_01')),
+('hist_080', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'MATH201_02')),
+('hist_081', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '7 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'BUS201_01')),
+('hist_082', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '6 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
+('hist_083', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '6 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
+('hist_084', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '5 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'MATH201_02')),
+('hist_085', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '5 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'BUS301_02')),
+('hist_086', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '4 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'BUS201_01')),
+('hist_087', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '4 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'CS201_02'));
