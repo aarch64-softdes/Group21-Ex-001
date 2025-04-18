@@ -82,8 +82,6 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   });
 
   useEffect(() => {
-    console.log('Status data:', statusData);
-
     if (statusData && id) {
       form.reset({
         name: statusData.name || '',

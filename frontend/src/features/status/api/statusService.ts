@@ -30,8 +30,6 @@ export default class StatusService {
       },
     });
 
-    console.log(response.data);
-
     return {
       data: response.data.content.data.map(mapToStatus),
       totalItems: response.data.content.totalElements,
