@@ -46,9 +46,9 @@ const EnrollmentHistoryTable: React.FC<EnrollmentHistoryTableProps> = ({
 
   const getActionBadge = (actionType: string) => {
     switch (actionType.toLowerCase()) {
-      case 'enroll':
+      case 'enrolled':
         return <Badge variant='default'>Enrolled</Badge>;
-      case 'unenroll':
+      case 'deleted':
         return <Badge variant='destructive'>Unenrolled</Badge>;
       default:
         return <Badge variant='secondary'>{actionType}</Badge>;

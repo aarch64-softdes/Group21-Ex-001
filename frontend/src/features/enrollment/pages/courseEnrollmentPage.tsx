@@ -4,11 +4,12 @@ import { useCourse } from '@/features/course/api/useCourseApi';
 import AvailableStudentsTable from '../components/AvailableStudentsTable';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ResourceNotFoundError } from '@/shared/lib/errors';
 
 const CourseEnrollmentPage: React.FC = () => {
   const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
-  const { data: course, isLoading } = useCourse(courseId || '');
+  const { data: course, isLoading, error } = useCourse(courseId || '');
 
   if (isLoading) {
     return (
@@ -18,19 +19,21 @@ const CourseEnrollmentPage: React.FC = () => {
     );
   }
 
+  if (error) {
+    throw error;
+  }
+
   if (!course || !courseId) {
-    return (
-      <div className='flex items-center justify-center h-48'>
-        <p className='text-muted-foreground'>Course not found</p>
-      </div>
-    );
+    throw new ResourceNotFoundError('Course not found');
   }
 
   return (
     <div className='container mx-auto p-6'>
       <div className='mb-6 flex items-center justify-between'>
         <div>
-          <h1 className='text-2xl font-bold mb-2'>Course Student Management</h1>
+          <h1 className='text-2xl font-bold mb-2'>
+            Course Enrollment Management
+          </h1>
           <p className='text-muted-foreground'>
             Course: {course.subject?.name} ({course.code})
           </p>

@@ -7,11 +7,12 @@ import CurrentEnrollmentsTable from '../components/CurrentEnrollmentsTable';
 import EnrollmentHistoryTable from '../components/EnrollmentHistoryTable';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ResourceNotFoundError } from '@/shared/lib/errors';
 
 const StudentEnrollmentPage: React.FC = () => {
   const navigate = useNavigate();
   const { studentId } = useParams<{ studentId: string }>();
-  const { data: student, isLoading } = useStudent(studentId || '');
+  const { data: student, isLoading, error } = useStudent(studentId || '');
   const [activeTab, setActiveTab] = useState('available');
 
   if (isLoading) {
@@ -22,19 +23,21 @@ const StudentEnrollmentPage: React.FC = () => {
     );
   }
 
+  if (error) {
+    throw error;
+  }
+
   if (!student || !studentId) {
-    return (
-      <div className='flex items-center justify-center h-48'>
-        <p className='text-muted-foreground'>Student not found</p>
-      </div>
-    );
+    throw new ResourceNotFoundError('Student not found');
   }
 
   return (
     <div className='container mx-auto p-6'>
       <div className='mb-6 flex items-center justify-between'>
         <div>
-          <h1 className='text-2xl font-bold mb-2'>Course Enrollment</h1>
+          <h1 className='text-2xl font-bold mb-2'>
+            Student Enrollment Management
+          </h1>
           <p className='text-muted-foreground'>
             Student: {student.name} ({student.studentId})
           </p>

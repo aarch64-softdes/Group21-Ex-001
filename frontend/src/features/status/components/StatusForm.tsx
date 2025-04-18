@@ -59,9 +59,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   isLoading = false,
   isEditing = false,
 }) => {
-  const { data: statusData, isLoading: isLoadingStatus } = useStatus(
-    parseInt(id || ''),
-  );
+  const { data: statusData, isLoading: isLoadingStatus } = useStatus(id || '');
   const { data: statusesData, isLoading: isLoadingStatuses } = useStatuses({
     page: 1,
     pageSize: 100,

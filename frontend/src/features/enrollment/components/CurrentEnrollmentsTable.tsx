@@ -280,7 +280,7 @@ const CurrentEnrollmentsTable: React.FC<CurrentEnrollmentsTableProps> = ({
             <AlertDialogAction
               onClick={handleConfirmUnenroll}
               disabled={unenrollCourse.isPending}
-              className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+              className='bg-destructive hover:bg-destructive/90'
             >
               {unenrollCourse.isPending ? (
                 <>

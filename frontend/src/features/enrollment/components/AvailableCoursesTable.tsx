@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useCourses } from '@/features/course/api/useCourseApi';
 import { useEnrollCourse } from '../api/useEnrollmentApi';
 import { Button } from '@ui/button';
-import { Input } from '@ui/input';
 import {
   Table,
   TableBody,
@@ -19,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@ui/dialog';
-import { Loader2, Search } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import TablePagination from '@/components/table/TablePagination';
 
 interface AvailableCoursesTableProps {
@@ -33,24 +32,11 @@ const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
   const [pageSize, setPageSize] = useState(10);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-
-  // Effect for debouncing search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 300);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [searchTerm]);
 
   const { data: coursesResponse, isLoading } = useCourses({
     page,
     pageSize,
-    filters: { search: debouncedSearchTerm },
+    filters: {},
     sort: { key: 'code', direction: 'asc' },
   });
 
@@ -87,19 +73,6 @@ const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
 
   return (
     <div className='bg-white rounded-md p-4'>
-      <div className='mb-4 relative'>
-        <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-          <Search className='h-4 w-4 text-muted-foreground' />
-        </div>
-        <Input
-          type='search'
-          placeholder='Search courses by name or code...'
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className='pl-10'
-        />
-      </div>
-
       {!coursesResponse?.data || coursesResponse.data.length === 0 ? (
         <div className='text-center py-8'>
           <p className='text-muted-foreground'>No available courses found.</p>
