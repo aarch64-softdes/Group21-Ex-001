@@ -7,9 +7,7 @@ public interface FileService {
 
     void importStudentFile(String format, Object multipartFile);
 
-    byte[] exportTranscript(String studentId);
+    byte[] exportTranscript(Map<String, Object> data);
 
-    Map<String, Object> getStudentTranscriptData(String studentId);
-    
     void importTranscriptFile(String format, Object multipartFile);
 }

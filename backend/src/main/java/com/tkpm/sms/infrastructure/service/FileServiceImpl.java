@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.naming.factory.OpenEjbFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -96,72 +97,19 @@ public class FileServiceImpl implements FileService {
             throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
 
-        List<EnrollmentFileImportDto> transcripts = fileStrategyFactory.getStrategy(format).convert(multipartFile, EnrollmentFileImportDto.class);
+        List<EnrollmentFileImportDto> transcripts = fileStrategyFactory.getStrategy(format).convert(multipartFile,
+                EnrollmentFileImportDto.class);
 
         enrollmentService.updateTranscripts(transcripts);
     }
 
     @Override
-    public byte[] exportTranscript(String studentId) {
+    public byte[] exportTranscript(Map<String, Object> data) {
         try {
-            Map<String, Object> data = getStudentTranscriptData(studentId);
             return documentService.processTemplateAsHtmlToPdf("templates/template.html", data);
         } catch (Exception e) {
-            log.error("Failed to generate transcript PDF for student {}", studentId, e);
+            log.error("Failed to generate transcript PDF for student {}", data.get("studentId"), e);
             throw new FileProcessingException("Failed to generate transcript PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
         }
-    }
-
-    @Override
-    public Map<String, Object> getStudentTranscriptData(String studentId) {
-        var student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Student with id %s not found", studentId)));
-
-        var studentDomain = studentPersistenceMapper.toDomain(student);
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("studentId", studentDomain.getStudentId());
-        data.put("studentName", studentDomain.getName());
-        data.put("className", studentDomain.getFaculty().getName());
-        data.put("birthDate", studentDomain.getDob().toString());
-        data.put("semester", "Spring 2025"); // TODO: Get from current academic term
-
-        // TODO: Calculate actual GPA from student's courses
-        data.put("gpa", calculateGPA(studentDomain));
-
-        // TODO: Get actual course data from student's enrollment
-        List<Map<String, Object>> subjects = getStudentCourses(studentDomain);
-        data.put("subjects", subjects);
-
-        data.put("totalCredits", calculateTotalCredits(subjects));
-
-        return data;
-    }
-
-    private Double calculateGPA(Student student) {
-        // TODO: Implement actual GPA calculation from student's courses
-        return 3.85; // Placeholder
-    }
-
-    private List<Map<String, Object>> getStudentCourses(Student student) {
-        // TODO: Get actual course data from student's enrollment
-        return List.of(
-                Map.of(
-                        "courseId", "MATH101",
-                        "name", "Mathematics",
-                        "credits", 4,
-                        "finalScore", 85.5),
-                Map.of(
-                        "courseId", "COMP201",
-                        "name", "Data Structures",
-                        "credits", 3,
-                        "finalScore", 92.0));
-    }
-
-    private Integer calculateTotalCredits(List<Map<String, Object>> subjects) {
-        return subjects.stream()
-                .mapToInt(subject -> (Integer) subject.get("credits"))
-                .sum();
     }
 }
