@@ -6,6 +6,7 @@ import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.application.dto.response.student.StudentDto;
 import com.tkpm.sms.application.dto.response.student.StudentMinimalDto;
+import com.tkpm.sms.application.service.interfaces.EnrollmentService;
 import com.tkpm.sms.application.service.interfaces.FileService;
 import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.common.PageResponse;
@@ -36,13 +37,14 @@ public class StudentController {
     StudentService studentService;
     StudentMapperImpl studentMapper;
     FileService fileService;
+    EnrollmentService enrollmentService;
 
-    @GetMapping({"", "/"})
+    @GetMapping({ "", "/" })
     public ResponseEntity<ApplicationResponseDto<PageResponse<StudentMinimalDto>>> getStudents(
-            @ModelAttribute StudentCollectionRequest search
-    ) {
+            @ModelAttribute StudentCollectionRequest search) {
         PageResponse<Student> pageResponse = studentService.findAll(search);
-        List<StudentMinimalDto> studentDtos = ListUtils.transform(pageResponse.getData(), studentMapper::toStudentMinimalDto);
+        List<StudentMinimalDto> studentDtos = ListUtils.transform(pageResponse.getData(),
+                studentMapper::toStudentMinimalDto);
         PageResponse<StudentMinimalDto> listResponse = PageResponse.of(pageResponse, studentDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
@@ -84,9 +86,15 @@ public class StudentController {
     @GetMapping("/{id}/transcript")
     public ResponseEntity<byte[]> getTranscript(@PathVariable String id) {
         try {
-            // TODO: Replace with actual student data retrieval
-            Map<String, Object> data = fileService.getStudentTranscriptData(id);
-            byte[] pdfBytes = fileService.exportTranscript(id);
+            var actualData = enrollmentService.getAcademicTranscriptOfStudent(id);
+            var data = Map.of(
+                    "studentId", actualData.getStudentId(),
+                    "studentName", actualData.getStudentName(),
+                    "courseName", actualData.getCourseName(),
+                    "studentDob", actualData.getStudentDob(),
+                    "gpa", actualData.getGpa(),
+                    "transcriptList", actualData.getTranscriptList());
+            byte[] pdfBytes = fileService.exportTranscript(data);
 
             String timestamp = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
             String filename = "academic_record_" + id + "_" + timestamp + ".pdf";
