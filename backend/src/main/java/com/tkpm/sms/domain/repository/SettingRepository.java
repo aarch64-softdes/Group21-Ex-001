@@ -17,4 +17,6 @@ public interface SettingRepository {
     String getEmailSetting();
 
     String getAdjustmentDurationSetting();
+
+    Double getFailingGradeSetting();
 }

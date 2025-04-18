@@ -73,4 +73,11 @@ public class SettingRepositoryImpl implements SettingRepository {
 
         return setting.getDetails();
     }
+
+    @Override
+    public Double getFailingGradeSetting() {
+        var setting = jpaRepository.findFailingGradeSetting();
+
+        return Double.parseDouble(setting.getDetails());
+    }
 }

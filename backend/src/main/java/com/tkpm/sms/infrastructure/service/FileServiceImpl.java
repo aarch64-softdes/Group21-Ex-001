@@ -1,7 +1,12 @@
 package com.tkpm.sms.infrastructure.service;
 
+import com.tkpm.sms.application.dto.request.enrollment.EnrollmentFileImportDto;
+import com.tkpm.sms.application.dto.request.enrollment.EnrollmentUpdateRequestDto;
+import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
+import com.tkpm.sms.application.service.interfaces.EnrollmentService;
 import com.tkpm.sms.application.service.interfaces.FileService;
+import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
@@ -29,10 +34,13 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FileServiceImpl implements FileService {
     StudentJpaRepository studentRepository;
+
     StudentPersistenceMapper studentPersistenceMapper;
     StudentMapperImpl studentMapper;
+    StudentService studentService;
     FileStrategyFactory fileStrategyFactory;
-    StudentDomainValidator studentDomainValidator;
+
+    EnrollmentService enrollmentService;
 
     @Override
     public byte[] exportStudentFile(String format) {
@@ -58,7 +66,7 @@ public class FileServiceImpl implements FileService {
             currentPage++;
         } while (currentPage < studentPage.getTotalPages());
 
-        return fileStrategyFactory.getStrategy(format).export(students);
+        return fileStrategyFactory.getStrategy(format).toBytes(students);
     }
 
     @Override
@@ -67,6 +75,19 @@ public class FileServiceImpl implements FileService {
             throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
 
-        fileStrategyFactory.getStrategy(format).importFile(multipartFile);
+        List<StudentFileDto> students = fileStrategyFactory.getStrategy(format).convert(multipartFile, StudentFileDto.class);
+
+        studentService.saveListStudentFromFile(students);
+    }
+
+    @Override
+    public void importTranscriptFile(String format, Object multipartFile) {
+        if (!(multipartFile instanceof MultipartFile)) {
+            throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
+        }
+
+        List<EnrollmentFileImportDto> transcripts = fileStrategyFactory.getStrategy(format).convert(multipartFile, EnrollmentFileImportDto.class);
+
+        enrollmentService.updateTranscripts(transcripts);
     }
 }

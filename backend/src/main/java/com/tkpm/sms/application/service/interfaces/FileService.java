@@ -4,4 +4,6 @@ public interface FileService {
     byte[] exportStudentFile(String format);
 
     void importStudentFile(String format, Object multipartFile);
+
+    void importTranscriptFile(String format, Object multipartFile);
 }

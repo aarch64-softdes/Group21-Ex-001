@@ -4,6 +4,7 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentDeleteRequestDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
+import com.tkpm.sms.application.dto.response.enrollment.AcademicTranscriptDto;
 import com.tkpm.sms.application.dto.response.enrollment.EnrollmentDto;
 import com.tkpm.sms.application.dto.response.enrollment.EnrollmentMinimalDto;
 import com.tkpm.sms.application.dto.response.enrollment.HistoryDto;
@@ -68,5 +69,13 @@ public class EnrollmentController {
         enrollmentService.deleteEnrollment(enrollmentDeleteRequestDto);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/{studentId}/transcript")
+    public ResponseEntity<ApplicationResponseDto<AcademicTranscriptDto>> getTranscriptOfStudent(
+            @PathVariable String studentId
+    ) {
+        AcademicTranscriptDto data = enrollmentService.getAcademicTranscriptOfStudent(studentId);
+        return ResponseEntity.ok(ApplicationResponseDto.success(data));
     }
 }
