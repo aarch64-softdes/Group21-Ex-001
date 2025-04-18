@@ -48,7 +48,7 @@ public class CourseDomainValidator {
 
         if(LocalDate.now().isAfter(course.getStartDate().plusDays(Integer.parseInt(adjustmentDuration)))) {
             throw new UnenrollableCourseException(
-                    String.format("Course with id %s is expired", course.getId())
+                    String.format("Course with code %s can only be modified in %s days", course.getCode(), adjustmentDuration)
             );
         }
     }
@@ -87,6 +87,14 @@ public class CourseDomainValidator {
             log.info("Validating course code and subject id for update: code={}, subjectCode={}", code, course.getSubject().getCode());
             throw new DuplicateResourceException(
                     String.format("Another course with code %s and subject id %s already exists", code, course.getSubject().getCode())
+            );
+        }
+    }
+
+    public void validateEnrollmentExistenceForCourse(Course course) {
+        if (enrollmentRepository.existsByCourseId(course.getId())) {
+            throw new DuplicateResourceException(
+                    String.format("Course with code %s already has enrollments", course.getCode())
             );
         }
     }

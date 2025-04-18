@@ -104,6 +104,13 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void deleteCourse(Integer id) {
+        var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Course with id %s not found", id)
+        ));
+
+        courseValidator.validateCourseInTimePeriod(course);
+        courseValidator.validateEnrollmentExistenceForCourse(course);
+
         courseRepository.deleteById(id);
     }
 }
