@@ -17,4 +17,5 @@ public class Faculty {
     String name;
     LocalDate deletedAt;
     Set<Student> students;
+    Set<Subject> subjects;
 }

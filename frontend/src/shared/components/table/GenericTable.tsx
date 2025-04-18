@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from '@ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@ui/dialog';
 import {
   Table,
   TableBody,
@@ -27,6 +27,8 @@ import { useMemo, useState } from 'react';
 import TableSort from './TableSort';
 import FileImportButton from './FileImportButton';
 import FileExportButton from './FileExportButton';
+import { getNestedValue } from '@/shared/lib/utils';
+import { ScrollArea } from '../ui/scroll-area';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
@@ -120,9 +122,19 @@ const GenericTable = <T extends { id: string }>({
                   width: column.style?.width,
                 }}
               >
-                {column.transform
-                  ? column.transform(cell[column.key])
-                  : String(cell[column.key])}
+                {(() => {
+                  // Get the value using the path or key
+                  const value = column.nested
+                    ? getNestedValue(cell, column.key.toString())
+                    : cell[column.key as keyof typeof cell];
+
+                  // Apply transform if specified or convert to string
+                  return column.transform
+                    ? column.transform(value)
+                    : value !== null && value !== undefined
+                    ? String(value)
+                    : '';
+                })()}
               </TableCell>
             ))}
             <TableCell className='min-w-20 py-1'>
@@ -139,6 +151,7 @@ const GenericTable = <T extends { id: string }>({
                 additionalActions={additionalActions.map((action) => ({
                   label: action.label,
                   handler: () => action.handler(cell.id),
+                  disabled: action.disabled ? action.disabled(cell) : false,
                 }))}
               />
             </TableCell>
@@ -191,7 +204,7 @@ const GenericTable = <T extends { id: string }>({
                 key={filterOption.id}
                 onChange={(value) => filters.onChange(filterOption.id, value)}
                 {...filterOption}
-                value={filters.value[filterOption.id] || ''}
+                value={filters.value[filterOption.id] as string}
                 componentType='popover'
               />
             );
@@ -263,31 +276,52 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Add Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
-          <FormComponent
-            onSubmit={handleAdd}
-            onCancel={() => setDialogOpen(false)}
-          />
+        <DialogContent className='max-w-screen w-[90%] p-4 rounded-md max-h-[96vh] flex flex-col'>
+          <DialogHeader>
+            <DialogTitle />
+          </DialogHeader>
+          <div className='flex-1 overflow-hidden my-4'>
+            <ScrollArea className='h-[calc(90vh-50px)] w-full'>
+              <FormComponent
+                onSubmit={handleAdd}
+                onCancel={() => setDialogOpen(false)}
+              />
+            </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
-          <FormComponent
-            id={currentEditItem?.id}
-            onSubmit={handleEditSave}
-            onCancel={() => setEditDialogOpen(false)}
-            isLoading={isEditSaving}
-            isEditing={true}
-          />
+        <DialogContent className='max-w-screen w-[90%] p-4 rounded-md max-h-[96vh] flex flex-col'>
+          <DialogHeader>
+            <DialogTitle />
+          </DialogHeader>
+          <div className='flex-1 overflow-hidden my-4'>
+            <ScrollArea className='h-[calc(90vh-50px)] w-full'>
+              <FormComponent
+                id={currentEditItem?.id}
+                onSubmit={handleEditSave}
+                onCancel={() => setEditDialogOpen(false)}
+                isLoading={isEditSaving}
+                isEditing={true}
+              />
+            </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Detail Dialog */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className='max-w-screen w-[90%] h-[97%] p-4'>
-          <DetailComponent id={currentDetailItem?.id} />
+        <DialogContent className='max-w-screen w-[90%] p-4 rounded-md max-h-[96vh] flex flex-col'>
+          <DialogHeader>
+            <DialogTitle />
+          </DialogHeader>
+          <div className='flex-1 overflow-hidden my-4'>
+            <ScrollArea className='h-[calc(90vh-50px)] w-full'>
+              <DetailComponent id={currentDetailItem?.id} />
+            </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -29,12 +29,19 @@ public class ErrorCodeStatusMapper {
         mappings.put(ErrorCode.INVALID_IDENTITY_ISSUED_DATE, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.FIELD_REQUIRED, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_FILE_FORMAT, HttpStatus.BAD_REQUEST);
+        mappings.put(ErrorCode.UNENROLLABLE_COURSE, HttpStatus.BAD_REQUEST);
+        mappings.put(ErrorCode.INVALID_SUBJECT_CREDITS, HttpStatus.BAD_REQUEST);
+        mappings.put(ErrorCode.STUDENT_PREREQUISITES_NOT_SATISFIED, HttpStatus.BAD_REQUEST);
 
         // Resource Errors (4xx)
         mappings.put(ErrorCode.NOT_FOUND, HttpStatus.NOT_FOUND);
         mappings.put(ErrorCode.DUPLICATE_RESOURCE, HttpStatus.CONFLICT);
         mappings.put(ErrorCode.UNSUPPORTED_EMAIL_DOMAIN, HttpStatus.CONFLICT);
         mappings.put(ErrorCode.UNSUPPORTED_STATUS_TRANSITION, HttpStatus.CONFLICT);
+
+        // Subject Errors (4xx)
+        mappings.put(ErrorCode.SUBJECT_DELETION_CONSTRAINT, HttpStatus.BAD_REQUEST);
+        mappings.put(ErrorCode.SUBJECT_DEACTIVATED, HttpStatus.BAD_REQUEST);
     }
 
     public HttpStatus getStatus(ErrorCode errorCode) {

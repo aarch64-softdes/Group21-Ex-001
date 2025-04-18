@@ -41,3 +41,13 @@ export function getErrorMessage(error: unknown): string {
   // Handle unknown error types
   return 'An unexpected error occurred.';
 }
+
+export function getNestedValue(obj: any, path: string | string[]): any {
+  if (!obj) return null;
+
+  const keys = Array.isArray(path) ? path : path.split('.');
+  return keys.reduce(
+    (value, key) => (value && value[key] !== undefined ? value[key] : null),
+    obj,
+  );
+}

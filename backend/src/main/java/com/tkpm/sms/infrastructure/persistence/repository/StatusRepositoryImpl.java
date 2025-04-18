@@ -7,6 +7,7 @@ import com.tkpm.sms.domain.repository.StatusRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.StatusEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.StatusJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.StatusPersistenceMapper;
+import com.tkpm.sms.infrastructure.utils.PagingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,14 +61,7 @@ public class StatusRepositoryImpl implements StatusRepository {
     @Override
     public PageResponse<Status> findAll(PageRequest pageRequest) {
         // Convert domain PageRequest to Spring Pageable
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                pageRequest.getPageNumber() - 1,
-                pageRequest.getPageSize(),
-                pageRequest.getSortDirection() == PageRequest.SortDirection.DESC
-                        ? Sort.Direction.DESC
-                        : Sort.Direction.ASC,
-                pageRequest.getSortBy()
-        );
+        Pageable pageable = PagingUtils.toSpringPageable(pageRequest);
 
         // Execute query with Spring Pageable
         Page<StatusEntity> page = jpaRepository.findAll(pageable);

@@ -10,4 +10,6 @@ public interface FileService {
     byte[] exportTranscript(String studentId);
 
     Map<String, Object> getStudentTranscriptData(String studentId);
+    
+    void importTranscriptFile(String format, Object multipartFile);
 }

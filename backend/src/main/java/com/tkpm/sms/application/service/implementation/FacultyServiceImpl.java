@@ -25,16 +25,7 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public PageResponse<Faculty> getAllFaculties(BaseCollectionRequest search) {
-        // Convert to domain PageRequest
-        PageRequest pageRequest = PageRequest.builder()
-                .pageNumber(search.getPage())
-                .pageSize(search.getSize())
-                .sortBy(search.getSortBy())
-                .sortDirection("desc".equalsIgnoreCase(search.getSortDirection())
-                        ? PageRequest.SortDirection.DESC
-                        : PageRequest.SortDirection.ASC)
-                .build();
-
+        PageRequest pageRequest = PageRequest.from(search);
         return facultyRepository.findAll(pageRequest);
     }
 

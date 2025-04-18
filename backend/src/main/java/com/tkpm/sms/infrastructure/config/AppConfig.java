@@ -1,6 +1,7 @@
 package com.tkpm.sms.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.*;
 import com.tkpm.sms.domain.service.validators.*;
 import org.springframework.context.annotation.Bean;
@@ -36,5 +37,27 @@ public class AppConfig {
     @Bean
     public StatusDomainValidator statusValidator(StatusRepository statusRepository) {
         return new StatusDomainValidator(statusRepository);
+    }
+
+    @Bean
+    public CourseDomainValidator courseValidator(
+            CourseRepository courseRepository,
+            SubjectRepository subjectRepository,
+            SettingRepository settingRepository,
+            EnrollmentRepository enrollmentRepository
+    ) {
+        return new CourseDomainValidator(courseRepository, subjectRepository, settingRepository, enrollmentRepository);
+    }
+
+    @Bean
+    public SubjectDomainValidator subjectValidator(SubjectRepository subjectRepository) {
+        return new SubjectDomainValidator(subjectRepository);
+    }
+
+    @Bean
+    public EnrollmentDomainValidator enrollmentValidator(EnrollmentRepository enrollmentRepository,
+                                                         StudentRepository studentRepository,
+                                                         CourseRepository courseRepository) {
+        return new EnrollmentDomainValidator(enrollmentRepository, studentRepository, courseRepository);
     }
 }

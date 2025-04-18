@@ -13,7 +13,7 @@ public class BaseCollectionRequest {
 
     int size = 5;
 
-    String sortBy = "name";
+    String sortBy = "id";
 
     String sortDirection = "asc";
 }

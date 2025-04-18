@@ -33,6 +33,10 @@ public class FileController {
 
     /**
      * Export students to a file in the specified format (CSV or JSON).
+     * @param format The format of the file to export (CSV or JSON).
+     */
+    /**
+     * Export students to a file in the specified format (CSV or JSON).
      * 
      * @param format The format of the file to export (CSV or JSON).
      */
@@ -141,5 +145,14 @@ public class FileController {
     private String generateFilename(String extension) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
         return "students" + "_" + timestamp + "." + extension;
+    }
+
+    @PostMapping("/import/transcript")
+    public ResponseEntity<ApplicationResponseDto<Void>> importTranscriptFile(
+            @RequestParam("format") String format,
+            @RequestParam("file") MultipartFile multipartFile
+    ) {
+        fileService.importTranscriptFile(format, multipartFile);
+        return ResponseEntity.ok().body(ApplicationResponseDto.success());
     }
 }

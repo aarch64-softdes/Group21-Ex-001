@@ -6,7 +6,6 @@ import com.tkpm.sms.domain.repository.IdentityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class IdentityDomainValidator {
     private final IdentityRepository identityRepository;

@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
 } from '@ui/alert-dialog';
 import { EllipsisVertical, Loader2 } from 'lucide-react';
-import React from 'react';
+import React, { act } from 'react';
 
 const ActionCell: React.FC<ActionCellProps> = ({
   requireDeleteConfirmation = true,
@@ -79,6 +79,24 @@ const ActionCell: React.FC<ActionCellProps> = ({
               <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
             </>
           )}
+
+          {additionalActions?.map((action, index) =>
+            action.disabled ? null : (
+              <React.Fragment key={`action-${index}`}>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    action.handler();
+                  }}
+                >
+                  <span className='flex items-center gap-2'>
+                    {action.label}
+                  </span>
+                </DropdownMenuItem>
+              </React.Fragment>
+            ),
+          )}
+
           {!disabledActions.delete && (
             <>
               <DropdownMenuSeparator />
@@ -87,18 +105,6 @@ const ActionCell: React.FC<ActionCellProps> = ({
               </DropdownMenuItem>
             </>
           )}
-          {additionalActions?.map((action, index) => (
-            <React.Fragment key={`action-${index}`}>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  action.handler();
-                }}
-              >
-                <span className='flex items-center gap-2'>{action.label}</span>
-              </DropdownMenuItem>
-            </React.Fragment>
-          ))}
         </DropdownMenuContent>
       </DropdownMenu>
 

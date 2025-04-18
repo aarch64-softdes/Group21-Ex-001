@@ -1,7 +1,11 @@
 package com.tkpm.sms.infrastructure.service;
 
+import com.tkpm.sms.application.dto.request.enrollment.EnrollmentFileImportDto;
+import com.tkpm.sms.application.dto.request.enrollment.EnrollmentUpdateRequestDto;
+import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
+import com.tkpm.sms.application.service.interfaces.EnrollmentService;
 import com.tkpm.sms.application.service.interfaces.FileService;
 import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.exception.ErrorCode;
@@ -37,11 +41,14 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FileServiceImpl implements FileService {
     StudentJpaRepository studentRepository;
+
     StudentPersistenceMapper studentPersistenceMapper;
     StudentMapperImpl studentMapper;
     StudentService studentService;
     FileStrategyFactory fileStrategyFactory;
+
     StudentDomainValidator studentDomainValidator;
+    EnrollmentService enrollmentService;
     DocumentTemplateProcessingService documentService;
 
     @Override
@@ -81,6 +88,17 @@ public class FileServiceImpl implements FileService {
                 StudentFileDto.class);
 
         studentService.saveListStudentFromFile(students);
+    }
+
+    @Override
+    public void importTranscriptFile(String format, Object multipartFile) {
+        if (!(multipartFile instanceof MultipartFile)) {
+            throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
+        }
+
+        List<EnrollmentFileImportDto> transcripts = fileStrategyFactory.getStrategy(format).convert(multipartFile, EnrollmentFileImportDto.class);
+
+        enrollmentService.updateTranscripts(transcripts);
     }
 
     @Override
