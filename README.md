@@ -447,3 +447,48 @@ After Elasticsearch is running and your application has generated some logs:
 7. Click "Save data view to Kibana"
 
 Now you can use Discover to search and filter your logs, or create visualizations and dashboards.
+
+## Features
+### Course
+- Course creation:
+  ![Course Creation](documents/assets/week04/course-create.png)   
+- Course update:
+   ![Course Update](documents/assets/week04/course-update.png)
+- Course list:
+  ![Course List](documents/assets/week04/course-list.png)
+- Course detail:
+   ![Course Detail](documents/assets/week04/course-detail.png)
+- Course enrollment:
+   ![Course Enrollment](documents/assets/week04/course-enrollment.png)
+- Invalid prerequisite enrollment:
+   ![Invalid Prerequisite](documents/assets/week04/course-enrollment-invalid-prerequesite.png)
+- Modified courses which are out of duration:
+   ![Enrollment Out of Duration](documents/assets/week04/course-modified-out-of-duration.png)
+
+### Enrollment
+- Enrollment creation:
+  ![Enrollment Creation](documents/assets/week04/enrollment.png)
+- Current enrollments of students:
+  ![Current Enrollments](documents/assets/week04/enrollment-current.png)
+- Enrollment transcript:
+   ![Enrollment Detail](documents/assets/week04/enrollment-transcript.png)
+- Enrollment transcript export:
+   ![Enrollment Export](documents/assets/week04/enrollment-transcript-pdf.png)
+- Enrollment history:
+   ![Enrollment History](documents/assets/week04/enrollment-history.png)
+
+### Subject
+- Subject creation:
+   ![Subject Creation](documents/assets/week04/subject-create.png)
+- Subject update:
+   ![Subject Update](documents/assets/week04/subject-update.png)
+- Subject list:
+   ![Subject List](documents/assets/week04/subject-list.png)
+- Subject detail:
+   ![Subject Detail](documents/assets/week04/subject-detail.png)
+- Subject deactive:
+   ![Subject Deactive](documents/assets/week04/subject-deactive.png)
+   
+### Setting - Adjustment duration
+- Setting duration:
+   ![Setting Duration](documents/assets/week04/setting-adjustment-duration.png)
