@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useAcademicTranscript } from '../api/useEnrollmentApi';
 import {
   Card,
@@ -23,6 +23,9 @@ import { Transcript } from '../types/enrollment';
 import { format } from 'date-fns';
 import { Separator } from '@ui/separator';
 
+// Import the print styles
+import '../styles/transcript-print.css';
+
 interface AcademicTranscriptProps {
   studentId: string;
 }
@@ -30,6 +33,7 @@ interface AcademicTranscriptProps {
 const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
   studentId,
 }) => {
+  const transcriptRef = useRef<HTMLDivElement>(null);
   const {
     data: transcript,
     isLoading,
@@ -43,7 +47,16 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
   };
 
   const handlePrint = () => {
+    // Add a class to the body before printing
+    document.body.classList.add('print-transcript-only');
+
+    // Call the print function
     window.print();
+
+    // Remove the class after printing dialog closes
+    setTimeout(() => {
+      document.body.classList.remove('print-transcript-only');
+    }, 500);
   };
 
   // This would be implemented fully with a proper API endpoint
@@ -77,14 +90,18 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
   }
 
   return (
-    <Card className='max-w-4xl mx-auto print:shadow-none'>
+    <Card
+      className='max-w-4xl mx-auto print:shadow-none'
+      id='transcript-printable'
+      ref={transcriptRef}
+    >
       <CardHeader className='print:pb-2'>
         <div className='flex justify-between items-start'>
           <div>
             <CardTitle className='text-2xl'>Academic Transcript</CardTitle>
             <CardDescription>Official student transcript</CardDescription>
           </div>
-          <div className='flex space-x-2 print:hidden'>
+          <div className='flex space-x-2 print-hidden'>
             <Button variant='outline' size='sm' onClick={handlePrint}>
               <Printer className='h-4 w-4 mr-2' />
               Print

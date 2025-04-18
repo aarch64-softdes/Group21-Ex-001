@@ -1,0 +1,41 @@
+@media print {
+    /* Hide everything by default when in print mode */
+    body.print-transcript-only * {
+      visibility: hidden;
+    }
+    
+    /* Only show the transcript card and its children */
+    body.print-transcript-only #transcript-printable,
+    body.print-transcript-only #transcript-printable * {
+      visibility: visible;
+    }
+    
+    /* Position the component at the top of the page */
+    body.print-transcript-only #transcript-printable {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+    
+    /* Additional print styling */
+    body.print-transcript-only .print-hidden {
+      display: none !important;
+    }
+    
+    /* Ensure page breaks work correctly */
+    @page {
+      size: auto;
+      margin: 15mm;
+    }
+    
+    /* Improve table printing */
+    table {
+      page-break-inside: auto;
+    }
+    
+    tr {
+      page-break-inside: avoid;
+      page-break-after: auto;
+    }
+  }

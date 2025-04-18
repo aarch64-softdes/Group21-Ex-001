@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useStudent } from '@/features/student/api/useStudentApi';
 import AvailableCoursesTable from '../components/AvailableCoursesTable';
 import CurrentEnrollmentsTable from '../components/CurrentEnrollmentsTable';
@@ -8,12 +8,21 @@ import EnrollmentHistoryTable from '../components/EnrollmentHistoryTable';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ResourceNotFoundError } from '@/shared/lib/errors';
+import AcademicTranscript from '../components/AcademicTranscriptView';
 
 const StudentEnrollmentPage: React.FC = () => {
   const navigate = useNavigate();
   const { studentId } = useParams<{ studentId: string }>();
   const { data: student, isLoading, error } = useStudent(studentId || '');
-  const [activeTab, setActiveTab] = useState('available');
+
+  // Use search params to store and retrieve the active tab
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'available';
+
+  // Update the URL when tab changes
+  const handleTabChange = (value: string) => {
+    setSearchParams({ tab: value });
+  };
 
   if (isLoading) {
     return (
@@ -55,10 +64,11 @@ const StudentEnrollmentPage: React.FC = () => {
         </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className='mb-6'>
           <TabsTrigger value='available'>Available Courses</TabsTrigger>
           <TabsTrigger value='current'>Current Enrollments</TabsTrigger>
+          <TabsTrigger value='transcript'>Transcript</TabsTrigger>
           <TabsTrigger value='history'>Enrollment History</TabsTrigger>
         </TabsList>
 
@@ -72,6 +82,10 @@ const StudentEnrollmentPage: React.FC = () => {
 
         <TabsContent value='history'>
           <EnrollmentHistoryTable studentId={studentId} />
+        </TabsContent>
+
+        <TabsContent value='transcript'>
+          <AcademicTranscript studentId={studentId} />
         </TabsContent>
       </Tabs>
     </div>

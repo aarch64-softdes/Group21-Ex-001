@@ -184,12 +184,6 @@ const StudentPage: React.FC = () => {
               navigate(`/student/${id}/enrollments`);
             },
           },
-          {
-            label: 'View Transcripts',
-            handler(id) {
-              navigate(`/student/${id}/transcript`);
-            },
-          },
         ]}
       />
     </div>
