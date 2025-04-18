@@ -1,4 +1,4 @@
-import Course from '@/features/course/types/course';
+import Course, { mapToCourse } from '@/features/course/types/course';
 import Student from '@/features/student/types/student';
 
 export interface Score {
@@ -75,7 +75,7 @@ export const mapToEnrollment = (data: any): Enrollment => ({
 
 export const mapToEnrollmentMinimal = (data: any): EnrollmentMinimal => ({
   id: data.id.toString(),
-  course: data.course,
+  course: mapToCourse(data.course),
   score: data.score
     ? {
         grade: data.score.grade,
