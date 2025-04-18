@@ -128,4 +128,11 @@ export default class StudentService {
       },
     });
   };
+
+  exportTranscript = async (studentId: string): Promise<Blob> => {
+    const response = await api.get(`/api/students/${studentId}/transcript`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  };
 }

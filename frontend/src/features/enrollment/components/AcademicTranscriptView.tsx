@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAcademicTranscript } from '../api/useEnrollmentApi';
 import {
   Card,
@@ -22,18 +22,20 @@ import { Button } from '@ui/button';
 import { Transcript } from '../types/enrollment';
 import { format } from 'date-fns';
 import { Separator } from '@ui/separator';
-
-// Import the print styles
+import StudentService from '@/features/student/api/studentService';
 import '../styles/transcript-print.css';
 
 interface AcademicTranscriptProps {
   studentId: string;
 }
 
+const studentService = new StudentService();
+
 const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
   studentId,
 }) => {
   const transcriptRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
   const {
     data: transcript,
     isLoading,
@@ -59,10 +61,38 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
     }, 500);
   };
 
-  // This would be implemented fully with a proper API endpoint
-  const handleDownload = () => {
-    // In a real implementation, this would call an API endpoint to generate a PDF
-    alert('This feature would download a PDF of the transcript.');
+  const handleDownload = async () => {
+    try {
+      setIsExporting(true);
+
+      // Get the blob data from the API
+      const blob = await studentService.exportTranscript(studentId);
+
+      // Create a download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+
+      // Set filename with student name if available
+      const filename = transcript
+        ? `transcript_${transcript.studentName.replace(/\s+/g, '_')}.pdf`
+        : `transcript_${studentId}.pdf`;
+
+      link.setAttribute('download', filename);
+
+      // Append to the document, click it, and clean up
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading transcript:', error);
+      alert('Failed to download transcript. Please try again later.');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   if (isLoading) {
@@ -106,9 +136,23 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
               <Printer className='h-4 w-4 mr-2' />
               Print
             </Button>
-            <Button variant='outline' size='sm' onClick={handleDownload}>
-              <Download className='h-4 w-4 mr-2' />
-              Download
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={handleDownload}
+              disabled={isExporting}
+            >
+              {isExporting ? (
+                <>
+                  <Loader2 className='h-4 w-4 mr-2 animate-spin' />
+                  Exporting...
+                </>
+              ) : (
+                <>
+                  <Download className='h-4 w-4 mr-2' />
+                  Download
+                </>
+              )}
             </Button>
           </div>
         </div>
