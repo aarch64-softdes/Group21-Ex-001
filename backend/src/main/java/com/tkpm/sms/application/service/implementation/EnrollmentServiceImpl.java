@@ -21,6 +21,7 @@ import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.repository.TranscriptRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import com.tkpm.sms.domain.service.validators.EnrollmentDomainValidator;
+import com.tkpm.sms.domain.valueobject.Score;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -81,10 +82,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Student %s is not enrolled into course %s", student.getStudentId(), course.getCode())));
 
-        var transcript = scoreMapper.toScore(transcriptUpdateRequestDto);
-        enrollment.setScore(
-                transcriptRepository.save(transcript)
-        );
+        var score = scoreMapper.toScore(transcriptUpdateRequestDto);
+        enrollment.setScore(score);
 
         return enrollmentRepository.save(enrollment);
     }
@@ -133,9 +132,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Enrollment enrollment = enrollmentMapper.toEnrollment(enrollmentCreateRequestDto);
         enrollment.setStudent(studentService.getStudentDetail(enrollmentCreateRequestDto.getStudentId()));
         enrollment.setCourse(courseService.getCourseById(enrollmentCreateRequestDto.getCourseId()));
-        enrollment.setScore(
-                transcriptRepository.save(new Score())
-        );
+        enrollment.setScore(new Score());
 
         return enrollmentRepository.save(enrollment);
     }
@@ -170,46 +167,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                         !enrollment.getScore().getGrade().isEmpty()
         ).toList();
 
-        var academicTranscript = AcademicTranscriptDto.builder()
-                .studentId(student.getId())
-                .studentName(student.getName())
-                .studentDob(student.getDob())
-                .gpa(getTotalGpa(enrollments))
-                .courseName(student.getFaculty().getName())
-                .transcriptList(
-                        enrollments.stream()
-                                .map(enrollment -> {
-                                    var course = enrollment.getCourse();
-                                    var subject = subjectService.getSubjectById(course.getSubject().getId());
-
-                                    return TranscriptDto.builder()
-                                            .subjectName(subject.getName())
-                                            .subjectCode(subject.getCode())
-                                            .grade(enrollment.getScore().getGrade())
-                                            .gpa(enrollment.getScore().getGpa())
-                                            .build();
-                                })
-                                .toList()
-                )
-                .build();
-
-        return academicTranscript;
+        return transcriptRepository.getAcademicTranscript(student, enrollments);
     }
 
-    private Double getTotalGpa(List<Enrollment> enrollments) {
-        if (enrollments.isEmpty()) {
-            return 0.0;
-        }
-
-        double gpa = enrollments.stream()
-                .mapToDouble(enrollment -> {
-                    var score = enrollment.getScore();
-                    return score.getGpa() * enrollment.getCourse().getSubject().getCredits();
-                })
-                .sum() / enrollments.stream()
-                .mapToDouble(enrollment -> enrollment.getCourse().getSubject().getCredits())
-                .sum();
-
-        return Math.ceil(gpa * 100.0) / 100.0;
-    }
 }

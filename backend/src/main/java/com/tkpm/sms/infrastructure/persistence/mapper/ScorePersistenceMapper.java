@@ -1,6 +1,6 @@
 package com.tkpm.sms.infrastructure.persistence.mapper;
 
-import com.tkpm.sms.domain.model.Score;
+import com.tkpm.sms.domain.valueobject.Score;
 import com.tkpm.sms.infrastructure.persistence.entity.ScoreEntity;
 import org.mapstruct.Mapper;
 

@@ -1,5 +1,6 @@
 package com.tkpm.sms.domain.model;
 
+import com.tkpm.sms.domain.valueobject.Score;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

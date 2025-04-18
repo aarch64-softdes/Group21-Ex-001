@@ -1,15 +1,14 @@
 package com.tkpm.sms.domain.repository;
 
 
-import com.tkpm.sms.domain.model.Score;
+import com.tkpm.sms.application.dto.response.enrollment.AcademicTranscriptDto;
+import com.tkpm.sms.domain.model.Enrollment;
+import com.tkpm.sms.domain.model.Student;
+import com.tkpm.sms.domain.valueobject.Score;
 
 import java.util.List;
 
 public interface TranscriptRepository {
 
-    List<Score> findAllByStudentId(String studentId);
-
-    Score save(Score score);
-
-    boolean existsByEnrollmentId(Integer enrollmentId);
+    AcademicTranscriptDto getAcademicTranscript(Student student, List<Enrollment> enrollments);
 }

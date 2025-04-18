@@ -4,7 +4,7 @@ import com.tkpm.sms.application.dto.request.enrollment.TranscriptUpdateRequestDt
 import com.tkpm.sms.application.dto.response.enrollment.TranscriptDto;
 import com.tkpm.sms.application.dto.response.enrollment.ScoreDto;
 import com.tkpm.sms.application.mapper.ScoreMapper;
-import com.tkpm.sms.domain.model.Score;
+import com.tkpm.sms.domain.valueobject.Score;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

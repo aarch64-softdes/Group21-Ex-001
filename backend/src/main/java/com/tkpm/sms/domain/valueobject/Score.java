@@ -1,4 +1,4 @@
-package com.tkpm.sms.domain.model;
+package com.tkpm.sms.domain.valueobject;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
