@@ -27,15 +27,15 @@ public class CourseScheduleDto {
 
     public static CourseScheduleDto getScheduleFromString(String schedule) {
         var dateOfWeek = schedule.substring(0, schedule.indexOf("("));
-        int startTime = Integer.parseInt(schedule.substring(schedule.indexOf("(") + 1, schedule.indexOf("-")));
-        int endTime = Integer.parseInt(schedule.substring(schedule.indexOf("-") + 1, schedule.indexOf(")")));
+        int startTime = Integer
+                .parseInt(schedule.substring(schedule.indexOf("(") + 1, schedule.indexOf("-")));
+        int endTime = Integer
+                .parseInt(schedule.substring(schedule.indexOf("-") + 1, schedule.indexOf(")")));
 
-        log.info("Parsed schedule: dateOfWeek={}, startTime={}, endTime={}", dateOfWeek, startTime, endTime);
+        log.info("Parsed schedule: dateOfWeek={}, startTime={}, endTime={}", dateOfWeek, startTime,
+                endTime);
 
-        return CourseScheduleDto.builder()
-                .dateOfWeek(dateOfWeek)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build();
+        return CourseScheduleDto.builder().dateOfWeek(dateOfWeek).startTime(startTime)
+                .endTime(endTime).build();
     }
 }

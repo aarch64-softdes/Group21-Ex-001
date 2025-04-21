@@ -21,19 +21,18 @@ import java.util.List;
 @Configuration
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ElasticsearchConfig {
-    @Value("${elasticsearch.host}")
+    @Value("${elasticsearch.host:localhost}")
     String host;
 
-    @Value("${elasticsearch.port}")
+    @Value("${elasticsearch.port:9200}")
     int port;
 
-    @Value("${elasticsearch.api-key}")
+    @Value("${elasticsearch.api-key:your-api-key}")
     String apiKey;
 
     @Bean
     public RestClient restClient() {
-        RestClientBuilder builder = RestClient.builder(
-                new HttpHost(host, port, "http"));
+        RestClientBuilder builder = RestClient.builder(new HttpHost(host, port, "http"));
 
         List<Header> defaultHeaders = new ArrayList<>();
         defaultHeaders.add(new BasicHeader("Authorization", "ApiKey " + apiKey));
@@ -45,9 +44,7 @@ public class ElasticsearchConfig {
 
     @Bean
     public ElasticsearchTransport elasticsearchTransport(RestClient restClient) {
-        return new RestClientTransport(
-                restClient,
-                new JacksonJsonpMapper());
+        return new RestClientTransport(restClient, new JacksonJsonpMapper());
     }
 
     @Bean

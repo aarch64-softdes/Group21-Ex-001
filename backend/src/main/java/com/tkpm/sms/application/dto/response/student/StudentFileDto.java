@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentFileDto {
-    //Basic information
+    // Basic information
     @JsonProperty("Student ID")
     String studentId;
 

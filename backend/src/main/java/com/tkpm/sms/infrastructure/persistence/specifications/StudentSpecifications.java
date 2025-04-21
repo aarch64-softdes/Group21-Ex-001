@@ -9,9 +9,7 @@ import java.util.Objects;
 
 public class StudentSpecifications {
     public static Specification<StudentEntity> withFilters(String search, String faculty) {
-        return Specification
-                .where(hasStudentIdOrName(search))
-                .and(belongToFaculty(faculty));
+        return Specification.where(hasStudentIdOrName(search)).and(belongToFaculty(faculty));
     }
 
     private static Specification<StudentEntity> hasStudentIdOrName(String search) {
@@ -23,13 +21,9 @@ public class StudentSpecifications {
             String lowercaseSearch = "%" + search.toLowerCase() + "%";
 
             return criteriaBuilder.or(
-                    criteriaBuilder.like(
-                            criteriaBuilder.lower(root.get("studentId")),
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("studentId")),
                             lowercaseSearch),
-                    criteriaBuilder.like(
-                            criteriaBuilder.lower(root.get("name")),
-                            lowercaseSearch)
-            );
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), lowercaseSearch));
         };
     }
 
@@ -42,10 +36,10 @@ public class StudentSpecifications {
             // Use fetch join to optimize the query and reduce N+1 problem
             root.fetch("faculty", JoinType.LEFT);
 
-            Join<StudentEntity, FacultyEntity> studentFacultyJoin = root.join("faculty", JoinType.LEFT);
+            Join<StudentEntity, FacultyEntity> studentFacultyJoin = root.join("faculty",
+                    JoinType.LEFT);
 
-            return criteriaBuilder.like(
-                    criteriaBuilder.lower(studentFacultyJoin.get("name")),
+            return criteriaBuilder.like(criteriaBuilder.lower(studentFacultyJoin.get("name")),
                     "%" + faculty.toLowerCase() + "%");
         };
     }

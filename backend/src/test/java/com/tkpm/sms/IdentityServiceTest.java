@@ -54,7 +54,8 @@ class IdentityServiceTest {
         Identity createdIdentity = identityService.createIdentity(requestDto);
 
         assertNotNull(createdIdentity);
-        verify(identityDomainValidator, times(1)).validateIdentityUniqueness(identityType, "123456789");
+        verify(identityDomainValidator, times(1)).validateIdentityUniqueness(identityType,
+                "123456789");
         verify(identityRepository, times(1)).save(identity);
     }
 
@@ -67,7 +68,8 @@ class IdentityServiceTest {
 
         when(identityRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> identityService.updateIdentity(id, requestDto));
+        assertThrows(ResourceNotFoundException.class,
+                () -> identityService.updateIdentity(id, requestDto));
     }
 
     @Test
@@ -81,14 +83,16 @@ class IdentityServiceTest {
         Identity identity = new Identity();
 
         when(identityRepository.findById(id)).thenReturn(Optional.of(identity));
-        doNothing().when(identityDomainValidator).validateIdentityUniquenessForUpdate(identityType, "123456789", id);
+        doNothing().when(identityDomainValidator).validateIdentityUniquenessForUpdate(identityType,
+                "123456789", id);
         doNothing().when(identityMapper).updateIdentityFromDto(requestDto, identity);
         when(identityRepository.save(identity)).thenReturn(identity);
 
         Identity updatedIdentity = identityService.updateIdentity(id, requestDto);
 
         assertNotNull(updatedIdentity);
-        verify(identityDomainValidator, times(1)).validateIdentityUniquenessForUpdate(identityType, "123456789", id);
+        verify(identityDomainValidator, times(1)).validateIdentityUniquenessForUpdate(identityType,
+                "123456789", id);
         verify(identityMapper, times(1)).updateIdentityFromDto(requestDto, identity);
         verify(identityRepository, times(1)).save(identity);
     }

@@ -47,9 +47,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject getSubjectById(Integer id) {
-        return subjectRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", id)));
+        return subjectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Subject with id %s not found", id)));
     }
 
     @Override
@@ -60,9 +59,7 @@ public class SubjectServiceImpl implements SubjectService {
         Subject subject = subjectMapper.toSubject(createRequestDto);
         subject.setFaculty(facultyService.getFacultyById(createRequestDto.getFacultyId()));
 
-        subjectValidator.validatePrerequisites(
-                createRequestDto.getPrerequisitesId()
-        );
+        subjectValidator.validatePrerequisites(createRequestDto.getPrerequisitesId());
 
         var prerequisites = subjectRepository.findAllByIds(createRequestDto.getPrerequisitesId());
         subject.setPrerequisites(prerequisites);
@@ -76,13 +73,11 @@ public class SubjectServiceImpl implements SubjectService {
     public Subject updateSubject(Integer id, SubjectUpdateRequestDto updateRequestDto) {
         subjectValidator.validateSubjectNameUniquenessForUpdate(updateRequestDto.getName(), id);
 
-        Subject subject = subjectRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException(
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
 
-        subjectValidator.validatePrerequisites(
-                updateRequestDto.getPrerequisitesId()
-        );
+        subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
 
         subjectMapper.updateSubjectFromDto(subject, updateRequestDto);
 
@@ -94,8 +89,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public void deleteSubject(Integer id) {
-        Subject subject = subjectRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException(
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
 
         // Add time constraint check
@@ -116,8 +111,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public void deactivateSubject(Integer id) {
-        Subject subject = subjectRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException(
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
 
         subjectValidator.validateSubjectForDeletionAndDeactivation(id);
@@ -129,8 +124,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public void activateSubject(Integer id) {
-        Subject subject = subjectRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException(
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
 
         subject.setActive(true);

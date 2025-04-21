@@ -1,7 +1,6 @@
 package com.tkpm.sms.application.dto.request.status;
 
 import com.tkpm.sms.application.annotation.RequiredConstraint;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,6 +17,3 @@ public class StatusRequestDto {
 
     List<Integer> validTransitionIds;
 }
-
-
-

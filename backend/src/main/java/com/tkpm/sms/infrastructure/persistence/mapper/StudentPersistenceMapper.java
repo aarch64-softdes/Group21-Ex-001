@@ -9,13 +9,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(componentModel = "spring", uses = {
-        FacultyPersistenceMapper.class,
-        ProgramPersistenceMapper.class,
-        StatusPersistenceMapper.class,
-        AddressPersistenceMapper.class,
-        IdentityPersistenceMapper.class,
-})
+@Mapper(componentModel = "spring", uses = {FacultyPersistenceMapper.class,
+        ProgramPersistenceMapper.class, StatusPersistenceMapper.class,
+        AddressPersistenceMapper.class, IdentityPersistenceMapper.class,})
 public abstract class StudentPersistenceMapper {
     @Autowired
     PhoneMapper phoneMapper;

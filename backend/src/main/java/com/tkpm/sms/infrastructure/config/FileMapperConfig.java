@@ -16,8 +16,7 @@ public class FileMapperConfig {
     @Bean(name = "jsonMapper")
     @Primary
     public ObjectMapper jsonMapper() {
-        return new ObjectMapper()
-                .registerModule(new JavaTimeModule())
+        return new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
     }

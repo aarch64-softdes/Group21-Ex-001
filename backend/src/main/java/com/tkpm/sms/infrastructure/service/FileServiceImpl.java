@@ -1,17 +1,12 @@
 package com.tkpm.sms.infrastructure.service;
 
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentFileImportDto;
-import com.tkpm.sms.application.dto.request.enrollment.EnrollmentUpdateRequestDto;
-import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
-import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.service.interfaces.EnrollmentService;
 import com.tkpm.sms.application.service.interfaces.FileService;
 import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
-import com.tkpm.sms.domain.exception.ResourceNotFoundException;
-import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.infrastructure.factories.FileStrategyFactory;
 import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
@@ -23,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.naming.factory.OpenEjbFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,18 +52,12 @@ public class FileServiceImpl implements FileService {
         Page<StudentEntity> studentPage;
 
         do {
-            studentPage = studentRepository.findAll(
-                    PageRequest.of(
-                            currentPage,
-                            pageSize,
-                            Sort.by("studentId")));
+            studentPage = studentRepository
+                    .findAll(PageRequest.of(currentPage, pageSize, Sort.by("studentId")));
 
-            students.addAll(studentPage
-                    .getContent()
-                    .stream()
-                    .map(studentPersistenceMapper::toDomain)
-                    .map(studentMapper::toStudentFileDto)
-                    .toList());
+            students.addAll(
+                    studentPage.getContent().stream().map(studentPersistenceMapper::toDomain)
+                            .map(studentMapper::toStudentFileDto).toList());
 
             currentPage++;
         } while (currentPage < studentPage.getTotalPages());
@@ -85,8 +71,8 @@ public class FileServiceImpl implements FileService {
             throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
 
-        List<StudentFileDto> students = fileStrategyFactory.getStrategy(format).convert(multipartFile,
-                StudentFileDto.class);
+        List<StudentFileDto> students = fileStrategyFactory.getStrategy(format)
+                .convert(multipartFile, StudentFileDto.class);
 
         studentService.saveListStudentFromFile(students);
     }
@@ -97,8 +83,8 @@ public class FileServiceImpl implements FileService {
             throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
         }
 
-        List<EnrollmentFileImportDto> transcripts = fileStrategyFactory.getStrategy(format).convert(multipartFile,
-                EnrollmentFileImportDto.class);
+        List<EnrollmentFileImportDto> transcripts = fileStrategyFactory.getStrategy(format)
+                .convert(multipartFile, EnrollmentFileImportDto.class);
 
         enrollmentService.updateTranscripts(transcripts);
     }
@@ -109,7 +95,8 @@ public class FileServiceImpl implements FileService {
             return documentService.processTemplateAsHtmlToPdf("templates/template.html", data);
         } catch (Exception e) {
             log.error("Failed to generate transcript PDF for student {}", data.get("studentId"), e);
-            throw new FileProcessingException("Failed to generate transcript PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException("Failed to generate transcript PDF",
+                    ErrorCode.FAIL_TO_EXPORT_FILE);
         }
     }
 }

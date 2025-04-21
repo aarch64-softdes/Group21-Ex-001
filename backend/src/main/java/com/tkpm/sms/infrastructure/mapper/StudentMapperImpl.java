@@ -18,9 +18,8 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(componentModel = "spring",
-        imports = {Gender.class, ImportFileUtils.class},
-        uses = {PhoneMapper.class, AddressMapper.class, IdentityMapper.class})
+@Mapper(componentModel = "spring", imports = {Gender.class, ImportFileUtils.class}, uses = {
+        PhoneMapper.class, AddressMapper.class, IdentityMapper.class})
 public abstract class StudentMapperImpl implements StudentMapper {
 
     @Autowired
@@ -66,7 +65,8 @@ public abstract class StudentMapperImpl implements StudentMapper {
     @Mapping(target = "mailingAddress", ignore = true)
     @Mapping(target = "identity", ignore = true)
     @Mapping(target = "gender", source = "gender", qualifiedByName = "stringToGender")
-    public abstract void updateStudentFromDto(StudentUpdateRequestDto requestDto, @MappingTarget Student student);
+    public abstract void updateStudentFromDto(StudentUpdateRequestDto requestDto,
+            @MappingTarget Student student);
 
     @Override
     @Mapping(target = "permanentAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileDto.getPermanentAddress()))")

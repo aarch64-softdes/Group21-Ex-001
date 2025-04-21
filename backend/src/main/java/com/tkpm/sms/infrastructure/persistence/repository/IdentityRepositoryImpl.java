@@ -25,8 +25,7 @@ public class IdentityRepositoryImpl implements IdentityRepository {
 
     @Override
     public Optional<Identity> findById(String id) {
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override

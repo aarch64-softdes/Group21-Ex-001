@@ -28,17 +28,15 @@ public class CourseDomainValidator {
 
     public void validateRoomAndCourseSchedule(String room, String schedule) {
         if (courseRepository.existsByRoomAndCourseSchedule(room, schedule)) {
-            throw new DuplicateResourceException(
-                    String.format("Course with room %s and schedule %s already exists", room, schedule)
-            );
+            throw new DuplicateResourceException(String
+                    .format("Course with room %s and schedule %s already exists", room, schedule));
         }
     }
 
     public void validateRoomAndCourseScheduleForUpdate(Integer id, String room, String schedule) {
         if (courseRepository.existsByIdNotAndRoomAndCourseSchedule(id, room, schedule)) {
-            throw new DuplicateResourceException(
-                    String.format("Another course with room %s and schedule %s already exists", room, schedule)
-            );
+            throw new DuplicateResourceException(String.format(
+                    "Another course with room %s and schedule %s already exists", room, schedule));
         }
     }
 
@@ -46,56 +44,51 @@ public class CourseDomainValidator {
 
         var adjustmentDuration = settingRepository.getAdjustmentDurationSetting();
 
-        if(LocalDate.now().isAfter(course.getStartDate().plusDays(Integer.parseInt(adjustmentDuration)))) {
+        if (LocalDate.now()
+                .isAfter(course.getStartDate().plusDays(Integer.parseInt(adjustmentDuration)))) {
             throw new UnenrollableCourseException(
-                    String.format("Course with code %s can only be modified in %s days", course.getCode(), adjustmentDuration)
-            );
+                    String.format("Course with code %s can only be modified in %s days",
+                            course.getCode(), adjustmentDuration));
         }
     }
 
     public void validateCourseIsMaxCapacity(Course course) {
         var currentCapacity = enrollmentRepository.countStudentsByCourseId(course.getId());
-        if(currentCapacity >= course.getMaxStudent()){
+        if (currentCapacity >= course.getMaxStudent()) {
             throw new UnenrollableCourseException(
-                    String.format("Course with id %s is already full ", course.getId())
-            );
+                    String.format("Course with id %s is already full ", course.getId()));
         }
     }
 
     public void validateCodeAndSubject(String code, Integer subjectId) {
-        var subject = subjectRepository.findById(subjectId).orElseThrow(
-                () -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", subjectId)
-                )
-        );
+        var subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Subject with id %s not found", subjectId)));
 
         log.info("Validating course code and subject id: code={}, subjectId={}", code, subjectId);
         if (courseRepository.existsByCodeAndSubjectId(code, subjectId)) {
-            throw new DuplicateResourceException(
-                    String.format("Course with code %s for subject %s already exists", code, subject.getCode())
-            );
+            throw new DuplicateResourceException(String.format(
+                    "Course with code %s for subject %s already exists", code, subject.getCode()));
         }
     }
 
     public void validateCodeAndSubjectForUpdate(Integer id, String code, Integer subjectId) {
         if (courseRepository.existsByCodeAndSubjectIdAndIdNot(code, subjectId, id)) {
-            var course = courseRepository.findById(id).orElseThrow(
-                    () -> new ResourceNotFoundException(
-                            String.format("Course with id %s not found", id)
-                    )
-            );
-            log.info("Validating course code and subject id for update: code={}, subjectCode={}", code, course.getSubject().getCode());
+            var course = courseRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            String.format("Course with id %s not found", id)));
+            log.info("Validating course code and subject id for update: code={}, subjectCode={}",
+                    code, course.getSubject().getCode());
             throw new DuplicateResourceException(
-                    String.format("Another course with code %s and subject id %s already exists", code, course.getSubject().getCode())
-            );
+                    String.format("Another course with code %s and subject id %s already exists",
+                            code, course.getSubject().getCode()));
         }
     }
 
     public void validateEnrollmentExistenceForCourse(Course course) {
         if (enrollmentRepository.existsByCourseId(course.getId())) {
             throw new DuplicateResourceException(
-                    String.format("Course with code %s already has enrollments", course.getCode())
-            );
+                    String.format("Course with code %s already has enrollments", course.getCode()));
         }
     }
 }

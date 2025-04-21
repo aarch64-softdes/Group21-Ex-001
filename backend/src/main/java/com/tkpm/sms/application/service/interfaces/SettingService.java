@@ -20,9 +20,11 @@ public interface SettingService {
 
     AdjustmentDurationSettingDto getAdjustmentDurationSetting();
 
-    AdjustmentDurationSettingDto updateAdjustmentDurationSetting(AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto);
+    AdjustmentDurationSettingDto updateAdjustmentDurationSetting(
+            AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto);
 
     FailingGradeSettingDto getFailingGradeSetting();
 
-    FailingGradeSettingDto updateFailingGradeSetting(FailingGradeSettingRequestDto failingGradeSettingRequestDto);
+    FailingGradeSettingDto updateFailingGradeSetting(
+            FailingGradeSettingRequestDto failingGradeSettingRequestDto);
 }

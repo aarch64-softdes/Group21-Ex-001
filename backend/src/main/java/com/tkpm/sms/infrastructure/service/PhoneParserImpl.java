@@ -28,13 +28,13 @@ public class PhoneParserImpl implements PhoneParser {
     public String parsePhoneNumber(String phone, String countryCode) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {
-            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
-                    phone, countryCode);
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phone, countryCode);
 
-            boolean isValidPhoneNumber = phoneNumberUtil.isValidNumberForRegion(phoneNumber, countryCode);
+            boolean isValidPhoneNumber = phoneNumberUtil.isValidNumberForRegion(phoneNumber,
+                    countryCode);
             if (isValidPhoneNumber) {
-                return phoneNumberUtil.format(
-                                phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
+                return phoneNumberUtil
+                        .format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
                         .replaceAll(" ", "");
             } else {
                 responseInvalidPhone(phone, countryCode);
@@ -56,8 +56,8 @@ public class PhoneParserImpl implements PhoneParser {
         try {
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phoneString, null);
             String countryCode = phoneNumberUtil.getRegionCodeForNumber(phoneNumber);
-            String internationalNumber = phoneNumberUtil.format(
-                            phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
+            String internationalNumber = phoneNumberUtil
+                    .format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
                     .replaceAll(" ", "");
 
             return Phone.of(countryCode, internationalNumber);
@@ -75,14 +75,15 @@ public class PhoneParserImpl implements PhoneParser {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {
             Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phoneString, countryCode);
-            boolean isValidPhoneNumber = phoneNumberUtil.isValidNumberForRegion(phoneNumber, countryCode);
+            boolean isValidPhoneNumber = phoneNumberUtil.isValidNumberForRegion(phoneNumber,
+                    countryCode);
 
             if (!isValidPhoneNumber) {
                 responseInvalidPhone(phoneString, countryCode);
             }
 
-            String internationalNumber = phoneNumberUtil.format(
-                            phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
+            String internationalNumber = phoneNumberUtil
+                    .format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
                     .replaceAll(" ", "");
 
             return Phone.of(countryCode, internationalNumber);
@@ -96,31 +97,24 @@ public class PhoneParserImpl implements PhoneParser {
     public PhoneDto parsePhoneToPhoneDto(String phone) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {
-            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
-                    phone, null);
-            return new PhoneDto(
-                    phone, phoneNumberUtil.getRegionCodeForNumber(phoneNumber)
-            );
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phone, null);
+            return new PhoneDto(phone, phoneNumberUtil.getRegionCodeForNumber(phoneNumber));
 
         } catch (Exception e) {
-            throw new InvalidPhoneNumberException(
-                    String.format("Invalid phone number: %s", phone), e);
+            throw new InvalidPhoneNumberException(String.format("Invalid phone number: %s", phone),
+                    e);
         }
     }
 
     public PhoneRequestDto parsePhoneToPhoneRequestDto(String phone) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         try {
-            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(
-                    phone, null);
-            return new PhoneRequestDto(
-                    phoneNumberUtil.getRegionCodeForNumber(phoneNumber),
-                    phone
-            );
+            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(phone, null);
+            return new PhoneRequestDto(phoneNumberUtil.getRegionCodeForNumber(phoneNumber), phone);
 
         } catch (Exception e) {
-            throw new InvalidPhoneNumberException(
-                    String.format("Invalid phone number: %s", phone), e);
+            throw new InvalidPhoneNumberException(String.format("Invalid phone number: %s", phone),
+                    e);
         }
     }
 

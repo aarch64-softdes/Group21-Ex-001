@@ -12,7 +12,8 @@ public interface SubjectMapper {
 
     SubjectDto toSubjectDto(Subject subject);
 
-    void updateSubjectFromDto(@MappingTarget Subject subject, SubjectUpdateRequestDto subjectRequestDto);
+    void updateSubjectFromDto(@MappingTarget Subject subject,
+            SubjectUpdateRequestDto subjectRequestDto);
 
     PrerequisiteSubjectDto toPrerequisiteSubjectDto(Subject subject);
 }

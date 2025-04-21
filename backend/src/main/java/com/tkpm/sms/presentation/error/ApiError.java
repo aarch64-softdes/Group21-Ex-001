@@ -17,10 +17,7 @@ public class ApiError {
     private LocalDateTime timestamp;
 
     public static ApiError of(String errorCode, String message) {
-        return ApiError.builder()
-                .errorCode(errorCode)
-                .message(message)
-                .timestamp(LocalDateTime.now())
-                .build();
+        return ApiError.builder().errorCode(errorCode).message(message)
+                .timestamp(LocalDateTime.now()).build();
     }
 }

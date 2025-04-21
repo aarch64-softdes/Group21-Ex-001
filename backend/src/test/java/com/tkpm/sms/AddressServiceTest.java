@@ -74,7 +74,8 @@ class AddressServiceTest {
 
         when(addressRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> addressService.updateAddress(id, requestDto));
+        assertThrows(ResourceNotFoundException.class,
+                () -> addressService.updateAddress(id, requestDto));
         verify(addressRepository).findById("1");
         verifyNoMoreInteractions(addressMapper, addressRepository);
     }

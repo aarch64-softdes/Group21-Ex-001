@@ -33,37 +33,28 @@ public class CourseRepositoryImpl implements CourseRepository {
         Page<CourseEntity> page = courseJpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Course> courses = page.getContent().stream()
-                .map(coursePersistenceMapper::toDomain)
+        List<Course> courses = page.getContent().stream().map(coursePersistenceMapper::toDomain)
                 .collect(Collectors.toList());
 
-        return PageResponse.of(
-                courses,
-                page.getNumber() + 1, // Convert 0-based to 1-based
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
+        return PageResponse.of(courses, page.getNumber() + 1, // Convert 0-based to 1-based
+                page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 
     @Override
     public Optional<Course> findById(Integer id) {
-        return courseJpaRepository.findById(id)
-                .map(coursePersistenceMapper::toDomain);
+        return courseJpaRepository.findById(id).map(coursePersistenceMapper::toDomain);
     }
 
     @Override
     public Course save(Course course) {
-        return coursePersistenceMapper.toDomain(
-                courseJpaRepository.save(coursePersistenceMapper.toEntity(course))
-        );
+        return coursePersistenceMapper
+                .toDomain(courseJpaRepository.save(coursePersistenceMapper.toEntity(course)));
     }
 
     @Override
     public void deleteById(Integer id) {
-        var course = courseJpaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                "Course not found with id: " + id
-        ));
+        var course = courseJpaRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Course not found with id: " + id));
 
         courseJpaRepository.delete(course);
     }

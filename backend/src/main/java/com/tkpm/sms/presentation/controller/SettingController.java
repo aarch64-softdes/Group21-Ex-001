@@ -40,16 +40,14 @@ public class SettingController {
 
     @PutMapping("/email")
     public ResponseEntity<ApplicationResponseDto<EmailDomainSettingDto>> updateEmailDomainSetting(
-            @RequestBody EmailDomainSettingRequestDto emailSettingRequestDto
-    ) {
+            @RequestBody EmailDomainSettingRequestDto emailSettingRequestDto) {
         var updatedSetting = settingService.updateEmailSetting(emailSettingRequestDto);
         return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
     }
 
     @PutMapping("/phone-number")
     public ResponseEntity<ApplicationResponseDto<PhoneSettingDto>> updatePhoneSetting(
-            @RequestBody PhoneSettingRequestDto phoneSettingRequestDto
-    ) {
+            @RequestBody PhoneSettingRequestDto phoneSettingRequestDto) {
         var updatedSetting = settingService.updatePhoneSetting(phoneSettingRequestDto);
         return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
     }
@@ -62,9 +60,9 @@ public class SettingController {
 
     @PutMapping("/adjustment-duration")
     public ResponseEntity<ApplicationResponseDto<AdjustmentDurationSettingDto>> updateAdjustmentDurationSetting(
-            @RequestBody AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto
-    ) {
-        var updatedSetting = settingService.updateAdjustmentDurationSetting(adjustmentDurationSettingRequestDto);
+            @RequestBody AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto) {
+        var updatedSetting = settingService
+                .updateAdjustmentDurationSetting(adjustmentDurationSettingRequestDto);
         return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
     }
 
@@ -76,9 +74,9 @@ public class SettingController {
 
     @PutMapping("/failing-grade")
     public ResponseEntity<ApplicationResponseDto<FailingGradeSettingDto>> updateFailingGradeSetting(
-            @RequestBody FailingGradeSettingRequestDto failingGradeSettingRequestDto
-    ) {
-        var updatedSetting = settingService.updateFailingGradeSetting(failingGradeSettingRequestDto);
+            @RequestBody FailingGradeSettingRequestDto failingGradeSettingRequestDto) {
+        var updatedSetting = settingService
+                .updateFailingGradeSetting(failingGradeSettingRequestDto);
         return ResponseEntity.ok(ApplicationResponseDto.success(updatedSetting));
     }
 }

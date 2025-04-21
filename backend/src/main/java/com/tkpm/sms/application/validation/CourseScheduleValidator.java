@@ -5,10 +5,11 @@ import com.tkpm.sms.application.dto.request.course.CourseScheduleDto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import javax.naming.Context;
 import java.util.Objects;
 
-public class CourseScheduleValidator implements ConstraintValidator<CourseScheduleConstraint, CourseScheduleDto> {
+public class CourseScheduleValidator
+        implements
+            ConstraintValidator<CourseScheduleConstraint, CourseScheduleDto> {
     private final String[] daysOfWeek = {"T2", "T3", "T4", "T5", "T6", "T7", "CN"};
     private final int MIN_START_TIME = 1;
     private final int MAX_START_TIME = 15;
@@ -49,10 +50,10 @@ public class CourseScheduleValidator implements ConstraintValidator<CourseSchedu
         return false;
     }
 
-    private void buildTemplate(String message, String propertyNode, ConstraintValidatorContext context) {
+    private void buildTemplate(String message, String propertyNode,
+            ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation();
-        context.buildConstraintViolationWithTemplate(message)
-                .addPropertyNode(propertyNode)
+        context.buildConstraintViolationWithTemplate(message).addPropertyNode(propertyNode)
                 .addConstraintViolation();
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 @Repository
 @RequiredArgsConstructor
 public class FacultyRepositoryImpl implements FacultyRepository {
@@ -31,14 +32,12 @@ public class FacultyRepositoryImpl implements FacultyRepository {
 
     @Override
     public Optional<Faculty> findById(Integer id) {
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override
     public Optional<Faculty> findByName(String name) {
-        return jpaRepository.findFacultyByName(name)
-                .map(mapper::toDomain);
+        return jpaRepository.findFacultyByName(name).map(mapper::toDomain);
     }
 
     @Override
@@ -65,16 +64,10 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         Page<FacultyEntity> page = jpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Faculty> content = page.getContent().stream()
-                .map(mapper::toDomain)
+        List<Faculty> content = page.getContent().stream().map(mapper::toDomain)
                 .collect(Collectors.toList());
 
-        return PageResponse.of(
-                content,
-                page.getNumber() + 1,
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
+        return PageResponse.of(content, page.getNumber() + 1, page.getSize(),
+                page.getTotalElements(), page.getTotalPages());
     }
 }

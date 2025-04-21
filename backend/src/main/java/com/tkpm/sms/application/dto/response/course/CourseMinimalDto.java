@@ -2,7 +2,6 @@ package com.tkpm.sms.application.dto.response.course;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 

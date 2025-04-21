@@ -31,18 +31,14 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty getFacultyById(Integer id) {
-        return facultyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Faculty with id %s not found", id)
-                ));
+        return facultyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Faculty with id %s not found", id)));
     }
 
     @Override
     public Faculty getFacultyByName(String name) {
-        return facultyRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Faculty with name %s not found", name)
-                ));
+        return facultyRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Faculty with name %s not found", name)));
     }
 
     @Override
@@ -63,8 +59,7 @@ public class FacultyServiceImpl implements FacultyService {
 
         Faculty facultyToUpdate = facultyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Faculty with id %s not found", id)
-                ));
+                        String.format("Faculty with id %s not found", id)));
 
         facultyToUpdate.setName(faculty.getName());
         return facultyRepository.save(facultyToUpdate);
@@ -75,8 +70,7 @@ public class FacultyServiceImpl implements FacultyService {
     public void deleteFaculty(Integer id) {
         Faculty faculty = facultyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Faculty with id %s not found", id)
-                ));
+                        String.format("Faculty with id %s not found", id)));
 
         faculty.setDeletedAt(LocalDate.now());
         facultyRepository.save(faculty);

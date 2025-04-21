@@ -121,15 +121,15 @@ public class ConsoleLogger extends AbstractLogger {
 
     private String applyColorForLevel(String message, LogLevel level) {
         switch (level) {
-            case DEBUG:
+            case DEBUG :
                 return ANSI_BLUE + message + ANSI_RESET;
-            case INFO:
+            case INFO :
                 return ANSI_GREEN + message + ANSI_RESET;
-            case WARN:
+            case WARN :
                 return ANSI_YELLOW + message + ANSI_RESET;
-            case ERROR:
+            case ERROR :
                 return ANSI_RED + message + ANSI_RESET;
-            default:
+            default :
                 return message;
         }
     }

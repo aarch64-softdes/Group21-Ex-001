@@ -46,32 +46,31 @@ public abstract class AbstractLogger implements BaseLogger {
         }
 
         switch (level) {
-            case DEBUG:
-                if (logger.isDebugEnabled()) logger.debug(formattedMessage);
+            case DEBUG :
+                if (logger.isDebugEnabled())
+                    logger.debug(formattedMessage);
                 break;
-            case WARN:
-                if (logger.isWarnEnabled()) logger.warn(formattedMessage);
+            case WARN :
+                if (logger.isWarnEnabled())
+                    logger.warn(formattedMessage);
                 break;
-            case ERROR:
+            case ERROR :
                 if (logger.isErrorEnabled()) {
                     logger.error(formattedMessage);
                 }
                 break;
-            case INFO:
-            default:
-                if (logger.isInfoEnabled()) logger.info(formattedMessage);
+            case INFO :
+            default :
+                if (logger.isInfoEnabled())
+                    logger.info(formattedMessage);
                 break;
         }
     }
 
     @Override
     public void log(String message, LogLevel level, Map<String, Object> metadata) {
-        LogEntry logEntry = LogEntry.builder()
-                .level(level)
-                .message(message)
-                .metadata(metadata)
-                .source(loggerName)
-                .build();
+        LogEntry logEntry = LogEntry.builder().level(level).message(message).metadata(metadata)
+                .source(loggerName).build();
         log(logEntry);
     }
 

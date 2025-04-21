@@ -43,7 +43,8 @@ public class IdentityServiceImpl implements IdentityService {
         IdentityType identityType = IdentityType.fromDisplayName(requestDto.getType());
 
         // Validate uniqueness for update
-        identityDomainValidator.validateIdentityUniquenessForUpdate(identityType, requestDto.getNumber(), id);
+        identityDomainValidator.validateIdentityUniquenessForUpdate(identityType,
+                requestDto.getNumber(), id);
 
         // Find existing identity
         Identity identity = identityRepository.findById(id)

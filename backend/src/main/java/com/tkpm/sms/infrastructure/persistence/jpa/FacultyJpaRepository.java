@@ -11,5 +11,6 @@ public interface FacultyJpaRepository extends JpaRepository<FacultyEntity, Integ
 
     boolean existsFacultyByName(String name);
 
-    boolean existsByNameAndIdNot(@NotNull(message = "Faculty's name is required") String name, Integer id);
+    boolean existsByNameAndIdNot(@NotNull(message = "Faculty's name is required") String name,
+            Integer id);
 }

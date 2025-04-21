@@ -25,8 +25,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Enhanced AOP aspect that automatically logs all controller methods, including exceptions
- * Logs detailed information to the configured logger and simplified messages to the console
+ * Enhanced AOP aspect that automatically logs all controller methods, including exceptions Logs
+ * detailed information to the configured logger and simplified messages to the console
  */
 @Aspect
 @Component
@@ -38,10 +38,8 @@ public class ControllerLoggingAspect {
     BaseLogger consoleLogger;
     String loggerType;
 
-    public ControllerLoggingAspect(
-            LoggerManager loggerManager,
-            @Value("${logging.controller.logger-type:JSON}") String loggerType
-    ) {
+    public ControllerLoggingAspect(LoggerManager loggerManager,
+            @Value("${logging.controller.logger-type:JSON}") String loggerType) {
         this.loggerManager = loggerManager;
         this.consoleLogger = loggerManager.getLogger(LoggerType.CONSOLE);
         this.loggerType = loggerType;
@@ -61,7 +59,8 @@ public class ControllerLoggingAspect {
     @Before("controllerPointcut()")
     public void logBefore(JoinPoint joinPoint) {
         startTime.set(System.currentTimeMillis());
-        correlationId.set(UUID.randomUUID().toString()); // TODO: get correlation ID from request header after updating frontend
+        correlationId.set(UUID.randomUUID().toString()); // TODO: get correlation ID from request
+                                                         // header after updating frontend
 
         HttpServletRequest request = getCurrentRequest();
         if (Objects.isNull(request)) {
@@ -77,24 +76,16 @@ public class ControllerLoggingAspect {
         String parametersJson = convertArgsToJson(joinPoint.getArgs());
 
         // Build request metadata
-        RequestMetadata metadata = RequestMetadata.builder()
-                .controller(className)
-                .method(methodName)
-                .endpoint(request.getRequestURI())
-                .path(fullPath)
+        RequestMetadata metadata = RequestMetadata.builder().controller(className)
+                .method(methodName).endpoint(request.getRequestURI()).path(fullPath)
                 .httpMethod(request.getMethod())
-                .parameters(joinPoint.getArgs().length > 0 ? parametersJson : null)
-                .build();
+                .parameters(joinPoint.getArgs().length > 0 ? parametersJson : null).build();
 
         // Create log entry
-        LogEntry logEntry = LogEntry.builder()
-                .timestamp(LocalDateTime.now().toString())
-                .correlationId(correlationId.get())
-                .source(className)
-                .level(LogLevel.INFO)
+        LogEntry logEntry = LogEntry.builder().timestamp(LocalDateTime.now().toString())
+                .correlationId(correlationId.get()).source(className).level(LogLevel.INFO)
                 .message("API Request: " + request.getMethod() + " " + fullPath)
-                .metadata(metadata.toHashMap())
-                .build();
+                .metadata(metadata.toHashMap()).build();
 
         if (request.getUserPrincipal() != null) {
             logEntry.setUserId(request.getUserPrincipal().getName());
@@ -107,8 +98,8 @@ public class ControllerLoggingAspect {
         getLogger().log(logEntry);
 
         // Also log simplified message to console with arguments
-        consoleLogger.log("API Request to: " + request.getMethod() + " " + fullPath +
-                " with arguments: " + parametersJson, LogLevel.INFO);
+        consoleLogger.log("API Request to: " + request.getMethod() + " " + fullPath
+                + " with arguments: " + parametersJson, LogLevel.INFO);
     }
 
     /**
@@ -131,26 +122,15 @@ public class ControllerLoggingAspect {
         String responseJson = convertResultToJson(result);
 
         // Build response metadata
-        ResponseMetadata metadata = ResponseMetadata.builder()
-                .controller(className)
-                .method(methodName)
-                .executionTime(executionTime)
-                .endpoint(request.getRequestURI())
-                .path(fullPath)
-                .httpMethod(request.getMethod())
-                .response(responseJson)
-                .build();
+        ResponseMetadata metadata = ResponseMetadata.builder().controller(className)
+                .method(methodName).executionTime(executionTime).endpoint(request.getRequestURI())
+                .path(fullPath).httpMethod(request.getMethod()).response(responseJson).build();
 
         // Create log entry
-        LogEntry logEntry = LogEntry.builder()
-                .timestamp(LocalDateTime.now().toString())
-                .correlationId(correlationId.get())
-                .source(className)
-                .level(LogLevel.INFO)
+        LogEntry logEntry = LogEntry.builder().timestamp(LocalDateTime.now().toString())
+                .correlationId(correlationId.get()).source(className).level(LogLevel.INFO)
                 .message("API Response: " + request.getMethod() + " " + request.getRequestURI())
-                .metadata(metadata.toHashMap())
-                .duration(executionTime)
-                .build();
+                .metadata(metadata.toHashMap()).duration(executionTime).build();
 
         if (request.getUserPrincipal() != null) {
             logEntry.setUserId(request.getUserPrincipal().getName());
@@ -160,9 +140,11 @@ public class ControllerLoggingAspect {
         getLogger().log(logEntry);
 
         // Also log simplified message to console with response summary
-        consoleLogger.log("API Response from: " + request.getMethod() + " " + fullPath +
-                " (took " + executionTime + "ms)" +
-                (responseJson != null ? " with response: " + responseJson : ""), LogLevel.INFO);
+        consoleLogger.log(
+                "API Response from: " + request.getMethod() + " " + fullPath + " (took "
+                        + executionTime + "ms)"
+                        + (responseJson != null ? " with response: " + responseJson : ""),
+                LogLevel.INFO);
 
         // Clean up thread local variables
         cleanupThreadLocals();
@@ -192,29 +174,19 @@ public class ControllerLoggingAspect {
         String parametersJson = convertArgsToJson(joinPoint.getArgs());
 
         // Build exception metadata
-        ExceptionMetadata metadata = ExceptionMetadata.builder()
-                .controller(className)
-                .method(methodName)
-                .executionTime(executionTime)
-                .endpoint(request.getRequestURI())
-                .path(fullPath)
-                .httpMethod(request.getMethod())
+        ExceptionMetadata metadata = ExceptionMetadata.builder().controller(className)
+                .method(methodName).executionTime(executionTime).endpoint(request.getRequestURI())
+                .path(fullPath).httpMethod(request.getMethod())
                 .exceptionClass(exception.getClass().getName())
-                .exceptionMessage(exception.getMessage())
-                .requestParameters(parametersJson)
-                .build();
+                .exceptionMessage(exception.getMessage()).requestParameters(parametersJson).build();
 
         // Create log entry
-        LogEntry logEntry = LogEntry.builder()
-                .timestamp(LocalDateTime.now().toString())
-                .correlationId(correlationId.get())
-                .source(className)
-                .level(LogLevel.ERROR)
-                .message("API Exception: " + request.getMethod() + " " + request.getRequestURI() +
-                        " - " + exception.getClass().getSimpleName() + ": " + exception.getMessage())
-                .metadata(metadata.toHashMap())
-                .duration(executionTime)
-                .build();
+        LogEntry logEntry = LogEntry.builder().timestamp(LocalDateTime.now().toString())
+                .correlationId(correlationId.get()).source(className).level(LogLevel.ERROR)
+                .message("API Exception: " + request.getMethod() + " " + request.getRequestURI()
+                        + " - " + exception.getClass().getSimpleName() + ": "
+                        + exception.getMessage())
+                .metadata(metadata.toHashMap()).duration(executionTime).build();
 
         if (request.getUserPrincipal() != null) {
             logEntry.setUserId(request.getUserPrincipal().getName());
@@ -227,9 +199,9 @@ public class ControllerLoggingAspect {
         getLogger().log(logEntry);
 
         // Also log simplified error message to console with context
-        consoleLogger.log("API Exception in: " + request.getMethod() + " " + fullPath +
-                " - " + exception.getClass().getSimpleName() + ": " + exception.getMessage() +
-                " with arguments: " + parametersJson, LogLevel.ERROR);
+        consoleLogger.log("API Exception in: " + request.getMethod() + " " + fullPath + " - "
+                + exception.getClass().getSimpleName() + ": " + exception.getMessage()
+                + " with arguments: " + parametersJson, LogLevel.ERROR);
 
         // Clean up thread local variables
         cleanupThreadLocals();
@@ -248,7 +220,8 @@ public class ControllerLoggingAspect {
             }
             return JsonUtils.toJson(args);
         } catch (Exception e) {
-            consoleLogger.log("Failed to convert arguments to JSON: " + e.getMessage(), LogLevel.WARN);
+            consoleLogger.log("Failed to convert arguments to JSON: " + e.getMessage(),
+                    LogLevel.WARN);
             return Arrays.toString(args); // Fallback to toString if JSON conversion fails
         }
     }
@@ -263,7 +236,8 @@ public class ControllerLoggingAspect {
             }
             return JsonUtils.toJson(result);
         } catch (Exception e) {
-            consoleLogger.log("Failed to convert response to JSON: " + e.getMessage(), LogLevel.WARN);
+            consoleLogger.log("Failed to convert response to JSON: " + e.getMessage(),
+                    LogLevel.WARN);
             return result.toString(); // Fallback to toString if JSON conversion fails
         }
     }
@@ -293,7 +267,8 @@ public class ControllerLoggingAspect {
      */
     private HttpServletRequest getCurrentRequest() {
         try {
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder
+                    .getRequestAttributes();
             return attributes != null ? attributes.getRequest() : null;
         } catch (Exception e) {
             return null;

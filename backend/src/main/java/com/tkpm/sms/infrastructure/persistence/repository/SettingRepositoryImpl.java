@@ -29,8 +29,7 @@ public class SettingRepositoryImpl implements SettingRepository {
 
     @Override
     public Optional<Setting> findByName(String name) {
-        return jpaRepository.findSettingByName(name)
-                .map(mapper::toDomain);
+        return jpaRepository.findSettingByName(name).map(mapper::toDomain);
     }
 
     @Override
@@ -53,7 +52,8 @@ public class SettingRepositoryImpl implements SettingRepository {
         var allowedCountries = setting.getDetails();
 
         try {
-            List<String> allowedCountriesList = objectMapper.readValue(allowedCountries, List.class);
+            List<String> allowedCountriesList = objectMapper.readValue(allowedCountries,
+                    List.class);
             return allowedCountriesList.get(0);
         } catch (JsonProcessingException e) {
             return "";

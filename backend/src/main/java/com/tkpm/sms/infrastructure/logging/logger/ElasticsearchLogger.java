@@ -23,8 +23,7 @@ public class ElasticsearchLogger extends AbstractLogger {
     String indexPrefix;
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public ElasticsearchLogger(
-            ElasticsearchClient esClient,
+    public ElasticsearchLogger(ElasticsearchClient esClient,
             @Value("${elasticsearch.index-prefix:logs}") String indexPrefix) {
         super("com.tkpm.sms.logging.logger.ElasticsearchLogger");
         this.esClient = esClient;
@@ -59,12 +58,9 @@ public class ElasticsearchLogger extends AbstractLogger {
         try {
             String indexName = getIndexName();
 
-            IndexResponse response = esClient.index(i -> i
-                    .index(indexName)
-                    .id(UUID.randomUUID().toString())
-                    .document(esDocument)
-                    .opType(co.elastic.clients.elasticsearch._types.OpType.Create)
-            );
+            IndexResponse response = esClient.index(
+                    i -> i.index(indexName).id(UUID.randomUUID().toString()).document(esDocument)
+                            .opType(co.elastic.clients.elasticsearch._types.OpType.Create));
 
             // Log success via standard logger
             String formattedMessage = formatLogEntry(logEntry);

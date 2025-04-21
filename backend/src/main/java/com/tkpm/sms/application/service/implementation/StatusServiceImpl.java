@@ -6,7 +6,6 @@ import com.tkpm.sms.application.mapper.StatusMapper;
 import com.tkpm.sms.application.service.interfaces.StatusService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
-import com.tkpm.sms.domain.exception.DomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.repository.StatusRepository;
@@ -35,58 +34,56 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     public Status getStatusById(Integer id) {
-        return statusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Status with id %s not found", id)));
+        return statusRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Status with id %s not found", id)));
     }
 
     @Override
     public Status getStatusByName(String name) {
-        return statusRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Status with name %s not found", name)));
+        return statusRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Status with name %s not found", name)));
     }
 
     @Override
     @Transactional
     public Status createStatus(StatusRequestDto statusRequestDto) {
-            // Validate name uniqueness
-            statusDomainValidator.validateNameUniqueness(statusRequestDto.getName());
+        // Validate name uniqueness
+        statusDomainValidator.validateNameUniqueness(statusRequestDto.getName());
 
-            // Map DTO to domain entity
-            Status status = statusMapper.toStatus(statusRequestDto);
+        // Map DTO to domain entity
+        Status status = statusMapper.toStatus(statusRequestDto);
 
-            // Save and return
-            return statusRepository.save(status);
+        // Save and return
+        return statusRepository.save(status);
     }
 
     @Override
     @Transactional
     public Status updateStatus(Integer id, StatusRequestDto statusRequestDto) {
-            // Validate name uniqueness for update
-            statusDomainValidator.validateNameUniquenessForUpdate(statusRequestDto.getName(), id);
+        // Validate name uniqueness for update
+        statusDomainValidator.validateNameUniquenessForUpdate(statusRequestDto.getName(), id);
 
-            // Find existing status
-            Status status = statusRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            String.format("Status with id %s not found", id)));
+        // Find existing status
+        Status status = statusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Status with id %s not found", id)));
 
-            // Update domain entity
-            statusMapper.updateStatusFromDto(statusRequestDto, status);
+        // Update domain entity
+        statusMapper.updateStatusFromDto(statusRequestDto, status);
 
-            // Save and return
-            return statusRepository.save(status);
+        // Save and return
+        return statusRepository.save(status);
     }
 
     @Override
     @Transactional
     public void deleteStatus(Integer id) {
-            Status status = statusRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            String.format("Status with id %s not found", id)));
+        Status status = statusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Status with id %s not found", id)));
 
-            status.setDeletedAt(LocalDate.now());
-            statusRepository.save(status);
+        status.setDeletedAt(LocalDate.now());
+        statusRepository.save(status);
     }
 
     @Override

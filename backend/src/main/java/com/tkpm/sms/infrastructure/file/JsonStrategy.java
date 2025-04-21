@@ -30,7 +30,8 @@ public class JsonStrategy implements FileStrategy {
         } catch (IOException e) {
             log.error("Failed to export file with Json format", e);
 
-            throw new FileProcessingException("Failed to export with csv format", ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException("Failed to export with csv format",
+                    ErrorCode.FAIL_TO_EXPORT_FILE);
         }
 
         return outputStream.toByteArray();

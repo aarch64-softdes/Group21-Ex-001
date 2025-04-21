@@ -32,8 +32,7 @@ public class SubjectRepositoryImpl implements SubjectRepository {
 
     @Override
     public Optional<Subject> findById(Integer id) {
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override
@@ -44,28 +43,22 @@ public class SubjectRepositoryImpl implements SubjectRepository {
         Page<SubjectEntity> page = jpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Subject> subjects = page.getContent().stream()
-                .map(mapper::toDomain)
+        List<Subject> subjects = page.getContent().stream().map(mapper::toDomain)
                 .collect(Collectors.toList());
 
-        return PageResponse.of(
-                subjects,
-                page.getNumber() + 1, // Convert 0-based to 1-based
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
+        return PageResponse.of(subjects, page.getNumber() + 1, // Convert 0-based to 1-based
+                page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 
     @Override
     public List<Subject> findAllByIds(Iterable<Integer> ids) {
-        return jpaRepository.findAllById(ids).stream().map(
-                mapper::toDomain
-        ).collect(Collectors.toList());
+        return jpaRepository.findAllById(ids).stream().map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public PageResponse<Subject> findWithFilters(String search, String faculty, PageRequest request) {
+    public PageResponse<Subject> findWithFilters(String search, String faculty,
+            PageRequest request) {
         return null;
     }
 
