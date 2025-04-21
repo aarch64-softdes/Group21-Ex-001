@@ -29,7 +29,7 @@ export interface Column<T> {
   isDefaultSort?: boolean;
   sortable?: boolean;
   style?: ColumnStyle;
-  transform?: (value: any) => string; // Use any to allow for any type of value
+  transform?: (value: any, row?: T) => string; // Use any to allow for any type of value
 }
 
 // NOTE: Must use "any" here because the type of the data is not known
@@ -102,12 +102,14 @@ export interface GenericTableProps<T extends { id: string }> {
     edit?: boolean;
     delete?: boolean;
   };
+  customActionCellComponent?: React.FC<any>;
   queryHook: QueryHook<T>;
   filterOptions: FilterOption[];
   tableOptions?: ReactElement<{ disabled?: boolean }>[];
   requireDeleteConfirmation?: boolean;
   additionalActions?: AdditionalAction[];
   disablePagination?: boolean;
+  metadata?: any;
 }
 
 export interface ActionCellProps {

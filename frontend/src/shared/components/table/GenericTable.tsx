@@ -43,6 +43,8 @@ const GenericTable = <T extends { id: string }>({
   additionalActions = [],
   disablePagination = false,
   tableOptions,
+  customActionCellComponent = undefined,
+  metadata = {},
 }: GenericTableProps<T>) => {
   const defaultSortColumn = columns.find(
     (column) => column.isDefaultSort,
@@ -114,7 +116,7 @@ const GenericTable = <T extends { id: string }>({
             {columns.map((column) => (
               <TableCell
                 key={column.key.toString()}
-                className='py-1'
+                className='py-1 h-10'
                 style={{
                   minWidth: column.style?.minWidth,
                   maxWidth: column.style?.maxWidth,
@@ -129,7 +131,7 @@ const GenericTable = <T extends { id: string }>({
 
                   // Apply transform if specified or convert to string
                   return column.transform
-                    ? column.transform(value)
+                    ? column.transform(value, cell)
                     : value !== null && value !== undefined
                     ? String(value)
                     : '';
@@ -137,22 +139,29 @@ const GenericTable = <T extends { id: string }>({
               </TableCell>
             ))}
             <TableCell className='min-w-20 py-1'>
-              <ActionCell
-                requireDeleteConfirmation={requireDeleteConfirmation}
-                isDeleting={deletingRow === cell.id && isDeleting}
-                onView={() => {
-                  setCurrentDetailItem(cell);
-                  setDetailDialogOpen(true);
-                }}
-                onEdit={() => handleEditClick(cell.id, data)}
-                onDelete={() => handleDelete(cell.id)}
-                disabledActions={disabledActions}
-                additionalActions={additionalActions.map((action) => ({
-                  label: action.label,
-                  handler: () => action.handler(cell.id),
-                  disabled: action.disabled ? action.disabled(cell) : false,
-                }))}
-              />
+              {customActionCellComponent ? (
+                React.createElement(customActionCellComponent, {
+                  ...cell,
+                  ...metadata,
+                })
+              ) : (
+                <ActionCell
+                  requireDeleteConfirmation={requireDeleteConfirmation}
+                  isDeleting={deletingRow === cell.id && isDeleting}
+                  onView={() => {
+                    setCurrentDetailItem(cell);
+                    setDetailDialogOpen(true);
+                  }}
+                  onEdit={() => handleEditClick(cell.id, data)}
+                  onDelete={() => handleDelete(cell.id)}
+                  disabledActions={disabledActions}
+                  additionalActions={additionalActions.map((action) => ({
+                    label: action.label,
+                    handler: () => action.handler(cell.id),
+                    disabled: action.disabled ? action.disabled(cell) : false,
+                  }))}
+                />
+              )}
             </TableCell>
           </TableRow>
         ))}
@@ -214,8 +223,6 @@ const GenericTable = <T extends { id: string }>({
       }),
     [filterOptions, filters.onChange, filters.value],
   );
-
-  console.log('1');
 
   return (
     <div className='flex flex-col gap-4 w-full'>
