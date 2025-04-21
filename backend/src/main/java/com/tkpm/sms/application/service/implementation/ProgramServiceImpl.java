@@ -34,18 +34,14 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public Program getProgramById(Integer id) {
-        return programRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Program with id %s not found", id)
-                ));
+        return programRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Program with id %s not found", id)));
     }
 
     @Override
     public Program getProgramByName(String name) {
-        return programRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Program with name %s not found", name)
-                ));
+        return programRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Program with name %s not found", name)));
     }
 
     @Override
@@ -67,8 +63,7 @@ public class ProgramServiceImpl implements ProgramService {
 
         Program programToUpdate = programRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Program with id %s not found", id)
-                ));
+                        String.format("Program with id %s not found", id)));
 
         // Update domain entity using mapper
         programMapper.updateProgramFromDto(programRequestDto, programToUpdate);
@@ -80,8 +75,7 @@ public class ProgramServiceImpl implements ProgramService {
     public void deleteProgram(Integer id) {
         Program program = programRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Program with id %s not found", id)
-                ));
+                        String.format("Program with id %s not found", id)));
 
         program.setDeletedAt(LocalDate.now());
         programRepository.save(program);

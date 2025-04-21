@@ -39,4 +39,3 @@ public class CourseEntity {
     @JoinColumn(name = "subject_id")
     SubjectEntity subject;
 }
-

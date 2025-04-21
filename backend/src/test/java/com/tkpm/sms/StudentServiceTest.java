@@ -1,24 +1,16 @@
 package com.tkpm.sms;
 
-import com.tkpm.sms.application.dto.request.address.AddressCreateRequestDto;
-import com.tkpm.sms.application.dto.request.address.AddressUpdateRequestDto;
-import com.tkpm.sms.application.dto.request.identity.IdentityCreateRequestDto;
 import com.tkpm.sms.application.dto.request.identity.IdentityUpdateRequestDto;
 import com.tkpm.sms.application.dto.request.phone.PhoneRequestDto;
-import com.tkpm.sms.application.dto.request.student.StudentCollectionRequest;
 import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
-import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
 import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.application.service.implementation.StudentServiceImpl;
 import com.tkpm.sms.application.service.interfaces.*;
-import com.tkpm.sms.domain.common.PageRequest;
-import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
-import com.tkpm.sms.domain.model.Address;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.model.Identity;
 import com.tkpm.sms.domain.model.Program;
@@ -36,8 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -86,18 +76,9 @@ class StudentServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        studentService = new StudentServiceImpl(
-                studentRepository,
-                identityValidator,
-                studentValidator,
-                statusService,
-                programService,
-                facultyService,
-                identityService,
-                studentMapper,
-                addressMapper,
-                identityMapper,
-                phoneParser);
+        studentService = new StudentServiceImpl(studentRepository, identityValidator,
+                studentValidator, statusService, programService, facultyService, identityService,
+                studentMapper, addressMapper, identityMapper, phoneParser);
     }
 
     @Nested
@@ -142,7 +123,8 @@ class StudentServiceTest {
             String studentId = "1";
             when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-            assertThrows(ResourceNotFoundException.class, () -> studentService.getStudentDetail(studentId));
+            assertThrows(ResourceNotFoundException.class,
+                    () -> studentService.getStudentDetail(studentId));
         }
     }
 
@@ -289,7 +271,8 @@ class StudentServiceTest {
             StudentUpdateRequestDto requestDto = new StudentUpdateRequestDto();
             when(studentRepository.findById(id)).thenReturn(Optional.empty());
 
-            assertThrows(ResourceNotFoundException.class, () -> studentService.updateStudent(id, requestDto));
+            assertThrows(ResourceNotFoundException.class,
+                    () -> studentService.updateStudent(id, requestDto));
         }
     }
 
@@ -316,7 +299,8 @@ class StudentServiceTest {
             String id = "1";
             when(studentRepository.findById(id)).thenReturn(Optional.empty());
 
-            assertThrows(ResourceNotFoundException.class, () -> studentService.deleteStudentById(id));
+            assertThrows(ResourceNotFoundException.class,
+                    () -> studentService.deleteStudentById(id));
         }
     }
 

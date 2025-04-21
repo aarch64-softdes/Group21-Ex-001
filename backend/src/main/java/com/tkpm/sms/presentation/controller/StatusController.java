@@ -34,10 +34,10 @@ public class StatusController {
 
     @GetMapping
     public ResponseEntity<ApplicationResponseDto<PageResponse<StatusDto>>> getAllStatuses(
-            @ModelAttribute BaseCollectionRequest search
-    ) {
+            @ModelAttribute BaseCollectionRequest search) {
         PageResponse<Status> pageResponse = statusService.getAllStatuses(search);
-        List<StatusDto> statusDtos = ListUtils.transform(pageResponse.getData(), statusMapper::toStatusDto);
+        List<StatusDto> statusDtos = ListUtils.transform(pageResponse.getData(),
+                statusMapper::toStatusDto);
         PageResponse<StatusDto> listResponse = PageResponse.of(pageResponse, statusDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
@@ -50,8 +50,7 @@ public class StatusController {
                 .map(toId -> {
                     Status toStatus = statusService.getStatusById(toId);
                     return new AllowedTransitionDto(toId, toStatus.getName());
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
 
         StatusDto statusDto = statusMapper.toStatusDto(status);
         statusDto.setAllowedTransitions(allowedTransitions);
@@ -62,20 +61,19 @@ public class StatusController {
     @PostMapping
     public ResponseEntity<ApplicationResponseDto<StatusDto>> createStatus(
             @Valid @RequestBody StatusRequestDto statusRequestDto,
-            UriComponentsBuilder uriComponentsBuilder
-    ) {
+            UriComponentsBuilder uriComponentsBuilder) {
         Status status = statusService.createStatus(statusRequestDto);
         StatusDto statusDto = statusMapper.toStatusDto(status);
 
-        return ResponseEntity.created(uriComponentsBuilder.path("/api/statuses/{id}").buildAndExpand(status.getId()).toUri())
+        return ResponseEntity
+                .created(uriComponentsBuilder.path("/api/statuses/{id}")
+                        .buildAndExpand(status.getId()).toUri())
                 .body(ApplicationResponseDto.success(statusDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApplicationResponseDto<StatusDto>> updateStatus(
-            @PathVariable Integer id,
-            @Valid @RequestBody StatusRequestDto statusRequestDto
-    ) {
+    public ResponseEntity<ApplicationResponseDto<StatusDto>> updateStatus(@PathVariable Integer id,
+            @Valid @RequestBody StatusRequestDto statusRequestDto) {
         Status status = statusService.updateStatus(id, statusRequestDto);
         StatusDto statusDto = statusMapper.toStatusDto(status);
 
@@ -91,8 +89,7 @@ public class StatusController {
     @PostMapping("/verify-transition")
     public ResponseEntity<ApplicationResponseDto<Boolean>> checkTransitionAllowed(
             @RequestBody StatusVerificationDto statusVerificationDto) {
-        boolean allowed = statusService.isTransitionAllowed(
-                statusVerificationDto.getFromId(),
+        boolean allowed = statusService.isTransitionAllowed(statusVerificationDto.getFromId(),
                 statusVerificationDto.getToId());
         return ResponseEntity.ok(ApplicationResponseDto.success(allowed));
     }

@@ -1,11 +1,8 @@
 package com.tkpm.sms;
 
-import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.program.ProgramRequestDto;
 import com.tkpm.sms.application.mapper.ProgramMapper;
 import com.tkpm.sms.application.service.implementation.ProgramServiceImpl;
-import com.tkpm.sms.domain.common.PageRequest;
-import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Program;
 import com.tkpm.sms.domain.repository.ProgramRepository;
@@ -15,11 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -105,14 +98,16 @@ class ProgramServiceTest {
 
         Program program = new Program();
         when(programRepository.findById(1)).thenReturn(Optional.of(program));
-        doNothing().when(programDomainValidator).validateNameUniquenessForUpdate("Updated Program", 1);
+        doNothing().when(programDomainValidator).validateNameUniquenessForUpdate("Updated Program",
+                1);
         doNothing().when(programMapper).updateProgramFromDto(requestDto, program);
         when(programRepository.save(program)).thenReturn(program);
 
         Program updatedProgram = programService.updateProgram(1, requestDto);
 
         assertNotNull(updatedProgram);
-        verify(programDomainValidator, times(1)).validateNameUniquenessForUpdate("Updated Program", 1);
+        verify(programDomainValidator, times(1)).validateNameUniquenessForUpdate("Updated Program",
+                1);
         verify(programMapper, times(1)).updateProgramFromDto(requestDto, program);
         verify(programRepository, times(1)).save(program);
     }

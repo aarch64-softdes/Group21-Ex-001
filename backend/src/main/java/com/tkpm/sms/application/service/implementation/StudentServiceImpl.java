@@ -18,7 +18,6 @@ import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.domain.valueobject.Phone;
 import com.tkpm.sms.infrastructure.mapper.StudentMapperImpl;
-import com.tkpm.sms.infrastructure.persistence.entity.StudentEntity;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -54,14 +52,14 @@ public class StudentServiceImpl implements StudentService {
     public PageResponse<Student> findAll(StudentCollectionRequest search) {
         PageRequest pageRequest = PageRequest.from(search);
 
-        return studentRepository.findWithFilters(search.getSearch(), search.getFaculty(), pageRequest);
+        return studentRepository.findWithFilters(search.getSearch(), search.getFaculty(),
+                pageRequest);
     }
 
     @Override
     public Student getStudentDetail(String id) {
-        return studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Student with id %s not found", id)));
+        return studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Student with id %s not found", id)));
     }
 
     @Override
@@ -74,8 +72,7 @@ public class StudentServiceImpl implements StudentService {
 
         // Parse and validate phone
         Phone phoneNumber = phoneParser.parsePhoneNumberToPhone(
-                requestDto.getPhone().getPhoneNumber(),
-                requestDto.getPhone().getCountryCode());
+                requestDto.getPhone().getPhoneNumber(), requestDto.getPhone().getCountryCode());
 
         // Convert DTO to domain entity
         Student student = studentMapper.toStudent(requestDto);
@@ -137,8 +134,7 @@ public class StudentServiceImpl implements StudentService {
         studentValidator.validateEmailDomain(requestDto.getEmail());
         // Parse and validate phone
         Phone phoneNumber = phoneParser.parsePhoneNumberToPhone(
-                requestDto.getPhone().getPhoneNumber(),
-                requestDto.getPhone().getCountryCode());
+                requestDto.getPhone().getPhoneNumber(), requestDto.getPhone().getCountryCode());
 
         // Update student fields
         studentMapper.updateStudentFromDto(requestDto, student);
@@ -176,8 +172,8 @@ public class StudentServiceImpl implements StudentService {
                         addressMapper.updateToCreateRequest(requestDto.getPermanentAddress()));
                 student.setPermanentAddress(address);
             } else {
-                addressMapper.updateAddressFromDto(
-                        requestDto.getPermanentAddress(), student.getPermanentAddress());
+                addressMapper.updateAddressFromDto(requestDto.getPermanentAddress(),
+                        student.getPermanentAddress());
             }
         } else {
             student.setPermanentAddress(null);
@@ -190,8 +186,8 @@ public class StudentServiceImpl implements StudentService {
                         addressMapper.updateToCreateRequest(requestDto.getTemporaryAddress()));
                 student.setTemporaryAddress(address);
             } else {
-                addressMapper.updateAddressFromDto(
-                        requestDto.getTemporaryAddress(), student.getTemporaryAddress());
+                addressMapper.updateAddressFromDto(requestDto.getTemporaryAddress(),
+                        student.getTemporaryAddress());
             }
         } else {
             student.setTemporaryAddress(null);
@@ -204,8 +200,8 @@ public class StudentServiceImpl implements StudentService {
                         addressMapper.updateToCreateRequest(requestDto.getMailingAddress()));
                 student.setMailingAddress(address);
             } else {
-                addressMapper.updateAddressFromDto(
-                        requestDto.getMailingAddress(), student.getMailingAddress());
+                addressMapper.updateAddressFromDto(requestDto.getMailingAddress(),
+                        student.getMailingAddress());
             }
         } else {
             student.setMailingAddress(null);
@@ -223,9 +219,10 @@ public class StudentServiceImpl implements StudentService {
         identityMapper.updateIdentityFromDto(requestDto.getIdentity(), identity);
 
         // Only validate uniqueness if type or number changed
-        if (!oldType.equals(identity.getType().getDisplayName()) || !oldNumber.equals(identity.getNumber())) {
-            identityValidator.validateIdentityUniquenessForUpdate(
-                    identity.getType(), identity.getNumber(), identity.getId());
+        if (!oldType.equals(identity.getType().getDisplayName())
+                || !oldNumber.equals(identity.getNumber())) {
+            identityValidator.validateIdentityUniquenessForUpdate(identity.getType(),
+                    identity.getNumber(), identity.getId());
         }
 
     }
@@ -244,8 +241,7 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public void saveListStudentFromFile(List<StudentFileDto> studentFileDtos) {
         List<StudentCreateRequestDto> studentCreateRequests = studentFileDtos.stream()
-                .map(studentMapper::toStudentCreateRequest)
-                .toList();
+                .map(studentMapper::toStudentCreateRequest).toList();
 
         for (StudentCreateRequestDto request : studentCreateRequests) {
             createStudent(request);

@@ -32,8 +32,7 @@ public class ElasticsearchConfig {
 
     @Bean
     public RestClient restClient() {
-        RestClientBuilder builder = RestClient.builder(
-                new HttpHost(host, port, "http"));
+        RestClientBuilder builder = RestClient.builder(new HttpHost(host, port, "http"));
 
         List<Header> defaultHeaders = new ArrayList<>();
         defaultHeaders.add(new BasicHeader("Authorization", "ApiKey " + apiKey));
@@ -45,9 +44,7 @@ public class ElasticsearchConfig {
 
     @Bean
     public ElasticsearchTransport elasticsearchTransport(RestClient restClient) {
-        return new RestClientTransport(
-                restClient,
-                new JacksonJsonpMapper());
+        return new RestClientTransport(restClient, new JacksonJsonpMapper());
     }
 
     @Bean

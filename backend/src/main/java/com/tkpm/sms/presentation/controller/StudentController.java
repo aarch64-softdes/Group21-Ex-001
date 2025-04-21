@@ -39,7 +39,7 @@ public class StudentController {
     FileService fileService;
     EnrollmentService enrollmentService;
 
-    @GetMapping({ "", "/" })
+    @GetMapping({"", "/"})
     public ResponseEntity<ApplicationResponseDto<PageResponse<StudentMinimalDto>>> getStudents(
             @ModelAttribute StudentCollectionRequest search) {
         PageResponse<Student> pageResponse = studentService.findAll(search);
@@ -50,22 +50,24 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationResponseDto<StudentDto>> getStudentDetail(@PathVariable String id) {
+    public ResponseEntity<ApplicationResponseDto<StudentDto>> getStudentDetail(
+            @PathVariable String id) {
         var student = studentService.getStudentDetail(id);
         var studentDto = studentMapper.toStudentDto(student);
         return ResponseEntity.ok(ApplicationResponseDto.success(studentDto));
     }
 
-    @PostMapping({ "/", "" })
+    @PostMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<StudentDto>> createStudent(
             @Valid @RequestBody StudentCreateRequestDto student,
             UriComponentsBuilder uriComponentsBuilder) {
         var newStudent = studentService.createStudent(student);
         var studentDto = studentMapper.toStudentDto(newStudent);
-        var locationOfNewUser = uriComponentsBuilder.path("api/students/{id}").buildAndExpand(newStudent.getId())
-                .toUri();
+        var locationOfNewUser = uriComponentsBuilder.path("api/students/{id}")
+                .buildAndExpand(newStudent.getId()).toUri();
 
-        return ResponseEntity.created(locationOfNewUser).body(ApplicationResponseDto.success(studentDto));
+        return ResponseEntity.created(locationOfNewUser)
+                .body(ApplicationResponseDto.success(studentDto));
     }
 
     @DeleteMapping("/{id}")
@@ -75,8 +77,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApplicationResponseDto<StudentDto>> updateStudent(
-            @PathVariable String id,
+    public ResponseEntity<ApplicationResponseDto<StudentDto>> updateStudent(@PathVariable String id,
             @Valid @RequestBody StudentUpdateRequestDto student) {
         var updatedStudent = studentService.updateStudent(id, student);
         var studentDto = studentMapper.toStudentDto(updatedStudent);
@@ -87,12 +88,9 @@ public class StudentController {
     public ResponseEntity<byte[]> getTranscript(@PathVariable String id) {
         try {
             var actualData = enrollmentService.getAcademicTranscriptOfStudent(id);
-            var data = Map.of(
-                    "studentId", actualData.getStudentId(),
-                    "studentName", actualData.getStudentName(),
-                    "courseName", actualData.getCourseName(),
-                    "studentDob", actualData.getStudentDob(),
-                    "gpa", actualData.getGpa(),
+            var data = Map.of("studentId", actualData.getStudentId(), "studentName",
+                    actualData.getStudentName(), "courseName", actualData.getCourseName(),
+                    "studentDob", actualData.getStudentDob(), "gpa", actualData.getGpa(),
                     "transcriptList", actualData.getTranscriptList());
             byte[] pdfBytes = fileService.exportTranscript(data);
 
@@ -101,8 +99,7 @@ public class StudentController {
 
             return ResponseEntity.ok()
                     .header("Content-Disposition", "attachment; filename=" + filename)
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(pdfBytes);
+                    .contentType(MediaType.APPLICATION_PDF).body(pdfBytes);
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate transcript from HTML template", e);
         }

@@ -31,10 +31,10 @@ public class FacultyController {
 
     @GetMapping({"", "/"})
     public ResponseEntity<ApplicationResponseDto<PageResponse<FacultyDto>>> getAllFaculties(
-            @ModelAttribute BaseCollectionRequest search
-    ) {
+            @ModelAttribute BaseCollectionRequest search) {
         PageResponse<Faculty> pageResponse = facultyService.getAllFaculties(search);
-        List<FacultyDto> facultyDtos = ListUtils.transform(pageResponse.getData(), facultyMapper::toDto);
+        List<FacultyDto> facultyDtos = ListUtils.transform(pageResponse.getData(),
+                facultyMapper::toDto);
         PageResponse<FacultyDto> listResponse = PageResponse.of(pageResponse, facultyDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
@@ -50,21 +50,20 @@ public class FacultyController {
     @PostMapping({"", "/"})
     public ResponseEntity<ApplicationResponseDto<FacultyDto>> createFaculty(
             @Valid @RequestBody FacultyRequestDto faculty,
-            UriComponentsBuilder uriComponentsBuilder
-    ) {
+            UriComponentsBuilder uriComponentsBuilder) {
 
         var newFaculty = facultyService.createFaculty(faculty);
         var facultyDto = new FacultyDto(newFaculty.getId(), newFaculty.getName());
 
-        return ResponseEntity.created(uriComponentsBuilder.path("/api/faculties/{id}").buildAndExpand(newFaculty.getId()).toUri())
+        return ResponseEntity
+                .created(uriComponentsBuilder.path("/api/faculties/{id}")
+                        .buildAndExpand(newFaculty.getId()).toUri())
                 .body(ApplicationResponseDto.success(facultyDto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<FacultyDto>> updateFaculty(
-            @PathVariable Integer id,
-            @Valid @RequestBody FacultyRequestDto faculty
-    ) {
+            @PathVariable Integer id, @Valid @RequestBody FacultyRequestDto faculty) {
         var updatedFaculty = facultyService.updateFaculty(id, faculty);
         var facultyDto = new FacultyDto(updatedFaculty.getId(), updatedFaculty.getName());
 

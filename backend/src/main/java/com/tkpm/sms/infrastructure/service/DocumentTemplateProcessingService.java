@@ -47,7 +47,8 @@ public class DocumentTemplateProcessingService {
             return resourceLoader.getResource("classpath:" + templatePath).getInputStream();
         } catch (IOException e) {
             log.error("Failed to load template from path: {}", templatePath, e);
-            throw new FileProcessingException("Failed to load template", ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException("Failed to load template",
+                    ErrorCode.FAIL_TO_EXPORT_FILE);
         }
     }
 
@@ -57,7 +58,8 @@ public class DocumentTemplateProcessingService {
                 return new String(documentBytes, "UTF-8");
             } catch (IOException e) {
                 log.error("Failed to convert HTML bytes to string", e);
-                throw new FileProcessingException("Failed to process HTML", ErrorCode.FAIL_TO_EXPORT_FILE);
+                throw new FileProcessingException("Failed to process HTML",
+                        ErrorCode.FAIL_TO_EXPORT_FILE);
             }
         } else if (sourceFormat.endsWith(".docx")) {
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(documentBytes);
@@ -106,21 +108,22 @@ public class DocumentTemplateProcessingService {
             return templateEngine.process(document.html(), thymeleafContext);
         } catch (Exception e) {
             log.error("Failed to process HTML template", e);
-            throw new FileProcessingException("Failed to process HTML template", ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException("Failed to process HTML template",
+                    ErrorCode.FAIL_TO_EXPORT_FILE);
         }
     }
 
     public byte[] convertHtmlToPdf(String htmlContent) {
         try {
             log.info("Converting HTML to PDF using Flying Saucer");
-            log.debug("HTML content to convert: {}", htmlContent.substring(0, Math.min(500, htmlContent.length())));
+            log.debug("HTML content to convert: {}",
+                    htmlContent.substring(0, Math.min(500, htmlContent.length())));
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             org.jsoup.nodes.Document doc = Jsoup.parse(htmlContent);
 
-            doc.outputSettings()
-                    .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+            doc.outputSettings().syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
                     .escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml);
             doc.select("html").first().attr("xmlns", "http://www.w3.org/1999/xhtml");
 
@@ -133,14 +136,14 @@ public class DocumentTemplateProcessingService {
             renderer.createPDF(baos);
 
             byte[] pdfBytes = baos.toByteArray();
-            log.info("Successfully converted HTML to PDF, size: {} bytes",
-                    pdfBytes.length);
+            log.info("Successfully converted HTML to PDF, size: {} bytes", pdfBytes.length);
 
             return pdfBytes;
         } catch (Exception e) {
             log.error("Failed to convert HTML to PDF: {}", e.getMessage());
             log.error("Error details:", e);
-            throw new FileProcessingException("Failed to convert HTML to PDF", ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException("Failed to convert HTML to PDF",
+                    ErrorCode.FAIL_TO_EXPORT_FILE);
         }
     }
 

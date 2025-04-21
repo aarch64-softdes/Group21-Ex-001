@@ -11,7 +11,6 @@ import com.tkpm.sms.infrastructure.utils.PagingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,14 +32,12 @@ public class StatusRepositoryImpl implements StatusRepository {
 
     @Override
     public Optional<Status> findById(Integer id) {
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override
     public Optional<Status> findByName(String name) {
-        return jpaRepository.findStatusByName(name)
-                .map(mapper::toDomain);
+        return jpaRepository.findStatusByName(name).map(mapper::toDomain);
     }
 
     @Override
@@ -67,16 +64,10 @@ public class StatusRepositoryImpl implements StatusRepository {
         Page<StatusEntity> page = jpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Status> content = page.getContent().stream()
-                .map(mapper::toDomain)
+        List<Status> content = page.getContent().stream().map(mapper::toDomain)
                 .collect(Collectors.toList());
 
-        return PageResponse.of(
-                content,
-                page.getNumber() + 1, // Convert 0-based to 1-based
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
+        return PageResponse.of(content, page.getNumber() + 1, // Convert 0-based to 1-based
+                page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 }

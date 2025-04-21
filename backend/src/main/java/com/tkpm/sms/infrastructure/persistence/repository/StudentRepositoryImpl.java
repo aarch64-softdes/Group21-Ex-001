@@ -40,20 +40,17 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public Optional<Student> findById(String id) {
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override
     public Optional<Student> findByStudentId(String studentId) {
-        return jpaRepository.findByStudentId(studentId)
-                .map(mapper::toDomain);
+        return jpaRepository.findByStudentId(studentId).map(mapper::toDomain);
     }
 
     @Override
     public Optional<Student> findByEmail(String email) {
-        return jpaRepository.findByEmail(email)
-                .map(mapper::toDomain);
+        return jpaRepository.findByEmail(email).map(mapper::toDomain);
     }
 
     @Override
@@ -70,60 +67,44 @@ public class StudentRepositoryImpl implements StudentRepository {
     public PageResponse<Student> findAll(PageRequest pageRequest) {
         // Convert domain PageRequest to Spring Pageable
         Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                pageRequest.getPageNumber() - 1,
-                pageRequest.getPageSize(),
+                pageRequest.getPageNumber() - 1, pageRequest.getPageSize(),
                 pageRequest.getSortDirection() == PageRequest.SortDirection.DESC
                         ? Sort.Direction.DESC
                         : Sort.Direction.ASC,
-                pageRequest.getSortBy()
-        );
+                pageRequest.getSortBy());
 
         // Execute query with Spring Pageable
         Page<StudentEntity> page = jpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Student> content = page.getContent().stream()
-                .map(mapper::toDomain)
+        List<Student> content = page.getContent().stream().map(mapper::toDomain)
                 .collect(Collectors.toList());
 
-        return PageResponse.of(
-                content,
-                page.getNumber() + 1, // Convert 0-based to 1-based
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
+        return PageResponse.of(content, page.getNumber() + 1, // Convert 0-based to 1-based
+                page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 
     @Override
-    public PageResponse<Student> findWithFilters(String search, String faculty, PageRequest pageRequest) {
+    public PageResponse<Student> findWithFilters(String search, String faculty,
+            PageRequest pageRequest) {
         // Convert domain PageRequest to Spring Pageable
         Pageable pageable = PagingUtils.toSpringPageable(pageRequest);
 
         // Apply specifications for filtering
-        Page<StudentEntity> page = jpaRepository.findAll(
-                StudentSpecifications.withFilters(search, faculty)
-                        .and(StudentSpecifications.fetchRelatedEntities()),
+        Page<StudentEntity> page = jpaRepository.findAll(StudentSpecifications
+                .withFilters(search, faculty).and(StudentSpecifications.fetchRelatedEntities()),
                 pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Student> content = page.getContent().stream()
-                .map(mapper::toDomain)
+        List<Student> content = page.getContent().stream().map(mapper::toDomain)
                 .collect(Collectors.toList());
 
-        return PageResponse.of(
-                content,
-                page.getNumber() + 1, // Convert 0-based to 1-based
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
+        return PageResponse.of(content, page.getNumber() + 1, // Convert 0-based to 1-based
+                page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 
     @Override
     public List<Student> findAll() {
-        return jpaRepository.findAll().stream()
-                .map(mapper::toDomain)
-                .collect(Collectors.toList());
+        return jpaRepository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
     }
 }

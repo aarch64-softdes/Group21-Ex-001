@@ -1,10 +1,7 @@
 package com.tkpm.sms.infrastructure.file;
 
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.tkpm.sms.application.dto.response.student.StudentFileDto;
-import com.tkpm.sms.application.service.interfaces.StudentService;
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.service.FileStrategy;
@@ -19,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -40,7 +36,8 @@ public class CsvStrategy implements FileStrategy {
         } catch (IOException e) {
             log.error("Failed to export with csv format", e);
 
-            throw new FileProcessingException("Failed to export with csv format", ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException("Failed to export with csv format",
+                    ErrorCode.FAIL_TO_EXPORT_FILE);
         }
 
         return outputStream.toByteArray();
@@ -60,7 +57,8 @@ public class CsvStrategy implements FileStrategy {
             return iterator.readAll();
         } catch (IOException e) {
             log.info("Error reading CSV file", e);
-            throw new FileProcessingException("Error reading CSV file", ErrorCode.FAIL_TO_IMPORT_FILE);
+            throw new FileProcessingException("Error reading CSV file",
+                    ErrorCode.FAIL_TO_IMPORT_FILE);
         }
     }
     @Override

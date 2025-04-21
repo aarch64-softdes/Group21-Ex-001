@@ -17,16 +17,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@NamedEntityGraph(name = "student-entity-graph",
-        attributeNodes = {
-                @NamedAttributeNode("status"),
-                @NamedAttributeNode("program"),
-                @NamedAttributeNode("faculty"),
-                @NamedAttributeNode("permanentAddress"),
-                @NamedAttributeNode("temporaryAddress"),
-                @NamedAttributeNode("mailingAddress"),
-                @NamedAttributeNode("identity")
-        })
+@NamedEntityGraph(name = "student-entity-graph", attributeNodes = {@NamedAttributeNode("status"),
+        @NamedAttributeNode("program"), @NamedAttributeNode("faculty"),
+        @NamedAttributeNode("permanentAddress"), @NamedAttributeNode("temporaryAddress"),
+        @NamedAttributeNode("mailingAddress"), @NamedAttributeNode("identity")})
 public class StudentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -46,7 +40,7 @@ public class StudentEntity {
 
     @Column(name = "school_year")
     Integer schoolYear;
-    
+
     @Email
     @NotNull
     @Column(unique = true)

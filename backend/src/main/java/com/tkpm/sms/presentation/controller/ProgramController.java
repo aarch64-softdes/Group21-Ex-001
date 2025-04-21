@@ -31,10 +31,10 @@ public class ProgramController {
 
     @GetMapping({"", "/"})
     public ResponseEntity<ApplicationResponseDto<PageResponse<ProgramDto>>> getAllPrograms(
-            @ModelAttribute BaseCollectionRequest search
-    ) {
+            @ModelAttribute BaseCollectionRequest search) {
         PageResponse<Program> pageResponse = programService.getAllPrograms(search);
-        List<ProgramDto> programDtos = ListUtils.transform(pageResponse.getData(), programMapper::toDto);
+        List<ProgramDto> programDtos = ListUtils.transform(pageResponse.getData(),
+                programMapper::toDto);
         PageResponse<ProgramDto> listResponse = PageResponse.of(pageResponse, programDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
@@ -50,20 +50,19 @@ public class ProgramController {
     @PostMapping({"", "/"})
     public ResponseEntity<ApplicationResponseDto<ProgramDto>> createProgram(
             @Valid @RequestBody ProgramRequestDto program,
-            UriComponentsBuilder uriComponentsBuilder
-    ) {
+            UriComponentsBuilder uriComponentsBuilder) {
         var newProgram = programService.createProgram(program);
         var programDto = programMapper.toDto(newProgram);
 
-        return ResponseEntity.created(uriComponentsBuilder.path("/api/programs/{id}").buildAndExpand(newProgram.getId()).toUri())
+        return ResponseEntity
+                .created(uriComponentsBuilder.path("/api/programs/{id}")
+                        .buildAndExpand(newProgram.getId()).toUri())
                 .body(ApplicationResponseDto.success(programDto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<ProgramDto>> updateProgram(
-            @PathVariable Integer id,
-            @Valid @RequestBody ProgramRequestDto program
-    ) {
+            @PathVariable Integer id, @Valid @RequestBody ProgramRequestDto program) {
         var updatedProgram = programService.updateProgram(id, program);
         var programDto = programMapper.toDto(updatedProgram);
 

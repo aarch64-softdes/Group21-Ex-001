@@ -13,11 +13,14 @@ import com.tkpm.sms.domain.model.History;
 import java.util.List;
 
 public interface EnrollmentService {
-    PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId, BaseCollectionRequest baseCollectionRequest);
+    PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId,
+            BaseCollectionRequest baseCollectionRequest);
 
-    PageResponse<History> findEnrollmentHistoryOfStudent(String studentId, BaseCollectionRequest baseCollectionRequest);
+    PageResponse<History> findEnrollmentHistoryOfStudent(String studentId,
+            BaseCollectionRequest baseCollectionRequest);
 
-    Enrollment updateTranscriptOfEnrollment(String studentId, Integer courseId, TranscriptUpdateRequestDto transcriptUpdateRequestDto);
+    Enrollment updateTranscriptOfEnrollment(String studentId, Integer courseId,
+            TranscriptUpdateRequestDto transcriptUpdateRequestDto);
 
     void updateTranscripts(List<EnrollmentFileImportDto> enrollmentFileImportDtos);
 

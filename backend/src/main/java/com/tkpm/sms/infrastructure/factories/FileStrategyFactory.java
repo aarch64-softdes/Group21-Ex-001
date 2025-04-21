@@ -16,17 +16,15 @@ public class FileStrategyFactory {
 
     public FileStrategyFactory(List<FileStrategy> strategyList) {
         this.strategies = strategyList.stream()
-                .collect(Collectors.toMap(
-                        FileStrategy::getFormat,
-                        Function.identity()
-                ));
+                .collect(Collectors.toMap(FileStrategy::getFormat, Function.identity()));
     }
 
     public FileStrategy getStrategy(String format) {
         FileStrategy strategy = strategies.get(format.toLowerCase());
 
         if (strategy == null) {
-            throw new FileProcessingException("Unsupported file format", ErrorCode.INVALID_FILE_FORMAT);
+            throw new FileProcessingException("Unsupported file format",
+                    ErrorCode.INVALID_FILE_FORMAT);
         }
 
         return strategies.get(format.toLowerCase());

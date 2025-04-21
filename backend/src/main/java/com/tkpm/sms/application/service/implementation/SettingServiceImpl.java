@@ -45,7 +45,8 @@ public class SettingServiceImpl implements SettingService {
 
     @Override
     @Transactional
-    public EmailDomainSettingDto updateEmailSetting(EmailDomainSettingRequestDto settingRequestDto) {
+    public EmailDomainSettingDto updateEmailSetting(
+            EmailDomainSettingRequestDto settingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.EMAIL.getValue())
                 .orElseThrow(() -> new ResourceNotFoundException("Email setting not found"));
 
@@ -66,22 +67,26 @@ public class SettingServiceImpl implements SettingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Phone setting not found"));
 
         try {
-            String details = objectMapper.writeValueAsString(phoneSettingRequestDto.getSupportedCountryCodes());
+            String details = objectMapper
+                    .writeValueAsString(phoneSettingRequestDto.getSupportedCountryCodes());
             setting.setDetails(details);
             var savedSetting = settingRepository.save(setting);
 
             return fromDomainModel(savedSetting);
         } catch (JsonProcessingException e) {
-            throw new GenericDomainException("Error processing phone setting", ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new GenericDomainException("Error processing phone setting",
+                    ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
     private PhoneSettingDto fromDomainModel(Setting setting) {
         try {
-            List<String> supportedCountryCodes = objectMapper.readValue(setting.getDetails(), List.class);
+            List<String> supportedCountryCodes = objectMapper.readValue(setting.getDetails(),
+                    List.class);
             return new PhoneSettingDto(supportedCountryCodes);
         } catch (JsonProcessingException e) {
-            throw new GenericDomainException("Error processing phone setting", ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new GenericDomainException("Error processing phone setting",
+                    ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -94,10 +99,10 @@ public class SettingServiceImpl implements SettingService {
     @Override
     @Transactional
     public AdjustmentDurationSettingDto updateAdjustmentDurationSetting(
-            AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto
-    ) {
+            AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.ADJUSTMENT_DURATION.getValue())
-                .orElseThrow(() -> new ResourceNotFoundException("Adjustment duration setting not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Adjustment duration setting not found"));
 
         setting.setDetails(adjustmentDurationSettingRequestDto.getAdjustmentDuration());
 
@@ -111,9 +116,11 @@ public class SettingServiceImpl implements SettingService {
     }
 
     @Override
-    public FailingGradeSettingDto updateFailingGradeSetting(FailingGradeSettingRequestDto failingGradeSettingRequestDto) {
+    public FailingGradeSettingDto updateFailingGradeSetting(
+            FailingGradeSettingRequestDto failingGradeSettingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.FAILING_GRADE.getValue())
-                .orElseThrow(() -> new ResourceNotFoundException("Failing grade setting not found"));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Failing grade setting not found"));
 
         // TODO: check if the value is valid
         Double failingGrade = failingGradeSettingRequestDto.getFailingGrade();
@@ -121,8 +128,6 @@ public class SettingServiceImpl implements SettingService {
 
         var savedSetting = settingRepository.save(setting);
 
-        return new FailingGradeSettingDto(
-                Double.parseDouble(savedSetting.getDetails())
-        );
+        return new FailingGradeSettingDto(Double.parseDouble(savedSetting.getDetails()));
     }
 }

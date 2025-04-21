@@ -1,11 +1,9 @@
 package com.tkpm.sms;
 
-import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.course.CourseCreateRequestDto;
 import com.tkpm.sms.application.dto.request.course.CourseUpdateRequestDto;
 import com.tkpm.sms.application.mapper.CourseMapper;
 import com.tkpm.sms.application.service.implementation.CourseServiceImpl;
-import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.exception.SubjectDeactivatedException;
 import com.tkpm.sms.domain.model.Course;
@@ -20,12 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -99,7 +92,8 @@ class CourseServiceTest {
         when(subjectRepository.findById(1)).thenReturn(Optional.of(subject));
         when(programRepository.findById(1)).thenReturn(Optional.of(mock(Program.class)));
 
-        assertThrows(SubjectDeactivatedException.class, () -> courseService.createCourse(createRequestDto));
+        assertThrows(SubjectDeactivatedException.class,
+                () -> courseService.createCourse(createRequestDto));
     }
 
     @Test

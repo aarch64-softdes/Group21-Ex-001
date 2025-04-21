@@ -17,15 +17,13 @@ import java.util.stream.Collectors;
 public class MetadataController {
     @GetMapping("/identity-type")
     public List<String> getAllIdentityType() {
-        return Arrays.stream(IdentityType.values())
-                .map(IdentityType::getDisplayName)
+        return Arrays.stream(IdentityType.values()).map(IdentityType::getDisplayName)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/gender")
     public List<String> getAllGender() {
-        return Arrays.stream(Gender.values())
-                .map(Gender::getDisplayName)
+        return Arrays.stream(Gender.values()).map(Gender::getDisplayName)
                 .collect(Collectors.toList());
     }
 }

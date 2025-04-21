@@ -39,11 +39,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getCourseById(Integer id) {
-        var course = courseRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(
-                        String.format("Course with id %s not found", id)
-                )
-        );
+        var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                String.format("Course with id %s not found", id)));
         return course;
     }
 
@@ -52,18 +49,15 @@ public class CourseServiceImpl implements CourseService {
     public Course createCourse(CourseCreateRequestDto createRequestDto) {
         Program program = programRepository.findById(createRequestDto.getProgramId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Program with id " + createRequestDto.getProgramId() + " not found"
-                ));
+                        "Program with id " + createRequestDto.getProgramId() + " not found"));
 
         Subject subject = subjectRepository.findById(createRequestDto.getSubjectId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Subject with id " + createRequestDto.getSubjectId() + " not found"
-                ));
+                        "Subject with id " + createRequestDto.getSubjectId() + " not found"));
 
         if (!subject.isActive()) {
             throw new SubjectDeactivatedException(
-                    "Subject with id " + createRequestDto.getSubjectId() + " is not active"
-            );
+                    "Subject with id " + createRequestDto.getSubjectId() + " is not active");
         }
 
         // Map DTO to domain object (excluding foreign keys)
@@ -83,19 +77,12 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public Course updateCourse(Integer id, CourseUpdateRequestDto updateRequestDto) {
         var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Course with id %s not found", id)
-        ));
+                String.format("Course with id %s not found", id)));
 
-        courseValidator.validateRoomAndCourseScheduleForUpdate(
-                id,
-                updateRequestDto.getRoom(),
-                updateRequestDto.getSchedule().toString()
-        );
-        courseValidator.validateCodeAndSubjectForUpdate(
-                id,
-                updateRequestDto.getCode(),
-                course.getSubject().getId()
-        );
+        courseValidator.validateRoomAndCourseScheduleForUpdate(id, updateRequestDto.getRoom(),
+                updateRequestDto.getSchedule().toString());
+        courseValidator.validateCodeAndSubjectForUpdate(id, updateRequestDto.getCode(),
+                course.getSubject().getId());
 
         courseMapper.toDomain(course, updateRequestDto);
 
@@ -105,8 +92,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void deleteCourse(Integer id) {
         var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Course with id %s not found", id)
-        ));
+                String.format("Course with id %s not found", id)));
 
         courseValidator.validateCourseInTimePeriod(course);
         courseValidator.validateEnrollmentExistenceForCourse(course);

@@ -17,5 +17,5 @@ public interface CourseService {
 
     void deleteCourse(Integer id);
 
-    ///  TODO: Enroll actions need to be defined here
+    /// TODO: Enroll actions need to be defined here
 }

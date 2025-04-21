@@ -16,10 +16,8 @@ public class PageRequest {
         ASC, DESC
     }
 
-    public static PageRequest from(BaseCollectionRequest search){
-        return PageRequest.builder()
-                .pageNumber(search.getPage())
-                .pageSize(search.getSize())
+    public static PageRequest from(BaseCollectionRequest search) {
+        return PageRequest.builder().pageNumber(search.getPage()).pageSize(search.getSize())
                 .sortBy(search.getSortBy())
                 .sortDirection("desc".equalsIgnoreCase(search.getSortDirection())
                         ? PageRequest.SortDirection.DESC

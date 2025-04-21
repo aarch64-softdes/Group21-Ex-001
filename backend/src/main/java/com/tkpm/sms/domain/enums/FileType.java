@@ -6,9 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum FileType {
-    JSON("json", "application/json"),
-    CSV("csv", "text/csv"),
-    PDF("pdf", "application/pdf");
+    JSON("json", "application/json"), CSV("csv", "text/csv"), PDF("pdf", "application/pdf");
 
     private final String extension;
     private final String mediaType;

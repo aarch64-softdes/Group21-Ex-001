@@ -18,12 +18,8 @@ public class Address {
     String country;
 
     public String getFullAddress() {
-        return String.format("%s, %s, %s, %s, %s",
-                street == null ? "" : street,
-                ward == null ? "" : ward,
-                district == null ? "" : district,
-                province == null ? "" : province,
-                country == null ? "" : country
-        );
+        return String.format("%s, %s, %s, %s, %s", street == null ? "" : street,
+                ward == null ? "" : ward, district == null ? "" : district,
+                province == null ? "" : province, country == null ? "" : country);
     }
 }

@@ -13,11 +13,8 @@ import com.tkpm.sms.domain.model.History;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {
-        StudentMapper.class,
-        CourseMapper.class,
-        ScoreMapper.class
-})
+@Mapper(componentModel = "spring", uses = {StudentMapper.class, CourseMapper.class,
+        ScoreMapper.class})
 public interface EnrollmentMapperImpl extends EnrollmentMapper {
     @Override
     @Mapping(target = "student", ignore = true)

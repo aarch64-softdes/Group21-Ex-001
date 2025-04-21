@@ -34,7 +34,6 @@ public class RequiredValidator implements ConstraintValidator<RequiredConstraint
     private void addConstraintViolation(ConstraintValidatorContext context, String fieldName) {
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(ErrorCode.FIELD_REQUIRED.name())
-                .addPropertyNode(fieldName)
-                .addConstraintViolation();
+                .addPropertyNode(fieldName).addConstraintViolation();
     }
 }

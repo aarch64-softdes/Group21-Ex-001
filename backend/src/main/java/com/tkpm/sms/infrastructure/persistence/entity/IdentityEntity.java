@@ -42,6 +42,6 @@ public class IdentityEntity {
     String country;
     String notes;
 
-//    @OneToOne(mappedBy = "identity")
-//    StudentEntity student;
+    // @OneToOne(mappedBy = "identity")
+    // StudentEntity student;
 }

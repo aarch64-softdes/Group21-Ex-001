@@ -7,9 +7,7 @@ import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.repository.StudentRepository;
-import com.tkpm.sms.infrastructure.persistence.entity.StudentEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -21,8 +19,7 @@ public class StudentDomainValidator {
     public void validateStudentIdUniqueness(String studentId) {
         if (studentRepository.existsByStudentId(studentId)) {
             throw new DuplicateResourceException(
-                    String.format("Student with ID %s already exists", studentId)
-            );
+                    String.format("Student with ID %s already exists", studentId));
         }
     }
 
@@ -30,16 +27,14 @@ public class StudentDomainValidator {
         Optional<Student> existingStudent = studentRepository.findByStudentId(studentId);
         if (existingStudent.isPresent() && !existingStudent.get().getId().equals(id)) {
             throw new DuplicateResourceException(
-                    String.format("Student with ID %s already exists", studentId)
-            );
+                    String.format("Student with ID %s already exists", studentId));
         }
     }
 
     public void validateEmailUniqueness(String email) {
         if (studentRepository.existsByEmail(email)) {
             throw new DuplicateResourceException(
-                    String.format("Student with email %s already exists", email)
-            );
+                    String.format("Student with email %s already exists", email));
         }
     }
 
@@ -47,8 +42,7 @@ public class StudentDomainValidator {
         Optional<Student> existingStudent = studentRepository.findByEmail(email);
         if (existingStudent.isPresent() && !existingStudent.get().getId().equals(id)) {
             throw new DuplicateResourceException(
-                    String.format("Student with email %s already exists", email)
-            );
+                    String.format("Student with email %s already exists", email));
         }
     }
 
@@ -57,8 +51,8 @@ public class StudentDomainValidator {
 
         if (!email.endsWith(validDomain)) {
             throw new UnsupportedEmailException(
-                    String.format("This %s email domain is not supported, only %s is allowed", email, validDomain)
-            );
+                    String.format("This %s email domain is not supported, only %s is allowed",
+                            email, validDomain));
         }
     }
 
@@ -66,8 +60,7 @@ public class StudentDomainValidator {
         if (student.getStatus() != null && !student.isStatusTransitionAllowed(newStatus)) {
             throw new UnsupportedStatusTransitionException(
                     String.format("Transition from %s to %s is not allowed",
-                            student.getStatus().getName(), newStatus.getName())
-            );
+                            student.getStatus().getName(), newStatus.getName()));
         }
     }
 }

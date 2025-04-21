@@ -37,70 +37,54 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     HistoryPersistenceMapper historyPersistenceMapper;
 
     @Override
-    public PageResponse<Enrollment> findAllEnrollmentsOfStudentWithPaging(String studentId, PageRequest pageRequest) {
+    public PageResponse<Enrollment> findAllEnrollmentsOfStudentWithPaging(String studentId,
+            PageRequest pageRequest) {
         Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                pageRequest.getPageNumber() - 1,
-                pageRequest.getPageSize(),
+                pageRequest.getPageNumber() - 1, pageRequest.getPageSize(),
                 pageRequest.getSortDirection() == PageRequest.SortDirection.DESC
                         ? Sort.Direction.DESC
                         : Sort.Direction.ASC,
-                pageRequest.getSortBy()
-        );
+                pageRequest.getSortBy());
 
         var page = enrollmentJpaRepository.findAllEnrollmentOfStudent(studentId, pageable);
 
-        var contents = page.getContent().stream()
-                .map(enrollmentPersistenceMapper::toDomain)
+        var contents = page.getContent().stream().map(enrollmentPersistenceMapper::toDomain)
                 .toList();
 
-        return PageResponse.of(
-                contents,
-                page.getNumber() + 1, // Convert 0-based to 1-based
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
+        return PageResponse.of(contents, page.getNumber() + 1, // Convert 0-based to 1-based
+                page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 
     @Override
-    public PageResponse<History> findEnrollmentHistoryOfStudent(String studentId, PageRequest pageRequest) {
+    public PageResponse<History> findEnrollmentHistoryOfStudent(String studentId,
+            PageRequest pageRequest) {
         Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                pageRequest.getPageNumber() - 1,
-                pageRequest.getPageSize(),
+                pageRequest.getPageNumber() - 1, pageRequest.getPageSize(),
                 pageRequest.getSortDirection() == PageRequest.SortDirection.DESC
                         ? Sort.Direction.DESC
                         : Sort.Direction.ASC,
-                pageRequest.getSortBy()
-        );
+                pageRequest.getSortBy());
 
         var page = historyJpaRepository.findAllEnrollmentHistoriesOfStudent(studentId, pageable);
 
-        var contents = page.getContent().stream()
-                .map(historyPersistenceMapper::toDomain)
-                .toList();
+        var contents = page.getContent().stream().map(historyPersistenceMapper::toDomain).toList();
 
-        return PageResponse.of(
-                contents,
-                page.getNumber() + 1, // Convert 0-based to 1-based
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
+        return PageResponse.of(contents, page.getNumber() + 1, // Convert 0-based to 1-based
+                page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 
     @Override
     public List<Enrollment> findAllEnrollmentsOfStudent(String studentId) {
         return enrollmentJpaRepository.findAllByStudentId(studentId).stream()
-                .map(enrollmentPersistenceMapper::toDomain)
-                .toList();
+                .map(enrollmentPersistenceMapper::toDomain).toList();
     }
 
     @Override
-    public Optional<Enrollment> findEnrollmentByStudentIdAndCourseId(String studentId, Integer courseId) {
+    public Optional<Enrollment> findEnrollmentByStudentIdAndCourseId(String studentId,
+            Integer courseId) {
         var enrollment = enrollmentJpaRepository.findByStudentIdAndCourseId(studentId, courseId);
 
-        return Optional.ofNullable(enrollment)
-                .map(enrollmentPersistenceMapper::toDomain);
+        return Optional.ofNullable(enrollment).map(enrollmentPersistenceMapper::toDomain);
     }
 
     @Override
@@ -108,12 +92,9 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         var enrollmentEntity = enrollmentPersistenceMapper.toEntity(enrollment);
         var savedEnrollmentEntity = enrollmentJpaRepository.save(enrollmentEntity);
 
-        var historyEntity = HistoryEntity.builder().
-                student(enrollmentEntity.getStudent()).
-                course(enrollmentEntity.getCourse()).
-                createdAt(LocalDateTime.now()).
-                actionType(History.ActionType.ENROLLED.name()).
-                build();
+        var historyEntity = HistoryEntity.builder().student(enrollmentEntity.getStudent())
+                .course(enrollmentEntity.getCourse()).createdAt(LocalDateTime.now())
+                .actionType(History.ActionType.ENROLLED.name()).build();
         historyJpaRepository.save(historyEntity);
 
         return enrollmentPersistenceMapper.toDomain(savedEnrollmentEntity);
@@ -123,12 +104,9 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     public void delete(Enrollment enrollment) {
         var enrollmentEntity = enrollmentPersistenceMapper.toEntity(enrollment);
 
-        var historyEntity = HistoryEntity.builder().
-                student(enrollmentEntity.getStudent()).
-                course(enrollmentEntity.getCourse()).
-                createdAt(LocalDateTime.now()).
-                actionType(History.ActionType.DELETED.name()).
-                build();
+        var historyEntity = HistoryEntity.builder().student(enrollmentEntity.getStudent())
+                .course(enrollmentEntity.getCourse()).createdAt(LocalDateTime.now())
+                .actionType(History.ActionType.DELETED.name()).build();
         historyJpaRepository.save(historyEntity);
 
         enrollmentJpaRepository.delete(enrollmentEntity);
@@ -144,38 +122,32 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         return enrollmentJpaRepository.countAllByCourseId(courseId);
     }
 
-
     @Override
     public List<Enrollment> getFailedSubjectsOfStudent(String studentId, List<Integer> subjectIds) {
         var failingGrade = settingRepository.getFailingGradeSetting();
-        var enrollments = enrollmentJpaRepository.findAllByStudentId(studentId)
-                .stream().filter(
-                        enrollmentEntity -> {
-                            var subject = enrollmentEntity.getCourse().getSubject();
-
-                            return subjectIds.contains(subject.getId());
-                        }
-                ).toList();
-        return enrollments.stream()
+        var enrollments = enrollmentJpaRepository.findAllByStudentId(studentId).stream()
                 .filter(enrollmentEntity -> {
-                    var transcript = enrollmentEntity.getScore();
-                    return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() < failingGrade;
-                }).map(
-                        enrollmentPersistenceMapper::toDomain
-                ).toList();
+                    var subject = enrollmentEntity.getCourse().getSubject();
+
+                    return subjectIds.contains(subject.getId());
+                }).toList();
+        return enrollments.stream().filter(enrollmentEntity -> {
+            var transcript = enrollmentEntity.getScore();
+            return Objects.nonNull(transcript.getGpa()) && transcript.getGpa() < failingGrade;
+        }).map(enrollmentPersistenceMapper::toDomain).toList();
     }
 
     @Override
-    public List<Enrollment> getUnenrolledOrUnfinishedCourseOfSubjects(String studentId, List<Integer> subjectIds) {
+    public List<Enrollment> getUnenrolledOrUnfinishedCourseOfSubjects(String studentId,
+            List<Integer> subjectIds) {
 
-        return enrollmentJpaRepository.findAllByStudentId(studentId)
-                .stream().filter(
-                        enrollmentEntity -> {
-                            var subject = enrollmentEntity.getCourse().getSubject();
+        return enrollmentJpaRepository.findAllByStudentId(studentId).stream()
+                .filter(enrollmentEntity -> {
+                    var subject = enrollmentEntity.getCourse().getSubject();
 
-                            return !subjectIds.contains(subject.getId()) || Objects.isNull(enrollmentEntity.getScore().getGpa());
-                        }
-                ).map(enrollmentPersistenceMapper::toDomain).toList();
+                    return !subjectIds.contains(subject.getId())
+                            || Objects.isNull(enrollmentEntity.getScore().getGpa());
+                }).map(enrollmentPersistenceMapper::toDomain).toList();
     }
 
     @Override

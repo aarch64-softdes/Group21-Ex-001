@@ -23,9 +23,10 @@ public interface SubjectMapperImpl extends SubjectMapper {
     SubjectDto toSubjectDto(Subject subject);
 
     @Override
-    @Mapping(target="prerequisites", ignore = true)
-    void updateSubjectFromDto(@MappingTarget Subject subject, SubjectUpdateRequestDto subjectRequestDto);
+    @Mapping(target = "prerequisites", ignore = true)
+    void updateSubjectFromDto(@MappingTarget Subject subject,
+            SubjectUpdateRequestDto subjectRequestDto);
 
     @Override
-    PrerequisiteSubjectDto toPrerequisiteSubjectDto(Subject  subject);
+    PrerequisiteSubjectDto toPrerequisiteSubjectDto(Subject subject);
 }

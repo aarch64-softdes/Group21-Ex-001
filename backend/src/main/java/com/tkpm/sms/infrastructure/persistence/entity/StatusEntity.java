@@ -37,10 +37,7 @@ public class StatusEntity {
     Set<StudentEntity> students;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
-            name = "status_transitions",
-            joinColumns = @JoinColumn(name = "from_status_id")
-    )
+    @CollectionTable(name = "status_transitions", joinColumns = @JoinColumn(name = "from_status_id"))
     @Column(name = "to_status_id")
     List<Integer> validTransitionIds;
 }

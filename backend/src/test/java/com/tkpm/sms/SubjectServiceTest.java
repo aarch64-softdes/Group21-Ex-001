@@ -1,13 +1,10 @@
 package com.tkpm.sms;
 
-import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.subject.SubjectCreateRequestDto;
 import com.tkpm.sms.application.dto.request.subject.SubjectUpdateRequestDto;
 import com.tkpm.sms.application.mapper.SubjectMapper;
 import com.tkpm.sms.application.service.implementation.SubjectServiceImpl;
 import com.tkpm.sms.application.service.interfaces.FacultyService;
-import com.tkpm.sms.domain.common.PageRequest;
-import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
 import com.tkpm.sms.domain.model.Faculty;
@@ -20,8 +17,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -151,7 +146,8 @@ class SubjectServiceTest {
         SubjectUpdateRequestDto requestDto = new SubjectUpdateRequestDto();
         when(subjectRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> subjectService.updateSubject(id, requestDto));
+        assertThrows(ResourceNotFoundException.class,
+                () -> subjectService.updateSubject(id, requestDto));
     }
 
     @Test
@@ -163,7 +159,8 @@ class SubjectServiceTest {
 
         when(subjectRepository.findById(id)).thenReturn(Optional.of(subject));
 
-        assertThrows(SubjectDeletionConstraintException.class, () -> subjectService.deleteSubject(id));
+        assertThrows(SubjectDeletionConstraintException.class,
+                () -> subjectService.deleteSubject(id));
 
         verify(subjectRepository, never()).save(any());
     }

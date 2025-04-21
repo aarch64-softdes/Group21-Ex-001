@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
-public interface StudentJpaRepository extends JpaRepository<StudentEntity, String>, JpaSpecificationExecutor<StudentEntity> {
+public interface StudentJpaRepository
+        extends
+            JpaRepository<StudentEntity, String>,
+            JpaSpecificationExecutor<StudentEntity> {
     Optional<StudentEntity> findByStudentId(String studentId);
 
     boolean existsByStudentId(String studentId);

@@ -35,37 +35,34 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DomainException.class)
-    public ResponseEntity<ApplicationResponseDto<Object>> handleApplicationException(DomainException exception) {
+    public ResponseEntity<ApplicationResponseDto<Object>> handleApplicationException(
+            DomainException exception) {
         log.error("Application error", exception);
 
         ErrorCode errorCode = exception.getCode();
         HttpStatus status = errorCodeStatusMapper.getStatus(errorCode);
         var response = ApplicationResponseDto.failure(exception, status.value());
 
-        return ResponseEntity
-                .status(errorCodeStatusMapper.getStatus(errorCode))
-                .body(response);
+        return ResponseEntity.status(errorCodeStatusMapper.getStatus(errorCode)).body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApplicationResponseDto<Object>> handleRuntimeException(RuntimeException exception) {
+    public ResponseEntity<ApplicationResponseDto<Object>> handleRuntimeException(
+            RuntimeException exception) {
         log.error("Unexpected error", exception);
 
         var errorCode = ErrorCode.UNCATEGORIZED;
         HttpStatus status = errorCodeStatusMapper.getStatus(errorCode);
 
-        var response = ApplicationResponseDto.failure(new GenericDomainException(
-                exception.getMessage(),
-                errorCode
-        ), status.value());
+        var response = ApplicationResponseDto.failure(
+                new GenericDomainException(exception.getMessage(), errorCode), status.value());
 
-        return ResponseEntity
-                .status(status)
-                .body(response);
+        return ResponseEntity.status(status).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApplicationResponseDto<Object>> handleValidationException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApplicationResponseDto<Object>> handleValidationException(
+            MethodArgumentNotValidException exception) {
         log.error("Validation error", exception);
 
         FieldError fieldError = exception.getFieldError();
@@ -78,15 +75,10 @@ public class GlobalExceptionHandler {
         HttpStatus status = errorCodeStatusMapper.getStatus(errorInfo.errorCode);
 
         var response = ApplicationResponseDto.failure(
-                new GenericDomainException(
-                        errorInfo.formattedMessage,
-                        errorInfo.errorCode),
-                status.value()
-        );
+                new GenericDomainException(errorInfo.formattedMessage, errorInfo.errorCode),
+                status.value());
 
-        return ResponseEntity
-                .badRequest()
-                .body(response);
+        return ResponseEntity.badRequest().body(response);
     }
 
     private static class ErrorResponseInfo {
@@ -99,20 +91,15 @@ public class GlobalExceptionHandler {
         }
     }
 
-    private ErrorResponseInfo processValidationError(
-            MethodArgumentNotValidException exception,
-            String enumKey
-    ) {
+    private ErrorResponseInfo processValidationError(MethodArgumentNotValidException exception,
+            String enumKey) {
         log.info("Enum key: {}", enumKey);
         try {
-            ConstraintViolation<?> constraintViolation = exception
-                    .getBindingResult()
-                    .getAllErrors()
-                    .get(0)
-                    .unwrap(ConstraintViolation.class);
+            ConstraintViolation<?> constraintViolation = exception.getBindingResult().getAllErrors()
+                    .get(0).unwrap(ConstraintViolation.class);
 
-            Map<String, Object> attributes =
-                    constraintViolation.getConstraintDescriptor().getAttributes();
+            Map<String, Object> attributes = constraintViolation.getConstraintDescriptor()
+                    .getAttributes();
 
             log.info("Attributes: {}", attributes);
 
@@ -145,17 +132,12 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<ApplicationResponseDto<Object>> handleInvalidErrorKey() {
         ErrorCode errorCode = ErrorCode.INVALID_ERROR_KEY;
-        return ResponseEntity
-                .badRequest()
-                .body(ApplicationResponseDto.failure(new GenericDomainException(
-                        errorCode.getDefaultMessage(),
-                        errorCode
-                )));
+        return ResponseEntity.badRequest().body(ApplicationResponseDto
+                .failure(new GenericDomainException(errorCode.getDefaultMessage(), errorCode)));
     }
 
     private String formatEnumValues(String message, String[] values) {
-        return message.replace(
-                String.format("{%s}", VALUES_ATTRIBUTE), Arrays.toString(values));
+        return message.replace(String.format("{%s}", VALUES_ATTRIBUTE), Arrays.toString(values));
     }
 
     private String formatRequiredMessage(String requiredField) {
@@ -165,7 +147,6 @@ public class GlobalExceptionHandler {
     private String formatMinValue(String message, String minValue) {
         log.info("Min value: {}", minValue);
         log.info("Message: {}", message);
-        return message.replace(
-                String.format("{%s}", MIN_VALUE_ATTRIBUTE), minValue);
+        return message.replace(String.format("{%s}", MIN_VALUE_ATTRIBUTE), minValue);
     }
 }

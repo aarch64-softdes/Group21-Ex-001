@@ -36,65 +36,45 @@ public class CourseController {
 
     @GetMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<PageResponse<CourseMinimalDto>>> getCourses(
-            @ModelAttribute BaseCollectionRequest search
-    ) {
+            @ModelAttribute BaseCollectionRequest search) {
         PageResponse<Course> pageResponse = courseService.findAll(search);
-        List<CourseMinimalDto> studentDtos = ListUtils.transform(pageResponse.getData(), courseMapper::toMinimalDto);
+        List<CourseMinimalDto> studentDtos = ListUtils.transform(pageResponse.getData(),
+                courseMapper::toMinimalDto);
         PageResponse<CourseMinimalDto> listResponse = PageResponse.of(pageResponse, studentDtos);
-        return ResponseEntity.ok(
-                ApplicationResponseDto.success(listResponse)
-        );
+        return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<CourseDto>> getCourseById(
-            @PathVariable Integer id
-    ) {
+            @PathVariable Integer id) {
         var course = courseService.getCourseById(id);
 
-        return ResponseEntity.ok(
-                ApplicationResponseDto.success(
-                        courseMapper.toDto(course)
-                )
-        );
+        return ResponseEntity.ok(ApplicationResponseDto.success(courseMapper.toDto(course)));
     }
 
     @PostMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<Object>> createCourse(
             @Valid @RequestBody CourseCreateRequestDto courseCreateRequestDto,
-            UriComponentsBuilder uriComponentsBuilder
-    ) {
+            UriComponentsBuilder uriComponentsBuilder) {
         var course = courseService.createCourse(courseCreateRequestDto);
 
-        var uri = uriComponentsBuilder
-                .path("/api/courses/{id}")
-                .buildAndExpand(course.getId())
+        var uri = uriComponentsBuilder.path("/api/courses/{id}").buildAndExpand(course.getId())
                 .toUri();
 
         return ResponseEntity.created(uri)
-                .body(ApplicationResponseDto.success(
-                        courseMapper.toDto(course)
-                ));
+                .body(ApplicationResponseDto.success(courseMapper.toDto(course)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApplicationResponseDto<Object>> updateCourse(
-            @PathVariable Integer id,
-            @Valid @RequestBody CourseUpdateRequestDto courseUpdateRequestDto
-    ) {
+    public ResponseEntity<ApplicationResponseDto<Object>> updateCourse(@PathVariable Integer id,
+            @Valid @RequestBody CourseUpdateRequestDto courseUpdateRequestDto) {
         var course = courseService.updateCourse(id, courseUpdateRequestDto);
 
-        return ResponseEntity.ok(
-                ApplicationResponseDto.success(
-                        courseMapper.toDto(course)
-                )
-        );
+        return ResponseEntity.ok(ApplicationResponseDto.success(courseMapper.toDto(course)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApplicationResponseDto<Void>> deleteCourse(
-            @PathVariable Integer id
-    ) {
+    public ResponseEntity<ApplicationResponseDto<Void>> deleteCourse(@PathVariable Integer id) {
         courseService.deleteCourse(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

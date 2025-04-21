@@ -24,7 +24,6 @@ public class AddressRepositoryImpl implements AddressRepository {
 
     @Override
     public Optional<Address> findById(String id) {
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return jpaRepository.findById(id).map(mapper::toDomain);
     }
 }

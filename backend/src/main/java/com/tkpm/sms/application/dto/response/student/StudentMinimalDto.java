@@ -6,14 +6,13 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-//@JsonInclude(JsonInclude.Include.NON_NULL)
+// @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StudentMinimalDto {
     // Basic Information
     String id;

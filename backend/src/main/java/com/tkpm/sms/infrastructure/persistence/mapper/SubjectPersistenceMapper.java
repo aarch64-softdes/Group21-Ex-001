@@ -5,9 +5,7 @@ import com.tkpm.sms.infrastructure.persistence.entity.SubjectEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {
-        FacultyPersistenceMapper.class
-})
+@Mapper(componentModel = "spring", uses = {FacultyPersistenceMapper.class})
 public interface SubjectPersistenceMapper {
     @Mapping(target = "isActive", source = "active")
     Subject toDomain(SubjectEntity entity);

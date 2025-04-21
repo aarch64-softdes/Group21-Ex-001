@@ -32,14 +32,12 @@ public class ProgramRepositoryImpl implements ProgramRepository {
 
     @Override
     public Optional<Program> findById(Integer id) {
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override
     public Optional<Program> findByName(String name) {
-        return jpaRepository.findProgramByName(name)
-                .map(mapper::toDomain);
+        return jpaRepository.findProgramByName(name).map(mapper::toDomain);
     }
 
     @Override
@@ -55,22 +53,16 @@ public class ProgramRepositoryImpl implements ProgramRepository {
     @Override
     public PageResponse<Program> findAll(PageRequest pageRequest) {
         // Convert domain PageRequest to Spring Pageable
-    Pageable pageable = PagingUtils.toSpringPageable(pageRequest);
+        Pageable pageable = PagingUtils.toSpringPageable(pageRequest);
 
         // Execute query with Spring Pageable
         Page<ProgramEntity> page = jpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Program> content = page.getContent().stream()
-                .map(mapper::toDomain)
+        List<Program> content = page.getContent().stream().map(mapper::toDomain)
                 .collect(Collectors.toList());
 
-        return PageResponse.of(
-                content,
-                page.getNumber() + 1, // Convert 0-based to 1-based
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
-        );
+        return PageResponse.of(content, page.getNumber() + 1, // Convert 0-based to 1-based
+                page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 }

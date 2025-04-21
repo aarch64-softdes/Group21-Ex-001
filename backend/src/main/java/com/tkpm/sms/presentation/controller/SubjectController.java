@@ -35,24 +35,21 @@ public class SubjectController {
 
     @GetMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<PageResponse<SubjectDto>>> getSubjects(
-         @ModelAttribute BaseCollectionRequest request
-    ) {
+            @ModelAttribute BaseCollectionRequest request) {
         PageResponse<Subject> pageResponse = subjectService.findAll(request);
-        List<SubjectDto> subjectDtoList = ListUtils.transform(pageResponse.getData(), subjectMapper::toSubjectDto);
+        List<SubjectDto> subjectDtoList = ListUtils.transform(pageResponse.getData(),
+                subjectMapper::toSubjectDto);
         PageResponse<SubjectDto> listResponse = PageResponse.of(pageResponse, subjectDtoList);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<SubjectDto>> getSubjectById(
-            @PathVariable Integer id
-    ) {
+            @PathVariable Integer id) {
         Subject subject = subjectService.getSubjectById(id);
 
-        List<PrerequisiteSubjectDto> prerequisitesSubjects = ListUtils.transform(
-                subject.getPrerequisites(),
-                subjectMapper::toPrerequisiteSubjectDto
-        );
+        List<PrerequisiteSubjectDto> prerequisitesSubjects = ListUtils
+                .transform(subject.getPrerequisites(), subjectMapper::toPrerequisiteSubjectDto);
 
         SubjectDto subjectDto = subjectMapper.toSubjectDto(subject);
         subjectDto.setPrerequisitesSubjects(prerequisitesSubjects);
@@ -62,44 +59,39 @@ public class SubjectController {
     @PostMapping({"/", ""})
     public ResponseEntity<ApplicationResponseDto<SubjectDto>> createSubject(
             @Valid @RequestBody SubjectCreateRequestDto subjectRequestDto,
-            UriComponentsBuilder uriComponentsBuilder
-    ) {
+            UriComponentsBuilder uriComponentsBuilder) {
         Subject createdSubject = subjectService.createSubject(subjectRequestDto);
         SubjectDto createdSubjectDto = subjectMapper.toSubjectDto(createdSubject);
-        return ResponseEntity.created(uriComponentsBuilder.path("/api/subjects/{id}").buildAndExpand(createdSubject.getId()).toUri())
+        return ResponseEntity
+                .created(uriComponentsBuilder.path("/api/subjects/{id}")
+                        .buildAndExpand(createdSubject.getId()).toUri())
                 .body(ApplicationResponseDto.success(createdSubjectDto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<SubjectDto>> updateSubject(
             @PathVariable Integer id,
-            @Valid @RequestBody SubjectUpdateRequestDto updateRequestDto
-    ) {
+            @Valid @RequestBody SubjectUpdateRequestDto updateRequestDto) {
         Subject updatedSubject = subjectService.updateSubject(id, updateRequestDto);
         SubjectDto updatedSubjectDto = subjectMapper.toSubjectDto(updatedSubject);
         return ResponseEntity.ok(ApplicationResponseDto.success(updatedSubjectDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApplicationResponseDto<Void>> deleteSubject(
-            @PathVariable Integer id
-    ) {
+    public ResponseEntity<ApplicationResponseDto<Void>> deleteSubject(@PathVariable Integer id) {
         subjectService.deleteSubject(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/{id}/deactivate")
     public ResponseEntity<ApplicationResponseDto<Void>> deactivateSubject(
-            @PathVariable Integer id
-    ) {
+            @PathVariable Integer id) {
         subjectService.deactivateSubject(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/{id}/activate")
-    public ResponseEntity<ApplicationResponseDto<Void>> activateSubject(
-            @PathVariable Integer id
-    ) {
+    public ResponseEntity<ApplicationResponseDto<Void>> activateSubject(@PathVariable Integer id) {
         subjectService.activateSubject(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

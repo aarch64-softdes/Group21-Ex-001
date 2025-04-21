@@ -25,14 +25,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LoggingAspect {
 
-
     @Value("${logging.aspect.logger-type:CONSOLE}")
     private String loggerType;
 
     private final BaseLogger logger = LoggerManager.getDefaultLoggerStatic();
 
     @Around("@annotation(loggingAround)")
-    public Object logAround(ProceedingJoinPoint joinPoint, LoggingAround loggingAround) throws Throwable {
+    public Object logAround(ProceedingJoinPoint joinPoint, LoggingAround loggingAround)
+            throws Throwable {
         String methodName = joinPoint.getSignature().getName();
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String messageTemplate = loggingAround.value();
@@ -47,10 +47,7 @@ public class LoggingAspect {
 
         LogEntry beforeLogEntry = LogEntry.builder()
 
-                .source(className)
-                .level(LogLevel.INFO)
-                .metadata(metadata)
-                .build();
+                .source(className).level(LogLevel.INFO).metadata(metadata).build();
 
         if (!StringUtils.hasText(messageTemplate)) {
             beforeLogEntry.setMessage(String.format("[BEFORE] Method %s called with arguments %s",
@@ -63,17 +60,15 @@ public class LoggingAspect {
 
         Object result = joinPoint.proceed();
 
-        LogEntry afterLogEntry = LogEntry.builder()
-                .source(className)
-                .level(LogLevel.INFO)
-                .metadata(metadata)
-                .build();
+        LogEntry afterLogEntry = LogEntry.builder().source(className).level(LogLevel.INFO)
+                .metadata(metadata).build();
 
         if (!StringUtils.hasText(messageTemplate)) {
-            afterLogEntry.setMessage(String.format("[AFTER] Method %s returned %s",
-                    methodName, result));
+            afterLogEntry
+                    .setMessage(String.format("[AFTER] Method %s returned %s", methodName, result));
         } else {
-            afterLogEntry.setMessage("[AFTER] " + formatMessage(messageTemplate, formattedArgs) + " completed");
+            afterLogEntry.setMessage(
+                    "[AFTER] " + formatMessage(messageTemplate, formattedArgs) + " completed");
         }
 
         logger.log(afterLogEntry);
@@ -95,11 +90,8 @@ public class LoggingAspect {
         metadata.put("method", methodName);
         metadata.put("class", className);
 
-        LogEntry logEntry = LogEntry.builder()
-                .source(className)
-                .level(LogLevel.INFO)
-                .metadata(metadata)
-                .build();
+        LogEntry logEntry = LogEntry.builder().source(className).level(LogLevel.INFO)
+                .metadata(metadata).build();
 
         if (!StringUtils.hasText(messageTemplate)) {
             logEntry.setMessage(String.format("[BEFORE] Method %s called with arguments %s",
@@ -125,24 +117,22 @@ public class LoggingAspect {
         metadata.put("method", methodName);
         metadata.put("class", className);
 
-        LogEntry logEntry = LogEntry.builder()
-                .source(className)
-                .level(LogLevel.INFO)
-                .metadata(metadata)
-                .build();
+        LogEntry logEntry = LogEntry.builder().source(className).level(LogLevel.INFO)
+                .metadata(metadata).build();
 
         if (!StringUtils.hasText(messageTemplate)) {
-            logEntry.setMessage(String.format("[AFTER] Method %s returned %s",
-                    methodName, result));
+            logEntry.setMessage(String.format("[AFTER] Method %s returned %s", methodName, result));
         } else {
-            logEntry.setMessage("[AFTER] " + formatMessage(messageTemplate, formattedArgs) + " completed");
+            logEntry.setMessage(
+                    "[AFTER] " + formatMessage(messageTemplate, formattedArgs) + " completed");
         }
 
         logger.log(logEntry);
     }
 
     @AfterThrowing(pointcut = "@annotation(loggingException)", throwing = "exception")
-    public void logAfterThrowing(JoinPoint joinPoint, LoggingException loggingException, Throwable exception) {
+    public void logAfterThrowing(JoinPoint joinPoint, LoggingException loggingException,
+            Throwable exception) {
         String methodName = joinPoint.getSignature().getName();
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String messageTemplate = loggingException.value();
@@ -157,15 +147,12 @@ public class LoggingAspect {
         metadata.put("exceptionClass", exception.getClass().getName());
         metadata.put("exceptionMessage", exception.getMessage());
 
-        LogEntry logEntry = LogEntry.builder()
-                .source(className)
-                .level(LogLevel.ERROR)
-                .metadata(metadata)
-                .build();
+        LogEntry logEntry = LogEntry.builder().source(className).level(LogLevel.ERROR)
+                .metadata(metadata).build();
 
         if (!StringUtils.hasText(messageTemplate)) {
-            logEntry.setMessage(String.format("[ERROR] Method %s threw exception %s",
-                    methodName, exception));
+            logEntry.setMessage(
+                    String.format("[ERROR] Method %s threw exception %s", methodName, exception));
         } else {
             Object[] argsWithException = new Object[formattedArgs.length + 1];
             System.arraycopy(formattedArgs, 0, argsWithException, 0, formattedArgs.length);
@@ -190,9 +177,9 @@ public class LoggingAspect {
             String placeholder = "{}";
             int index = result.indexOf(placeholder);
             if (index != -1) {
-                result = result.substring(0, index) +
-                        (args[i] == null ? "null" : args[i].toString()) +
-                        result.substring(index + placeholder.length());
+                result = result.substring(0, index)
+                        + (args[i] == null ? "null" : args[i].toString())
+                        + result.substring(index + placeholder.length());
             }
         }
         return result;

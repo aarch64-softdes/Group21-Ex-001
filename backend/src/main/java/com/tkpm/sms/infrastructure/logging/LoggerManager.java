@@ -28,14 +28,14 @@ public class LoggerManager {
      */
     public BaseLogger getLogger(LoggerType type) {
         switch (type) {
-            case FILE:
+            case FILE :
                 return applicationContext.getBean(FileLogger.class);
-            case JSON:
+            case JSON :
                 return applicationContext.getBean(JsonLogger.class);
-            case ELASTICSEARCH:
+            case ELASTICSEARCH :
                 return applicationContext.getBean(ElasticsearchLogger.class);
-            case CONSOLE:
-            default:
+            case CONSOLE :
+            default :
                 return applicationContext.getBean(ConsoleLogger.class);
         }
     }

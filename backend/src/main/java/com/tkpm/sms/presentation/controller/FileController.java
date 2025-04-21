@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,21 +27,19 @@ public class FileController {
     /**
      * Export students to a file in the specified format (CSV or JSON).
      * 
-     * @param format The format of the file to export (CSV or JSON).
+     * @param format
+     *            The format of the file to export (CSV or JSON).
      */
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportStudentsToFile(@RequestParam("format") String format) {
         byte[] data = fileService.exportStudentFile(format);
         String filename = generateFilename(format);
 
-        String mediaType = format.equalsIgnoreCase("json")
-                ? "application/json"
-                : "text/csv";
+        String mediaType = format.equalsIgnoreCase("json") ? "application/json" : "text/csv";
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType(mediaType))
-                .contentLength(data.length)
+                .contentType(MediaType.parseMediaType(mediaType)).contentLength(data.length)
                 .body(data);
     }
 

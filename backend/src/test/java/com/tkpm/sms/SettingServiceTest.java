@@ -105,8 +105,7 @@ class SettingServiceTest {
 
             when(settingRepository.findByName(SettingType.PHONE_NUMBER.getValue()))
                     .thenReturn(Optional.of(setting));
-            when(objectMapper.writeValueAsString(any()))
-                    .thenThrow(JsonProcessingException.class);
+            when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
 
             assertThrows(GenericDomainException.class,
                     () -> settingService.updatePhoneSetting(requestDto));

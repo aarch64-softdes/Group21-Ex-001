@@ -17,7 +17,8 @@ public class JsonUtils {
     /**
      * Converts an object to a JSON string.
      *
-     * @param object The object to convert
+     * @param object
+     *            The object to convert
      * @return JSON string representation of the object
      */
     public static String toJson(Object object) {
@@ -31,9 +32,12 @@ public class JsonUtils {
     /**
      * Parses a JSON string into an object of the specified type.
      *
-     * @param json      The JSON string to parse
-     * @param valueType The class of the object to parse the JSON into
-     * @param <T>       The type of the object
+     * @param json
+     *            The JSON string to parse
+     * @param valueType
+     *            The class of the object to parse the JSON into
+     * @param <T>
+     *            The type of the object
      * @return The parsed object
      */
     public static <T> T fromJson(String json, Class<T> valueType) {

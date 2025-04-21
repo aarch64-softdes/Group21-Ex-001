@@ -42,10 +42,6 @@ public class SubjectEntity {
 
     // many-to-many relationship with subject
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "subject_prerequisites",
-            joinColumns = @JoinColumn(name = "subject_id"),
-            inverseJoinColumns = @JoinColumn(name = "prerequisite_id")
-    )
+    @JoinTable(name = "subject_prerequisites", joinColumns = @JoinColumn(name = "subject_id"), inverseJoinColumns = @JoinColumn(name = "prerequisite_id"))
     Set<SubjectEntity> prerequisites;
 }

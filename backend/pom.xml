@@ -233,14 +233,21 @@
                 </configuration>
             </plugin>
 
-            <!-- Google Java Format-->
             <plugin>
-                <groupId>com.spotify.fmt</groupId>
-                <artifactId>fmt-maven-plugin</artifactId>
-                <version>2.21</version>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.43.0</version>
+                <configuration>
+                    <java>
+                        <eclipse>
+                            <file>${project.basedir}/eclipse-formatter.xml</file>
+                        </eclipse>
+                        <removeUnusedImports/>
+                    </java>
+                </configuration>
             </plugin>
 
-            <!-- Git Hook -->
+            <!-- Git Hook Plugin -->
             <plugin>
                 <groupId>io.github.phillipuniverse</groupId>
                 <artifactId>githook-maven-plugin</artifactId>
@@ -262,8 +269,8 @@
                             git diff --name-only > /tmp/unstaged_changes.txt
                             git diff --cached --name-only > /tmp/staged_changes.txt
 
-                            # Run formatter on all Java files in the project
-                            mvn com.spotify.fmt:fmt-maven-plugin:format
+                            # Run formatter on all Java files in the project using Spotless
+                            mvn spotless:apply
 
                             # Stage all Java files that were changed by the formatter
                             echo "Staging all formatted Java files..."

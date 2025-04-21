@@ -33,21 +33,24 @@ public class EnrollmentController {
     @GetMapping("/{studentId}")
     public ResponseEntity<ApplicationResponseDto<PageResponse<EnrollmentMinimalDto>>> getAllEnrollmentsOfStudent(
             @PathVariable String studentId,
-            @ModelAttribute BaseCollectionRequest baseCollectionRequest
-    ) {
-        PageResponse<Enrollment> pageResponse = enrollmentService.findAllEnrollmentsOfStudent(studentId, baseCollectionRequest);
-        List<EnrollmentMinimalDto> enrollmentDtos = ListUtils.transform(pageResponse.getData(), enrollmentMapper::toEnrollmentListDto);
-        PageResponse<EnrollmentMinimalDto> listResponse = PageResponse.of(pageResponse, enrollmentDtos);
+            @ModelAttribute BaseCollectionRequest baseCollectionRequest) {
+        PageResponse<Enrollment> pageResponse = enrollmentService
+                .findAllEnrollmentsOfStudent(studentId, baseCollectionRequest);
+        List<EnrollmentMinimalDto> enrollmentDtos = ListUtils.transform(pageResponse.getData(),
+                enrollmentMapper::toEnrollmentListDto);
+        PageResponse<EnrollmentMinimalDto> listResponse = PageResponse.of(pageResponse,
+                enrollmentDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
     @GetMapping("/{studentId}/history")
     public ResponseEntity<ApplicationResponseDto<PageResponse<HistoryDto>>> getEnrollmentHistoryOfStudent(
             @PathVariable String studentId,
-            @ModelAttribute BaseCollectionRequest baseCollectionRequest
-    ) {
-        PageResponse<History> pageResponse = enrollmentService.findEnrollmentHistoryOfStudent(studentId, baseCollectionRequest);
-        List<HistoryDto> historyDtos = ListUtils.transform(pageResponse.getData(), enrollmentMapper::toHistoryDto);
+            @ModelAttribute BaseCollectionRequest baseCollectionRequest) {
+        PageResponse<History> pageResponse = enrollmentService
+                .findEnrollmentHistoryOfStudent(studentId, baseCollectionRequest);
+        List<HistoryDto> historyDtos = ListUtils.transform(pageResponse.getData(),
+                enrollmentMapper::toHistoryDto);
         PageResponse<HistoryDto> listResponse = PageResponse.of(pageResponse, historyDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
@@ -55,17 +58,19 @@ public class EnrollmentController {
     @PostMapping("/enroll")
     public ResponseEntity<ApplicationResponseDto<EnrollmentDto>> enrollStudent(
             @RequestBody EnrollmentCreateRequestDto enrollmentCreateRequestDto,
-            UriComponentsBuilder uriComponentsBuilder
-    ) {
+            UriComponentsBuilder uriComponentsBuilder) {
         Enrollment enrollment = enrollmentService.createEnrollment(enrollmentCreateRequestDto);
         EnrollmentDto enrollmentDto = enrollmentMapper.toEnrollmentCreatedDto(enrollment);
-        var locationOfNewUser = uriComponentsBuilder.path("api/enrollments/{id}").buildAndExpand(enrollment.getId()).toUri();
+        var locationOfNewUser = uriComponentsBuilder.path("api/enrollments/{id}")
+                .buildAndExpand(enrollment.getId()).toUri();
 
-        return ResponseEntity.created(locationOfNewUser).body(ApplicationResponseDto.success(enrollmentDto));
+        return ResponseEntity.created(locationOfNewUser)
+                .body(ApplicationResponseDto.success(enrollmentDto));
     }
 
     @DeleteMapping("/unenroll")
-    public ResponseEntity<Void> unenrollStudent(@RequestBody EnrollmentDeleteRequestDto enrollmentDeleteRequestDto) {
+    public ResponseEntity<Void> unenrollStudent(
+            @RequestBody EnrollmentDeleteRequestDto enrollmentDeleteRequestDto) {
         enrollmentService.deleteEnrollment(enrollmentDeleteRequestDto);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -73,8 +78,7 @@ public class EnrollmentController {
 
     @GetMapping("/{studentId}/transcript")
     public ResponseEntity<ApplicationResponseDto<AcademicTranscriptDto>> getTranscriptOfStudent(
-            @PathVariable String studentId
-    ) {
+            @PathVariable String studentId) {
         AcademicTranscriptDto data = enrollmentService.getAcademicTranscriptOfStudent(studentId);
         return ResponseEntity.ok(ApplicationResponseDto.success(data));
     }
