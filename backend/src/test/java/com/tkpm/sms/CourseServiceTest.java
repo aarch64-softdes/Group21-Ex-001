@@ -106,6 +106,9 @@ class CourseServiceTest {
 
     @Test
     void testDeleteCourse() {
+        Course course = mock(Course.class);
+
+        when(courseRepository.findById(1)).thenReturn(Optional.of(course));
         doNothing().when(courseRepository).deleteById(1);
 
         courseService.deleteCourse(1);
