@@ -115,15 +115,6 @@ const StudentPage: React.FC = () => {
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onAdd: async (value: CreateStudentDTO) => {
-        await createStudent.mutateAsync(value);
-      },
-    }),
-    [createStudent],
-  );
-
   const searchNameFilterOption: SearchFilterOption = {
     id: 'search',
     label: 'Search by name',
@@ -175,14 +166,23 @@ const StudentPage: React.FC = () => {
     [deleteStudent],
   );
 
+  const onAdd = useCallback(
+    async (value: CreateStudentDTO) => {
+      await createStudent.mutateAsync(value);
+    },
+    [createStudent],
+  );
+
   return (
     <div className='min-h-3/4 m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Student Management'
-        addingTitle='Add Student'
+        addAction={{
+          title: 'Add Student',
+          onAdd,
+        }}
         queryHook={useStudents}
         columns={columns}
-        actions={actions}
         actionCellProperties={{
           requireDeleteConfirmation: true,
           edit: {

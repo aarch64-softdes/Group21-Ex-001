@@ -85,12 +85,10 @@ const CoursePage: React.FC = () => {
     [deleteCourse],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onAdd: async (value: CreateCourseDTO) => {
-        await createCourse.mutateAsync(value);
-      },
-    }),
+  const onAdd = React.useCallback(
+    async (value: CreateCourseDTO) => {
+      await createCourse.mutateAsync(value);
+    },
     [createCourse],
   );
 
@@ -98,10 +96,13 @@ const CoursePage: React.FC = () => {
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Course Management'
-        addingTitle='Add Course'
+        addAction={{
+          onAdd,
+          disabled: false,
+          title: 'Add Course',
+        }}
         queryHook={useCourses}
         columns={columns}
-        actions={actions}
         actionCellProperties={{
           requireDeleteConfirmation: true,
           edit: {

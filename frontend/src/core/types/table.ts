@@ -32,12 +32,9 @@ export interface Column<T> {
   transform?: (value: any, row?: T) => string; // Use any to allow for any type of value
 }
 
-// NOTE: Must use "any" here because the type of the data is not known
-export interface TableActions {
-  onSave?: (id: string, updatedData: any) => void | Promise<void>;
-  onDelete?: (id: string) => void | Promise<void>;
-  onAdd?: (data: any) => void | Promise<void>;
-}
+export type SaveAction = (id: string, updatedData: any) => void | Promise<void>;
+export type DeleteAction = (id: string) => void | Promise<void>;
+export type AddAction = (data: any) => void | Promise<void>;
 
 export interface TablePaginationProps {
   currentPage: number;
@@ -92,18 +89,21 @@ export interface DetailComponentProps {
 }
 
 export interface GenericTableProps<T extends { id: string }> {
-  tableTitle: string;
-  addingTitle: string;
+  tableTitle?: string;
   columns: Column<T>[];
-  actions?: TableActions;
+  addAction: {
+    onAdd: AddAction;
+    disabled?: boolean;
+    title?: string;
+  };
   actionCellProperties: {
     requireDeleteConfirmation?: boolean;
     edit: {
-      onSave: (id: string, updatedData: any) => void | Promise<void>;
+      onSave: SaveAction;
       disabled?: boolean;
     };
     delete: {
-      onDelete: (id: string) => void | Promise<void>;
+      onDelete: DeleteAction;
       disabled?: boolean;
     };
     formComponent?: React.FC<FormComponentProps<T>>;

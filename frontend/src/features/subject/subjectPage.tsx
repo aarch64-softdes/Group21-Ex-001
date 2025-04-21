@@ -70,15 +70,6 @@ const SubjectPage: React.FC = () => {
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onAdd: async (value: CreateSubjectDTO) => {
-        await createSubject.mutateAsync(value);
-      },
-    }),
-    [createSubject],
-  );
-
   const onSave = useCallback(
     async (id: string, value: UpdateSubjectDTO) => {
       await updateSubject.mutateAsync({
@@ -96,14 +87,23 @@ const SubjectPage: React.FC = () => {
     [deleteSubject],
   );
 
+  const onAdd = useCallback(
+    async (value: CreateSubjectDTO) => {
+      await createSubject.mutateAsync(value);
+    },
+    [createSubject],
+  );
+
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Subject Management'
-        addingTitle='Add Subject'
+        addAction={{
+          onAdd,
+          title: 'Add Subject',
+        }}
         queryHook={useSubjects}
         columns={columns}
-        actions={actions}
         actionCellProperties={{
           requireDeleteConfirmation: true,
           edit: {

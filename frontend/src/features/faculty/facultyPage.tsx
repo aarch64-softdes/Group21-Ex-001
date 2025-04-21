@@ -36,34 +36,40 @@ const FacultyPage: React.FC = () => {
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onAdd: async (value: CreateFacultyDTO) => {
-        await createFaculty.mutateAsync(value);
-      },
-    }),
-    [createFaculty],
+  const onSave = React.useCallback(
+    async (id: string, value: UpdateFacultyDTO) => {
+      await updateFaculty.mutateAsync({
+        id: id,
+        data: value,
+      });
+    },
+    [updateFaculty],
   );
 
-  const onSave = async (id: string, value: UpdateFacultyDTO) => {
-    await updateFaculty.mutateAsync({
-      id: id,
-      data: value,
-    });
-  };
+  const onDelete = React.useCallback(
+    async (id: string) => {
+      await deleteFaculty.mutateAsync(id);
+    },
+    [deleteFaculty],
+  );
 
-  const onDelete = async (id: string) => {
-    await deleteFaculty.mutateAsync(id);
-  };
+  const onAdd = React.useCallback(
+    async (value: CreateFacultyDTO) => {
+      await createFaculty.mutateAsync(value);
+    },
+    [createFaculty],
+  );
 
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Faculty Management'
-        addingTitle='Add Faculty'
+        addAction={{
+          onAdd,
+          title: 'Add Faculty',
+        }}
         queryHook={useFaculties}
         columns={columns}
-        actions={actions}
         actionCellProperties={{
           requireDeleteConfirmation: true,
           edit: {

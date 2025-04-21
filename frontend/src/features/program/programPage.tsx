@@ -36,15 +36,6 @@ const ProgramPage: React.FC = () => {
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onAdd: async (value: CreateProgramDTO) => {
-        await createProgram.mutateAsync(value);
-      },
-    }),
-    [createProgram],
-  );
-
   const onSave = React.useCallback(
     async (id: string, value: UpdateProgramDTO) => {
       await updateProgram.mutateAsync({
@@ -62,14 +53,23 @@ const ProgramPage: React.FC = () => {
     [deleteProgram],
   );
 
+  const onAdd = React.useCallback(
+    async (value: CreateProgramDTO) => {
+      await createProgram.mutateAsync(value);
+    },
+    [createProgram],
+  );
+
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Program Management'
-        addingTitle='Add Program'
         queryHook={usePrograms}
+        addAction={{
+          title: 'Add Program',
+          onAdd,
+        }}
         columns={columns}
-        actions={actions}
         actionCellProperties={{
           requireDeleteConfirmation: true,
           edit: {

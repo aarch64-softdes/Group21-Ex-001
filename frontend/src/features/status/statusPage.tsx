@@ -33,15 +33,6 @@ const StatusPage: React.FC = () => {
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onAdd: async (value: CreateStatusDTO) => {
-        await createStatus.mutateAsync(value);
-      },
-    }),
-    [createStatus],
-  );
-
   const onSave = React.useCallback(
     async (id: string, value: UpdateStatusDTO) => {
       await updateStatus.mutateAsync({
@@ -59,14 +50,23 @@ const StatusPage: React.FC = () => {
     [deleteStatus],
   );
 
+  const onAdd = React.useCallback(
+    async (value: CreateStatusDTO) => {
+      await createStatus.mutateAsync(value);
+    },
+    [createStatus],
+  );
+
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Status Management'
-        addingTitle='Add Status'
+        addAction={{
+          onAdd,
+          title: 'Add Status',
+        }}
         queryHook={useStatuses}
         columns={columns}
-        actions={actions}
         actionCellProperties={{
           requireDeleteConfirmation: true,
           edit: {

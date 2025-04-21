@@ -31,9 +31,12 @@ import React from 'react';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
-  addingTitle,
+  addAction = {
+    onAdd: () => {},
+    disabled: false,
+    title: 'Add',
+  },
   columns,
-  actions,
   queryHook,
   filterOptions,
   disablePagination = false,
@@ -80,11 +83,13 @@ const GenericTable = <T extends { id: string }>({
     isEditSaving,
     handleEditClick,
     handleEditSave,
-  } = useTableEdit<T>(actions);
+  } = useTableEdit<T>(actionCellProperties.edit.onSave);
 
-  const { isDeleting, deletingRow, handleDelete } = useTableDelete(actions);
+  const { isDeleting, deletingRow, handleDelete } = useTableDelete(
+    actionCellProperties.delete.onDelete,
+  );
   const { isAdding, dialogOpen, setDialogOpen, handleAdd, handleShowDialog } =
-    useTableAdd(actions);
+    useTableAdd(addAction.onAdd);
 
   const tableBody = useMemo(() => {
     if (state.isFetching) {
@@ -257,15 +262,17 @@ const GenericTable = <T extends { id: string }>({
               </React.Fragment>
             ))}
 
-            <LoadingButton
-              variant='outline'
-              className='flex items-center gap-2'
-              onClick={handleShowDialog}
-              isLoading={isAdding}
-            >
-              <PlusCircle className='h-5 w-5' />
-              {addingTitle}
-            </LoadingButton>
+            {addAction && !addAction.disabled && (
+              <LoadingButton
+                variant='outline'
+                className='flex items-center gap-2'
+                onClick={handleShowDialog}
+                isLoading={isAdding}
+              >
+                <PlusCircle className='h-5 w-5' />
+                {addAction.title}
+              </LoadingButton>
+            )}
           </div>
         </div>
       </div>
