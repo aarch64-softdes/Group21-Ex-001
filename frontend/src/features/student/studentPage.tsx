@@ -117,17 +117,11 @@ const StudentPage: React.FC = () => {
 
   const actions = React.useMemo(
     () => ({
-      onSave: async (id: string, value: CreateStudentDTO) => {
-        await updateStudent.mutateAsync({ id, data: value });
-      },
       onAdd: async (value: CreateStudentDTO) => {
         await createStudent.mutateAsync(value);
       },
-      onDelete: async (id: string) => {
-        await deleteStudent.mutateAsync(id);
-      },
     }),
-    [updateStudent, createStudent, deleteStudent],
+    [createStudent],
   );
 
   const searchNameFilterOption: SearchFilterOption = {
@@ -167,6 +161,20 @@ const StudentPage: React.FC = () => {
     [handleExportStudents, handleImportStudents],
   );
 
+  const onSave = useCallback(
+    async (id: string, value: CreateStudentDTO) => {
+      await updateStudent.mutateAsync({ id, data: value });
+    },
+    [updateStudent],
+  );
+
+  const onDelete = useCallback(
+    async (id: string) => {
+      await deleteStudent.mutateAsync(id);
+    },
+    [deleteStudent],
+  );
+
   return (
     <div className='min-h-3/4 m-auto flex flex-row gap-4 p-4'>
       <GenericTable
@@ -175,26 +183,30 @@ const StudentPage: React.FC = () => {
         queryHook={useStudents}
         columns={columns}
         actions={actions}
-        formComponent={StudentForm}
-        detailComponent={StudentDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
+          },
+          delete: {
+            onDelete,
+          },
+          formComponent: StudentForm,
+          detailComponent: StudentDetail,
+          additionalActions: [
+            {
+              label: 'Enrollment',
+              handler(id) {
+                navigate(`/student/${id}/enrollments`);
+              },
+            },
+          ],
         }}
-        requireDeleteConfirmation={true}
         tableOptions={[
           <FileImportButton onImport={fileOptions.onImport} />,
           <FileExportButton onExport={fileOptions.onExport} />,
         ]}
         filterOptions={[searchNameFilterOption, searchFacultyFilterOption]}
-        additionalActions={[
-          {
-            label: 'Enrollment',
-            handler(id) {
-              navigate(`/student/${id}/enrollments`);
-            },
-          },
-        ]}
       />
     </div>
   );

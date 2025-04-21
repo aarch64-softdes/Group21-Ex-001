@@ -96,18 +96,24 @@ export interface GenericTableProps<T extends { id: string }> {
   addingTitle: string;
   columns: Column<T>[];
   actions?: TableActions;
-  formComponent: React.FC<FormComponentProps<T>>;
-  detailComponent: React.FC<DetailComponentProps>;
-  disabledActions?: {
-    edit?: boolean;
-    delete?: boolean;
+  actionCellProperties: {
+    requireDeleteConfirmation?: boolean;
+    edit: {
+      onSave: (id: string, updatedData: any) => void | Promise<void>;
+      disabled?: boolean;
+    };
+    delete: {
+      onDelete: (id: string) => void | Promise<void>;
+      disabled?: boolean;
+    };
+    formComponent?: React.FC<FormComponentProps<T>>;
+    detailComponent?: React.FC<DetailComponentProps>;
+    additionalActions?: AdditionalAction[];
   };
   customActionCellComponent?: React.FC<any>;
   queryHook: QueryHook<T>;
   filterOptions: FilterOption[];
   tableOptions?: ReactElement<{ disabled?: boolean }>[];
-  requireDeleteConfirmation?: boolean;
-  additionalActions?: AdditionalAction[];
   disablePagination?: boolean;
   metadata?: any;
 }

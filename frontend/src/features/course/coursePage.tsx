@@ -68,22 +68,30 @@ const CoursePage: React.FC = () => {
     [],
   );
 
+  const onSave = React.useCallback(
+    async (id: string, value: UpdateCourseDTO) => {
+      await updateCourse.mutateAsync({
+        id,
+        data: value,
+      });
+    },
+    [updateCourse],
+  );
+
+  const onDelete = React.useCallback(
+    async (id: string) => {
+      await deleteCourse.mutateAsync(id);
+    },
+    [deleteCourse],
+  );
+
   const actions = React.useMemo(
     () => ({
-      onSave: async (id: string, value: UpdateCourseDTO) => {
-        await updateCourse.mutateAsync({
-          id,
-          data: value,
-        });
-      },
       onAdd: async (value: CreateCourseDTO) => {
         await createCourse.mutateAsync(value);
       },
-      onDelete: async (id: string) => {
-        await deleteCourse.mutateAsync(id);
-      },
     }),
-    [updateCourse, createCourse, deleteCourse],
+    [createCourse],
   );
 
   return (
@@ -94,22 +102,28 @@ const CoursePage: React.FC = () => {
         queryHook={useCourses}
         columns={columns}
         actions={actions}
-        formComponent={CourseForm}
-        detailComponent={CourseDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
-        }}
-        requireDeleteConfirmation={true}
-        filterOptions={[]}
-        additionalActions={[
-          {
-            label: 'Enrollment',
-            handler(id) {
-              navigate(`/course/${id}/enrollments`);
-            },
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
+            disabled: false,
           },
-        ]}
+          delete: {
+            onDelete,
+            disabled: false,
+          },
+          detailComponent: CourseDetail,
+          formComponent: CourseForm,
+          additionalActions: [
+            {
+              label: 'Enrollment',
+              handler(id) {
+                navigate(`/course/${id}/enrollments`);
+              },
+            },
+          ],
+        }}
+        filterOptions={[]}
       />
     </div>
   );

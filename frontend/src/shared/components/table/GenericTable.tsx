@@ -34,18 +34,30 @@ const GenericTable = <T extends { id: string }>({
   addingTitle,
   columns,
   actions,
-  formComponent: FormComponent,
-  detailComponent: DetailComponent,
-  disabledActions = {},
   queryHook,
   filterOptions,
-  requireDeleteConfirmation,
-  additionalActions = [],
   disablePagination = false,
   tableOptions,
+  actionCellProperties = {
+    requireDeleteConfirmation: false,
+    edit: {
+      onSave: () => {},
+      disabled: false,
+    },
+    delete: {
+      onDelete: () => {},
+      disabled: false,
+    },
+    additionalActions: [],
+  },
   customActionCellComponent = undefined,
   metadata = {},
 }: GenericTableProps<T>) => {
+  const disabledActions = {
+    edit: actionCellProperties.edit.disabled,
+    delete: actionCellProperties.delete.disabled,
+  };
+
   const defaultSortColumn = columns.find(
     (column) => column.isDefaultSort,
   )?.header;
@@ -146,7 +158,9 @@ const GenericTable = <T extends { id: string }>({
                 })
               ) : (
                 <ActionCell
-                  requireDeleteConfirmation={requireDeleteConfirmation}
+                  requireDeleteConfirmation={
+                    actionCellProperties.requireDeleteConfirmation
+                  }
                   isDeleting={deletingRow === cell.id && isDeleting}
                   onView={() => {
                     setCurrentDetailItem(cell);
@@ -155,11 +169,13 @@ const GenericTable = <T extends { id: string }>({
                   onEdit={() => handleEditClick(cell.id, data)}
                   onDelete={() => handleDelete(cell.id)}
                   disabledActions={disabledActions}
-                  additionalActions={additionalActions.map((action) => ({
-                    label: action.label,
-                    handler: () => action.handler(cell.id),
-                    disabled: action.disabled ? action.disabled(cell) : false,
-                  }))}
+                  additionalActions={actionCellProperties.additionalActions?.map(
+                    (action) => ({
+                      label: action.label,
+                      handler: () => action.handler(cell.id),
+                      disabled: action.disabled ? action.disabled(cell) : false,
+                    }),
+                  )}
                 />
               )}
             </TableCell>
@@ -284,10 +300,12 @@ const GenericTable = <T extends { id: string }>({
           </DialogHeader>
           <div className='flex-1 overflow-hidden my-4'>
             <ScrollArea className='h-[calc(90vh-50px)] w-full'>
-              <FormComponent
-                onSubmit={handleAdd}
-                onCancel={() => setDialogOpen(false)}
-              />
+              {actionCellProperties.formComponent && (
+                <actionCellProperties.formComponent
+                  onSubmit={handleAdd}
+                  onCancel={() => setDialogOpen(false)}
+                />
+              )}
             </ScrollArea>
           </div>
         </DialogContent>
@@ -301,13 +319,15 @@ const GenericTable = <T extends { id: string }>({
           </DialogHeader>
           <div className='flex-1 overflow-hidden my-4'>
             <ScrollArea className='h-[calc(90vh-50px)] w-full'>
-              <FormComponent
-                id={currentEditItem?.id}
-                onSubmit={handleEditSave}
-                onCancel={() => setEditDialogOpen(false)}
-                isLoading={isEditSaving}
-                isEditing={true}
-              />
+              {actionCellProperties.formComponent && (
+                <actionCellProperties.formComponent
+                  id={currentEditItem?.id}
+                  onSubmit={handleEditSave}
+                  onCancel={() => setEditDialogOpen(false)}
+                  isLoading={isEditSaving}
+                  isEditing={true}
+                />
+              )}
             </ScrollArea>
           </div>
         </DialogContent>
@@ -321,7 +341,11 @@ const GenericTable = <T extends { id: string }>({
           </DialogHeader>
           <div className='flex-1 overflow-hidden my-4'>
             <ScrollArea className='h-[calc(90vh-50px)] w-full'>
-              <DetailComponent id={currentDetailItem?.id} />
+              {actionCellProperties.detailComponent && (
+                <actionCellProperties.detailComponent
+                  id={currentDetailItem?.id}
+                />
+              )}
             </ScrollArea>
           </div>
         </DialogContent>

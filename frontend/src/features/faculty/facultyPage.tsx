@@ -38,21 +38,23 @@ const FacultyPage: React.FC = () => {
 
   const actions = React.useMemo(
     () => ({
-      onSave: async (id: string, value: UpdateFacultyDTO) => {
-        await updateFaculty.mutateAsync({
-          id: id,
-          data: value,
-        });
-      },
       onAdd: async (value: CreateFacultyDTO) => {
         await createFaculty.mutateAsync(value);
       },
-      onDelete: async (id: string) => {
-        await deleteFaculty.mutateAsync(id);
-      },
     }),
-    [updateFaculty, createFaculty, deleteFaculty],
+    [createFaculty],
   );
+
+  const onSave = async (id: string, value: UpdateFacultyDTO) => {
+    await updateFaculty.mutateAsync({
+      id: id,
+      data: value,
+    });
+  };
+
+  const onDelete = async (id: string) => {
+    await deleteFaculty.mutateAsync(id);
+  };
 
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
@@ -62,13 +64,17 @@ const FacultyPage: React.FC = () => {
         queryHook={useFaculties}
         columns={columns}
         actions={actions}
-        formComponent={FacultyForm}
-        detailComponent={FacultyDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave: onSave,
+          },
+          delete: {
+            onDelete: onDelete,
+          },
+          detailComponent: FacultyDetail,
+          formComponent: FacultyForm,
         }}
-        requireDeleteConfirmation={true}
         filterOptions={[]}
       />
     </div>

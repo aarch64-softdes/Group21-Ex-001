@@ -38,20 +38,28 @@ const ProgramPage: React.FC = () => {
 
   const actions = React.useMemo(
     () => ({
-      onSave: async (id: string, value: UpdateProgramDTO) => {
-        await updateProgram.mutateAsync({
-          id: id,
-          data: value,
-        });
-      },
       onAdd: async (value: CreateProgramDTO) => {
         await createProgram.mutateAsync(value);
       },
-      onDelete: async (id: string) => {
-        await deleteProgram.mutateAsync(id);
-      },
     }),
-    [updateProgram, createProgram, deleteProgram],
+    [createProgram],
+  );
+
+  const onSave = React.useCallback(
+    async (id: string, value: UpdateProgramDTO) => {
+      await updateProgram.mutateAsync({
+        id,
+        data: value,
+      });
+    },
+    [updateProgram],
+  );
+
+  const onDelete = React.useCallback(
+    async (id: string) => {
+      await deleteProgram.mutateAsync(id);
+    },
+    [deleteProgram],
   );
 
   return (
@@ -62,13 +70,17 @@ const ProgramPage: React.FC = () => {
         queryHook={usePrograms}
         columns={columns}
         actions={actions}
-        formComponent={ProgramForm}
-        detailComponent={ProgramDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
+          },
+          delete: {
+            onDelete,
+          },
+          detailComponent: ProgramDetail,
+          formComponent: ProgramForm,
         }}
-        requireDeleteConfirmation={true}
         filterOptions={[]}
       />
     </div>

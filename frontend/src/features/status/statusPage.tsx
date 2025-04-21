@@ -35,20 +35,28 @@ const StatusPage: React.FC = () => {
 
   const actions = React.useMemo(
     () => ({
-      onSave: async (id: string, value: UpdateStatusDTO) => {
-        await updateStatus.mutateAsync({
-          id,
-          data: value,
-        });
-      },
       onAdd: async (value: CreateStatusDTO) => {
         await createStatus.mutateAsync(value);
       },
-      onDelete: async (id: string) => {
-        await deleteStatus.mutateAsync(id);
-      },
     }),
-    [updateStatus, createStatus, deleteStatus],
+    [createStatus],
+  );
+
+  const onSave = React.useCallback(
+    async (id: string, value: UpdateStatusDTO) => {
+      await updateStatus.mutateAsync({
+        id,
+        data: value,
+      });
+    },
+    [updateStatus],
+  );
+
+  const onDelete = React.useCallback(
+    async (id: string) => {
+      await deleteStatus.mutateAsync(id);
+    },
+    [deleteStatus],
   );
 
   return (
@@ -59,13 +67,17 @@ const StatusPage: React.FC = () => {
         queryHook={useStatuses}
         columns={columns}
         actions={actions}
-        formComponent={StatusForm}
-        detailComponent={StatusDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
+          },
+          delete: {
+            onDelete,
+          },
+          detailComponent: StatusDetail,
+          formComponent: StatusForm,
         }}
-        requireDeleteConfirmation={true}
         filterOptions={[]}
       />
     </div>
