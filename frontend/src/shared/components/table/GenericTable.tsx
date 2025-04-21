@@ -25,10 +25,9 @@ import { GenericTableProps } from '@/core/types/table';
 import { PlusCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import TableSort from './TableSort';
-import FileImportButton from './FileImportButton';
-import FileExportButton from './FileExportButton';
 import { getNestedValue } from '@/shared/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
+import React from 'react';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
@@ -43,7 +42,7 @@ const GenericTable = <T extends { id: string }>({
   requireDeleteConfirmation,
   additionalActions = [],
   disablePagination = false,
-  fileOptions,
+  tableOptions,
 }: GenericTableProps<T>) => {
   const defaultSortColumn = columns.find(
     (column) => column.isDefaultSort,
@@ -216,6 +215,8 @@ const GenericTable = <T extends { id: string }>({
     [filterOptions, filters.onChange, filters.value],
   );
 
+  console.log('1');
+
   return (
     <div className='flex flex-col gap-4 w-full'>
       {/* Table heading and actions */}
@@ -225,19 +226,13 @@ const GenericTable = <T extends { id: string }>({
         <div className='flex justify-between items-center'>
           <div className='flex items-center gap-2'>{renderFilters}</div>
           <div className='flex items-center gap-2'>
-            {fileOptions?.enableImport && fileOptions.onImport && (
-              <FileImportButton
-                onImport={fileOptions.onImport}
-                disabled={state.isLoading || state.isFetching}
-              />
-            )}
-
-            {fileOptions?.enableExport && fileOptions.onExport && (
-              <FileExportButton
-                onExport={fileOptions.onExport}
-                disabled={state.isLoading || data.length === 0}
-              />
-            )}
+            {tableOptions?.map((option, index) => (
+              <React.Fragment key={`table-option-${index}`}>
+                {React.cloneElement(option, {
+                  disabled: state.isLoading || state.isFetching,
+                })}
+              </React.Fragment>
+            ))}
 
             <LoadingButton
               variant='outline'

@@ -1,6 +1,7 @@
 import { UseQueryResult } from '@tanstack/react-query';
 import { ApiResponse } from './apiResponse';
 import { FilterOption, FilterParams } from './filter';
+import { ReactElement } from 'react';
 
 export type SortConfig = {
   key: string | null;
@@ -29,15 +30,6 @@ export interface Column<T> {
   sortable?: boolean;
   style?: ColumnStyle;
   transform?: (value: any) => string; // Use any to allow for any type of value
-}
-
-export interface TableFileOptions {
-  enableExport?: boolean;
-  onExport?: (format: string) => Promise<Blob>;
-
-  enableImport?: boolean;
-  onImport?: (format: string, file: File) => Promise<void>;
-  onImportSuccess?: () => void;
 }
 
 // NOTE: Must use "any" here because the type of the data is not known
@@ -112,10 +104,10 @@ export interface GenericTableProps<T extends { id: string }> {
   };
   queryHook: QueryHook<T>;
   filterOptions: FilterOption[];
+  tableOptions?: ReactElement<{ disabled?: boolean }>[];
   requireDeleteConfirmation?: boolean;
   additionalActions?: AdditionalAction[];
   disablePagination?: boolean;
-  fileOptions?: TableFileOptions;
 }
 
 export interface ActionCellProps {

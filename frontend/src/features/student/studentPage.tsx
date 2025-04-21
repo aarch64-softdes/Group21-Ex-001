@@ -16,6 +16,8 @@ import { Column } from '@/core/types/table';
 import { FolderSearch, UserSearch } from 'lucide-react';
 import StudentService from '@/features/student/api/studentService';
 import { useNavigate } from 'react-router-dom';
+import FileImportButton from './components/FileImportButton';
+import FileExportButton from './components/FileExportButton';
 
 const StudentPage: React.FC = () => {
   const studentService = new StudentService();
@@ -155,6 +157,16 @@ const StudentPage: React.FC = () => {
     [],
   );
 
+  const fileOptions = React.useMemo(
+    () => ({
+      enableExport: true,
+      onExport: handleExportStudents,
+      enableImport: true,
+      onImport: handleImportStudents,
+    }),
+    [handleExportStudents, handleImportStudents],
+  );
+
   return (
     <div className='min-h-3/4 m-auto flex flex-row gap-4 p-4'>
       <GenericTable
@@ -170,13 +182,11 @@ const StudentPage: React.FC = () => {
           delete: false,
         }}
         requireDeleteConfirmation={true}
+        tableOptions={[
+          <FileImportButton onImport={fileOptions.onImport} />,
+          <FileExportButton onExport={fileOptions.onExport} />,
+        ]}
         filterOptions={[searchNameFilterOption, searchFacultyFilterOption]}
-        fileOptions={{
-          enableExport: true,
-          onExport: handleExportStudents,
-          enableImport: true,
-          onImport: handleImportStudents,
-        }}
         additionalActions={[
           {
             label: 'Enrollment',
