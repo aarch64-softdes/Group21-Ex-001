@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { DetailComponentProps } from '@/core/types/table';
 import { useStudent } from '@/features/student/api/useStudentApi';
-import { Loader2, User, Mail, Phone, School, Calendar } from 'lucide-react';
+import {
+  Loader2,
+  User,
+  Mail,
+  Phone,
+  School,
+  Calendar,
+  CornerUpRight,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
 import { Badge } from '@ui/badge';
 import { Separator } from '@ui/separator';
 import { Avatar, AvatarFallback } from '@ui/avatar';
 import { Country, findCountryByCode } from '@/shared/data/countryData';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface DetailFieldProps {
   label: string;
@@ -30,6 +40,8 @@ const DetailField: React.FC<DetailFieldProps> = ({
 };
 
 const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
+  const navigate = useNavigate();
+
   const { data: student, isLoading } = useStudent(studentId as string);
 
   let [country, setCountry] = useState<Country>({
@@ -102,36 +114,39 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
         </Avatar>
 
         <div className='flex-1'>
-          <div className='flex flex-col md:flex-row md:items-center justify-between'>
-            <div>
+          <div className='flex flex-col md:flex-row md:items-center justify-between '>
+            <div className='space-y-0.5'>
               <h1 className='text-2xl font-bold'>{student.name}</h1>
               <p className='text-muted-foreground text-sm'>
                 {student.studentId}
               </p>
+              <div className='flex items-center gap-1.5 text-sm text-muted-foreground'>
+                <Mail className='h-4 w-4' />
+                <span>{student.email}</span>
+              </div>
+              <div className='flex items-center gap-1.5 text-sm text-muted-foreground'>
+                <Phone className='h-4 w-4' />
+                <span className='mr-1'>
+                  {country.flag} {student.phone.phoneNumber}
+                </span>
+              </div>
             </div>
-            <Badge
-              className={`text-xs px-3 py-1 mt-2 md:mt-0 ${getStatusColor(
-                student.status,
-              )}`}
-            >
-              {student.status}
-            </Badge>
-          </div>
-
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-4'>
-            <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-              <Mail className='h-4 w-4' />
-              <span>{student.email}</span>
-            </div>
-            <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-              <Phone className='h-4 w-4' />
-              <span className='mr-1'>
-                {country.flag} {student.phone.phoneNumber}
-              </span>
-            </div>
-            <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-              <Calendar className='h-4 w-4' />
-              <span>DOB: {formatDate(student.dob)}</span>
+            <div className='flex flex-col gap-3 items-end'>
+              <Badge
+                className={`text-xs px-3 py-1 mt-2 md:mt-0 ${getStatusColor(
+                  student.status,
+                )}`}
+              >
+                {student.status}
+              </Badge>
+              <Button
+                variant='outline'
+                className='mt-2 md:mt-0'
+                onClick={() => navigate(`/student/${studentId}/enrollments`)}
+              >
+                Enrollment for {student.name}
+                <CornerUpRight className='ml-2 h-4 w-4' />
+              </Button>
             </div>
           </div>
         </div>
@@ -149,6 +164,10 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
           </CardHeader>
           <CardContent className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             <DetailField label='Gender' value={student.gender} />
+            <DetailField
+              label='Date of Birth'
+              value={formatDate(student.dob)}
+            />
             <DetailField label='Permanent Address' colSpan='full'>
               {student.permanentAddress
                 ? [

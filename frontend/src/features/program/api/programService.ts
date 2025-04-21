@@ -4,7 +4,7 @@ import Program, {
   CreateProgramDTO,
   UpdateProgramDTO,
   mapToProgram,
-} from '@/features/program/types/program';
+} from '@program/types/program';
 
 export default class ProgramService {
   getPrograms = async ({
@@ -32,13 +32,13 @@ export default class ProgramService {
 
     return {
       data: response.data.content.data.map(mapToProgram),
-      totalItems: response.data.content.data.length,
-      totalPages: 1, // Since pagination is not implemented in these entities
-      currentPage: page,
+      totalItems: response.data.content.totalElements,
+      totalPages: response.data.content.totalPages,
+      currentPage: response.data.content.pageNumber,
     };
   };
 
-  getProgram = async (id: number): Promise<Program> => {
+  getProgram = async (id: string): Promise<Program> => {
     const response = await api.get(`/api/programs/${id}`);
     return mapToProgram(response.data.content);
   };
@@ -47,11 +47,11 @@ export default class ProgramService {
     await api.post('/api/programs', data);
   };
 
-  updateProgram = async (id: number, data: UpdateProgramDTO): Promise<void> => {
+  updateProgram = async (id: string, data: UpdateProgramDTO): Promise<void> => {
     await api.put(`/api/programs/${id}`, data);
   };
 
-  deleteProgram = async (id: number): Promise<void> => {
+  deleteProgram = async (id: string): Promise<void> => {
     await api.delete(`/api/programs/${id}`);
   };
 }

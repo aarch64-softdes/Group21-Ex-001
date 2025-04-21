@@ -2,334 +2,7 @@
 
 ## Source code structure
 
-```
-.
-├── backend
-│   ├── mvnw
-│   ├── mvnw.cmd
-│   ├── pom.xml
-│   ├── src
-│   │   ├── main
-│   │   │   ├── java
-│   │   │   │   └── com
-│   │   │   │       └── tkpm
-│   │   │   │           └── sms
-│   │   │   │               ├── aspect
-│   │   │   │               │   └── ControllerLoggingAspect.java
-│   │   │   │               ├── config
-│   │   │   │               │   ├── ElasticsearchConfig.java
-│   │   │   │               │   └── FileMapperConfig.java
-│   │   │   │               ├── controller
-│   │   │   │               │   ├── FacultyController.java
-│   │   │   │               │   ├── FileController.java
-│   │   │   │               │   ├── MetadataController.java
-│   │   │   │               │   ├── ProgramController.java
-│   │   │   │               │   ├── SettingController.java
-│   │   │   │               │   ├── StatusController.java
-│   │   │   │               │   └── StudentController.java
-│   │   │   │               ├── dto
-│   │   │   │               │   ├── request
-│   │   │   │               │   │   ├── address
-│   │   │   │               │   │   │   ├── AddressCreateRequestDto.java
-│   │   │   │               │   │   │   └── AddressUpdateRequestDto.java
-│   │   │   │               │   │   ├── common
-│   │   │   │               │   │   │   └── BaseCollectionRequest.java
-│   │   │   │               │   │   ├── faculty
-│   │   │   │               │   │   │   └── FacultyRequestDto.java
-│   │   │   │               │   │   ├── identity
-│   │   │   │               │   │   │   ├── IdentityCreateRequestDto.java
-│   │   │   │               │   │   │   └── IdentityUpdateRequestDto.java
-│   │   │   │               │   │   ├── phone
-│   │   │   │               │   │   │   └── PhoneRequestDto.java
-│   │   │   │               │   │   ├── program
-│   │   │   │               │   │   │   └── ProgramRequestDto.java
-│   │   │   │               │   │   ├── setting
-│   │   │   │               │   │   │   ├── EmailDomainSettingRequestDto.java
-│   │   │   │               │   │   │   └── PhoneSettingRequestDto.java
-│   │   │   │               │   │   ├── status
-│   │   │   │               │   │   │   ├── AllowedTransitionDto.java
-│   │   │   │               │   │   │   ├── StatusRequestDto.java
-│   │   │   │               │   │   │   └── StatusVerificationDto.java
-│   │   │   │               │   │   └── student
-│   │   │   │               │   │       ├── StudentCollectionRequest.java
-│   │   │   │               │   │       ├── StudentCreateRequestDto.java
-│   │   │   │               │   │       └── StudentUpdateRequestDto.java
-│   │   │   │               │   └── response
-│   │   │   │               │       ├── common
-│   │   │   │               │       │   ├── ApplicationResponseDto.java
-│   │   │   │               │       │   ├── ListResponse.java
-│   │   │   │               │       │   └── PageDto.java
-│   │   │   │               │       ├── FacultyDto.java
-│   │   │   │               │       ├── identity
-│   │   │   │               │       │   └── IdentityDto.java
-│   │   │   │               │       ├── PhoneDto.java
-│   │   │   │               │       ├── ProgramDto.java
-│   │   │   │               │       ├── setting
-│   │   │   │               │       │   ├── EmailDomainSettingDto.java
-│   │   │   │               │       │   ├── PhoneSettingDto.java
-│   │   │   │               │       │   └── SettingDto.java
-│   │   │   │               │       ├── StatusDto.java
-│   │   │   │               │       └── student
-│   │   │   │               │           ├── StudentDto.java
-│   │   │   │               │           ├── StudentFileDto.java
-│   │   │   │               │           └── StudentMinimalDto.java
-│   │   │   │               ├── entity
-│   │   │   │               │   ├── Address.java
-│   │   │   │               │   ├── Faculty.java
-│   │   │   │               │   ├── Identity.java
-│   │   │   │               │   ├── Program.java
-│   │   │   │               │   ├── Setting.java
-│   │   │   │               │   ├── Status.java
-│   │   │   │               │   └── Student.java
-│   │   │   │               ├── enums
-│   │   │   │               │   ├── Faculty.java
-│   │   │   │               │   ├── Gender.java
-│   │   │   │               │   ├── IdentityType.java
-│   │   │   │               │   ├── LoggerType.java
-│   │   │   │               │   ├── Status.java
-│   │   │   │               │   └── SupportedFileType.java
-│   │   │   │               ├── exceptions
-│   │   │   │               │   ├── ApplicationException.java
-│   │   │   │               │   ├── ErrorCode.java
-│   │   │   │               │   └── GlobalExceptionHandler.java
-│   │   │   │               ├── factories
-│   │   │   │               │   └── FileStrategyFactory.java
-│   │   │   │               ├── logging
-│   │   │   │               │   ├── BaseLogger.java
-│   │   │   │               │   ├── LogEntry.java
-│   │   │   │               │   ├── logger
-│   │   │   │               │   │   ├── AbstractLogger.java
-│   │   │   │               │   │   ├── ConsoleLogger.java
-│   │   │   │               │   │   ├── ElasticsearchLogger.java
-│   │   │   │               │   │   ├── FileLogger.java
-│   │   │   │               │   │   └── JsonLogger.java
-│   │   │   │               │   ├── LoggerManager.java
-│   │   │   │               │   └── metadata
-│   │   │   │               │       ├── BaseMetadata.java
-│   │   │   │               │       ├── ExceptionMetadata.java
-│   │   │   │               │       ├── RequestMetadata.java
-│   │   │   │               │       └── ResponseMetadata.java
-│   │   │   │               ├── mapper
-│   │   │   │               │   ├── AddressMapper.java
-│   │   │   │               │   ├── FacultyMapper.java
-│   │   │   │               │   ├── IdentityMapper.java
-│   │   │   │               │   ├── ProgramMapper.java
-│   │   │   │               │   ├── StatusMapper.java
-│   │   │   │               │   └── StudentMapper.java
-│   │   │   │               ├── repository
-│   │   │   │               │   ├── AddressRepository.java
-│   │   │   │               │   ├── FacultyRepository.java
-│   │   │   │               │   ├── IdentityRepository.java
-│   │   │   │               │   ├── ProgramRepository.java
-│   │   │   │               │   ├── SettingRepository.java
-│   │   │   │               │   ├── StatusRepository.java
-│   │   │   │               │   └── StudentRepository.java
-│   │   │   │               ├── service
-│   │   │   │               │   ├── AddressService.java
-│   │   │   │               │   ├── FacultyService.java
-│   │   │   │               │   ├── FileService.java
-│   │   │   │               │   ├── IdentityService.java
-│   │   │   │               │   ├── ProgramService.java
-│   │   │   │               │   ├── SettingService.java
-│   │   │   │               │   ├── StatusService.java
-│   │   │   │               │   └── StudentService.java
-│   │   │   │               ├── SmsApplication.java
-│   │   │   │               ├── specification
-│   │   │   │               │   └── StudentSpecifications.java
-│   │   │   │               ├── strategies
-│   │   │   │               │   ├── CsvStrategy.java
-│   │   │   │               │   ├── FileStrategy.java
-│   │   │   │               │   └── JsonStrategy.java
-│   │   │   │               ├── utils
-│   │   │   │               │   ├── EnumUtils.java
-│   │   │   │               │   ├── ImportFileUtils.java
-│   │   │   │               │   ├── JsonUtils.java
-│   │   │   │               │   └── PhoneUtils.java
-│   │   │   │               └── validator
-│   │   │   │                   ├── identity
-│   │   │   │                   │   ├── IdentityConstraint.java
-│   │   │   │                   │   └── IdentityValidator.java
-│   │   │   │                   ├── required
-│   │   │   │                   │   ├── RequiredConstraint.java
-│   │   │   │                   │   └── RequiredValidator.java
-│   │   │   │                   └── status
-│   │   │   │                       ├── StatusConstraint.java
-│   │   │   │                       └── StatusValidator.java
-│   │   │   └── resources
-│   │   │       ├── application.sample.yml
-│   │   │       ├── application.yml
-│   │   │       ├── db
-│   │   │       │   └── migration
-│   │   │       │       └── initial-schema.sql
-│   │   │       └── logback.xml
-│   │   └── test
-│   │       └── java
-│   │           └── com
-│   │               └── tkpm
-│   │                   └── sms
-│   │                       └── SmsApplicationTests.java
-├── database_creation.sql
-├── documents
-│   └── assets
-│       ├── add-student-existed-id.png
-│       ├── edit-student-existed-id.png
-│       ├── emaildomain-validation.png
-│       ├── phonenumer-validation.png
-│       ├── setting-phonenumber-emaildomain.png
-│       ├── status-transistion-edit.png
-│       ├── status-transition-setting.png
-│       └── Week02
-│           ├── SD-export-1.png
-│           ├── SD-export-csv.png
-│           ├── SD-export-json.png
-│           ├── SD-faculty-add.png
-│           ├── SD-faculty-edit.png
-│           ├── SD-import-csv-1.png
-│           ├── SD-import-csv-2.png
-│           ├── SD-import-csv-3.png
-│           ├── SD-import-csv-4.png
-│           ├── SD-import-json-1.png
-│           ├── SD-import-json-2.png
-│           ├── SD-import-json-3.png
-│           ├── SD-logging-elastic-search.png
-│           ├── SD-logging-json.png
-│           ├── SD-program-add.png
-│           ├── SD-program-update.png
-│           ├── SD-search-name-faculty.png
-│           ├── SD-search-name.png
-│           ├── SD-status-add.png
-│           ├── SD-status-update.png
-│           ├── SD-update-student-1.png
-│           └── SD-update-student-2.png
-├── frontend
-│   ├── components.json
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── public
-│   │   └── vite.svg
-│   ├── README.md
-│   ├── src
-│   │   ├── App.tsx
-│   │   ├── assets
-│   │   │   └── react.svg
-│   │   ├── components
-│   │   │   ├── error
-│   │   │   │   ├── ErrorBoundary.tsx
-│   │   │   │   └── ErrorPage.tsx
-│   │   │   ├── faculty
-│   │   │   │   ├── FacultyDetail.tsx
-│   │   │   │   └── FacultyForm.tsx
-│   │   │   ├── filter
-│   │   │   │   └── SearchFilter.tsx
-│   │   │   ├── layouts
-│   │   │   │   ├── AppSidebar.tsx
-│   │   │   │   └── Layout.tsx
-│   │   │   ├── program
-│   │   │   │   ├── ProgramDetail.tsx
-│   │   │   │   └── ProgramForm.tsx
-│   │   │   ├── settings
-│   │   │   │   ├── EmailDomainSettings.tsx
-│   │   │   │   └── PhoneSettings.tsx
-│   │   │   ├── status
-│   │   │   │   ├── StatusDetail.tsx
-│   │   │   │   └── StatusForm.tsx
-│   │   │   ├── student
-│   │   │   │   ├── AddressForm.tsx
-│   │   │   │   ├── PhoneField.tsx
-│   │   │   │   ├── StudentDetail.tsx
-│   │   │   │   └── StudentForm.tsx
-│   │   │   ├── table
-│   │   │   │   ├── ActionCell.tsx
-│   │   │   │   ├── FileExportButton.tsx
-│   │   │   │   ├── FileImportButton.tsx
-│   │   │   │   ├── GenericTable.tsx
-│   │   │   │   ├── SkeletonTable.tsx
-│   │   │   │   ├── TablePagination.tsx
-│   │   │   │   └── TableSort.tsx
-│   │   │   └── ui
-│   │   │       ├── accordion.tsx
-│   │   │       ├── alert-dialog.tsx
-│   │   │       ├── avatar.tsx
-│   │   │       ├── badge.tsx
-│   │   │       ├── button.tsx
-│   │   │       ├── card.tsx
-│   │   │       ├── checkbox.tsx
-│   │   │       ├── command.tsx
-│   │   │       ├── dialog.tsx
-│   │   │       ├── dropdown-menu.tsx
-│   │   │       ├── form.tsx
-│   │   │       ├── input.tsx
-│   │   │       ├── label.tsx
-│   │   │       ├── loadingButton.tsx
-│   │   │       ├── popover.tsx
-│   │   │       ├── scroll-area.tsx
-│   │   │       ├── select.tsx
-│   │   │       ├── separator.tsx
-│   │   │       ├── sheet.tsx
-│   │   │       ├── sidebar.tsx
-│   │   │       ├── skeleton.tsx
-│   │   │       ├── sonner.tsx
-│   │   │       ├── table.tsx
-│   │   │       └── tooltip.tsx
-│   │   ├── data
-│   │   │   └── countryData.ts
-│   │   ├── hooks
-│   │   │   ├── api
-│   │   │   │   ├── useFacultyApi.ts
-│   │   │   │   ├── useMetadata.ts
-│   │   │   │   ├── useProgramApi.ts
-│   │   │   │   ├── useSettingsApi.ts
-│   │   │   │   ├── useStatusApi.ts
-│   │   │   │   └── useStudentApi.ts
-│   │   │   ├── useDebounce.ts
-│   │   │   ├── use-mobile.ts
-│   │   │   └── useTableDataOperation.ts
-│   │   ├── index.css
-│   │   ├── lib
-│   │   │   ├── api.ts
-│   │   │   ├── errors.ts
-│   │   │   ├── toast-utils.ts
-│   │   │   └── utils.ts
-│   │   ├── main.tsx
-│   │   ├── pages
-│   │   │   ├── facultyPage.tsx
-│   │   │   ├── programPage.tsx
-│   │   │   ├── settingPage.tsx
-│   │   │   ├── statusPage.tsx
-│   │   │   └── studentPage.tsx
-│   │   ├── services
-│   │   │   ├── facultyService.ts
-│   │   │   ├── metadataService.ts
-│   │   │   ├── programService.ts
-│   │   │   ├── settingService.ts
-│   │   │   ├── statusService.ts
-│   │   │   └── studentService.ts
-│   │   ├── types
-│   │   │   ├── address.ts
-│   │   │   ├── apiResponse.ts
-│   │   │   ├── faculty.ts
-│   │   │   ├── filter.ts
-│   │   │   ├── identityDocument.ts
-│   │   │   ├── program.ts
-│   │   │   ├── setting.ts
-│   │   │   ├── status.ts
-│   │   │   ├── student.ts
-│   │   │   └── table.ts
-│   │   └── vite-env.d.ts
-│   ├── tailwind.config.js
-│   ├── tsconfig.app.json
-│   ├── tsconfig.json
-│   ├── tsconfig.node.json
-│   └── vite.config.ts
-├── import-student-csv.csv
-├── import-student-json.json
-├── README.md
-└── tree.txt
-
-136 directories, 411 files
-```
+Read in [this file](./dirtree.txt).
 
 ## Dependencies
 
@@ -447,3 +120,53 @@ After Elasticsearch is running and your application has generated some logs:
 7. Click "Save data view to Kibana"
 
 Now you can use Discover to search and filter your logs, or create visualizations and dashboards.
+
+## Features
+
+### Course
+
+- Course creation:
+  ![Course Creation](documents/assets/week04/course-create.png)
+- Course update:
+  ![Course Update](documents/assets/week04/course-update.png)
+- Course list:
+  ![Course List](documents/assets/week04/course-list.png)
+- Course detail:
+  ![Course Detail](documents/assets/week04/course-detail.png)
+- Course enrollment:
+  ![Course Enrollment](documents/assets/week04/course-enrollment.png)
+- Invalid prerequisite enrollment:
+  ![Invalid Prerequisite](documents/assets/week04/course-enrollment-invalid-prerequesite.png)
+- Modified courses which are out of duration:
+  ![Enrollment Out of Duration](documents/assets/week04/course-modified-out-of-duration.png)
+
+### Enrollment
+
+- Enrollment creation:
+  ![Enrollment Creation](documents/assets/week04/enrollment.png)
+- Current enrollments of students:
+  ![Current Enrollments](documents/assets/week04/enrollment-current.png)
+- Enrollment transcript:
+  ![Enrollment Detail](documents/assets/week04/enrollment-transcript.png)
+- Enrollment transcript export:
+  ![Enrollment Export](documents/assets/week04/enrollment-transcript-pdf.png)
+- Enrollment history:
+  ![Enrollment History](documents/assets/week04/enrollment-history.png)
+
+### Subject
+
+- Subject creation:
+  ![Subject Creation](documents/assets/week04/subject-create.png)
+- Subject update:
+  ![Subject Update](documents/assets/week04/subject-update.png)
+- Subject list:
+  ![Subject List](documents/assets/week04/subject-list.png)
+- Subject detail:
+  ![Subject Detail](documents/assets/week04/subject-detail.png)
+- Subject deactive:
+  ![Subject Deactive](documents/assets/week04/subject-deactive.png)
+
+### Setting - Adjustment duration
+
+- Setting duration:
+  ![Setting Duration](documents/assets/week04/setting-adjustment-duration.png)

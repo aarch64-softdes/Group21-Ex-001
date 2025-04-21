@@ -40,7 +40,7 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
   isEditing = false,
 }) => {
   const { data: programData, isLoading: isLoadingProgram } = useProgram(
-    id ? parseInt(id, 10) : 0,
+    id || '',
   );
 
   const form = useForm<ProgramFormValues>({

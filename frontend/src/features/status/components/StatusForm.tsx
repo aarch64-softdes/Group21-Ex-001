@@ -1,10 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import Status, {
-  CreateStatusDTO,
-  UpdateStatusDTO,
-} from '@/features/status/types/status';
 
 import { Button } from '@ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
@@ -34,6 +30,7 @@ import {
 } from '@ui/command';
 import { ScrollArea } from '@ui/scroll-area';
 import { Badge } from '@ui/badge';
+import Status, { CreateStatusDTO, UpdateStatusDTO } from '@status/types/status';
 
 // Define schema
 export const StatusFormSchema = z.object({
@@ -46,7 +43,7 @@ export const StatusFormSchema = z.object({
     .array(
       z
         .object({
-          id: z.number(),
+          id: z.string(),
         })
         .optional(),
     )
@@ -62,9 +59,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   isLoading = false,
   isEditing = false,
 }) => {
-  const { data: statusData, isLoading: isLoadingStatus } = useStatus(
-    parseInt(id || ''),
-  );
+  const { data: statusData, isLoading: isLoadingStatus } = useStatus(id || '');
   const { data: statusesData, isLoading: isLoadingStatuses } = useStatuses({
     page: 1,
     pageSize: 100,
@@ -87,8 +82,6 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   });
 
   useEffect(() => {
-    console.log('Status data:', statusData);
-
     if (statusData && id) {
       form.reset({
         name: statusData.name || '',
@@ -102,19 +95,23 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   }, [statusData, id, form]);
 
   const handleSubmit = (values: StatusFormValues) => {
-    onSubmit(values);
+    if (isEditing) {
+      onSubmit(values as UpdateStatusDTO);
+    } else {
+      onSubmit(values as CreateStatusDTO);
+    }
   };
 
   // Add a status to allowedTransitions
   const addStatus = (status: Status) => {
     const currentTransitions = form.getValues('allowedTransitions') || [];
 
-    if (id && id === status.id) {
+    if (id && id == status.id) {
       return;
     }
 
     // Prevent duplicates
-    if (!currentTransitions.some((s) => s.id === status.id)) {
+    if (!currentTransitions.some((s) => s?.id === status.id)) {
       const newTransitions = [...currentTransitions, status];
       form.setValue('allowedTransitions', newTransitions);
 
@@ -124,10 +121,15 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   };
 
   // Remove a status from allowedTransitions
-  const removeStatus = (statusId: string) => {
+  const removeStatus = (statusId: number) => {
+    if (!statusId) {
+      return;
+    }
+
     const currentTransitions = form.getValues('allowedTransitions') || [];
+    console.log(currentTransitions);
     const newTransitions = currentTransitions.filter(
-      (status) => status.id !== statusId,
+      (status) => status?.id !== statusId,
     );
     form.setValue('allowedTransitions', newTransitions);
 
@@ -220,12 +222,21 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                                   key={status.id}
                                   variant='secondary'
                                   className='flex items-center gap-1'
+                                  onClick={() => removeStatus(status.id)}
                                 >
                                   {status.name}
-                                  <X
-                                    className='h-3 w-3 cursor-pointer'
-                                    onClick={() => removeStatus(status.id)}
-                                  />
+                                  <button
+                                    type='button'
+                                    className='text-xs text-muted-foreground px-1 cursor-pointer'
+                                    onClick={() => {
+                                      removeStatus(status.id);
+                                    }}
+                                  >
+                                    <X
+                                      className='h-4 w-4'
+                                      aria-label={`Remove ${status.name}`}
+                                    />
+                                  </button>
                                 </Badge>
                               ))}
                               {selectedStatuses.length === 0 && (

@@ -26,9 +26,11 @@
       "@components/*": ["./src/shared/components/*"],
       
       "@student/*": ["./src/features/student/*"],
+      "@enrollment/*": ["./src/features/enrollment/*"],
       "@program/*": ["./src/features/program/*"],
       "@course/*": ["./src/features/course/*"],
       "@faculty/*": ["./src/features/faculty/*"],
+      "@subject/*": ["./src/features/subject/*"],
       "@status/*": ["./src/features/status/*"],
       "@settings/*": ["./src/features/settings/*"],
       "@metadata/*": ["./src/features/metadata/*"],

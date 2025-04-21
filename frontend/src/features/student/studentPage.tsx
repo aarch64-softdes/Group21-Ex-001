@@ -15,9 +15,11 @@ import Student, { CreateStudentDTO } from '@/features/student/types/student';
 import { Column } from '@/core/types/table';
 import { FolderSearch, UserSearch } from 'lucide-react';
 import StudentService from '@/features/student/api/studentService';
+import { useNavigate } from 'react-router-dom';
 
 const StudentPage: React.FC = () => {
   const studentService = new StudentService();
+  const navigate = useNavigate();
 
   const createStudent = useCreateStudent();
   const updateStudent = useUpdateStudent();
@@ -70,13 +72,6 @@ const StudentPage: React.FC = () => {
         key: 'schoolYear',
         style: {
           width: '80px',
-        },
-      },
-      {
-        header: 'Program',
-        key: 'program',
-        style: {
-          width: '150px',
         },
       },
       {
@@ -182,6 +177,14 @@ const StudentPage: React.FC = () => {
           enableImport: true,
           onImport: handleImportStudents,
         }}
+        additionalActions={[
+          {
+            label: 'Enrollment',
+            handler(id) {
+              navigate(`/student/${id}/enrollments`);
+            },
+          },
+        ]}
       />
     </div>
   );

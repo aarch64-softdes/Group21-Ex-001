@@ -7,10 +7,10 @@ import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.ProgramEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.ProgramJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.ProgramPersistenceMapper;
+import com.tkpm.sms.infrastructure.utils.PagingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -55,14 +55,7 @@ public class ProgramRepositoryImpl implements ProgramRepository {
     @Override
     public PageResponse<Program> findAll(PageRequest pageRequest) {
         // Convert domain PageRequest to Spring Pageable
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(
-                pageRequest.getPageNumber() - 1,
-                pageRequest.getPageSize(),
-                pageRequest.getSortDirection() == PageRequest.SortDirection.DESC
-                        ? Sort.Direction.DESC
-                        : Sort.Direction.ASC,
-                pageRequest.getSortBy()
-        );
+    Pageable pageable = PagingUtils.toSpringPageable(pageRequest);
 
         // Execute query with Spring Pageable
         Page<ProgramEntity> page = jpaRepository.findAll(pageable);

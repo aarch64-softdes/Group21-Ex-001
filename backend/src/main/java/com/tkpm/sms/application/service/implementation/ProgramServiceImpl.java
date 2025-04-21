@@ -27,14 +27,7 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public PageResponse<Program> getAllPrograms(BaseCollectionRequest search) {
-        PageRequest pageRequest = PageRequest.builder()
-                .pageNumber(search.getPage())
-                .pageSize(search.getSize())
-                .sortBy(search.getSortBy())
-                .sortDirection("desc".equalsIgnoreCase(search.getSortDirection())
-                        ? PageRequest.SortDirection.DESC
-                        : PageRequest.SortDirection.ASC)
-                .build();
+        PageRequest pageRequest = PageRequest.from(search);
 
         return programRepository.findAll(pageRequest);
     }

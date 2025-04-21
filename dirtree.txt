@@ -1,0 +1,445 @@
+.
+├── backend
+│   ├── docker-compose.yml
+│   ├── logs
+│   │   ├── application.json
+│   │   ├── application.log
+│   │   └── archived
+│   │       ├── application.2025-03-21.0.log
+│   │       ├── application-2025-03-21.json
+│   │       ├── application.2025-03-22.0.log
+│   │       ├── application-2025-03-22.json
+│   │       ├── application.2025-03-26.0.log
+│   │       └── application-2025-03-26.json
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── pom.xml
+│   └── src
+│       ├── main
+│       │   ├── java
+│       │   │   └── com
+│       │   │       └── tkpm
+│       │   │           └── sms
+│       │   │               ├── application
+│       │   │               │   ├── annotation
+│       │   │               │   │   ├── CourseScheduleConstraint.java
+│       │   │               │   │   ├── IdentityConstraint.java
+│       │   │               │   │   └── RequiredConstraint.java
+│       │   │               │   ├── dto
+│       │   │               │   │   ├── request
+│       │   │               │   │   └── response
+│       │   │               │   ├── mapper
+│       │   │               │   │   ├── AddressMapper.java
+│       │   │               │   │   ├── CourseMapper.java
+│       │   │               │   │   ├── EnrollmentMapper.java
+│       │   │               │   │   ├── FacultyMapper.java
+│       │   │               │   │   ├── IdentityMapper.java
+│       │   │               │   │   ├── PhoneMapper.java
+│       │   │               │   │   ├── ProgramMapper.java
+│       │   │               │   │   ├── ScoreMapper.java
+│       │   │               │   │   ├── StatusMapper.java
+│       │   │               │   │   ├── StudentMapper.java
+│       │   │               │   │   └── SubjectMapper.java
+│       │   │               │   ├── service
+│       │   │               │   │   ├── implementation
+│       │   │               │   │   └── interfaces
+│       │   │               │   └── validation
+│       │   │               │       ├── CourseScheduleValidator.java
+│       │   │               │       ├── IdentityValidator.java
+│       │   │               │       └── RequiredValidator.java
+│       │   │               ├── domain
+│       │   │               │   ├── annotation
+│       │   │               │   │   ├── LoggingAfter.java
+│       │   │               │   │   ├── LoggingAround.java
+│       │   │               │   │   ├── LoggingBefore.java
+│       │   │               │   │   └── LoggingException.java
+│       │   │               │   ├── common
+│       │   │               │   │   ├── PageRequest.java
+│       │   │               │   │   └── PageResponse.java
+│       │   │               │   ├── enums
+│       │   │               │   │   ├── FileType.java
+│       │   │               │   │   ├── Gender.java
+│       │   │               │   │   ├── IdentityType.java
+│       │   │               │   │   └── SettingType.java
+│       │   │               │   ├── exception
+│       │   │               │   │   ├── DomainException.java
+│       │   │               │   │   ├── DuplicateResourceException.java
+│       │   │               │   │   ├── ErrorCode.java
+│       │   │               │   │   ├── FileProcessingException.java
+│       │   │               │   │   ├── GenericDomainException.java
+│       │   │               │   │   ├── InvalidIdentityException.java
+│       │   │               │   │   ├── InvalidPhoneNumberException.java
+│       │   │               │   │   ├── ResourceNotFoundException.java
+│       │   │               │   │   ├── StudentPrerequisitesNotSatisfiedException.java
+│       │   │               │   │   ├── SubjectDeactivatedException.java
+│       │   │               │   │   ├── SubjectDeletionConstraintException.java
+│       │   │               │   │   ├── UnenrollableCourseException.java
+│       │   │               │   │   ├── UnsupportedEmailException.java
+│       │   │               │   │   └── UnsupportedStatusTransitionException.java
+│       │   │               │   ├── model
+│       │   │               │   │   ├── Address.java
+│       │   │               │   │   ├── Course.java
+│       │   │               │   │   ├── Enrollment.java
+│       │   │               │   │   ├── Faculty.java
+│       │   │               │   │   ├── History.java
+│       │   │               │   │   ├── Identity.java
+│       │   │               │   │   ├── Program.java
+│       │   │               │   │   ├── Setting.java
+│       │   │               │   │   ├── Status.java
+│       │   │               │   │   ├── Student.java
+│       │   │               │   │   └── Subject.java
+│       │   │               │   ├── repository
+│       │   │               │   │   ├── AddressRepository.java
+│       │   │               │   │   ├── CourseRepository.java
+│       │   │               │   │   ├── EnrollmentRepository.java
+│       │   │               │   │   ├── FacultyRepository.java
+│       │   │               │   │   ├── IdentityRepository.java
+│       │   │               │   │   ├── ProgramRepository.java
+│       │   │               │   │   ├── SettingRepository.java
+│       │   │               │   │   ├── StatusRepository.java
+│       │   │               │   │   ├── StudentRepository.java
+│       │   │               │   │   ├── SubjectRepository.java
+│       │   │               │   │   └── TranscriptRepository.java
+│       │   │               │   ├── service
+│       │   │               │   │   ├── FileStrategy.java
+│       │   │               │   │   └── validators
+│       │   │               │   ├── utils
+│       │   │               │   │   ├── EnumUtils.java
+│       │   │               │   │   └── ListUtils.java
+│       │   │               │   └── valueobject
+│       │   │               │       ├── Phone.java
+│       │   │               │       └── Score.java
+│       │   │               ├── infrastructure
+│       │   │               │   ├── aspect
+│       │   │               │   │   ├── ControllerLoggingAspect.java
+│       │   │               │   │   └── LoggingAspect.java
+│       │   │               │   ├── config
+│       │   │               │   │   ├── AppConfig.java
+│       │   │               │   │   ├── ElasticsearchConfig.java
+│       │   │               │   │   └── FileMapperConfig.java
+│       │   │               │   ├── factories
+│       │   │               │   │   └── FileStrategyFactory.java
+│       │   │               │   ├── file
+│       │   │               │   │   ├── CsvStrategy.java
+│       │   │               │   │   ├── JsonStrategy.java
+│       │   │               │   │   └── PdfStrategy.java
+│       │   │               │   ├── logging
+│       │   │               │   │   ├── BaseLogger.java
+│       │   │               │   │   ├── LogEntry.java
+│       │   │               │   │   ├── logger
+│       │   │               │   │   ├── LoggerManager.java
+│       │   │               │   │   ├── LoggerType.java
+│       │   │               │   │   └── metadata
+│       │   │               │   ├── mapper
+│       │   │               │   │   ├── AddressMapperImpl.java
+│       │   │               │   │   ├── CourseMapperImpl.java
+│       │   │               │   │   ├── EnrollmentMapperImpl.java
+│       │   │               │   │   ├── FacultyMapperImpl.java
+│       │   │               │   │   ├── IdentityMapperImpl.java
+│       │   │               │   │   ├── PhoneMapperImpl.java
+│       │   │               │   │   ├── ProgramMapperImpl.java
+│       │   │               │   │   ├── ScoreMapperImpl.java
+│       │   │               │   │   ├── StatusMapperImpl.java
+│       │   │               │   │   ├── StudentMapperImpl.java
+│       │   │               │   │   └── SubjectMapperImpl.java
+│       │   │               │   ├── persistence
+│       │   │               │   │   ├── entity
+│       │   │               │   │   ├── jpa
+│       │   │               │   │   ├── mapper
+│       │   │               │   │   ├── repository
+│       │   │               │   │   └── specifications
+│       │   │               │   ├── service
+│       │   │               │   │   ├── DocumentTemplateProcessingService.java
+│       │   │               │   │   ├── FileServiceImpl.java
+│       │   │               │   │   └── PhoneParserImpl.java
+│       │   │               │   └── utils
+│       │   │               │       ├── ArgumentFormatterUtils.java
+│       │   │               │       ├── ImportFileUtils.java
+│       │   │               │       ├── JsonUtils.java
+│       │   │               │       └── PagingUtils.java
+│       │   │               ├── presentation
+│       │   │               │   ├── controller
+│       │   │               │   │   ├── CourseController.java
+│       │   │               │   │   ├── EnrollmentController.java
+│       │   │               │   │   ├── FacultyController.java
+│       │   │               │   │   ├── FileController.java
+│       │   │               │   │   ├── MetadataController.java
+│       │   │               │   │   ├── ProgramController.java
+│       │   │               │   │   ├── SettingController.java
+│       │   │               │   │   ├── StatusController.java
+│       │   │               │   │   ├── StudentController.java
+│       │   │               │   │   └── SubjectController.java
+│       │   │               │   └── error
+│       │   │               │       ├── ApiError.java
+│       │   │               │       ├── ErrorCodeStatusMapper.java
+│       │   │               │       └── GlobalExceptionHandler.java
+│       │   │               └── SmsApplication.java
+│       │   └── resources
+│       │       ├── application-dev.yml
+│       │       ├── application.sample.yml
+│       │       ├── application.yml
+│       │       ├── db
+│       │       │   └── migration
+│       │       │       └── initial-schema.sql
+│       │       ├── logback.xml
+│       │       └── templates
+│       │           ├── template.html
+│       │           └── template.xlsx
+│       └── test
+│           └── java
+│               └── com
+│                   └── tkpm
+│                       └── sms
+│                           ├── AddressServiceTest.java
+│                           ├── CourseServiceTest.java
+│                           ├── FacultyServiceTest.java
+│                           ├── IdentityServiceTest.java
+│                           ├── ProgramServiceTest.java
+│                           ├── SettingServiceTest.java
+│                           ├── SmsApplicationTests.java
+│                           ├── StudentServiceTest.java
+│                           └── SubjectServiceTest.java
+├── database_creation.sql
+├── dirtree.txt
+├── documents
+│   ├── assets
+│   │   ├── week02
+│   │   │   ├── SD-export-1.png
+│   │   │   ├── SD-export-csv.png
+│   │   │   ├── SD-export-json.png
+│   │   │   ├── SD-faculty-add.png
+│   │   │   ├── SD-faculty-edit.png
+│   │   │   ├── SD-import-csv-1.png
+│   │   │   ├── SD-import-csv-2.png
+│   │   │   ├── SD-import-csv-3.png
+│   │   │   ├── SD-import-csv-4.png
+│   │   │   ├── SD-import-json-1.png
+│   │   │   ├── SD-import-json-2.png
+│   │   │   ├── SD-import-json-3.png
+│   │   │   ├── SD-logging-elastic-search.png
+│   │   │   ├── SD-logging-json.png
+│   │   │   ├── SD-program-add.png
+│   │   │   ├── SD-program-update.png
+│   │   │   ├── SD-search-name-faculty.png
+│   │   │   ├── SD-search-name.png
+│   │   │   ├── SD-status-add.png
+│   │   │   ├── SD-status-update.png
+│   │   │   ├── SD-update-student-1.png
+│   │   │   └── SD-update-student-2.png
+│   │   ├── week03
+│   │   │   ├── add-student-existed-id.png
+│   │   │   ├── edit-student-existed-id.png
+│   │   │   ├── emaildomain-validation.png
+│   │   │   ├── phonenumer-validation.png
+│   │   │   ├── setting-phonenumber-emaildomain.png
+│   │   │   ├── status-transistion-edit.png
+│   │   │   └── status-transition-setting.png
+│   │   └── week04
+│   │       ├── course-create.png
+│   │       ├── course-detail.png
+│   │       ├── course-enrollment-invalid-prerequesite.png
+│   │       ├── course-enrollment.png
+│   │       ├── course-list.png
+│   │       ├── course-modified-out-of-duration.png
+│   │       ├── course-update.png
+│   │       ├── enrollment-current.png
+│   │       ├── enrollment-history.png
+│   │       ├──  enrollment.png
+│   │       ├── enrollment-transcript-pdf.png
+│   │       ├── enrollment-transcript.png
+│   │       ├── setting-adjustment-duration.png
+│   │       ├── subject-create.png
+│   │       ├── subject-deactive.png
+│   │       ├── subject-detail.png
+│   │       ├── subject-list.png
+│   │       └── subject-update.png
+│   ├── BoyScoutRule_BrokenWindowTheory.md
+│   └── UnitTest.md
+├── frontend
+│   ├── components.json
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   └── vite.svg
+│   ├── README.md
+│   ├── src
+│   │   ├── App.tsx
+│   │   ├── assets
+│   │   │   └── react.svg
+│   │   ├── core
+│   │   │   ├── config
+│   │   │   │   └── api.ts
+│   │   │   └── types
+│   │   │       ├── apiResponse.ts
+│   │   │       ├── filter.ts
+│   │   │       └── table.ts
+│   │   ├── features
+│   │   │   ├── course
+│   │   │   │   ├── api
+│   │   │   │   │   ├── courseService.ts
+│   │   │   │   │   └── useCourseApi.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── CourseDetail.tsx
+│   │   │   │   │   └── CourseForm.tsx
+│   │   │   │   ├── coursePage.tsx
+│   │   │   │   └── types
+│   │   │   │       ├── courseSchedule.ts
+│   │   │   │       └── course.ts
+│   │   │   ├── enrollment
+│   │   │   │   ├── api
+│   │   │   │   │   ├── enrollmentService.ts
+│   │   │   │   │   └── useEnrollmentApi.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── AcademicTranscriptView.tsx
+│   │   │   │   │   ├── AvailableCoursesTable.tsx
+│   │   │   │   │   ├── AvailableStudentsTable.tsx
+│   │   │   │   │   ├── CurrentEnrollmentsTable.tsx
+│   │   │   │   │   └── EnrollmentHistoryTable.tsx
+│   │   │   │   ├── pages
+│   │   │   │   │   ├── courseEnrollmentPage.tsx
+│   │   │   │   │   └── studentEnrollmentPage.tsx
+│   │   │   │   ├── styles
+│   │   │   │   │   └── transcript-print.css
+│   │   │   │   └── types
+│   │   │   │       └── enrollment.ts
+│   │   │   ├── faculty
+│   │   │   │   ├── api
+│   │   │   │   │   ├── facultyService.ts
+│   │   │   │   │   └── useFacultyApi.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── FacultyDetail.tsx
+│   │   │   │   │   └── FacultyForm.tsx
+│   │   │   │   ├── facultyPage.tsx
+│   │   │   │   └── types
+│   │   │   │       └── faculty.ts
+│   │   │   ├── metadata
+│   │   │   │   └── api
+│   │   │   │       ├── metadataService.ts
+│   │   │   │       └── useMetadata.ts
+│   │   │   ├── program
+│   │   │   │   ├── api
+│   │   │   │   │   ├── programService.ts
+│   │   │   │   │   └── useProgramApi.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── ProgramDetail.tsx
+│   │   │   │   │   └── ProgramForm.tsx
+│   │   │   │   ├── programPage.tsx
+│   │   │   │   └── types
+│   │   │   │       └── program.ts
+│   │   │   ├── settings
+│   │   │   │   ├── api
+│   │   │   │   │   ├── settingService.ts
+│   │   │   │   │   └── useSettingsApi.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── AdjustmentDurationSetting.tsx
+│   │   │   │   │   ├── EmailDomainSettings.tsx
+│   │   │   │   │   └── PhoneSettings.tsx
+│   │   │   │   ├── settingPage.tsx
+│   │   │   │   └── types
+│   │   │   │       └── setting.ts
+│   │   │   ├── status
+│   │   │   │   ├── api
+│   │   │   │   │   ├── statusService.ts
+│   │   │   │   │   └── useStatusApi.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── StatusDetail.tsx
+│   │   │   │   │   └── StatusForm.tsx
+│   │   │   │   ├── statusPage.tsx
+│   │   │   │   └── types
+│   │   │   │       └── status.ts
+│   │   │   ├── student
+│   │   │   │   ├── api
+│   │   │   │   │   ├── studentService.ts
+│   │   │   │   │   └── useStudentApi.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── AddressForm.tsx
+│   │   │   │   │   ├── PhoneField.tsx
+│   │   │   │   │   ├── StudentDetail.tsx
+│   │   │   │   │   └── StudentForm.tsx
+│   │   │   │   ├── studentPage.tsx
+│   │   │   │   └── types
+│   │   │   │       ├── address.ts
+│   │   │   │       ├── identityDocument.ts
+│   │   │   │       └── student.ts
+│   │   │   └── subject
+│   │   │       ├── api
+│   │   │       │   ├── subjectService.tsx
+│   │   │       │   └── useSubjectApi.tsx
+│   │   │       ├── components
+│   │   │       │   ├── SubjectDetail.tsx
+│   │   │       │   └── SubjectForm.tsx
+│   │   │       ├── subjectPage.tsx
+│   │   │       └── types
+│   │   │           └── subject.ts
+│   │   ├── index.css
+│   │   ├── main.tsx
+│   │   ├── schemas
+│   │   ├── shared
+│   │   │   ├── components
+│   │   │   │   ├── common
+│   │   │   │   │   └── LoadMoreSelect.tsx
+│   │   │   │   ├── error
+│   │   │   │   │   ├── ErrorBoundary.tsx
+│   │   │   │   │   └── ErrorPage.tsx
+│   │   │   │   ├── filter
+│   │   │   │   │   └── SearchFilter.tsx
+│   │   │   │   ├── layouts
+│   │   │   │   │   ├── AppSidebar.tsx
+│   │   │   │   │   └── Layout.tsx
+│   │   │   │   ├── table
+│   │   │   │   │   ├── ActionCell.tsx
+│   │   │   │   │   ├── FileExportButton.tsx
+│   │   │   │   │   ├── FileImportButton.tsx
+│   │   │   │   │   ├── GenericTable.tsx
+│   │   │   │   │   ├── SkeletonTable.tsx
+│   │   │   │   │   ├── TablePagination.tsx
+│   │   │   │   │   └── TableSort.tsx
+│   │   │   │   └── ui
+│   │   │   │       ├── accordion.tsx
+│   │   │   │       ├── alert-dialog.tsx
+│   │   │   │       ├── avatar.tsx
+│   │   │   │       ├── badge.tsx
+│   │   │   │       ├── button.tsx
+│   │   │   │       ├── card.tsx
+│   │   │   │       ├── checkbox.tsx
+│   │   │   │       ├── command.tsx
+│   │   │   │       ├── dialog.tsx
+│   │   │   │       ├── dropdown-menu.tsx
+│   │   │   │       ├── form.tsx
+│   │   │   │       ├── input.tsx
+│   │   │   │       ├── label.tsx
+│   │   │   │       ├── loadingButton.tsx
+│   │   │   │       ├── popover.tsx
+│   │   │   │       ├── scroll-area.tsx
+│   │   │   │       ├── select.tsx
+│   │   │   │       ├── separator.tsx
+│   │   │   │       ├── sheet.tsx
+│   │   │   │       ├── sidebar.tsx
+│   │   │   │       ├── skeleton.tsx
+│   │   │   │       ├── sonner.tsx
+│   │   │   │       ├── table.tsx
+│   │   │   │       ├── tabs.tsx
+│   │   │   │       ├── textarea.tsx
+│   │   │   │       └── tooltip.tsx
+│   │   │   ├── data
+│   │   │   │   └── countryData.ts
+│   │   │   ├── hooks
+│   │   │   │   ├── useDebounce.ts
+│   │   │   │   ├── useLoadMore.ts
+│   │   │   │   ├── use-mobile.ts
+│   │   │   │   └── useTableDataOperation.ts
+│   │   │   └── lib
+│   │   │       ├── errors.ts
+│   │   │       ├── toast-utils.ts
+│   │   │       └── utils.ts
+│   │   └── vite-env.d.ts
+│   ├── tailwind.config.js
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+└── README.md
+
+121 directories, 322 files
