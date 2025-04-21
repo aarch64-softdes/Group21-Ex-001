@@ -71,6 +71,7 @@ pipeline {
                             -Dsonar.organization=aarch64 \
                             -Dsonar.host.url=https://sonarcloud.io \
                             -Dsonar.qualitygate.wait=false
+                            -Dsonar.pullrequest.provider=none
                     '''
                 }
             }
