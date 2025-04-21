@@ -54,6 +54,7 @@ const GenericTable = <T extends { id: string }>({
     additionalActions: [],
   },
   customActionCellComponent = undefined,
+  emptyMessage = 'No data available',
   metadata = {},
 }: GenericTableProps<T>) => {
   const disabledActions = {
@@ -83,13 +84,13 @@ const GenericTable = <T extends { id: string }>({
     isEditSaving,
     handleEditClick,
     handleEditSave,
-  } = useTableEdit<T>(actionCellProperties.edit.onSave);
+  } = useTableEdit<T>(actionCellProperties?.edit.onSave);
 
   const { isDeleting, deletingRow, handleDelete } = useTableDelete(
-    actionCellProperties.delete.onDelete,
+    actionCellProperties?.delete.onDelete,
   );
   const { isAdding, dialogOpen, setDialogOpen, handleAdd, handleShowDialog } =
-    useTableAdd(addAction.onAdd);
+    useTableAdd(addAction?.onAdd);
 
   const tableBody = useMemo(() => {
     if (state.isFetching) {
@@ -111,19 +112,6 @@ const GenericTable = <T extends { id: string }>({
           </TableBody>
         );
       }
-
-      return (
-        <TableBody>
-          <TableRow>
-            <TableCell
-              className='text-center text-red-500'
-              colSpan={columns.length + 1}
-            >
-              No data found
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      );
     }
 
     return (
@@ -138,6 +126,7 @@ const GenericTable = <T extends { id: string }>({
                   minWidth: column.style?.minWidth,
                   maxWidth: column.style?.maxWidth,
                   width: column.style?.width,
+                  textAlign: column.style?.textAlign,
                 }}
               >
                 {(() => {
@@ -155,7 +144,7 @@ const GenericTable = <T extends { id: string }>({
                 })()}
               </TableCell>
             ))}
-            <TableCell className='min-w-20 py-1'>
+            <TableCell className='min-w-20 py-1 flex justify-center items-center'>
               {customActionCellComponent ? (
                 React.createElement(customActionCellComponent, {
                   ...cell,
@@ -206,7 +195,16 @@ const GenericTable = <T extends { id: string }>({
       <TableHeader>
         <TableRow>
           {columns.map((column) => (
-            <TableHead key={column.header} className='text-blue-500'>
+            <TableHead
+              key={column.header}
+              className='text-blue-500'
+              style={{
+                minWidth: column.style?.minWidth,
+                maxWidth: column.style?.maxWidth,
+                width: column.style?.width,
+                textAlign: column.style?.textAlign,
+              }}
+            >
               <TableSort
                 columnKey={String(column.key)}
                 columnHeader={column.header}
@@ -216,7 +214,10 @@ const GenericTable = <T extends { id: string }>({
               />
             </TableHead>
           ))}
-          <TableHead className='w-4 text-blue-500'>Action</TableHead>
+          <TableHead className='w-16 text-blue-500 text-center'>
+            Action
+          </TableHead>
+          <TableHead className='w-4' />
         </TableRow>
       </TableHeader>
     ),
@@ -279,7 +280,11 @@ const GenericTable = <T extends { id: string }>({
 
       {/* Table content */}
       <div className='border rounded-md'>
-        {state.isLoading ? (
+        {data.length === 0 && !state.isLoading ? (
+          <div className='flex items-center justify-center h-24'>
+            <p className='text-muted-foreground'>{emptyMessage}</p>
+          </div>
+        ) : state.isLoading ? (
           <SkeletonTable rows={pagination.pageSize} columns={columns.length} />
         ) : (
           <div className='overflow-x-auto'>

@@ -49,6 +49,7 @@ const SubjectPage: React.FC = () => {
         key: 'credits',
         style: {
           width: '100px',
+          textAlign: 'center',
         },
       },
       {
@@ -61,6 +62,7 @@ const SubjectPage: React.FC = () => {
         key: 'isActive',
         style: {
           width: '100px',
+          textAlign: 'center',
         },
         transform: (value: boolean) => {
           return value ? 'Active' : 'Inactive';

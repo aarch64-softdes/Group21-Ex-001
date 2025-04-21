@@ -1,17 +1,7 @@
-// src/features/enrollment/components/AvailableStudentsTable.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useStudents } from '@/features/student/api/useStudentApi';
 import { useEnrollCourse } from '../api/useEnrollmentApi';
 import { Button } from '@ui/button';
-import { Input } from '@ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@ui/table';
 import {
   Dialog,
   DialogContent,
@@ -21,144 +11,45 @@ import {
   DialogTitle,
 } from '@ui/dialog';
 import { Loader2, Search } from 'lucide-react';
-import TablePagination from '@/components/table/TablePagination';
+import GenericTable from '@/components/table/GenericTable';
+import { Column } from '@/core/types/table';
 import { Badge } from '@ui/badge';
-import TableSkeleton from '@/components/table/SkeletonTable';
+import { SearchFilterOption } from '@/core/types/filter';
+import Student from '@/features/student/types/student';
 
 interface AvailableStudentsTableProps {
   courseId: string;
 }
 
-const AvailableStudentsTable: React.FC<AvailableStudentsTableProps> = ({
+interface CustomEnrollButtonProps {
+  id: string;
+  courseId: string;
+}
+
+const CustomEnrollButton: React.FC<CustomEnrollButtonProps> = ({
+  id,
   courseId,
 }) => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-
-  // Effect for debouncing search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 300);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [searchTerm]);
-
-  const {
-    data: studentsResponse,
-    isLoading,
-    error,
-    refetch,
-  } = useStudents({
-    page,
-    pageSize,
-    filters: { search: debouncedSearchTerm },
-    sort: { key: 'studentId', direction: 'asc' },
-  });
-
   const enrollCourse = useEnrollCourse();
 
-  const handleEnrollClick = (studentId: string) => {
-    setSelectedStudent(studentId);
+  const handleEnrollClick = () => {
     setIsEnrollDialogOpen(true);
   };
 
   const handleConfirmEnroll = async () => {
-    if (selectedStudent) {
-      await enrollCourse.mutateAsync({
-        studentId: selectedStudent,
-        courseId,
-      });
-      setIsEnrollDialogOpen(false);
-      setSelectedStudent(null);
-    }
+    await enrollCourse.mutateAsync({
+      studentId: id,
+      courseId,
+    });
+    setIsEnrollDialogOpen(false);
   };
 
-  if (isLoading) {
-    return <TableSkeleton columns={6} rows={5} />;
-  }
-
-  if (error) {
-    throw error;
-  }
-
   return (
-    <div className='bg-white rounded-md p-4'>
-      <div className='mb-4 relative'>
-        <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-          <Search className='h-4 w-4 text-muted-foreground' />
-        </div>
-        <Input
-          type='search'
-          placeholder='Search students by name or ID...'
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className='pl-10'
-        />
-      </div>
-
-      {!studentsResponse?.data || studentsResponse.data.length === 0 ? (
-        <div className='text-center py-8'>
-          <p className='text-muted-foreground'>No available students found.</p>
-        </div>
-      ) : (
-        <>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Student ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Faculty</TableHead>
-                <TableHead>Program</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {studentsResponse.data.map((student) => (
-                <TableRow key={student.id}>
-                  <TableCell className='font-medium'>
-                    {student.studentId}
-                  </TableCell>
-                  <TableCell>{student.name}</TableCell>
-                  <TableCell>{student.faculty}</TableCell>
-                  <TableCell>{student.program}</TableCell>
-                  <TableCell>
-                    <Badge variant='outline' className='text-xs'>
-                      {student.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size='sm'
-                      onClick={() => handleEnrollClick(student.id)}
-                    >
-                      Enroll
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-          <div className='py-4'>
-            <TablePagination
-              currentPage={page}
-              totalPages={studentsResponse.totalPages}
-              totalItems={studentsResponse.totalItems}
-              pageSize={pageSize}
-              onPageChange={setPage}
-              onPageSizeChange={setPageSize}
-            />
-          </div>
-        </>
-      )}
+    <>
+      <Button size='sm' onClick={handleEnrollClick}>
+        Enroll
+      </Button>
 
       <Dialog open={isEnrollDialogOpen} onOpenChange={setIsEnrollDialogOpen}>
         <DialogContent className='max-w-[425px]'>
@@ -192,6 +83,62 @@ const AvailableStudentsTable: React.FC<AvailableStudentsTableProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </>
+  );
+};
+
+const AvailableStudentsTable: React.FC<AvailableStudentsTableProps> = ({
+  courseId,
+}) => {
+  const columns: Column<Student>[] = [
+    {
+      header: 'Student ID',
+      key: 'id',
+    },
+    {
+      header: 'Name',
+      key: 'name',
+    },
+    {
+      header: 'Faculty',
+      key: 'faculty',
+    },
+    {
+      header: 'Program',
+      key: 'program',
+    },
+    {
+      header: 'Status',
+      key: 'status',
+      transform: (value) => (
+        <Badge variant='outline' className='text-xs'>
+          {value}
+        </Badge>
+      ),
+    },
+  ];
+
+  const searchNameFilterOption: SearchFilterOption = {
+    id: 'search',
+    label: 'Search',
+    labelIcon: Search,
+    placeholder: 'Search by id, name',
+    type: 'search',
+  };
+
+  return (
+    <div className='bg-white rounded-md p-4'>
+      <GenericTable
+        columns={columns}
+        addAction={{
+          disabled: true,
+          onAdd: () => {},
+        }}
+        queryHook={useStudents}
+        filterOptions={[searchNameFilterOption]}
+        customActionCellComponent={CustomEnrollButton}
+        metadata={courseId}
+      />
     </div>
   );
 };

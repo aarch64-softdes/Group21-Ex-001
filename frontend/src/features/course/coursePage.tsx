@@ -41,6 +41,7 @@ const CoursePage: React.FC = () => {
         key: 'room',
         style: {
           width: '80px',
+          textAlign: 'center',
         },
       },
       {
@@ -48,6 +49,7 @@ const CoursePage: React.FC = () => {
         key: 'schedule',
         style: {
           width: '100px',
+          textAlign: 'center',
         },
       },
       {
@@ -55,6 +57,7 @@ const CoursePage: React.FC = () => {
         key: 'year',
         style: {
           width: '60px',
+          textAlign: 'center',
         },
       },
       {
@@ -62,6 +65,7 @@ const CoursePage: React.FC = () => {
         key: 'semester',
         style: {
           width: '80px',
+          textAlign: 'center',
         },
       },
     ],

@@ -29,90 +29,28 @@ interface CustomEnrollButtonProps {
 const CustomEnrollButton: React.FC<CustomEnrollButtonProps> = ({
   id,
   studentId,
-  code,
 }) => {
-  const handleEnrollClick = () => {
-    console.log(
-      `Enroll button clicked for course ID: ${id}, Student ID: ${studentId}, Code: ${code}`,
-    );
-  };
-
-  return (
-    <Button variant='outline' onClick={handleEnrollClick}>
-      Enroll
-    </Button>
-  );
-};
-
-const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
-  studentId,
-}) => {
-  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
-
   const enrollCourse = useEnrollCourse();
 
-  const handleEnrollClick = (courseId: string) => {
-    setSelectedCourse(courseId);
+  const handleEnrollClick = () => {
     setIsEnrollDialogOpen(true);
   };
 
   const handleConfirmEnroll = async () => {
-    if (selectedCourse) {
-      await enrollCourse.mutateAsync({
-        studentId,
-        courseId: selectedCourse,
-      });
-      setIsEnrollDialogOpen(false);
-      setSelectedCourse(null);
-    }
+    await enrollCourse.mutateAsync({
+      studentId,
+      courseId: id,
+    });
+    setIsEnrollDialogOpen(false);
   };
-
-  const columns: Column<Course>[] = [
-    {
-      header: 'Code',
-      key: 'code',
-    },
-    {
-      header: 'Subject',
-      key: 'subject.name',
-      nested: true,
-    },
-    {
-      header: 'Schedule',
-      key: 'schedule',
-    },
-    {
-      header: 'Room',
-      key: 'room',
-    },
-    {
-      header: 'Semester',
-      key: 'semester',
-      transform: (value, row) => `${row?.year}, Semester ${value}`,
-    },
-  ];
 
   return (
     <>
-      <GenericTable
-        tableTitle='Available Courses'
-        columns={columns}
-        queryHook={useCourses}
-        disabledActions={{
-          edit: true,
-          delete: true,
-        }}
-        filterOptions={[]}
-        customActionCellComponent={CustomEnrollButton}
-        metadata={studentId}
-        addingTitle={''}
-        formComponent={undefined}
-        detailComponent={undefined}
-      />
+      <Button onClick={handleEnrollClick}>Enroll</Button>
 
       <Dialog open={isEnrollDialogOpen} onOpenChange={setIsEnrollDialogOpen}>
-        <DialogContent>
+        <DialogContent className='max-w-[425px]'>
           <DialogHeader>
             <DialogTitle>Confirm Enrollment</DialogTitle>
             <DialogDescription>
@@ -144,6 +82,49 @@ const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
         </DialogContent>
       </Dialog>
     </>
+  );
+};
+
+const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
+  studentId,
+}) => {
+  const columns: Column<Course>[] = [
+    {
+      header: 'Code',
+      key: 'code',
+    },
+    {
+      header: 'Subject',
+      key: 'subject.name',
+      nested: true,
+    },
+    {
+      header: 'Schedule',
+      key: 'schedule',
+    },
+    {
+      header: 'Room',
+      key: 'room',
+    },
+    {
+      header: 'Semester',
+      key: 'semester',
+      transform: (value, row) => `${row?.year}, Semester ${value}`,
+    },
+  ];
+
+  return (
+    <GenericTable
+      columns={columns}
+      addAction={{
+        disabled: true,
+        onAdd: () => {},
+      }}
+      queryHook={useCourses}
+      filterOptions={[]}
+      customActionCellComponent={CustomEnrollButton}
+      metadata={studentId}
+    />
   );
 };
 

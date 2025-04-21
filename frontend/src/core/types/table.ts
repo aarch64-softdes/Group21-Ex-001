@@ -20,6 +20,7 @@ export type ColumnStyle = {
   width?: string;
   minWidth?: string;
   maxWidth?: string;
+  textAlign?: 'left' | 'center' | 'right';
 };
 
 export interface Column<T> {
@@ -29,7 +30,7 @@ export interface Column<T> {
   isDefaultSort?: boolean;
   sortable?: boolean;
   style?: ColumnStyle;
-  transform?: (value: any, row?: T) => string; // Use any to allow for any type of value
+  transform?: (value: any, row?: T) => string | ReactElement; // Use any to allow for any type of value
 }
 
 export type SaveAction = (id: string, updatedData: any) => void | Promise<void>;
@@ -96,7 +97,7 @@ export interface GenericTableProps<T extends { id: string }> {
     disabled?: boolean;
     title?: string;
   };
-  actionCellProperties: {
+  actionCellProperties?: {
     requireDeleteConfirmation?: boolean;
     edit: {
       onSave: SaveAction;
@@ -115,6 +116,7 @@ export interface GenericTableProps<T extends { id: string }> {
   filterOptions: FilterOption[];
   tableOptions?: ReactElement<{ disabled?: boolean }>[];
   disablePagination?: boolean;
+  emptyMessage?: string;
   metadata?: any;
 }
 

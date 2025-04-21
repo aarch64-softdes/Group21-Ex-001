@@ -74,6 +74,7 @@ const StudentPage: React.FC = () => {
         key: 'schoolYear',
         style: {
           width: '80px',
+          textAlign: 'center',
         },
       },
       {
@@ -81,6 +82,7 @@ const StudentPage: React.FC = () => {
         key: 'status',
         style: {
           width: '112px',
+          textAlign: 'center',
         },
 
         // render: (value: string) => {
