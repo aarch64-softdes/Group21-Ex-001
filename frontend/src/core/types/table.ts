@@ -111,6 +111,7 @@ export interface GenericTableProps<T extends { id: string }> {
     detailComponent?: React.FC<DetailComponentProps>;
     additionalActions?: AdditionalAction[];
   };
+  disabledActionCell?: boolean;
   customActionCellComponent?: React.FC<any>;
   queryHook: QueryHook<T>;
   filterOptions: FilterOption[];

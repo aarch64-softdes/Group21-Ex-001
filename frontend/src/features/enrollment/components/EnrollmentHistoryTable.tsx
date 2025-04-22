@@ -1,10 +1,9 @@
 import React from 'react';
 import { Badge } from '@ui/badge';
-import { Column, QueryHookParams } from '@/core/types/table';
+import { Column } from '@/core/types/table';
 import GenericTable from '@/components/table/GenericTable';
-import EnrollmentService from '../api/enrollmentService';
-import { useQuery } from '@tanstack/react-query';
 import { EnrollmentHistory } from '../types/enrollment';
+import { useEnrollmentHistory } from '../api/useEnrollmentApi';
 
 interface EnrollmentHistoryTableProps {
   studentId: string;
@@ -54,31 +53,13 @@ const EnrollmentHistoryTable: React.FC<EnrollmentHistoryTableProps> = ({
     },
   ];
 
-  const enrollmentService = new EnrollmentService();
-  const useEnrollmentHistory = () => {
-    const useEnrollments = (query: QueryHookParams) => {
-      let { page, pageSize } = query;
-
-      if (page < 1) {
-        page = 1;
-      }
-
-      return useQuery({
-        queryKey: ['enrollmentHistory', studentId, page, pageSize],
-        queryFn: () =>
-          enrollmentService.getEnrollmentHistory(studentId, page, pageSize),
-      });
-    };
-
-    return useEnrollments;
-  };
-
   return (
     <div className='bg-white rounded-md p-4'>
       <GenericTable
         columns={columns}
         addAction={{ disabled: true, onAdd: () => {} }}
-        queryHook={useEnrollmentHistory()}
+        queryHook={useEnrollmentHistory(studentId)}
+        disabledActionCell={true}
         filterOptions={[]}
         metadata={studentId}
         emptyMessage='No enrollment history found.'

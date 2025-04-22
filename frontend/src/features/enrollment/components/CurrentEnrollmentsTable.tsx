@@ -13,10 +13,8 @@ import {
   Loader2,
   XCircle,
 } from 'lucide-react';
-import { Column, QueryHookParams } from '@/core/types/table';
+import { Column } from '@/core/types/table';
 import GenericTable from '@/components/table/GenericTable';
-import EnrollmentService from '../api/enrollmentService';
-import { useQuery } from '@tanstack/react-query';
 import { EnrollmentMinimal } from '../types/enrollment';
 import {
   Tooltip,
@@ -24,10 +22,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@ui/tooltip';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@ui/alert-dialog';
 
 interface CurrentEnrollmentsTableProps {
   studentId: string;
-  isAdmin?: boolean;
 }
 
 const GradeDisplay = ({ grade, gpa }: { grade?: string; gpa?: number }) => {
@@ -74,14 +81,76 @@ const GradeDisplay = ({ grade, gpa }: { grade?: string; gpa?: number }) => {
   );
 };
 
+interface CustomUnenrollButtonProps extends EnrollmentMinimal {
+  studentId: string;
+}
+
+const UnenrollButton: React.FC<CustomUnenrollButtonProps> = ({
+  id,
+  course: { id: courseId },
+  studentId,
+}) => {
+  const [isUnenrollDialogOpen, setIsUnenrollDialogOpen] = useState(false);
+  const unenrollCourse = useUnenrollCourse();
+  const handleUnenrollClick = () => {
+    setIsUnenrollDialogOpen(true);
+  };
+
+  const handleConfirmUnenroll = async () => {
+    await unenrollCourse.mutateAsync({
+      studentId,
+      courseId: courseId || '',
+    });
+    setIsUnenrollDialogOpen(false);
+  };
+
+  return (
+    <>
+      <Button variant={'destructive'} size='sm' onClick={handleUnenrollClick}>
+        Unenroll
+      </Button>
+
+      <AlertDialog
+        open={isUnenrollDialogOpen}
+        onOpenChange={setIsUnenrollDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Unenrollment</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to unenroll from this course? This action
+              cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={unenrollCourse.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmUnenroll}
+              disabled={unenrollCourse.isPending}
+              className='bg-destructive hover:bg-destructive/90'
+            >
+              {unenrollCourse.isPending ? (
+                <>
+                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                  Unenrolling...
+                </>
+              ) : (
+                'Unenroll'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+};
+
 const CurrentEnrollmentsTable: React.FC<CurrentEnrollmentsTableProps> = ({
   studentId,
-  isAdmin = false,
 }) => {
-  const unenrollCourse = useUnenrollCourse();
-  const updateTranscript = useUpdateTranscript();
-
-  // Simple column definitions
+  // Column definitions
   const columns: Column<EnrollmentMinimal>[] = [
     { header: 'Code', key: 'course.code', nested: true },
     { header: 'Subject', key: 'course.subject.name', nested: true },
@@ -103,86 +172,17 @@ const CurrentEnrollmentsTable: React.FC<CurrentEnrollmentsTableProps> = ({
     },
   ];
 
-  // Simple action buttons
-  const ActionButtons = ({ row }: { row: EnrollmentMinimal }) => {
-    const handleUnenroll = () => {
-      if (confirm('Are you sure you want to unenroll from this course?')) {
-        unenrollCourse.mutate({
-          studentId: studentId,
-          courseId: row.course.id || '',
-        });
-      }
-    };
-
-    const handleUpdateGrade = () => {
-      if (isAdmin) {
-        const grade = prompt('Enter grade:', row.score?.grade || '');
-        const gpa = prompt(
-          'Enter GPA (0-4):',
-          row.score?.gpa?.toString() || '',
-        );
-
-        if (grade !== null && gpa !== null) {
-          updateTranscript.mutate({
-            studentId: studentId,
-            courseId: row.course.id || '',
-            transcript: {
-              grade: grade,
-              gpa: parseFloat(gpa) || 0,
-            },
-          });
-        }
-      }
-    };
-
-    return (
-      <div className='flex space-x-2'>
-        {isAdmin && (
-          <Button size='sm' variant='outline' onClick={handleUpdateGrade}>
-            <Edit2 className='h-4 w-4 mr-1' />
-            Grade
-          </Button>
-        )}
-        <Button
-          size='sm'
-          variant='destructive'
-          onClick={handleUnenroll}
-          disabled={unenrollCourse.isPending}
-        >
-          {unenrollCourse.isPending ? 'Unenrolling...' : 'Unenroll'}
-        </Button>
-      </div>
-    );
-  };
-
-  const enrollmentService = new EnrollmentService();
-  const useEnrollment = () => {
-    const useEnrollments = (query: QueryHookParams) => {
-      let { page, pageSize } = query;
-
-      if (page < 1) {
-        page = 1;
-      }
-
-      return useQuery({
-        queryKey: ['enrollments', studentId, page, pageSize],
-        queryFn: () =>
-          enrollmentService.getStudentEnrollments(studentId, page, pageSize),
-      });
-    };
-
-    return useEnrollments;
-  };
-
   return (
     <div className='bg-white rounded-md p-4'>
       <GenericTable
         columns={columns}
         addAction={{ disabled: true, onAdd: () => {} }}
-        queryHook={useEnrollment()}
+        queryHook={useEnrollments(studentId)}
         filterOptions={[]}
-        customActionCellComponent={ActionButtons}
-        metadata={studentId}
+        customActionCellComponent={UnenrollButton}
+        metadata={{
+          studentId,
+        }}
         emptyMessage='You are not currently enrolled in any courses.'
       />
     </div>

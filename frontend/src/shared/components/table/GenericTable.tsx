@@ -56,6 +56,7 @@ const GenericTable = <T extends { id: string }>({
   customActionCellComponent = undefined,
   emptyMessage = 'No data available',
   metadata = {},
+  disabledActionCell = false,
 }: GenericTableProps<T>) => {
   const disabledActions = {
     edit: actionCellProperties.edit.disabled,
@@ -114,6 +115,44 @@ const GenericTable = <T extends { id: string }>({
       }
     }
 
+    const getActionCell = (cell: T) => {
+      if (disabledActionCell) {
+        return null;
+      }
+
+      return (
+        <TableCell className='min-w-20 py-1 flex justify-center items-center'>
+          {customActionCellComponent ? (
+            React.createElement(customActionCellComponent, {
+              ...cell,
+              ...metadata,
+            })
+          ) : (
+            <ActionCell
+              requireDeleteConfirmation={
+                actionCellProperties.requireDeleteConfirmation
+              }
+              isDeleting={deletingRow === cell.id && isDeleting}
+              onView={() => {
+                setCurrentDetailItem(cell);
+                setDetailDialogOpen(true);
+              }}
+              onEdit={() => handleEditClick(cell.id, data)}
+              onDelete={() => handleDelete(cell.id)}
+              disabledActions={disabledActions}
+              additionalActions={actionCellProperties.additionalActions?.map(
+                (action) => ({
+                  label: action.label,
+                  handler: () => action.handler(cell.id),
+                  disabled: action.disabled ? action.disabled(cell) : false,
+                }),
+              )}
+            />
+          )}
+        </TableCell>
+      );
+    };
+
     return (
       <TableBody>
         {data.map((cell: T) => (
@@ -144,35 +183,7 @@ const GenericTable = <T extends { id: string }>({
                 })()}
               </TableCell>
             ))}
-            <TableCell className='min-w-20 py-1 flex justify-center items-center'>
-              {customActionCellComponent ? (
-                React.createElement(customActionCellComponent, {
-                  ...cell,
-                  ...metadata,
-                })
-              ) : (
-                <ActionCell
-                  requireDeleteConfirmation={
-                    actionCellProperties.requireDeleteConfirmation
-                  }
-                  isDeleting={deletingRow === cell.id && isDeleting}
-                  onView={() => {
-                    setCurrentDetailItem(cell);
-                    setDetailDialogOpen(true);
-                  }}
-                  onEdit={() => handleEditClick(cell.id, data)}
-                  onDelete={() => handleDelete(cell.id)}
-                  disabledActions={disabledActions}
-                  additionalActions={actionCellProperties.additionalActions?.map(
-                    (action) => ({
-                      label: action.label,
-                      handler: () => action.handler(cell.id),
-                      disabled: action.disabled ? action.disabled(cell) : false,
-                    }),
-                  )}
-                />
-              )}
-            </TableCell>
+            {getActionCell(cell)}
           </TableRow>
         ))}
       </TableBody>
@@ -214,9 +225,11 @@ const GenericTable = <T extends { id: string }>({
               />
             </TableHead>
           ))}
-          <TableHead className='w-16 text-blue-500 text-center'>
-            Action
-          </TableHead>
+          {disabledActionCell ? null : (
+            <TableHead className='w-16 text-blue-500 text-center'>
+              Action
+            </TableHead>
+          )}
           <TableHead className='w-4' />
         </TableRow>
       </TableHeader>

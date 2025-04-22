@@ -21,8 +21,7 @@ interface AvailableStudentsTableProps {
   courseId: string;
 }
 
-interface CustomEnrollButtonProps {
-  id: string;
+interface CustomEnrollButtonProps extends Student {
   courseId: string;
 }
 

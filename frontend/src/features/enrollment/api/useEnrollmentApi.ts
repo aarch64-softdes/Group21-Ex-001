@@ -1,4 +1,3 @@
-// src/features/enrollment/api/useEnrollmentApi.ts
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import EnrollmentService from './enrollmentService';
 import {
@@ -8,33 +7,40 @@ import {
 } from '../types/enrollment';
 import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
 import { getErrorMessage } from '@/shared/lib/utils';
+import { QueryHookParams } from '@/core/types/table';
 
 const enrollmentService = new EnrollmentService();
 
-export const useEnrollments = (
-  studentId: string,
-  page: number = 1,
-  pageSize: number = 10,
-) => {
-  return useQuery({
-    queryKey: ['enrollments', studentId, page, pageSize],
-    queryFn: () =>
-      enrollmentService.getStudentEnrollments(studentId, page, pageSize),
-    enabled: !!studentId,
-  });
+export const useEnrollments = (studentId: string) => {
+  return (query: QueryHookParams) => {
+    let { page, pageSize } = query;
+    if (page < 1) {
+      page = 1;
+    }
+
+    return useQuery({
+      queryKey: ['enrollments', studentId, page, pageSize],
+      queryFn: () =>
+        enrollmentService.getStudentEnrollments(studentId, page, pageSize),
+      enabled: !!studentId,
+    });
+  };
 };
 
-export const useEnrollmentHistory = (
-  studentId: string,
-  page: number = 1,
-  pageSize: number = 10,
-) => {
-  return useQuery({
-    queryKey: ['enrollmentHistory', studentId, page, pageSize],
-    queryFn: () =>
-      enrollmentService.getEnrollmentHistory(studentId, page, pageSize),
-    enabled: !!studentId,
-  });
+export const useEnrollmentHistory = (studentId: string) => {
+  return (query: QueryHookParams) => {
+    let { page, pageSize } = query;
+    if (page < 1) {
+      page = 1;
+    }
+
+    return useQuery({
+      queryKey: ['enrollmentHistory', studentId, page, pageSize],
+      queryFn: () =>
+        enrollmentService.getEnrollmentHistory(studentId, page, pageSize),
+      enabled: !!studentId,
+    });
+  };
 };
 
 export const useAcademicTranscript = (studentId: string) => {
