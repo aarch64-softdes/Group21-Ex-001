@@ -8,7 +8,7 @@ import com.tkpm.sms.application.dto.request.enrollment.TranscriptUpdateRequestDt
 import com.tkpm.sms.application.dto.response.enrollment.AcademicTranscriptDto;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Enrollment;
-import com.tkpm.sms.domain.model.History;
+import com.tkpm.sms.domain.valueobject.History;
 
 import java.util.List;
 

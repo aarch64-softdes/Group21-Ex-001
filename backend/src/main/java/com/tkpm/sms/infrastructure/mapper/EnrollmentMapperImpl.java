@@ -9,7 +9,8 @@ import com.tkpm.sms.application.mapper.EnrollmentMapper;
 import com.tkpm.sms.application.mapper.ScoreMapper;
 import com.tkpm.sms.application.mapper.StudentMapper;
 import com.tkpm.sms.domain.model.Enrollment;
-import com.tkpm.sms.domain.model.History;
+import com.tkpm.sms.domain.valueobject.History;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

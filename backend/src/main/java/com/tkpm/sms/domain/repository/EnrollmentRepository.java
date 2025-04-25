@@ -3,7 +3,7 @@ package com.tkpm.sms.domain.repository;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Enrollment;
-import com.tkpm.sms.domain.model.History;
+import com.tkpm.sms.domain.valueobject.History;
 
 import java.util.List;
 import java.util.Optional;
