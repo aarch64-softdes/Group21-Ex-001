@@ -1,21 +1,21 @@
 package com.tkpm.sms.domain.service.validators;
 
-import com.tkpm.sms.domain.exception.UnenrollableCourseException;
 import com.tkpm.sms.domain.exception.DuplicateResourceException;
-import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
+import com.tkpm.sms.domain.exception.UnenrollableCourseException;
+import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
-
+import com.tkpm.sms.domain.valueobject.Schedule;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-
-import java.time.LocalDate;
-
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDate;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,18 +26,21 @@ public class CourseDomainValidator {
     SettingRepository settingRepository;
     EnrollmentRepository enrollmentRepository;
 
-    public void validateRoomAndCourseSchedule(String room, String schedule) {
-        if (courseRepository.existsByRoomAndCourseSchedule(room, schedule)) {
-            throw new DuplicateResourceException(String
-                    .format("Course with room %s and schedule %s already exists", room, schedule));
-        }
-    }
+    public void validateRoomAndCourseSchedule(Integer id, String room, Schedule schedule) {
+        var courses = courseRepository.findAllWithSameRoom(room);
 
-    public void validateRoomAndCourseScheduleForUpdate(Integer id, String room, String schedule) {
-        if (courseRepository.existsByIdNotAndRoomAndCourseSchedule(id, room, schedule)) {
-            throw new DuplicateResourceException(String.format(
-                    "Another course with room %s and schedule %s already exists", room, schedule));
-        }
+        courses.forEach(course -> {
+            if (!Objects.isNull(id) && course.getId().equals(id)) {
+                return;
+            }
+
+            var existedSchedule = Schedule.of(course.getSchedule());
+            if (schedule.isOverlapping(existedSchedule)) {
+                throw new DuplicateResourceException(String.format(
+                        "The course with room %s and schedule %s is overlapping another course",
+                        room, schedule));
+            }
+        });
     }
 
     public void validateCourseInTimePeriod(Course course) {

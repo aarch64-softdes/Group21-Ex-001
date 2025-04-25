@@ -1,5 +1,6 @@
 package com.tkpm.sms.domain.model;
 
+import com.tkpm.sms.domain.valueobject.Schedule;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,7 +20,7 @@ public class Course {
     String lecturer;
     int maxStudent;
     String room;
-    String schedule;
+    Schedule schedule;
     LocalDate startDate;
 
     Program program;
