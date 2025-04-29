@@ -10,6 +10,9 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 @Entity
 @Table(name = "students")
 @Getter
@@ -22,6 +25,8 @@ import java.util.List;
         @NamedAttributeNode("program"), @NamedAttributeNode("faculty"),
         @NamedAttributeNode("permanentAddress"), @NamedAttributeNode("temporaryAddress"),
         @NamedAttributeNode("mailingAddress"), @NamedAttributeNode("identity")})
+@SQLDelete(sql = "UPDATE students SET deleted_at = NOW() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class StudentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -83,9 +88,13 @@ public class StudentEntity {
     @JoinColumn(name = "identity_id")
     IdentityEntity identity;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "student")
     List<EnrollmentEntity> enrollments;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "student")
     List<HistoryEntity> histories;
+
+    // Soft delete
+    @Column(name = "deleted_at")
+    LocalDate deletedAt;
 }
