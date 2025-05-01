@@ -37,7 +37,20 @@ public class CourseDomainValidator {
             var existedSchedule = Schedule.of(course.getSchedule());
             if (schedule.isOverlapping(existedSchedule)) {
                 throw new DuplicateResourceException(String.format(
-                        "The course with room %s and schedule %s is overlapping another course",
+                        "The course with room %s and schedule %s is overlapping other courses",
+                        room, schedule));
+            }
+        });
+    }
+
+    public void validateRoomAndCourseSchedule(String room, Schedule schedule) {
+        var courses = courseRepository.findAllWithSameRoom(room);
+
+        courses.forEach(course -> {
+            var existedSchedule = Schedule.of(course.getSchedule());
+            if (schedule.isOverlapping(existedSchedule)) {
+                throw new DuplicateResourceException(String.format(
+                        "The course with room %s and schedule %s is overlapping other courses",
                         room, schedule));
             }
         });

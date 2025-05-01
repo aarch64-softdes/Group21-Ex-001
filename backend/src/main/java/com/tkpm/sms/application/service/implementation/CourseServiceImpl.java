@@ -68,7 +68,7 @@ public class CourseServiceImpl implements CourseService {
         course.setProgram(program);
         course.setSubject(subject);
 
-        courseValidator.validateRoomAndCourseSchedule(null, course.getRoom(), course.getSchedule());
+        courseValidator.validateRoomAndCourseSchedule(course.getRoom(), course.getSchedule());
         courseValidator.validateCodeAndSubject(course.getCode(), subject.getId());
 
         return courseRepository.save(course);
