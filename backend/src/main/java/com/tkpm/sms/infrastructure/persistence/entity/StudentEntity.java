@@ -72,19 +72,19 @@ public class StudentEntity {
     @JoinColumn(name = "faculty_id")
     FacultyEntity faculty;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "permanent_address_id")
     AddressEntity permanentAddress;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "temporary_address_id")
     AddressEntity temporaryAddress;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "mailing_address_id")
     AddressEntity mailingAddress;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "identity_id")
     IdentityEntity identity;
 

@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -235,8 +234,7 @@ public class StudentServiceImpl implements StudentService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Student with id %s not found", id)));
 
-        student.setDeletedAt(LocalDate.now());
-        studentRepository.save(student);
+        studentRepository.delete(student);
     }
 
     @Override
