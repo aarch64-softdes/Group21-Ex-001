@@ -15,8 +15,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -77,7 +75,6 @@ public class ProgramServiceImpl implements ProgramService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Program with id %s not found", id)));
 
-        program.setDeletedAt(LocalDate.now());
-        programRepository.save(program);
+        programRepository.delete(program);
     }
 }
