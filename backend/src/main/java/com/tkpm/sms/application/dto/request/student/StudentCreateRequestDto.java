@@ -32,13 +32,13 @@ public class StudentCreateRequestDto {
     String gender;
 
     @RequiredConstraint(field = "Faculty")
-    String faculty;
+    Integer faculty;
 
     @RequiredConstraint(field = "School Year")
     Integer schoolYear;
 
     @RequiredConstraint(field = "Program")
-    String program;
+    Integer program;
 
     @Email(message = "INVALID_EMAIL")
     @RequiredConstraint(field = "Student email")
@@ -53,7 +53,7 @@ public class StudentCreateRequestDto {
     PhoneRequestDto phone;
 
     @RequiredConstraint(field = "Status")
-    String status;
+    Integer status;
 
     @RequiredConstraint(field = "Identity")
     @IdentityConstraint(values = {"Identity Card", "Chip Card", "Passport"})

@@ -159,9 +159,9 @@ class StudentServiceTest {
             phoneDto.setPhoneNumber("1234567890");
             dto.setPhone(phoneDto);
 
-            dto.setFaculty("Test Faculty");
-            dto.setProgram("Test Program");
-            dto.setStatus("Active");
+            dto.setFaculty(1);
+            dto.setProgram(1);
+            dto.setStatus(1);
 
             return dto;
         }
@@ -216,9 +216,9 @@ class StudentServiceTest {
             phoneDto.setPhoneNumber("1234567890");
             dto.setPhone(phoneDto);
 
-            dto.setFaculty("Updated Faculty");
-            dto.setProgram("Updated Program");
-            dto.setStatus("Active");
+            dto.setFaculty(1);
+            dto.setProgram(1);
+            dto.setStatus(1);
 
             IdentityUpdateRequestDto identityDto = new IdentityUpdateRequestDto();
             identityDto.setType("Passport");
@@ -250,9 +250,9 @@ class StudentServiceTest {
                 Program program, Status status) {
             when(studentRepository.findById(id)).thenReturn(Optional.of(student));
             when(phoneParser.parsePhoneNumberToPhone(anyString(), anyString())).thenReturn(phone);
-            when(facultyService.getFacultyByName(anyString())).thenReturn(faculty);
-            when(programService.getProgramByName(anyString())).thenReturn(program);
-            when(statusService.getStatusByName(anyString())).thenReturn(status);
+            when(statusService.getStatusById(any())).thenReturn(status);
+            when(programService.getProgramById(any())).thenReturn(program);
+            when(facultyService.getFacultyById(any())).thenReturn(faculty);
             when(studentRepository.save(any(Student.class))).thenReturn(student);
         }
 

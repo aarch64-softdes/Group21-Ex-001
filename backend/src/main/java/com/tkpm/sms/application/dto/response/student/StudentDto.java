@@ -2,8 +2,11 @@ package com.tkpm.sms.application.dto.response.student;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tkpm.sms.application.dto.response.AddressDto;
+import com.tkpm.sms.application.dto.response.FacultyDto;
 import com.tkpm.sms.application.dto.response.PhoneDto;
+import com.tkpm.sms.application.dto.response.ProgramDto;
 import com.tkpm.sms.application.dto.response.identity.IdentityDto;
+import com.tkpm.sms.application.dto.response.status.StatusDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -25,10 +28,10 @@ public class StudentDto {
     String gender;
 
     // Academic Information
-    String faculty;
+    FacultyDto faculty;
     Integer schoolYear;
-    String program;
-    String status;
+    ProgramDto program;
+    StatusDto status;
 
     // Contact Information
     String email;
