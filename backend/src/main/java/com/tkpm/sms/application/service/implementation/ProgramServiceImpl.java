@@ -12,6 +12,9 @@ import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.domain.service.validators.ProgramDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,6 +78,7 @@ public class ProgramServiceImpl implements ProgramService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Program with id %s not found", id)));
 
-        programRepository.delete(program);
+        program.setDeletedAt(LocalDate.now());
+        programRepository.save(program);
     }
 }
