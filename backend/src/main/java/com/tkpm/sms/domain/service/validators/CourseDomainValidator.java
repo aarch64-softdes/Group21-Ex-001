@@ -15,7 +15,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,32 +25,21 @@ public class CourseDomainValidator {
     SettingRepository settingRepository;
     EnrollmentRepository enrollmentRepository;
 
-    public void validateRoomAndCourseSchedule(Integer id, String room, Schedule schedule) {
-        var courses = courseRepository.findAllWithSameRoom(room);
+    public void validateRoomAndCourseSchedule(Course course) {
+        var courses = courseRepository.findAllWithSameRoom(course.getSemester(), course.getYear(),
+                course.getRoom());
 
-        courses.forEach(course -> {
-            if (!Objects.isNull(id) && course.getId().equals(id)) {
+        courses.forEach(other -> {
+            if (other.getId().equals(course.getId())) {
                 return;
             }
 
-            var existedSchedule = Schedule.of(course.getSchedule());
+            var schedule = course.getSchedule();
+            var existedSchedule = Schedule.of(other.getSchedule());
             if (schedule.isOverlapping(existedSchedule)) {
                 throw new DuplicateResourceException(String.format(
-                        "The course with room %s and schedule %s is overlapping other courses",
-                        room, schedule));
-            }
-        });
-    }
-
-    public void validateRoomAndCourseSchedule(String room, Schedule schedule) {
-        var courses = courseRepository.findAllWithSameRoom(room);
-
-        courses.forEach(course -> {
-            var existedSchedule = Schedule.of(course.getSchedule());
-            if (schedule.isOverlapping(existedSchedule)) {
-                throw new DuplicateResourceException(String.format(
-                        "The course with room %s and schedule %s is overlapping other courses",
-                        room, schedule));
+                        "The course with room %s and schedule %s is overlapping other courses.",
+                        course.getRoom(), schedule));
             }
         });
     }
