@@ -70,9 +70,10 @@ public abstract class StudentMapperImpl implements StudentMapper {
     @Mapping(target = "mailingAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileDto.getMailingAddress()))")
     @Mapping(target = "identity", expression = "java(ImportFileUtils.parseIdentityCreateRequestDto(studentFileDto))")
     @Mapping(target = "phone", expression = "java(phoneMapper.toPhoneRequestDto(studentFileDto.getPhone()))")
-    @Mapping(target = "faculty", source = "faculty")
-    @Mapping(target = "program", source = "program")
-    @Mapping(target = "status", source = "status")
+    // TODO: Handle correct mapping
+    // @Mapping(target = "faculty", source = "faculty")
+    // @Mapping(target = "program", source = "program")
+    // @Mapping(target = "status", source = "status")
     public abstract StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileDto);
 
     @Override
