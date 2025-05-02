@@ -159,9 +159,9 @@ class StudentServiceTest {
             phoneDto.setPhoneNumber("1234567890");
             dto.setPhone(phoneDto);
 
-            dto.setFaculty(1);
-            dto.setProgram(1);
-            dto.setStatus(1);
+            dto.setFacultyId(1);
+            dto.setProgramId(1);
+            dto.setStatusId(1);
 
             return dto;
         }
@@ -216,9 +216,9 @@ class StudentServiceTest {
             phoneDto.setPhoneNumber("1234567890");
             dto.setPhone(phoneDto);
 
-            dto.setFaculty(1);
-            dto.setProgram(1);
-            dto.setStatus(1);
+            dto.setFacultyId(1);
+            dto.setProgramId(1);
+            dto.setStatusId(1);
 
             IdentityUpdateRequestDto identityDto = new IdentityUpdateRequestDto();
             identityDto.setType("Passport");

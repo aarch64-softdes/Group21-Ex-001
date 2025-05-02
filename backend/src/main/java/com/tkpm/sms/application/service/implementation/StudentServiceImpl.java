@@ -79,9 +79,9 @@ public class StudentServiceImpl implements StudentService {
         student.setPhone(phoneNumber);
 
         // Set related entities
-        var faculty = facultyService.getFacultyById(requestDto.getFaculty());
-        var program = programService.getProgramById(requestDto.getProgram());
-        var status = statusService.getStatusById(requestDto.getStatus());
+        var faculty = facultyService.getFacultyById(requestDto.getFacultyId());
+        var program = programService.getProgramById(requestDto.getProgramId());
+        var status = statusService.getStatusById(requestDto.getStatusId());
 
         student.setFaculty(faculty);
         student.setProgram(program);
@@ -141,9 +141,9 @@ public class StudentServiceImpl implements StudentService {
         student.setPhone(phoneNumber);
 
         // Update related entities
-        var faculty = facultyService.getFacultyById(requestDto.getFaculty());
-        var program = programService.getProgramById(requestDto.getProgram());
-        var newStatus = statusService.getStatusById(requestDto.getStatus());
+        var faculty = facultyService.getFacultyById(requestDto.getFacultyId());
+        var program = programService.getProgramById(requestDto.getProgramId());
+        var newStatus = statusService.getStatusById(requestDto.getStatusId());
 
         // Validate status transition
         if (student.getStatus() != null && !student.getStatus().getId().equals(newStatus.getId())) {
