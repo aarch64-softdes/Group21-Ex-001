@@ -60,8 +60,8 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public List<CourseEntity> findAllWithSameRoom(String room) {
-        return courseJpaRepository.findAllByRoom(room);
+    public List<CourseEntity> findAllWithSameRoom(int semester, int year, String room) {
+        return courseJpaRepository.findAllBySemesterAndYearAndRoom(semester, year, room);
     }
 
     @Override
