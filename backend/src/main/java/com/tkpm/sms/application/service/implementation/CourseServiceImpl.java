@@ -68,7 +68,7 @@ public class CourseServiceImpl implements CourseService {
         course.setProgram(program);
         course.setSubject(subject);
 
-        courseValidator.validateRoomAndCourseSchedule(course.getRoom(), course.getSchedule());
+        courseValidator.validateRoomAndCourseSchedule(course);
         courseValidator.validateCodeAndSubject(course.getCode(), subject.getId());
 
         return courseRepository.save(course);
@@ -80,12 +80,11 @@ public class CourseServiceImpl implements CourseService {
         var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 String.format("Course with id %s not found", id)));
 
-        courseValidator.validateRoomAndCourseSchedule(id, updateRequestDto.getRoom(),
-                scheduleMapper.toSchedule(updateRequestDto.getSchedule()));
+        courseMapper.toDomain(course, updateRequestDto);
+
+        courseValidator.validateRoomAndCourseSchedule(course);
         courseValidator.validateCodeAndSubjectForUpdate(id, updateRequestDto.getCode(),
                 course.getSubject().getId());
-
-        courseMapper.toDomain(course, updateRequestDto);
 
         return courseRepository.save(course);
     }

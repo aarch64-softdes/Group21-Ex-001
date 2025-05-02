@@ -17,7 +17,7 @@ public interface CourseRepository {
 
     void deleteById(Integer id);
 
-    List<CourseEntity> findAllWithSameRoom(String room);
+    List<CourseEntity> findAllWithSameRoom(int semester, int year, String room);
 
     boolean existsByCodeAndSubjectId(String code, Integer subjectId);
 
