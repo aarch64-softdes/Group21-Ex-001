@@ -241,7 +241,18 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public void saveListStudentFromFile(List<StudentFileDto> studentFileDtos) {
         List<StudentCreateRequestDto> studentCreateRequests = studentFileDtos.stream()
-                .map(studentMapper::toStudentCreateRequest).toList();
+                .map(studentFileDto -> {
+                    var studentCreateRequest = studentMapper.toStudentCreateRequest(studentFileDto);
+
+                    studentCreateRequest.setFacultyId(
+                            facultyService.getFacultyByName(studentFileDto.getFaculty()).getId());
+                    studentCreateRequest.setProgramId(
+                            programService.getProgramByName(studentFileDto.getProgram()).getId());
+                    studentCreateRequest.setStatusId(
+                            statusService.getStatusByName(studentFileDto.getStatus()).getId());
+
+                    return studentCreateRequest;
+                }).toList();
 
         for (StudentCreateRequestDto request : studentCreateRequests) {
             createStudent(request);

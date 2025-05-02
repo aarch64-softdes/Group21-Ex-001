@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Mapper(componentModel = "spring", imports = {Gender.class, ImportFileUtils.class}, uses = {
         PhoneMapper.class, AddressMapper.class, IdentityMapper.class, FacultyMapper.class,
         StatusMapper.class, ProgramMapper.class})
-
 public abstract class StudentMapperImpl implements StudentMapper {
 
     @Autowired
@@ -70,9 +69,9 @@ public abstract class StudentMapperImpl implements StudentMapper {
     @Mapping(target = "mailingAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileDto.getMailingAddress()))")
     @Mapping(target = "identity", expression = "java(ImportFileUtils.parseIdentityCreateRequestDto(studentFileDto))")
     @Mapping(target = "phone", expression = "java(phoneMapper.toPhoneRequestDto(studentFileDto.getPhone()))")
-    @Mapping(target = "faculty", source = "faculty")
-    @Mapping(target = "program", source = "program")
-    @Mapping(target = "status", source = "status")
+    @Mapping(target = "facultyId", ignore = true)
+    @Mapping(target = "programId", ignore = true)
+    @Mapping(target = "statusId", ignore = true)
     public abstract StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileDto);
 
     @Override
