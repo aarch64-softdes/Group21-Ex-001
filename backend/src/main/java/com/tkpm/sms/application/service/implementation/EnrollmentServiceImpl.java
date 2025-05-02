@@ -17,7 +17,6 @@ import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.*;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
-import com.tkpm.sms.domain.repository.TranscriptRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import com.tkpm.sms.domain.service.validators.EnrollmentDomainValidator;
 import com.tkpm.sms.domain.valueobject.History;
@@ -35,7 +34,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EnrollmentServiceImpl implements EnrollmentService {
     EnrollmentRepository enrollmentRepository;
-    TranscriptRepository transcriptRepository;
 
     EnrollmentMapper enrollmentMapper;
     ScoreMapper scoreMapper;
@@ -164,7 +162,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                         && !enrollment.getScore().getGrade().isEmpty())
                 .toList();
 
-        return transcriptRepository.getAcademicTranscript(student, enrollments);
+        return enrollmentRepository.getAcademicTranscript(student, enrollments);
     }
 
 }

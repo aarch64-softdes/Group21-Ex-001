@@ -1,8 +1,10 @@
 package com.tkpm.sms.domain.repository;
 
+import com.tkpm.sms.application.dto.response.enrollment.AcademicTranscriptDto;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Enrollment;
+import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.valueobject.History;
 
 import java.util.List;
@@ -32,4 +34,6 @@ public interface EnrollmentRepository {
             List<Integer> subjectIds);
 
     boolean existsByCourseId(Integer courseId);
+
+    AcademicTranscriptDto getAcademicTranscript(Student student, List<Enrollment> enrollments);
 }
