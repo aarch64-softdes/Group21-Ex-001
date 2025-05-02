@@ -5,16 +5,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CourseJpaRepository
         extends
             JpaRepository<CourseEntity, Integer>,
             PagingAndSortingRepository<CourseEntity, Integer> {
-    boolean existsByRoomAndSchedule(String room, String courseSchedule);
-
-    boolean existsByIdNotAndRoomAndSchedule(Integer id, String room, String schedule);
 
     boolean existsByCodeAndSubjectId(String code, Integer subjectId);
 
     boolean existsByCodeAndSubjectIdAndIdNot(String code, Integer subjectId, Integer id);
+
+    List<CourseEntity> findAllByRoom(String room);
+
+    List<CourseEntity> findAllBySemesterAndYearAndRoom(int semester, int year, String room);
 }

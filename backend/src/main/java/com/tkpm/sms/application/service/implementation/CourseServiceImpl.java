@@ -4,6 +4,7 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.course.CourseCreateRequestDto;
 import com.tkpm.sms.application.dto.request.course.CourseUpdateRequestDto;
 import com.tkpm.sms.application.mapper.CourseMapper;
+import com.tkpm.sms.application.mapper.ScheduleMapper;
 import com.tkpm.sms.application.service.interfaces.CourseService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
@@ -29,6 +30,7 @@ public class CourseServiceImpl implements CourseService {
     CourseRepository courseRepository;
     ProgramRepository programRepository;
     SubjectRepository subjectRepository;
+    ScheduleMapper scheduleMapper;
     CourseDomainValidator courseValidator;
 
     @Override
@@ -39,9 +41,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getCourseById(Integer id) {
-        var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+        return courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 String.format("Course with id %s not found", id)));
-        return course;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class CourseServiceImpl implements CourseService {
         course.setProgram(program);
         course.setSubject(subject);
 
-        courseValidator.validateRoomAndCourseSchedule(course.getRoom(), course.getSchedule());
+        courseValidator.validateRoomAndCourseSchedule(course);
         courseValidator.validateCodeAndSubject(course.getCode(), subject.getId());
 
         return courseRepository.save(course);
@@ -79,12 +80,11 @@ public class CourseServiceImpl implements CourseService {
         var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 String.format("Course with id %s not found", id)));
 
-        courseValidator.validateRoomAndCourseScheduleForUpdate(id, updateRequestDto.getRoom(),
-                updateRequestDto.getSchedule().toString());
+        courseMapper.toDomain(course, updateRequestDto);
+
+        courseValidator.validateRoomAndCourseSchedule(course);
         courseValidator.validateCodeAndSubjectForUpdate(id, updateRequestDto.getCode(),
                 course.getSubject().getId());
-
-        courseMapper.toDomain(course, updateRequestDto);
 
         return courseRepository.save(course);
     }

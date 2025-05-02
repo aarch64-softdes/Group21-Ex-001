@@ -32,6 +32,7 @@ public class ErrorCodeStatusMapper {
         mappings.put(ErrorCode.UNENROLLABLE_COURSE, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.INVALID_SUBJECT_CREDITS, HttpStatus.BAD_REQUEST);
         mappings.put(ErrorCode.STUDENT_PREREQUISITES_NOT_SATISFIED, HttpStatus.BAD_REQUEST);
+        mappings.put(ErrorCode.INVALID_COURSE_SCHEDULE_TIME, HttpStatus.BAD_REQUEST);
 
         // Resource Errors (4xx)
         mappings.put(ErrorCode.NOT_FOUND, HttpStatus.NOT_FOUND);
