@@ -25,17 +25,17 @@ public class CourseScheduleValidator
         }
 
         if (value.getStartTime() < MIN_START_TIME || value.getStartTime() > MAX_START_TIME) {
-            buildTemplate("Start time must be between 1 and 10", "startTime", context);
+            buildTemplate("INVALID_COURSE_SCHEDULE_TIME", "startTime", context);
             return false;
         }
 
         if (value.getEndTime() < MIN_START_TIME || value.getEndTime() > MAX_START_TIME) {
-            buildTemplate("End time must be between 1 and 10", "endTime", context);
+            buildTemplate("INVALID_COURSE_SCHEDULE_TIME", "endTime", context);
             return false;
         }
 
         if (value.getStartTime() >= value.getEndTime()) {
-            buildTemplate("Start time must be less than end time", "startTime", context);
+            buildTemplate("INVALID_COURSE_SCHEDULE_TIME", "startTime", context);
             return false;
         }
 

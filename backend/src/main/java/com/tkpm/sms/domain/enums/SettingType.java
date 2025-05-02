@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum SettingType {
-    EMAIL("email"), PHONE_NUMBER("phonenumber"), ADJUSTMENT_DURATION(
-            "adjustmentduration"), FAILING_GRADE("failinggrade"),;
+    EMAIL("email"), PHONE_NUMBER("phonenumber"), ADJUSTMENT_DURATION("adjustmentduration"),
+    FAILING_GRADE("failinggrade"),;
 
     private final String value;
 
