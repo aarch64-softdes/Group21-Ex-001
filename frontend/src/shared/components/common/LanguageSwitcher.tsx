@@ -18,6 +18,7 @@ export function LanguageSwitcher() {
 
   const toggleLanguage = (code: string) => {
     i18n.changeLanguage(code);
+    window.location.reload();
   };
 
   return (

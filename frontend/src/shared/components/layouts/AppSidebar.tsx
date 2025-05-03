@@ -22,46 +22,46 @@ import {
 import { t } from 'i18next';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
-// Menu items.
-const items = [
-  {
-    title: t('common:students'),
-    url: 'student',
-    icon: GraduationCap,
-  },
-  {
-    title: t('common:faculties'),
-    url: 'faculty',
-    icon: Users,
-  },
-  {
-    title: t('common:programs'),
-    url: 'program',
-    icon: Library,
-  },
-  {
-    title: t('common:status'),
-    url: 'status',
-    icon: Activity,
-  },
-  {
-    title: t('common:subjects'),
-    url: 'subject',
-    icon: Bookmark,
-  },
-  {
-    title: t('common:courses'),
-    url: 'course',
-    icon: FileText,
-  },
-  {
-    title: t('common:settings'),
-    url: 'setting',
-    icon: Settings,
-  },
-];
-
 export function AppSidebar() {
+  // Menu items.
+  const items = [
+    {
+      title: t('common:students'),
+      url: 'student',
+      icon: GraduationCap,
+    },
+    {
+      title: t('common:faculties'),
+      url: 'faculty',
+      icon: Users,
+    },
+    {
+      title: t('common:programs'),
+      url: 'program',
+      icon: Library,
+    },
+    {
+      title: t('common:status'),
+      url: 'status',
+      icon: Activity,
+    },
+    {
+      title: t('common:subjects'),
+      url: 'subject',
+      icon: Bookmark,
+    },
+    {
+      title: t('common:courses'),
+      url: 'course',
+      icon: FileText,
+    },
+    {
+      title: t('common:settings'),
+      url: 'setting',
+      icon: Settings,
+    },
+  ];
+
   return (
     <Sidebar
       style={{

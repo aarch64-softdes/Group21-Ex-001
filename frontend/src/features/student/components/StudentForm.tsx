@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useTranslation } from 'react-i18next';
 
 import {
   Accordion,
@@ -43,40 +44,45 @@ import { useFacultiesDropdown } from '@/features/faculty/api/useFacultyApi';
 import { useProgramsDropdown } from '@/features/program/api/useProgramApi';
 import { useStatusesDropdown } from '@/features/status/api/useStatusApi';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
-import Faculty from '@/features/faculty/types/faculty';
 import { Textarea } from '@/components/ui/textarea';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { t } from 'i18next';
 
 export const StudentFormSchema = z.object({
-  studentId: z.string().min(1, 'Student ID is required'),
+  studentId: z.string().min(1, t('student:validation.required')),
   name: z
     .string()
-    .min(1, 'Name is required')
-    .regex(/^[\p{L}\s]*$/u, 'Name must contain only letters and spaces'),
+    .min(1, t('student:validation.required'))
+    .regex(/^[\p{L}\s]*$/u, t('student:validation.nameFormat')),
   dob: z.string().refine((date) => {
     const today = new Date();
     const birthDate = new Date(date);
     return birthDate < today;
-  }, 'Date of birth must be in the past'),
-  gender: z.string().min(1, 'Gender is required'),
-  faculty: z.string().min(1, 'Faculty is required'),
+  }, t('student:validation.pastDate')),
+  gender: z.string().min(1, t('student:validation.required')),
+  faculty: z.string().min(1, t('student:validation.required')),
   schoolYear: z.number().int().positive(),
   program: z.string(),
-  email: z.string().email('Invalid email address'),
+  email: z.string().email(t('student:validation.email')),
   address: z.string().optional(),
   phone: z.object({
     phoneNumber: z.string(),
     countryCode: z.string(),
   }),
 
-  status: z.string().min(1, 'Status is required').default('Studying'),
+  status: z
+    .string()
+    .min(1, t('student:validation.required'))
+    .default('Studying'),
 
   permanentAddress: z.object({
-    street: z.string().min(1, 'Street address is required'),
-    ward: z.string().min(1, 'Ward is required'),
-    district: z.string().min(1, 'District is required'),
-    province: z.string().min(1, 'Province is required'),
-    country: z.string().min(1, 'Country is required').default('Việt Nam'),
+    street: z.string().min(1, t('student:validation.required')),
+    ward: z.string().min(1, t('student:validation.required')),
+    district: z.string().min(1, t('student:validation.required')),
+    province: z.string().min(1, t('student:validation.required')),
+    country: z
+      .string()
+      .min(1, t('student:validation.required'))
+      .default('Việt Nam'),
   }),
 
   temporaryAddress: z
@@ -90,22 +96,26 @@ export const StudentFormSchema = z.object({
     .optional()
     .or(
       z.object({
-        street: z
+        street: z.string().min(1, t('student:validation.required')),
+        ward: z.string().min(1, t('student:validation.required')),
+        district: z.string().min(1, t('student:validation.required')),
+        province: z.string().min(1, t('student:validation.required')),
+        country: z
           .string()
-          .min(1, 'If providing temporary address, street is required'),
-        ward: z.string().min(1, 'Ward is required'),
-        district: z.string().min(1, 'District is required'),
-        province: z.string().min(1, 'Province is required'),
-        country: z.string().min(1, 'Country is required').default('Việt Nam'),
+          .min(1, t('student:validation.required'))
+          .default('Việt Nam'),
       }),
     ),
 
   mailingAddress: z.object({
-    street: z.string().min(1, 'Street address is required'),
-    ward: z.string().min(1, 'Ward is required'),
-    district: z.string().min(1, 'District is required'),
-    province: z.string().min(1, 'Province is required'),
-    country: z.string().min(1, 'Country is required').default('Việt Nam'),
+    street: z.string().min(1, t('student:validation.required')),
+    ward: z.string().min(1, t('student:validation.required')),
+    district: z.string().min(1, t('student:validation.required')),
+    province: z.string().min(1, t('student:validation.required')),
+    country: z
+      .string()
+      .min(1, t('student:validation.required'))
+      .default('Việt Nam'),
   }),
 
   identity: z
@@ -116,22 +126,26 @@ export const StudentFormSchema = z.object({
       z.discriminatedUnion('type', [
         z.object({
           type: z.literal('Identity Card'),
-          number: z.string().min(9, 'ID number must include 9 digits'),
-          issuedDate: z.string().min(1, 'Issue date is required'),
-          expiryDate: z.string().min(1, 'Expiration date is required'),
-          issuedBy: z.string().min(1, 'Issuing authority is required'),
+          number: z
+            .string()
+            .min(9, t('student:validation.idLength', { length: 9 })),
+          issuedDate: z.string().min(1, t('student:validation.required')),
+          expiryDate: z.string().min(1, t('student:validation.required')),
+          issuedBy: z.string().min(1, t('student:validation.required')),
           hasChip: z.boolean().optional(),
           country: z.string().optional(),
           notes: z.string().optional(),
         }),
         z.object({
           type: z.literal('Chip Card'),
-          number: z.string().min(12, 'ID number must include 12 digits'),
-          issuedDate: z.string().min(1, 'Issue date is required'),
-          expiryDate: z.string().min(1, 'Expiration date is required'),
-          issuedBy: z.string().min(1, 'Issuing authority is required'),
+          number: z
+            .string()
+            .min(12, t('student:validation.idLength', { length: 12 })),
+          issuedDate: z.string().min(1, t('student:validation.required')),
+          expiryDate: z.string().min(1, t('student:validation.required')),
+          issuedBy: z.string().min(1, t('student:validation.required')),
           hasChip: z.boolean({
-            required_error: 'Please specify if this ID card has a chip',
+            required_error: t('student:validation.required'),
           }),
           country: z.string().optional(),
           notes: z.string().optional(),
@@ -140,17 +154,17 @@ export const StudentFormSchema = z.object({
           type: z.literal('Passport'),
           number: z
             .string()
-            .min(9, 'Passport number must be 9 characters')
-            .max(9, 'Passport number must be 9 characters')
+            .min(9, t('student:validation.idLength', { length: 9 }))
+            .max(9, t('student:validation.idLength', { length: 9 }))
             .regex(
               /^[A-Z]{2}[0-9]{7}$/,
-              'Passport number must be 2 uppercase letters followed by 7 digits',
+              t('student:validation.passportFormat'),
             ),
-          issuedDate: z.string().min(1, 'Issue date is required'),
-          expiryDate: z.string().min(1, 'Expiration date is required'),
-          issuedBy: z.string().min(1, 'Issuing authority is required'),
+          issuedDate: z.string().min(1, t('student:validation.required')),
+          expiryDate: z.string().min(1, t('student:validation.required')),
+          issuedBy: z.string().min(1, t('student:validation.required')),
           hasChip: z.boolean().optional(),
-          country: z.string().min(1, 'Country is required for passport'),
+          country: z.string().min(1, t('student:validation.required')),
           notes: z.string().optional(),
         }),
       ]),
@@ -175,12 +189,6 @@ const FormSection = ({
   </Card>
 );
 
-const addressTypes = [
-  { type: 'permanentAddress', displayName: 'Permanent Address' },
-  { type: 'temporaryAddress', displayName: 'Temporary Address' },
-  { type: 'mailingAddress', displayName: 'Mailing Address' },
-];
-
 const identityTypes = [
   { type: 'Identity Card', displayName: 'Identity Card (CMND)' },
   { type: 'Chip Card', displayName: 'Chip Card (CCCD)' },
@@ -194,6 +202,8 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
   isLoading = false,
   isEditing = false,
 }) => {
+  const { t } = useTranslation(['student', 'common']);
+
   const faculties = useFacultiesDropdown(isEditing ? 100 : 5);
   const programs = useProgramsDropdown(isEditing ? 100 : 5);
   const statuses = useStatusesDropdown(isEditing ? 100 : 5);
@@ -206,6 +216,21 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
   // Add state to force select controls to rerender
   const [formKey, setFormKey] = useState(id || 'new');
+
+  const addressTypes = [
+    {
+      type: 'permanentAddress',
+      displayName: t('student:fields.address.permanent'),
+    },
+    {
+      type: 'temporaryAddress',
+      displayName: t('student:fields.address.temporary'),
+    },
+    {
+      type: 'mailingAddress',
+      displayName: t('student:fields.address.mailing'),
+    },
+  ];
 
   const form = useForm<StudentFormValues>({
     resolver: zodResolver(StudentFormSchema),
@@ -396,7 +421,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       {/* Header */}
       <div className='border-b px-4 py-2 flex items-center justify-between'>
         <h2 className='text-xl font-semibold'>
-          {isEditing ? 'Edit Student' : 'Add New Student'}
+          {isEditing ? t('student:editStudent') : t('student:addNew')}
         </h2>
       </div>
 
@@ -416,14 +441,14 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                 autoComplete='off'
                 noValidate
               >
-                <FormSection title='Basic Information'>
+                <FormSection title={t('student:sections.basicInfo')}>
                   <div className='grid grid-cols-2 lg:grid-cols-3 gap-6'>
                     <FormField
                       control={form.control}
                       name='studentId'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Student ID</FormLabel>
+                          <FormLabel>{t('student:fields.studentId')}</FormLabel>
                           <FormControl>
                             <Input
                               placeholder='e.g. S12345'
@@ -446,7 +471,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='name'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel>{t('student:fields.name')}</FormLabel>
                           <FormControl>
                             <Input
                               placeholder='John Doe'
@@ -469,7 +494,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='dob'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Date of Birth</FormLabel>
+                          <FormLabel>{t('student:fields.dob')}</FormLabel>
                           <FormControl>
                             <Input
                               type='date'
@@ -492,14 +517,16 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='gender'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Gender</FormLabel>
+                          <FormLabel>{t('student:fields.gender')}</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value || undefined}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder='Select gender' />
+                                <SelectValue
+                                  placeholder={t('student:fields.selectGender')}
+                                />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -515,7 +542,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                                 ))
                               ) : (
                                 <SelectItem value='' disabled>
-                                  Failed to load genders
+                                  {t('common:messages.noData')}
                                 </SelectItem>
                               )}
                             </SelectContent>
@@ -530,7 +557,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='email'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{t('student:fields.email')}</FormLabel>
                           <FormControl>
                             <Input
                               placeholder='example@email.com'
@@ -571,7 +598,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                                 'text-destructive',
                             )}
                           >
-                            Contact Addresses
+                            {t('student:sections.contactInfo')}
                             {(form.formState.errors.permanentAddress ||
                               form.formState.errors.temporaryAddress ||
                               form.formState.errors.mailingAddress) && (
@@ -601,27 +628,38 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                   </div>
                 </FormSection>
 
-                <FormSection title='Identity Information'>
+                <FormSection title={t('student:sections.identityInfo')}>
                   <div className='grid grid-cols-2 lg:grid-cols-3 gap-6'>
                     <FormField
                       control={form.control}
                       name='identity.type'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Document Type</FormLabel>
+                          <FormLabel>
+                            {t('student:fields.identity.type')}
+                          </FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value || undefined}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder='Select document type' />
+                                <SelectValue
+                                  placeholder={t(
+                                    'student:fields.identity.selectType',
+                                  )}
+                                />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               {identityTypes.map((type) => (
                                 <SelectItem key={type.type} value={type.type}>
-                                  {type.displayName}
+                                  {t(
+                                    `student:fields.identity.types.${type.type
+                                      .toLowerCase()
+                                      .replace(' ', '')}`,
+                                    type.displayName,
+                                  )}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -636,7 +674,9 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='identity.number'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Document Number</FormLabel>
+                          <FormLabel>
+                            {t('student:fields.identity.number')}
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder='e.g. 012345678912'
@@ -654,7 +694,9 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='identity.issuedDate'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Date of Issue</FormLabel>
+                          <FormLabel>
+                            {t('student:fields.identity.issueDate')}
+                          </FormLabel>
                           <FormControl>
                             <Input type='date' {...field} autoComplete='off' />
                           </FormControl>
@@ -668,7 +710,9 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='identity.expiryDate'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Expiration Date</FormLabel>
+                          <FormLabel>
+                            {t('student:fields.identity.expiryDate')}
+                          </FormLabel>
                           <FormControl>
                             <Input type='date' {...field} autoComplete='off' />
                           </FormControl>
@@ -682,7 +726,9 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='identity.issuedBy'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Issued By</FormLabel>
+                          <FormLabel>
+                            {t('student:fields.identity.issuedBy')}
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder='e.g. Ministry of Public Security'
@@ -711,9 +757,13 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                               />
                             </FormControl>
                             <div className='space-y-1 leading-none'>
-                              <FormLabel>Has Chip</FormLabel>
+                              <FormLabel>
+                                {t('student:fields.identity.hasChip')}
+                              </FormLabel>
                               <p className='text-sm text-muted-foreground'>
-                                Specify if this ID card contains a chip
+                                {t(
+                                  'student:fields.identity.hasChipDescription',
+                                )}
                               </p>
                             </div>
                             <FormMessage />
@@ -729,7 +779,9 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                           name='identity.country'
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Issuing Country</FormLabel>
+                              <FormLabel>
+                                {t('student:fields.identity.country')}
+                              </FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder='e.g. Việt Nam'
@@ -747,10 +799,15 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                           name='identity.notes'
                           render={({ field }) => (
                             <FormItem className='col-span-2'>
-                              <FormLabel>Notes</FormLabel>
+                              <FormLabel>
+                                {t('student:fields.identity.notes', 'Notes')}
+                              </FormLabel>
                               <FormControl>
                                 <Textarea
-                                  placeholder='Any additional information'
+                                  placeholder={t(
+                                    'student:fields.identity.notesPlaceholder',
+                                    'Any additional information',
+                                  )}
                                   {...field}
                                   autoComplete='off'
                                   rows={3}
@@ -765,26 +822,28 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                     )}
                   </div>
                 </FormSection>
-                <FormSection title='Academic Information'>
+                <FormSection title={t('student:sections.academicInfo')}>
                   <div className='grid grid-cols-2 gap-4'>
                     <FormField
                       control={form.control}
                       name='faculty'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Faculty</FormLabel>
+                          <FormLabel>{t('student:fields.faculty')}</FormLabel>
                           <LoadMoreSelect
                             value={field.value || ''}
                             onValueChange={field.onChange}
-                            placeholder='Select faculty'
+                            placeholder={t('student:fields.selectFaculty')}
                             items={faculties.selectItems}
                             isLoading={faculties.isLoading}
                             isLoadingMore={faculties.isLoadingMore}
                             hasMore={faculties.hasMore}
                             onLoadMore={faculties.loadMore}
                             disabled={faculties.isLoading}
-                            emptyMessage='No faculties found.'
-                            searchPlaceholder='Search faculties...'
+                            emptyMessage={t('common:messages.noData')}
+                            searchPlaceholder={t(
+                              'student:fields.searchFaculty',
+                            )}
                             onSearch={faculties.setFacultySearch}
                           />
                           <FormMessage />
@@ -797,7 +856,9 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='schoolYear'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>School Year</FormLabel>
+                          <FormLabel>
+                            {t('student:fields.schoolYear')}
+                          </FormLabel>
                           <FormControl>
                             <Input
                               type='number'
@@ -825,19 +886,21 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='program'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Program</FormLabel>
+                          <FormLabel>{t('student:fields.program')}</FormLabel>
                           <LoadMoreSelect
                             value={field.value || ''}
                             onValueChange={field.onChange}
-                            placeholder='Select program'
+                            placeholder={t('student:fields.selectProgram')}
                             items={programs.selectItems}
                             isLoading={programs.isLoading}
                             isLoadingMore={programs.isLoadingMore}
                             hasMore={programs.hasMore}
                             onLoadMore={programs.loadMore}
                             disabled={programs.isLoading}
-                            emptyMessage='No programs found.'
-                            searchPlaceholder='Search programs...'
+                            emptyMessage={t('common:messages.noData')}
+                            searchPlaceholder={t(
+                              'student:fields.searchProgram',
+                            )}
                             onSearch={programs.setProgramSearch}
                           />
                           <FormMessage />
@@ -850,19 +913,19 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       name='status'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Status</FormLabel>
+                          <FormLabel>{t('student:fields.status')}</FormLabel>
                           <LoadMoreSelect
                             value={field.value || ''}
                             onValueChange={field.onChange}
-                            placeholder='Select status'
+                            placeholder={t('student:fields.selectStatus')}
                             items={statuses.selectItems}
                             isLoading={statuses.isLoading}
                             isLoadingMore={statuses.isLoadingMore}
                             hasMore={statuses.hasMore}
                             onLoadMore={statuses.loadMore}
                             disabled={statuses.isLoading}
-                            emptyMessage='No statuses found.'
-                            searchPlaceholder='Search statuses...'
+                            emptyMessage={t('common:messages.noData')}
+                            searchPlaceholder={t('student:fields.searchStatus')}
                             onSearch={statuses.setStatusSearch}
                           />
                           <FormMessage />
@@ -881,10 +944,12 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                       onCancel();
                     }}
                   >
-                    Cancel
+                    {t('common:actions.cancel')}
                   </Button>
                   <LoadingButton type='submit' isLoading={isLoading}>
-                    {isEditing ? 'Save Changes' : 'Add Student'}
+                    {isEditing
+                      ? t('common:actions.save')
+                      : t('common:actions.add')}
                   </LoadingButton>
                 </div>
               </form>

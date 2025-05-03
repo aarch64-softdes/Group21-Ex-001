@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { DetailComponentProps } from '@/core/types/table';
 import { useStudent } from '@/features/student/api/useStudentApi';
+import { Country, findCountryByCode } from '@/shared/data/countryData';
+import { Avatar, AvatarFallback } from '@ui/avatar';
+import { Badge } from '@ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
+import { Separator } from '@ui/separator';
+import { t } from 'i18next';
 import {
+  CornerUpRight,
   Loader2,
-  User,
   Mail,
   Phone,
   School,
-  Calendar,
-  CornerUpRight,
+  User,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
-import { Badge } from '@ui/badge';
-import { Separator } from '@ui/separator';
-import { Avatar, AvatarFallback } from '@ui/avatar';
-import { Country, findCountryByCode } from '@/shared/data/countryData';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface DetailFieldProps {
@@ -68,7 +68,7 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
   if (!student) {
     return (
       <div className='flex items-center justify-center h-48'>
-        <p className='text-muted-foreground'>Student not found</p>
+        <p className='text-muted-foreground'>{t('student:studentNotFound')}</p>
       </div>
     );
   }
@@ -144,7 +144,7 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
                 className='mt-2 md:mt-0'
                 onClick={() => navigate(`/student/${studentId}/enrollments`)}
               >
-                Enrollment for {student.name}
+                {t('student:enrollments')} {student.name}
                 <CornerUpRight className='ml-2 h-4 w-4' />
               </Button>
             </div>
@@ -158,17 +158,23 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
           <CardHeader className=''>
             <CardTitle className='text-lg flex items-center gap-2'>
               <User className='h-5 w-5' />
-              Personal Information
+              {t('student:sections.basicInfo')}
             </CardTitle>
             <Separator />
           </CardHeader>
           <CardContent className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            <DetailField label='Gender' value={student.gender} />
             <DetailField
-              label='Date of Birth'
+              label={t('student:fields.gender')}
+              value={student.gender}
+            />
+            <DetailField
+              label={t('student:fields.dob')}
               value={formatDate(student.dob)}
             />
-            <DetailField label='Permanent Address' colSpan='full'>
+            <DetailField
+              label={t('student:fields.address.permanent')}
+              colSpan='full'
+            >
               {student.permanentAddress
                 ? [
                     student.permanentAddress.street,
@@ -178,10 +184,13 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
                     student.permanentAddress.country,
                   ]
                     .filter(Boolean)
-                    .join(', ') || 'No permanent address provided'
-                : 'No permanent address provided'}
+                    .join(', ') || t('student:noPermanentAddress')
+                : t('student:noPermanentAddress')}
             </DetailField>
-            <DetailField label='Temporary Address' colSpan='full'>
+            <DetailField
+              label={t('student:fields.address.temporary')}
+              colSpan='full'
+            >
               {student.temporaryAddress
                 ? [
                     student.temporaryAddress.street,
@@ -191,10 +200,13 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
                     student.temporaryAddress.country,
                   ]
                     .filter(Boolean)
-                    .join(', ') || 'No temporary address provided'
-                : 'No temporary address provided'}
+                    .join(', ') || t('student:noTemporaryAddress')
+                : t('student:noTemporaryAddress')}
             </DetailField>
-            <DetailField label='Mailing Address' colSpan='full'>
+            <DetailField
+              label={t('student:fields.address.mailing')}
+              colSpan='full'
+            >
               {student.mailingAddress
                 ? [
                     student.mailingAddress.street,
@@ -204,23 +216,23 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
                     student.mailingAddress.country,
                   ]
                     .filter(Boolean)
-                    .join(', ') || 'No mailing address provided'
-                : 'No mailing address provided'}
+                    .join(', ') || t('student:noMailingAddress')
+                : t('student:noMailingAddress')}
             </DetailField>
             <Separator className='col-span-3' />
 
             {student.identity && student.identity.type && (
               <>
                 <DetailField
-                  label='Identity Document Type'
+                  label={t('student:fields.identity.type')}
                   value={student.identity.type}
                 />
                 <DetailField
-                  label='Document Number'
+                  label={t('student:fields.identity.number')}
                   value={student.identity.number}
                 />
                 <DetailField
-                  label='Issue Date'
+                  label={t('student:fields.identity.issueDate')}
                   value={
                     student.identity.issuedDate
                       ? formatDate(student.identity.issuedDate)
@@ -228,11 +240,11 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
                   }
                 />
                 <DetailField
-                  label='Issue Place'
+                  label={t('student:fields.identity.issuedBy')}
                   value={student.identity.issuedBy || 'N/A'}
                 />
                 <DetailField
-                  label='Expiry Date'
+                  label={t('student:fields.identity.expiryDate')}
                   value={
                     student.identity.expiryDate
                       ? formatDate(student.identity.expiryDate)
@@ -242,14 +254,18 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
 
                 {student.identity.type.toLowerCase() === 'chip card' && (
                   <DetailField
-                    label='Has Chip'
-                    value={student.identity.hasChip ? 'Yes' : 'No'}
+                    label={t('student:fields.identity.hasChip')}
+                    value={
+                      student.identity.hasChip
+                        ? t('common:yes')
+                        : t('common:no')
+                    }
                   />
                 )}
 
                 {student.identity.type.toLowerCase() === 'passport' && (
                   <DetailField
-                    label='Issued Country'
+                    label={t('student:fields.identity.country')}
                     value={student.identity.country || 'N/A'}
                   />
                 )}
@@ -257,7 +273,7 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
                 {student.identity.type.toLowerCase() === 'passport' &&
                   student.identity.notes && (
                     <DetailField
-                      label='Note'
+                      label={t('common:notes')}
                       value={student.identity.notes}
                       colSpan='full'
                     />
@@ -272,26 +288,26 @@ const StudentDetail: React.FC<DetailComponentProps> = ({ id: studentId }) => {
           <CardHeader className=''>
             <CardTitle className='text-lg flex items-center gap-2'>
               <School className='h-5 w-5' />
-              Academic Information
+              {t('student:sections.academicInfo')}
             </CardTitle>
             <Separator />
           </CardHeader>
           <CardContent className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             <div className='flex flex-col'>
               <dt className='text-sm font-medium text-muted-foreground'>
-                Faculty
+                {t('student:fields.faculty')}
               </dt>
               <dd className='mt-1'>{student.faculty}</dd>
             </div>
             <div className='flex flex-col'>
               <dt className='text-sm font-medium text-muted-foreground'>
-                Program
+                {t('student:fields.program')}
               </dt>
               <dd className='mt-1'>{student.program || 'N/A'}</dd>
             </div>
             <div className='flex flex-col'>
               <dt className='text-sm font-medium text-muted-foreground'>
-                School Year
+                {t('student:fields.schoolYear')}
               </dt>
               <dd className='mt-1'>{student.schoolYear}</dd>
             </div>

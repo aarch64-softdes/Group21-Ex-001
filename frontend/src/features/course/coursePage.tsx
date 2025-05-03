@@ -1,19 +1,19 @@
-import GenericTable from '@components/table/GenericTable';
+import { Column } from '@/core/types/table';
 import {
+  useCourses,
   useCreateCourse,
   useDeleteCourse,
-  useCourses,
   useUpdateCourse,
 } from '@/features/course/api/useCourseApi';
 import Course, {
   CreateCourseDTO,
   UpdateCourseDTO,
 } from '@/features/course/types/course';
-import { Column } from '@/core/types/table';
+import GenericTable from '@components/table/GenericTable';
 import React from 'react';
-import CourseForm from './components/CourseForm';
-import CourseDetail from './components/CourseDetail';
 import { useNavigate } from 'react-router-dom';
+import CourseDetail from './components/CourseDetail';
+import CourseForm from './components/CourseForm';
 
 const CoursePage: React.FC = () => {
   const navigate = useNavigate();

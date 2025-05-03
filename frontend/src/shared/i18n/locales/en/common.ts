@@ -8,6 +8,9 @@ export default {
   courses: 'Courses',
   status: 'Status',
   settings: 'Settings',
+  yes: 'Yes',
+  no: 'No',
+  notes: 'Notes',
   actions: {
     view: 'View',
     add: 'Add',

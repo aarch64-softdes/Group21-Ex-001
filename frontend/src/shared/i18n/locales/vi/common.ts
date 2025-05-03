@@ -8,6 +8,9 @@ export default {
   courses: 'Khóa học',
   status: 'Trạng thái',
   settings: 'Cài đặt',
+  yes: 'Có',
+  no: 'Không',
+  notes: 'Ghi chú',
   actions: {
     view: 'Xem',
     add: 'Thêm',
