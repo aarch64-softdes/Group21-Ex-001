@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useCourses } from '@/features/course/api/useCourseApi';
 import { useEnrollCourse } from '../api/useEnrollmentApi';
 import { Button } from '@ui/button';
-
 import {
   Dialog,
   DialogContent,
@@ -15,6 +14,7 @@ import { Loader2 } from 'lucide-react';
 import GenericTable from '@/components/table/GenericTable';
 import Course from '@/features/course/types/course';
 import { Column } from '@/core/types/table';
+import { useTranslation } from 'react-i18next';
 
 interface AvailableCoursesTableProps {
   studentId: string;
@@ -30,6 +30,7 @@ const CustomEnrollButton: React.FC<CustomEnrollButtonProps> = ({
   id,
   studentId,
 }) => {
+  const { t } = useTranslation('enrollment');
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
   const enrollCourse = useEnrollCourse();
 
@@ -47,14 +48,16 @@ const CustomEnrollButton: React.FC<CustomEnrollButtonProps> = ({
 
   return (
     <>
-      <Button onClick={handleEnrollClick}>Enroll</Button>
+      <Button onClick={handleEnrollClick}>
+        {t('availableCourses.enroll')}
+      </Button>
 
       <Dialog open={isEnrollDialogOpen} onOpenChange={setIsEnrollDialogOpen}>
         <DialogContent className='max-w-[425px]'>
           <DialogHeader>
-            <DialogTitle>Confirm Enrollment</DialogTitle>
+            <DialogTitle>{t('availableCourses.confirmEnrollment')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to enroll in this course?
+              {t('availableCourses.confirmEnrollmentMessage')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -63,7 +66,7 @@ const CustomEnrollButton: React.FC<CustomEnrollButtonProps> = ({
               onClick={() => setIsEnrollDialogOpen(false)}
               disabled={enrollCourse.isPending}
             >
-              Cancel
+              {t('common:actions.cancel')}
             </Button>
             <Button
               onClick={handleConfirmEnroll}
@@ -72,10 +75,10 @@ const CustomEnrollButton: React.FC<CustomEnrollButtonProps> = ({
               {enrollCourse.isPending ? (
                 <>
                   <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  Enrolling...
+                  {t('availableCourses.enrolling')}
                 </>
               ) : (
-                'Enroll'
+                t('availableCourses.enroll')
               )}
             </Button>
           </DialogFooter>
@@ -88,28 +91,31 @@ const CustomEnrollButton: React.FC<CustomEnrollButtonProps> = ({
 const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
   studentId,
 }) => {
+  const { t } = useTranslation('enrollment');
+
   const columns: Column<Course>[] = [
     {
-      header: 'Code',
+      header: t('availableCourses.code'),
       key: 'code',
     },
     {
-      header: 'Subject',
+      header: t('availableCourses.subject'),
       key: 'subject.name',
       nested: true,
     },
     {
-      header: 'Schedule',
+      header: t('availableCourses.schedule'),
       key: 'schedule',
     },
     {
-      header: 'Room',
+      header: t('availableCourses.room'),
       key: 'room',
     },
     {
-      header: 'Semester',
+      header: t('availableCourses.semester'),
       key: 'semester',
-      transform: (value, row) => `${row?.year}, Semester ${value}`,
+      transform: (value, row) =>
+        `${row?.year}, ${t('availableCourses.semester')} ${value}`,
     },
   ];
 
@@ -124,6 +130,7 @@ const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
       filterOptions={[]}
       customActionCellComponent={CustomEnrollButton}
       metadata={studentId}
+      emptyMessage={t('availableCourses.noCoursesFound')}
     />
   );
 };

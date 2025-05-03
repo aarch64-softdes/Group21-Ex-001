@@ -4,6 +4,7 @@ import { Column } from '@/core/types/table';
 import GenericTable from '@/components/table/GenericTable';
 import { EnrollmentHistory } from '../types/enrollment';
 import { useEnrollmentHistory } from '../api/useEnrollmentApi';
+import { useTranslation } from 'react-i18next';
 
 interface EnrollmentHistoryTableProps {
   studentId: string;
@@ -12,13 +13,21 @@ interface EnrollmentHistoryTableProps {
 const EnrollmentHistoryTable: React.FC<EnrollmentHistoryTableProps> = ({
   studentId,
 }) => {
+  const { t } = useTranslation('enrollment');
+
   // Action badge component for display
   const ActionBadge = ({ actionType }: { actionType: string }) => {
     switch (actionType.toLowerCase()) {
       case 'enrolled':
-        return <Badge variant='default'>Enrolled</Badge>;
+        return (
+          <Badge variant='default'>{t('history.actionTypes.enrolled')}</Badge>
+        );
       case 'deleted':
-        return <Badge variant='destructive'>Unenrolled</Badge>;
+        return (
+          <Badge variant='destructive'>
+            {t('history.actionTypes.unenrolled')}
+          </Badge>
+        );
       default:
         return <Badge variant='secondary'>{actionType}</Badge>;
     }
@@ -27,7 +36,7 @@ const EnrollmentHistoryTable: React.FC<EnrollmentHistoryTableProps> = ({
   // Column definitions
   const columns: Column<EnrollmentHistory>[] = [
     {
-      header: 'Date',
+      header: t('history.date'),
       key: 'createdAt',
       transform: (value) =>
         new Date(value).toLocaleString('en-US', {
@@ -39,17 +48,22 @@ const EnrollmentHistoryTable: React.FC<EnrollmentHistoryTableProps> = ({
         }),
     },
     {
-      header: 'Action',
+      header: t('history.action'),
       key: 'actionType',
       transform: (value) => <ActionBadge actionType={value} />,
     },
-    { header: 'Course Code', key: 'course.code', nested: true },
-    { header: 'Course Name', key: 'course.subject.name', nested: true },
+    { header: t('history.courseCode'), key: 'course.code', nested: true },
     {
-      header: 'Semester',
+      header: t('history.courseName'),
+      key: 'course.subject.name',
+      nested: true,
+    },
+    {
+      header: t('history.semester'),
       key: 'course.semester',
       nested: true,
-      transform: (value, row) => `${row?.course?.year}, Semester ${value}`,
+      transform: (value, row) =>
+        `${row?.course?.year}, ${t('history.semester')} ${value}`,
     },
   ];
 
@@ -62,7 +76,7 @@ const EnrollmentHistoryTable: React.FC<EnrollmentHistoryTableProps> = ({
         disabledActionCell={true}
         filterOptions={[]}
         metadata={studentId}
-        emptyMessage='No enrollment history found.'
+        emptyMessage={t('history.noHistory')}
       />
     </div>
   );
