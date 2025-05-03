@@ -1,7 +1,6 @@
 import {
   Activity,
   Bookmark,
-  ClipboardList,
   FileText,
   GraduationCap,
   Library,
@@ -12,6 +11,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -19,41 +19,43 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@ui/sidebar';
+import { t } from 'i18next';
+import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 // Menu items.
 const items = [
   {
-    title: 'Student',
+    title: t('common:students'),
     url: 'student',
     icon: GraduationCap,
   },
   {
-    title: 'Faculty',
+    title: t('common:faculties'),
     url: 'faculty',
     icon: Users,
   },
   {
-    title: 'Program',
+    title: t('common:programs'),
     url: 'program',
     icon: Library,
   },
   {
-    title: 'Status',
+    title: t('common:status'),
     url: 'status',
     icon: Activity,
   },
   {
-    title: 'Subject',
+    title: t('common:subjects'),
     url: 'subject',
     icon: Bookmark,
   },
   {
-    title: 'Course',
+    title: t('common:courses'),
     url: 'course',
     icon: FileText,
   },
   {
-    title: 'Setting',
+    title: t('common:settings'),
     url: 'setting',
     icon: Settings,
   },
@@ -68,7 +70,7 @@ export function AppSidebar() {
     >
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('common:appName')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -85,6 +87,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className='p-4'>
+        <LanguageSwitcher />
+      </SidebarFooter>
     </Sidebar>
   );
 }
