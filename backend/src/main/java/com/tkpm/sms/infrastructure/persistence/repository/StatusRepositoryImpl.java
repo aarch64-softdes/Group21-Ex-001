@@ -73,6 +73,12 @@ public class StatusRepositoryImpl implements StatusRepository {
     }
 
     @Override
+    public void delete(Status status) {
+        var entity = mapper.toEntity(status);
+        jpaRepository.delete(entity);
+    }
+
+    @Override
     public List<Status> findAllStatusesHaveThisAsTransition(Integer id) {
         return jpaRepository.findAllByValidTransitionIdsContains(Collections.singletonList(id))
                 .stream().map(mapper::toDomain).collect(Collectors.toList());

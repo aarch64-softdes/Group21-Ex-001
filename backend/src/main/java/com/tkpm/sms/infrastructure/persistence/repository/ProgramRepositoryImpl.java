@@ -65,4 +65,10 @@ public class ProgramRepositoryImpl implements ProgramRepository {
         return PageResponse.of(content, page.getNumber() + 1, // Convert 0-based to 1-based
                 page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
+
+    @Override
+    public void delete(Program program) {
+        var entity = mapper.toEntity(program);
+        jpaRepository.delete(entity);
+    }
 }

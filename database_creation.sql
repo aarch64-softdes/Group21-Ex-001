@@ -67,7 +67,8 @@ CREATE TABLE students (
     temporary_address_id VARCHAR(255),
     mailing_address_id VARCHAR(255),
     identity_id VARCHAR(255),
-    CONSTRAINT pk_students PRIMARY KEY (id)
+    CONSTRAINT pk_students PRIMARY KEY (id),
+    deleted_at DATE
 );
 
 CREATE TABLE status_transitions (
