@@ -6,13 +6,14 @@ import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
+import com.tkpm.sms.application.mapper.PhoneMapper;
 import com.tkpm.sms.application.service.interfaces.*;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
+import com.tkpm.sms.domain.exception.ErrorCode;
+import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
-import com.tkpm.sms.domain.model.Address;
-import com.tkpm.sms.domain.model.Identity;
-import com.tkpm.sms.domain.model.Student;
+import com.tkpm.sms.domain.model.*;
 import com.tkpm.sms.domain.repository.StudentRepository;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
@@ -25,7 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -45,6 +47,7 @@ public class StudentServiceImpl implements StudentService {
     StudentMapperImpl studentMapper;
     AddressMapper addressMapper;
     IdentityMapper identityMapper;
+    PhoneMapper phoneMapper;
 
     PhoneParser phoneParser;
 
@@ -88,27 +91,8 @@ public class StudentServiceImpl implements StudentService {
         student.setStatus(status);
 
         // Handle addresses
-        if (requestDto.getPermanentAddress() != null) {
-            Address address = addressMapper.toAddress(requestDto.getPermanentAddress());
-            student.setPermanentAddress(address);
-        }
-
-        if (requestDto.getTemporaryAddress() != null) {
-            Address address = addressMapper.toAddress(requestDto.getTemporaryAddress());
-            student.setTemporaryAddress(address);
-        }
-
-        if (requestDto.getMailingAddress() != null) {
-            Address address = addressMapper.toAddress(requestDto.getMailingAddress());
-            student.setMailingAddress(address);
-        }
-
-        // Handle identity
-        if (requestDto.getIdentity() != null) {
-            Identity identity = identityMapper.toIdentity(requestDto.getIdentity());
-            identityValidator.validateIdentityUniqueness(identity.getType(), identity.getNumber());
-            student.setIdentity(identity);
-        }
+        studentAddressesHandler(student, requestDto);
+        studentIdentityHandler(student, requestDto);
 
         // Save student
         return studentRepository.save(student);
@@ -218,7 +202,7 @@ public class StudentServiceImpl implements StudentService {
 
         identityMapper.updateIdentityFromDto(requestDto.getIdentity(), identity);
 
-        // Only validate uniqueness if type or number changed
+        // Only validate uniqueness if the type or number changed
         if (!oldType.equals(identity.getType().getDisplayName())
                 || !oldNumber.equals(identity.getNumber())) {
             identityValidator.validateIdentityUniquenessForUpdate(identity.getType(),
@@ -240,22 +224,139 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public void saveListStudentFromFile(List<StudentFileDto> studentFileDtos) {
-        List<StudentCreateRequestDto> studentCreateRequests = studentFileDtos.stream()
-                .map(studentFileDto -> {
-                    var studentCreateRequest = studentMapper.toStudentCreateRequest(studentFileDto);
+        Map<String, Faculty> facultyNameCache = createFacultyNameCache(studentFileDtos);
+        Map<String, Status> statusNameCache = createStatusNameCache(studentFileDtos);
+        Map<String, Program> programNameCache = createProgramNameCache(studentFileDtos);
 
-                    studentCreateRequest.setFacultyId(
-                            facultyService.getFacultyByName(studentFileDto.getFaculty()).getId());
-                    studentCreateRequest.setProgramId(
-                            programService.getProgramByName(studentFileDto.getProgram()).getId());
-                    studentCreateRequest.setStatusId(
-                            statusService.getStatusByName(studentFileDto.getStatus()).getId());
+        List<Student> validStudents = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
-                    return studentCreateRequest;
-                }).toList();
+        for (StudentFileDto dto : studentFileDtos) {
+            try {
+                StudentCreateRequestDto createRequest = studentMapper.toStudentCreateRequest(dto);
+                Student student = studentMapper.toStudent(createRequest);
 
-        for (StudentCreateRequestDto request : studentCreateRequests) {
-            createStudent(request);
+                if (!facultyNameCache.containsKey(dto.getFaculty())) {
+                    throw new ResourceNotFoundException("Faculty not found: " + dto.getFaculty());
+                }
+                student.setFaculty(facultyNameCache.get(dto.getFaculty()));
+
+                if (!statusNameCache.containsKey(dto.getStatus())) {
+                    throw new ResourceNotFoundException("Program not found: " + dto.getStatus());
+                }
+                student.setStatus(statusNameCache.get(dto.getStatus()));
+
+                if (!programNameCache.containsKey(dto.getProgram())) {
+                    throw new ResourceNotFoundException("Status not found: " + dto.getProgram());
+                }
+                student.setProgram(programNameCache.get(dto.getProgram()));
+
+                // Parse phone number
+                if (createRequest.getPhone() != null) {
+                    Phone phone = phoneParser.parsePhoneNumberToPhone(
+                            createRequest.getPhone().getPhoneNumber(),
+                            createRequest.getPhone().getCountryCode());
+                    student.setPhone(phone);
+                }
+
+                studentAddressesHandler(student, createRequest);
+                studentIdentityHandler(student, createRequest);
+
+                // Basic validation
+                studentValidator.validateStudentIdUniqueness(student.getStudentId());
+                studentValidator.validateEmailUniqueness(student.getEmail());
+                studentValidator.validateEmailDomain(student.getEmail());
+
+                validStudents.add(student);
+            } catch (Exception e) {
+                errors.add(String.format("Error processing student %s: %s", dto.getStudentId(),
+                        e.getMessage()));
+                log.error("Error processing student {}: {}", dto.getStudentId(), e.getMessage());
+            }
         }
+
+        if (!validStudents.isEmpty()) {
+            studentRepository.saveAll(validStudents);
+            log.info("Imported {} students successfully", validStudents.size());
+        }
+
+        if (!errors.isEmpty()) {
+            throw new FileProcessingException(
+                    "Failed to import students: " + String.join("; ", errors),
+                    ErrorCode.FAIL_TO_IMPORT_FILE);
+        }
+    }
+
+    private void studentAddressesHandler(Student student, StudentCreateRequestDto requestDto) {
+        if (requestDto.getPermanentAddress() != null) {
+            Address address = addressMapper.toAddress(requestDto.getPermanentAddress());
+            student.setPermanentAddress(address);
+        }
+
+        if (requestDto.getTemporaryAddress() != null) {
+            Address address = addressMapper.toAddress(requestDto.getTemporaryAddress());
+            student.setTemporaryAddress(address);
+        }
+
+        if (requestDto.getMailingAddress() != null) {
+            Address address = addressMapper.toAddress(requestDto.getMailingAddress());
+            student.setMailingAddress(address);
+        }
+    }
+
+    private void studentIdentityHandler(Student student, StudentCreateRequestDto requestDto) {
+        if (requestDto.getIdentity() != null) {
+            Identity identity = identityMapper.toIdentity(requestDto.getIdentity());
+            identityValidator.validateIdentityUniqueness(identity.getType(), identity.getNumber());
+            student.setIdentity(identity);
+        }
+    }
+
+    private Map<String, Faculty> createFacultyNameCache(List<StudentFileDto> dtos) {
+        Set<String> facultyNames = dtos.stream().map(StudentFileDto::getFaculty)
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+
+        Map<String, Faculty> result = new HashMap<>();
+        for (String name : facultyNames) {
+            try {
+                log.info("Searching for faculty: {}", name);
+                result.put(name, facultyService.getFacultyByName(name));
+            } catch (Exception e) {
+                log.warn("Faculty not found: {}", name);
+            }
+        }
+        return result;
+    }
+
+    private Map<String, Status> createStatusNameCache(List<StudentFileDto> dtos) {
+        Set<String> statusNames = dtos.stream().map(StudentFileDto::getStatus)
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+
+        Map<String, Status> result = new HashMap<>();
+        for (String name : statusNames) {
+            try {
+                log.info("Searching for status: {}", name);
+                result.put(name, statusService.getStatusByName(name));
+            } catch (Exception e) {
+                log.warn("Status not found: {}", name);
+            }
+        }
+        return result;
+    }
+
+    private Map<String, Program> createProgramNameCache(List<StudentFileDto> dtos) {
+        Set<String> programNames = dtos.stream().map(StudentFileDto::getProgram)
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+
+        Map<String, Program> result = new HashMap<>();
+        for (String name : programNames) {
+            try {
+                log.info("Searching for program: {}", name);
+                result.put(name, programService.getProgramByName(name));
+            } catch (Exception e) {
+                log.warn("Program not found: {}", name);
+            }
+        }
+        return result;
     }
 }

@@ -6,16 +6,12 @@ import com.tkpm.sms.application.dto.request.student.StudentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
-import com.tkpm.sms.application.service.interfaces.StudentService;
+import com.tkpm.sms.application.mapper.PhoneMapper;
 import com.tkpm.sms.application.service.implementation.StudentServiceImpl;
 import com.tkpm.sms.application.service.interfaces.*;
 import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
-import com.tkpm.sms.domain.model.Faculty;
-import com.tkpm.sms.domain.model.Identity;
-import com.tkpm.sms.domain.model.Program;
-import com.tkpm.sms.domain.model.Status;
-import com.tkpm.sms.domain.model.Student;
+import com.tkpm.sms.domain.model.*;
 import com.tkpm.sms.domain.repository.StudentRepository;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
@@ -73,12 +69,15 @@ class StudentServiceTest {
 
     private StudentService studentService;
 
+    @Mock
+    private PhoneMapper phoneMapper;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         studentService = new StudentServiceImpl(studentRepository, identityValidator,
                 studentValidator, statusService, programService, facultyService, identityService,
-                studentMapper, addressMapper, identityMapper, phoneParser);
+                studentMapper, addressMapper, identityMapper, phoneMapper, phoneParser);
     }
 
     @Nested
@@ -167,7 +166,7 @@ class StudentServiceTest {
         }
 
         private void setupCreateStudentMocks(StudentCreateRequestDto requestDto, Student student,
-                Phone phone, Faculty faculty, Program program, Status status) {
+                                             Phone phone, Faculty faculty, Program program, Status status) {
             when(phoneParser.parsePhoneNumberToPhone(anyString(), anyString())).thenReturn(phone);
             when(studentMapper.toStudent(requestDto)).thenReturn(student);
             when(facultyService.getFacultyByName(anyString())).thenReturn(faculty);
@@ -246,8 +245,8 @@ class StudentServiceTest {
         }
 
         private void setupUpdateStudentMocks(String id, StudentUpdateRequestDto requestDto,
-                Student student, Phone phone, Faculty faculty,
-                Program program, Status status) {
+                                             Student student, Phone phone, Faculty faculty,
+                                             Program program, Status status) {
             when(studentRepository.findById(id)).thenReturn(Optional.of(student));
             when(phoneParser.parsePhoneNumberToPhone(anyString(), anyString())).thenReturn(phone);
             when(statusService.getStatusById(any())).thenReturn(status);
