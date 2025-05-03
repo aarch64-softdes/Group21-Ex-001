@@ -1,0 +1,42 @@
+export default {
+  title: 'Subject Management',
+  addNew: 'Add Subject',
+  editSubject: 'Edit Subject',
+  subjectDetails: 'Subject Details',
+  fields: {
+    id: 'ID',
+    name: 'Name',
+    code: 'Code',
+    credits: 'Credits',
+    description: 'Description',
+    faculty: 'Faculty',
+    isActive: 'Status',
+    status: {
+      active: 'Active',
+      inactive: 'Inactive',
+    },
+    prerequisites: 'Prerequisites',
+  },
+  sections: {
+    subjectInfo: 'Subject Information',
+    description: 'Description',
+    prerequisites: 'Prerequisites',
+  },
+  messages: {
+    subjectAdded: 'Subject added successfully',
+    subjectUpdated: 'Subject updated successfully',
+    subjectDeleted: 'Subject deleted successfully',
+    subjectActivated: 'Subject activated successfully',
+    subjectDeactivated: 'Subject deactivated successfully',
+    confirmDelete: 'Are you sure you want to delete this subject?',
+    confirmActivate: 'Are you sure you want to activate this subject?',
+    confirmDeactivate: 'Are you sure you want to deactivate this subject?',
+    noPrerequisites: 'No prerequisites',
+    noPrerequisitesSelected: 'No prerequisites selected',
+    addPrerequisite: 'Add prerequisite',
+  },
+  actions: {
+    activate: 'Activate',
+    deactivate: 'Deactivate',
+  },
+};
