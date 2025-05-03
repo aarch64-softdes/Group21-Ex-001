@@ -16,6 +16,7 @@ import { Column } from '@/core/types/table';
 import { Badge } from '@ui/badge';
 import { SearchFilterOption } from '@/core/types/filter';
 import Student from '@/features/student/types/student';
+import StudentDetail from '@/features/student/components/StudentDetail';
 
 interface AvailableStudentsTableProps {
   courseId: string;
@@ -136,7 +137,7 @@ const AvailableStudentsTable: React.FC<AvailableStudentsTableProps> = ({
         queryHook={useStudents}
         filterOptions={[searchNameFilterOption]}
         customActionCellComponent={CustomEnrollButton}
-        metadata={courseId}
+        metadata={{ courseId }}
       />
     </div>
   );
