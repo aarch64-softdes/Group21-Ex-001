@@ -1,10 +1,7 @@
 import { Address } from '@student/types/address';
 import IdentityDocument from '@student/types/identityDocument';
 
-// Using string types instead of enums since values come from the API
 export type Gender = string;
-export type Faculty = string;
-export type Status = string;
 
 export default interface Student {
   id: string;
@@ -12,15 +9,18 @@ export default interface Student {
   name: string;
   dob: Date;
   gender: Gender;
-  faculty: Faculty;
+  faculty: string;
+  facultyId?: string;
   schoolYear: number;
   program: string;
+  programId?: string;
   email: string;
   permanentAddress: Address;
   temporaryAddress: Address;
   mailingAddress: Address;
   phone: Phone;
-  status: Status;
+  status: string;
+  statusId?: string;
   identity: IdentityDocument;
 }
 
@@ -29,15 +29,15 @@ export interface CreateStudentDTO {
   name: string;
   dob: Date;
   gender: Gender;
-  faculty: Faculty;
+  facultyId: string;
   schoolYear: number;
-  program: string;
+  programId: string;
   email: string;
   permanentAddress: Address;
   temporaryAddress: Address;
   mailingAddress: Address;
   phone: Phone;
-  status?: Status;
+  statusId: string;
   identity: IdentityDocument;
 }
 
@@ -45,15 +45,15 @@ export interface UpdateStudentDTO {
   name?: string;
   dob?: Date;
   gender?: Gender;
-  faculty?: Faculty;
+  facultyId?: string;
   schoolYear?: number;
-  program?: string;
+  programId?: string;
   email?: string;
   permanentAddress: Address;
   temporaryAddress: Address;
   mailingAddress: Address;
   phone?: Phone;
-  status?: Status;
+  statusId?: string;
   identity: IdentityDocument;
 }
 
@@ -64,20 +64,23 @@ export interface Phone {
 
 export const mapToStudent = (data: any): Student => {
   const res = {
-    id: data.id as string,
-    studentId: data.studentId as string,
+    id: data.id.toString(),
+    studentId: data.studentId.toString(),
     name: data.name,
     dob: data.dob ? new Date(data.dob) : new Date(),
     gender: data.gender,
-    faculty: data.faculty,
+    faculty: data.faculty?.name || data.faculty, // Handle both object and string
+    facultyId: data.faculty?.id?.toString() || undefined, // Extract ID as string if available
     schoolYear: data.schoolYear,
-    program: data.program,
+    program: data.program?.name || data.program, // Handle both object and string
+    programId: data.program?.id?.toString() || undefined, // Extract ID as string if available
     email: data.email,
     permanentAddress: data.permanentAddress,
     temporaryAddress: data.temporaryAddress,
     mailingAddress: data.mailingAddress,
     phone: data.phone,
-    status: data.status,
+    status: data.status?.name || data.status, // Handle both object and string
+    statusId: data.status?.id?.toString() || undefined, // Extract ID as string if available
     identity: data.identity,
   };
 

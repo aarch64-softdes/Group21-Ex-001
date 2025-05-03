@@ -65,9 +65,8 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
     value: faculty.id,
   }));
 
-  // Use the subjects dropdown hook
   const subjects = useSubjectsDropdown(
-    isEditing ? 100 : 5,
+    5,
     (subject) => ({
       id: subject.id,
       label: `${subject.code} - ${subject.name}`,

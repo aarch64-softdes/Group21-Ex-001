@@ -8,6 +8,7 @@ import Status from '@/features/faculty/types/faculty';
 import programService from '@/features/program/api/programService';
 import { useLoadMore } from '@/shared/hooks/useLoadMore';
 import { useState } from 'react';
+import { SelectItem } from '@/components/common/LoadMoreSelect';
 
 const statusService = new StatusService();
 
@@ -36,7 +37,10 @@ export const useStatuses = (params: QueryHookParams) => {
   });
 };
 
-export const useStatusesDropdown = (initialPageSize?: number) => {
+export const useStatusesDropdown = (
+  initialPageSize?: number,
+  mapFn?: (status: Status) => SelectItem,
+) => {
   const [statusSearch, setStatusSearch] = useState<string>('');
   const statuses = useLoadMore<Status>({
     queryKey: ['statuses', 'dropdown'],
@@ -48,11 +52,13 @@ export const useStatusesDropdown = (initialPageSize?: number) => {
         sortType: 'asc',
         search: searchQuery,
       }),
-    mapFn: (status: Status) => ({
-      id: status.id,
-      label: status.name,
-      value: status.name,
-    }),
+    mapFn:
+      mapFn ||
+      ((status: Status) => ({
+        id: status.id,
+        label: status.name,
+        value: status.name,
+      })),
     searchQuery: statusSearch,
     initialPageSize,
   });

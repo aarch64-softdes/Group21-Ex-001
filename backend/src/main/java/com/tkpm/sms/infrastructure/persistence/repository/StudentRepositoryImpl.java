@@ -33,6 +33,13 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
+    public List<Student> saveAll(List<Student> students) {
+        var entities = students.stream().map(mapper::toEntity).collect(Collectors.toList());
+        var savedEntities = jpaRepository.saveAll(entities);
+        return savedEntities.stream().map(mapper::toDomain).collect(Collectors.toList());
+    }
+
+    @Override
     public void delete(Student student) {
         var entity = mapper.toEntity(student);
         jpaRepository.delete(entity);
