@@ -23,10 +23,9 @@ CREATE TABLE addresses (
 );
 
 CREATE TABLE settings (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(255) NOT NULL,
     details TEXT,
-    CONSTRAINT pk_settings PRIMARY KEY (id),
     CONSTRAINT uc_settings_name UNIQUE (name)
 );
 
@@ -215,7 +214,7 @@ ALTER TABLE histories
 
 
 -- Insert settings records
-INSERT INTO settings (id, name, details) VALUES
+INSERT INTO settings (name, details) VALUES
 ('phonenumber', '["VN"]'),
 ('email', '@student.hcmus.edu.vn'),
 ('failinggrade', '2.0'),
