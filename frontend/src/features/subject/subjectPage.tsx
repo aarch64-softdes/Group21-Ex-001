@@ -15,8 +15,11 @@ import { Column } from '@/core/types/table';
 import React, { useCallback } from 'react';
 import SubjectForm from '@subject/components/SubjectForm';
 import SubjectDetail from '@subject/components/SubjectDetail';
+import { useTranslation } from 'react-i18next';
 
 const SubjectPage: React.FC = () => {
+  const { t } = useTranslation(['subject', 'common']);
+
   const createSubject = useCreateSubject();
   const updateSubject = useUpdateSubject();
   const deleteSubject = useDeleteSubject();
@@ -26,26 +29,26 @@ const SubjectPage: React.FC = () => {
   const columns: Column<Subject>[] = React.useMemo(
     () => [
       {
-        header: 'ID',
+        header: t('subject:fields.id'),
         key: 'id',
         style: {
           width: '80px',
         },
       },
       {
-        header: 'Code',
+        header: t('subject:fields.code'),
         key: 'code',
         style: {
           width: '120px',
         },
       },
       {
-        header: 'Name',
+        header: t('subject:fields.name'),
         key: 'name',
         isDefaultSort: true,
       },
       {
-        header: 'Credits',
+        header: t('subject:fields.credits'),
         key: 'credits',
         style: {
           width: '100px',
@@ -53,23 +56,25 @@ const SubjectPage: React.FC = () => {
         },
       },
       {
-        header: 'Faculty',
+        header: t('subject:fields.faculty'),
         key: 'faculty.name',
         nested: true,
       },
       {
-        header: 'Status',
+        header: t('subject:fields.isActive'),
         key: 'isActive',
         style: {
           width: '100px',
           textAlign: 'center',
         },
         transform: (value: boolean) => {
-          return value ? 'Active' : 'Inactive';
+          return value
+            ? t('subject:fields.status.active')
+            : t('subject:fields.status.inactive');
         },
       },
     ],
-    [],
+    [t],
   );
 
   const onSave = useCallback(
@@ -99,10 +104,10 @@ const SubjectPage: React.FC = () => {
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
-        tableTitle='Subject Management'
+        tableTitle={t('subject:title')}
         addAction={{
           onAdd,
-          title: 'Add Subject',
+          title: t('subject:addNew'),
         }}
         queryHook={useSubjects}
         columns={columns}
@@ -118,7 +123,7 @@ const SubjectPage: React.FC = () => {
           formComponent: SubjectForm,
           additionalActions: [
             {
-              label: 'Activate',
+              label: t('subject:actions.activate'),
               handler: async (id: string) => {
                 await activateSubject.mutateAsync(id);
               },
@@ -127,7 +132,7 @@ const SubjectPage: React.FC = () => {
               },
             },
             {
-              label: 'Deactivate',
+              label: t('subject:actions.deactivate'),
               handler: async (id: string) => {
                 await deactivateSubject.mutateAsync(id);
               },
