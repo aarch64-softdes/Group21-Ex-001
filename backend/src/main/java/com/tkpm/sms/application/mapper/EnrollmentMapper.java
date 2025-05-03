@@ -5,7 +5,7 @@ import com.tkpm.sms.application.dto.response.enrollment.EnrollmentDto;
 import com.tkpm.sms.application.dto.response.enrollment.EnrollmentMinimalDto;
 import com.tkpm.sms.application.dto.response.enrollment.HistoryDto;
 import com.tkpm.sms.domain.model.Enrollment;
-import com.tkpm.sms.domain.model.History;
+import com.tkpm.sms.domain.valueobject.History;
 
 public interface EnrollmentMapper {
     Enrollment toEnrollment(EnrollmentCreateRequestDto enrollCreateRequestDto);

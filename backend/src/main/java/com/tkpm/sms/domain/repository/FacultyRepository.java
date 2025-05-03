@@ -20,4 +20,6 @@ public interface FacultyRepository {
     void deleteById(Integer id);
 
     PageResponse<Faculty> findAll(PageRequest pageRequest);
+
+    void delete(Faculty faculty);
 }

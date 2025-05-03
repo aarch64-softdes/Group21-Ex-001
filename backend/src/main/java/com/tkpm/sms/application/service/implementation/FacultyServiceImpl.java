@@ -14,8 +14,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -72,7 +70,6 @@ public class FacultyServiceImpl implements FacultyService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Faculty with id %s not found", id)));
 
-        faculty.setDeletedAt(LocalDate.now());
-        facultyRepository.save(faculty);
+        facultyRepository.delete(faculty);
     }
 }

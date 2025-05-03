@@ -70,4 +70,10 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         return PageResponse.of(content, page.getNumber() + 1, page.getSize(),
                 page.getTotalElements(), page.getTotalPages());
     }
+
+    @Override
+    public void delete(Faculty faculty) {
+        var entity = mapper.toEntity(faculty);
+        jpaRepository.delete(entity);
+    }
 }
