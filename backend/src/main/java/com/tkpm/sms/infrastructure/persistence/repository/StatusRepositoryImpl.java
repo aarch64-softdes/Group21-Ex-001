@@ -70,4 +70,10 @@ public class StatusRepositoryImpl implements StatusRepository {
         return PageResponse.of(content, page.getNumber() + 1, // Convert 0-based to 1-based
                 page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
+
+    @Override
+    public void delete(Status status) {
+        var entity = mapper.toEntity(status);
+        jpaRepository.delete(entity);
+    }
 }

@@ -8,6 +8,10 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "students")
@@ -21,6 +25,8 @@ import java.time.LocalDate;
         @NamedAttributeNode("program"), @NamedAttributeNode("faculty"),
         @NamedAttributeNode("permanentAddress"), @NamedAttributeNode("temporaryAddress"),
         @NamedAttributeNode("mailingAddress"), @NamedAttributeNode("identity")})
+@SQLDelete(sql = "UPDATE students SET deleted_at = NOW() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class StudentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -66,19 +72,29 @@ public class StudentEntity {
     @JoinColumn(name = "faculty_id")
     FacultyEntity faculty;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "permanent_address_id")
     AddressEntity permanentAddress;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "temporary_address_id")
     AddressEntity temporaryAddress;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "mailing_address_id")
     AddressEntity mailingAddress;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "identity_id")
     IdentityEntity identity;
+
+    @OneToMany(mappedBy = "student")
+    List<EnrollmentEntity> enrollments;
+
+    @OneToMany(mappedBy = "student")
+    List<HistoryEntity> histories;
+
+    // Soft delete
+    @Column(name = "deleted_at")
+    LocalDate deletedAt;
 }

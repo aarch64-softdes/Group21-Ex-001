@@ -1,9 +1,12 @@
-package com.tkpm.sms.domain.model;
+package com.tkpm.sms.domain.valueobject;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+
+import com.tkpm.sms.domain.model.Course;
+import com.tkpm.sms.domain.model.Student;
 
 @Getter
 @Setter

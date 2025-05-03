@@ -18,4 +18,6 @@ public interface ProgramRepository {
     boolean existsByNameAndIdNot(String name, Integer id);
 
     PageResponse<Program> findAll(PageRequest pageRequest);
+
+    void delete(Program program);
 }

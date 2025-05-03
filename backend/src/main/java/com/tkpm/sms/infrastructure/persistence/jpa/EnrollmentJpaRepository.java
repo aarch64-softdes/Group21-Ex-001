@@ -15,6 +15,7 @@ public interface EnrollmentJpaRepository extends JpaRepository<EnrollmentEntity,
 
     boolean existsByStudentIdAndCourseId(String studentId, Integer courseId);
 
+    @Query("SELECT COUNT(e) FROM EnrollmentEntity e WHERE e.course.id = :courseId AND e.student.deletedAt IS NULL")
     Integer countAllByCourseId(Integer courseId);
 
     Collection<EnrollmentEntity> findAllByStudentId(String studentId);

@@ -33,10 +33,10 @@ public class ProgramEntity {
     LocalDate deletedAt;
 
     // one-to-many relationship with students
-    @OneToMany(mappedBy = "program")
+    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
     Set<StudentEntity> students;
 
     // one-to-many relationship with courses
-    @OneToMany(mappedBy = "program", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "program", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Set<CourseEntity> courses;
 }
