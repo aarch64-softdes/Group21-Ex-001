@@ -85,4 +85,9 @@ export default {
       'Passport number must be 2 uppercase letters followed by 7 digits',
     nameFormat: 'Name must contain only letters and spaces',
   },
+  messages: {
+    studentAdded: 'Student added successfully',
+    studentUpdated: 'Student updated successfully',
+    studentDeleted: 'Student deleted successfully',
+  },
 };

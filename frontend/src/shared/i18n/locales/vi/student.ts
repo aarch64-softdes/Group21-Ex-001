@@ -84,4 +84,9 @@ export default {
     passportFormat: 'Số hộ chiếu phải gồm 2 chữ hoa và 7 chữ số',
     nameFormat: 'Họ tên chỉ được chứa chữ cái và khoảng trắng',
   },
+  messages: {
+    studentAdded: 'Thêm sinh viên thành công',
+    studentUpdated: 'Cập nhật thông tin sinh viên thành công',
+    studentDeleted: 'Xóa sinh viên thành công',
+  },
 };
