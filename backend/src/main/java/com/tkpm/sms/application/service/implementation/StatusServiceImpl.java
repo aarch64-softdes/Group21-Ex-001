@@ -78,6 +78,8 @@ public class StatusServiceImpl implements StatusService {
     @Override
     @Transactional
     public void deleteStatus(Integer id) {
+        statusDomainValidator.validateStatusTransitionForDeletion(id);
+
         Status status = statusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Status with id %s not found", id)));

@@ -6,7 +6,6 @@ import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.repository.SettingRepository;
-import com.tkpm.sms.domain.repository.SubjectRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.HistoryEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.EnrollmentJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.jpa.HistoryJpaRepository;
@@ -31,7 +30,6 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     EnrollmentJpaRepository enrollmentJpaRepository;
     HistoryJpaRepository historyJpaRepository;
     SettingRepository settingRepository;
-    SubjectRepository subjectRepository;
 
     EnrollmentPersistenceMapper enrollmentPersistenceMapper;
     HistoryPersistenceMapper historyPersistenceMapper;
