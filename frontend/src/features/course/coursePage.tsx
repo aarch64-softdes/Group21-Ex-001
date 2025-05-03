@@ -14,9 +14,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import CourseDetail from './components/CourseDetail';
 import CourseForm from './components/CourseForm';
+import { useTranslation } from 'react-i18next';
 
 const CoursePage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['course', 'common']);
 
   const createCourse = useCreateCourse();
   const updateCourse = useUpdateCourse();
@@ -25,19 +27,19 @@ const CoursePage: React.FC = () => {
   const columns: Column<Course>[] = React.useMemo(
     () => [
       {
-        header: 'Course Code',
+        header: t('course:fields.code'),
         key: 'code',
         style: {
           width: '120px',
         },
       },
       {
-        header: 'Subject',
+        header: t('course:fields.subject'),
         key: 'subject.name',
         nested: true,
       },
       {
-        header: 'Room',
+        header: t('course:fields.room'),
         key: 'room',
         style: {
           width: '80px',
@@ -45,7 +47,7 @@ const CoursePage: React.FC = () => {
         },
       },
       {
-        header: 'Schedule',
+        header: t('course:fields.schedule'),
         key: 'schedule',
         style: {
           width: '100px',
@@ -53,7 +55,7 @@ const CoursePage: React.FC = () => {
         },
       },
       {
-        header: 'Year',
+        header: t('course:fields.year'),
         key: 'year',
         style: {
           width: '60px',
@@ -61,7 +63,7 @@ const CoursePage: React.FC = () => {
         },
       },
       {
-        header: 'Semester',
+        header: t('course:fields.semester'),
         key: 'semester',
         style: {
           width: '80px',
@@ -69,7 +71,7 @@ const CoursePage: React.FC = () => {
         },
       },
     ],
-    [],
+    [t],
   );
 
   const onSave = React.useCallback(
@@ -99,11 +101,11 @@ const CoursePage: React.FC = () => {
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
-        tableTitle='Course Management'
+        tableTitle={t('course:title')}
         addAction={{
           onAdd,
           disabled: false,
-          title: 'Add Course',
+          title: t('course:addNew'),
         }}
         queryHook={useCourses}
         columns={columns}
@@ -121,7 +123,7 @@ const CoursePage: React.FC = () => {
           formComponent: CourseForm,
           additionalActions: [
             {
-              label: 'Enrollment',
+              label: t('enrollment:title'),
               handler(id) {
                 navigate(`/course/${id}/enrollments`);
               },
