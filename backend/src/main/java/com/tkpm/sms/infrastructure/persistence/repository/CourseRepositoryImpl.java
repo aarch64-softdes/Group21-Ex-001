@@ -60,13 +60,8 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public boolean existsByRoomAndCourseSchedule(String room, String schedule) {
-        return courseJpaRepository.existsByRoomAndSchedule(room, schedule);
-    }
-
-    @Override
-    public boolean existsByIdNotAndRoomAndCourseSchedule(Integer id, String room, String schedule) {
-        return courseJpaRepository.existsByIdNotAndRoomAndSchedule(id, room, schedule);
+    public List<CourseEntity> findAllWithSameRoom(int semester, int year, String room) {
+        return courseJpaRepository.findAllBySemesterAndYearAndRoom(semester, year, room);
     }
 
     @Override

@@ -1,5 +1,30 @@
 spring:
-  application:
-    name: sms
   profiles:
     active: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/student-db ## Change this
+    driver-class-name: org.postgresql.Driver
+    username: root ## Change this
+    password: root ## Change this
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        generate_statistics=true:
+elasticsearch:
+  host: localhost
+  port: 9200
+  index-prefix: logs
+  api-key: cnBRNTBwVUJjT3ZEVWxOYzhGbl86M0JLamtUQ2RUMS1jTDdic2ZuR3NVdw==
+
+logging:
+  controller:
+    logger-type: ELASTICSEARCH
+
+app:
+  constraint:
+    deletable-duration: 30 # in minutes
+
