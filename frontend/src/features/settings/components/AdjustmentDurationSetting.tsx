@@ -23,10 +23,12 @@ import {
   useAdjustmentDurationSetting,
   useUpdateAdjustmentDurationSetting,
 } from '@/features/settings/api/useSettingsApi';
+import { useTranslation } from 'react-i18next';
 
 const AdjustmentDurationSettings: React.FC<{ className?: string }> = ({
   className,
 }) => {
+  const { t } = useTranslation(['setting', 'common']);
   const { data, isLoading } = useAdjustmentDurationSetting();
   const updateAdjustmentDuration = useUpdateAdjustmentDurationSetting();
 
@@ -42,20 +44,20 @@ const AdjustmentDurationSettings: React.FC<{ className?: string }> = ({
 
   const validateDuration = (value: string): string | null => {
     if (!value.trim()) {
-      return 'Duration is required';
+      return t('setting:adjustmentDuration.validation.required');
     }
 
     const numValue = parseInt(value);
     if (isNaN(numValue)) {
-      return 'Duration must be a number';
+      return t('setting:adjustmentDuration.validation.mustBeNumber');
     }
 
     if (numValue < 1) {
-      return 'Duration must be at least 1 day';
+      return t('setting:adjustmentDuration.validation.minDuration');
     }
 
     if (numValue > 90) {
-      return 'Duration must not exceed 90 days';
+      return t('setting:adjustmentDuration.validation.maxDuration');
     }
 
     return null;
@@ -84,11 +86,18 @@ const AdjustmentDurationSettings: React.FC<{ className?: string }> = ({
       });
       setIsEditing(false);
       setError(null);
-      showSuccessToast('Adjustment duration updated successfully');
+      showSuccessToast(
+        t('setting:messages.updated', {
+          setting: t('setting:adjustmentDuration.title'),
+        }),
+      );
     } catch (err) {
       console.error('Failed to update adjustment duration:', err);
       showErrorToast(
-        'Failed to update adjustment duration: ' + getErrorMessage(err),
+        t('setting:messages.updateFailed', {
+          setting: t('setting:adjustmentDuration.title'),
+          error: getErrorMessage(err),
+        }),
       );
     }
   };
@@ -109,10 +118,9 @@ const AdjustmentDurationSettings: React.FC<{ className?: string }> = ({
   return (
     <Card className={cn('w-160', className)}>
       <CardHeader>
-        <CardTitle>Enrollment Adjustment Period</CardTitle>
+        <CardTitle>{t('setting:adjustmentDuration.title')}</CardTitle>
         <CardDescription>
-          Configure the number of days students can adjust their course
-          enrollments after the start date
+          {t('setting:adjustmentDuration.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -128,7 +136,7 @@ const AdjustmentDurationSettings: React.FC<{ className?: string }> = ({
                   htmlFor='adjustmentDuration'
                   className='block text-sm font-medium text-gray-700 mb-1'
                 >
-                  Adjustment Period (days)
+                  {t('setting:adjustmentDuration.label')}
                 </label>
                 <Input
                   id='adjustmentDuration'
@@ -149,26 +157,23 @@ const AdjustmentDurationSettings: React.FC<{ className?: string }> = ({
                 {isEditing ? (
                   <>
                     <Save className='mr-2 h-4 w-4' />
-                    Save
+                    {t('setting:actions.save')}
                   </>
                 ) : (
                   <>
                     <Pencil className='mr-2 h-4 w-4' />
-                    Edit
+                    {t('setting:actions.edit')}
                   </>
                 )}
               </Button>
               {isEditing && (
                 <Button variant='outline' onClick={handleCancel}>
-                  Cancel
+                  {t('setting:actions.cancel')}
                 </Button>
               )}
             </div>
             <div className='text-sm text-gray-500'>
-              <p>
-                Students will be able to enroll or unenroll from courses during
-                this period after the course start date.
-              </p>
+              <p>{t('setting:adjustmentDuration.help')}</p>
             </div>
           </div>
         )}
@@ -177,11 +182,13 @@ const AdjustmentDurationSettings: React.FC<{ className?: string }> = ({
         <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
           <DialogContent className='w-160 p-8'>
             <DialogHeader>
-              <DialogTitle>Confirm Adjustment Period Change</DialogTitle>
+              <DialogTitle>
+                {t('setting:adjustmentDuration.confirmTitle')}
+              </DialogTitle>
               <DialogDescription>
-                You are about to change the enrollment adjustment period to{' '}
-                <strong>{tempDuration} days</strong>. This will affect all
-                course enrollment periods. Are you sure?
+                {t('setting:adjustmentDuration.confirmDescription', {
+                  duration: tempDuration,
+                })}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -189,7 +196,7 @@ const AdjustmentDurationSettings: React.FC<{ className?: string }> = ({
                 variant='outline'
                 onClick={() => setShowConfirmDialog(false)}
               >
-                Cancel
+                {t('setting:actions.cancel')}
               </Button>
               <Button
                 onClick={handleSave}
@@ -198,10 +205,10 @@ const AdjustmentDurationSettings: React.FC<{ className?: string }> = ({
                 {updateAdjustmentDuration.isPending ? (
                   <>
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                    Saving...
+                    {t('setting:actions.saving')}
                   </>
                 ) : (
-                  'Confirm'
+                  t('setting:actions.confirm')
                 )}
               </Button>
             </DialogFooter>
