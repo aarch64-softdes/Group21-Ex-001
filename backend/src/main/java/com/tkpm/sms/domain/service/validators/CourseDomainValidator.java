@@ -35,7 +35,7 @@ public class CourseDomainValidator {
             }
 
             var schedule = course.getSchedule();
-            var existedSchedule = Schedule.of(other.getSchedule());
+            var existedSchedule = Schedule.of(other.getSchedule().toString());
             if (schedule.isOverlapping(existedSchedule)) {
                 throw new DuplicateResourceException(String.format(
                         "The course with room %s and schedule %s is overlapping other courses.",
@@ -51,8 +51,8 @@ public class CourseDomainValidator {
         if (LocalDate.now()
                 .isAfter(course.getStartDate().plusDays(Integer.parseInt(adjustmentDuration)))) {
             throw new UnenrollableCourseException(
-                    String.format("Course with code %s can only be modified in %s days",
-                            course.getCode(), adjustmentDuration));
+                    String.format("Course %s can only be modified in %s days", course.getCode(),
+                            adjustmentDuration));
         }
     }
 
@@ -60,7 +60,7 @@ public class CourseDomainValidator {
         var currentCapacity = enrollmentRepository.countStudentsByCourseId(course.getId());
         if (currentCapacity >= course.getMaxStudent()) {
             throw new UnenrollableCourseException(
-                    String.format("Course with id %s is already full ", course.getId()));
+                    String.format("Course %s is already full ", course.getCode()));
         }
     }
 
@@ -71,8 +71,8 @@ public class CourseDomainValidator {
 
         log.info("Validating course code and subject id: code={}, subjectId={}", code, subjectId);
         if (courseRepository.existsByCodeAndSubjectId(code, subjectId)) {
-            throw new DuplicateResourceException(String.format(
-                    "Course with code %s for subject %s already exists", code, subject.getCode()));
+            throw new DuplicateResourceException(String
+                    .format("Course %s for subject %s already exists", code, subject.getCode()));
         }
     }
 
@@ -92,7 +92,7 @@ public class CourseDomainValidator {
     public void validateEnrollmentExistenceForCourse(Course course) {
         if (enrollmentRepository.existsByCourseId(course.getId())) {
             throw new DuplicateResourceException(
-                    String.format("Course with code %s already has enrollments", course.getCode()));
+                    String.format("Course %s already has enrollments", course.getCode()));
         }
     }
 }

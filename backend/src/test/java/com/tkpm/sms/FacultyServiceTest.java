@@ -6,6 +6,9 @@ import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.repository.FacultyRepository;
 import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
+
+import jakarta.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class FacultyServiceTest {
@@ -143,6 +147,7 @@ class FacultyServiceTest {
     }
 
     @Test
+    @Transactional
     void testDeleteFaculty() {
         Faculty faculty = Faculty.builder().id(1).name("Test Faculty").build();
         when(facultyRepository.findById(1)).thenReturn(Optional.of(faculty));
@@ -150,7 +155,6 @@ class FacultyServiceTest {
 
         facultyService.deleteFaculty(1);
 
-        assertNotNull(faculty.getDeletedAt());
-        verify(facultyRepository, times(1)).save(any(Faculty.class));
+        verify(facultyRepository).delete(faculty);
     }
 }

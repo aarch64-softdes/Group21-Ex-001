@@ -4,7 +4,9 @@ import com.tkpm.sms.domain.exception.DuplicateResourceException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.exception.SubjectDeactivatedException;
 import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
+import com.tkpm.sms.domain.model.Course;
 import com.tkpm.sms.domain.model.Subject;
+import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SubjectDomainValidator {
     private final SubjectRepository subjectRepository;
+    private final CourseRepository courseRepository;
 
     public void validateSubjectCodeUniqueness(String code) {
         if (subjectRepository.existsByCode(code)) {
@@ -48,8 +51,11 @@ public class SubjectDomainValidator {
                         String.format("Subject with id %s not found", id)));
 
         if (subjectRepository.existsCourseForSubject(id)) {
+            var courses = courseRepository.findAllBySubjectId(id);
+
             throw new SubjectDeletionConstraintException(String.format(
-                    "Subject with code %s has courses associated with it", subject.getCode()));
+                    "Subject %s has courses associated with it: %s", subject.getCode(),
+                    String.join(", ", courses.stream().map(Course::getCode).toList())));
         }
 
         if (subjectRepository.isPrerequisiteForOtherSubjects(id)) {

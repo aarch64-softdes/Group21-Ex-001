@@ -15,8 +15,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -78,12 +76,13 @@ public class StatusServiceImpl implements StatusService {
     @Override
     @Transactional
     public void deleteStatus(Integer id) {
+        statusDomainValidator.validateStatusTransitionForDeletion(id);
+
         Status status = statusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Status with id %s not found", id)));
 
-        status.setDeletedAt(LocalDate.now());
-        statusRepository.save(status);
+        statusRepository.delete(status);
     }
 
     @Override

@@ -12,8 +12,9 @@ import com.tkpm.sms.application.mapper.EnrollmentMapper;
 import com.tkpm.sms.application.service.interfaces.EnrollmentService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Enrollment;
-import com.tkpm.sms.domain.model.History;
 import com.tkpm.sms.domain.utils.ListUtils;
+import com.tkpm.sms.domain.valueobject.History;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

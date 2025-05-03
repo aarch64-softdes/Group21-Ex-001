@@ -60,8 +60,15 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public List<CourseEntity> findAllWithSameRoom(int semester, int year, String room) {
-        return courseJpaRepository.findAllBySemesterAndYearAndRoom(semester, year, room);
+    public List<Course> findAllWithSameRoom(int semester, int year, String room) {
+        return courseJpaRepository.findAllBySemesterAndYearAndRoom(semester, year, room).stream()
+                .map(coursePersistenceMapper::toDomain).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Course> findAllBySubjectId(Integer subjectId) {
+        return courseJpaRepository.findAllBySubjectId(subjectId).stream()
+                .map(coursePersistenceMapper::toDomain).collect(Collectors.toList());
     }
 
     @Override

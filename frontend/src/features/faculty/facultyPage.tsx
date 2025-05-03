@@ -41,39 +41,51 @@ const FacultyPage: React.FC = () => {
     [t],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onSave: async (id: string, value: UpdateFacultyDTO) => {
-        await updateFaculty.mutateAsync({
-          id: id,
-          data: value,
-        });
-      },
-      onAdd: async (value: CreateFacultyDTO) => {
-        await createFaculty.mutateAsync(value);
-      },
-      onDelete: async (id: string) => {
-        await deleteFaculty.mutateAsync(id);
-      },
-    }),
-    [updateFaculty, createFaculty, deleteFaculty],
+  const onSave = React.useCallback(
+    async (id: string, value: UpdateFacultyDTO) => {
+      await updateFaculty.mutateAsync({
+        id: id,
+        data: value,
+      });
+    },
+    [updateFaculty],
+  );
+
+  const onDelete = React.useCallback(
+    async (id: string) => {
+      await deleteFaculty.mutateAsync(id);
+    },
+    [deleteFaculty],
+  );
+
+  const onAdd = React.useCallback(
+    async (value: CreateFacultyDTO) => {
+      await createFaculty.mutateAsync(value);
+    },
+    [createFaculty],
   );
 
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle={t('faculty:title')}
-        addingTitle={t('faculty:addNew')}
+        addAction={{
+          onAdd,
+          title: t('faculty:addNew'),
+        }}
         queryHook={useFaculties}
         columns={columns}
-        actions={actions}
-        formComponent={FacultyForm}
-        detailComponent={FacultyDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave: onSave,
+          },
+          delete: {
+            onDelete: onDelete,
+          },
+          detailComponent: FacultyDetail,
+          formComponent: FacultyForm,
         }}
-        requireDeleteConfirmation={true}
         filterOptions={[]}
       />
     </div>

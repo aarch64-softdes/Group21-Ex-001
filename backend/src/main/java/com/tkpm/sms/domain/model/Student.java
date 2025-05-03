@@ -22,6 +22,7 @@ public class Student {
     Integer schoolYear;
     String email;
     Phone phone;
+    LocalDate deletedAt;
 
     // Relationships
     Faculty faculty;

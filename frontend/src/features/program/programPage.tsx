@@ -39,39 +39,51 @@ const ProgramPage: React.FC = () => {
     [t],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onSave: async (id: string, value: UpdateProgramDTO) => {
-        await updateProgram.mutateAsync({
-          id: id,
-          data: value,
-        });
-      },
-      onAdd: async (value: CreateProgramDTO) => {
-        await createProgram.mutateAsync(value);
-      },
-      onDelete: async (id: string) => {
-        await deleteProgram.mutateAsync(id);
-      },
-    }),
-    [updateProgram, createProgram, deleteProgram],
+  const onSave = React.useCallback(
+    async (id: string, value: UpdateProgramDTO) => {
+      await updateProgram.mutateAsync({
+        id,
+        data: value,
+      });
+    },
+    [updateProgram],
+  );
+
+  const onDelete = React.useCallback(
+    async (id: string) => {
+      await deleteProgram.mutateAsync(id);
+    },
+    [deleteProgram],
+  );
+
+  const onAdd = React.useCallback(
+    async (value: CreateProgramDTO) => {
+      await createProgram.mutateAsync(value);
+    },
+    [createProgram],
   );
 
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle={t('program:title')}
-        addingTitle={t('program:addNew')}
         queryHook={usePrograms}
-        columns={columns}
-        actions={actions}
-        formComponent={ProgramForm}
-        detailComponent={ProgramDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
+        addAction={{
+          title: t('program:addNew'),
+          onAdd,
         }}
-        requireDeleteConfirmation={true}
+        columns={columns}
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
+          },
+          delete: {
+            onDelete,
+          },
+          detailComponent: ProgramDetail,
+          formComponent: ProgramForm,
+        }}
         filterOptions={[]}
       />
     </div>
