@@ -11,6 +11,31 @@ export default {
   yes: 'Có',
   no: 'Không',
   notes: 'Ghi chú',
+  pagination: {
+    rowsPerPage: 'Số dòng mỗi trang:',
+    showing: 'Hiển thị từ {{from}} đến {{to}} của {{total}} mục',
+    firstPage: 'Trang đầu',
+    previousPage: 'Trang trước',
+    nextPage: 'Trang sau',
+    lastPage: 'Trang cuối',
+    page: 'Trang {{page}}',
+  },
+  error: {
+    returnHome: 'Quay về Trang chủ',
+    pageNotFound: 'Không tìm thấy trang',
+    somethingWentWrong: 'Đã xảy ra lỗi',
+  },
+  table: {
+    actions: 'Thao tác',
+    view: 'Xem',
+    edit: 'Sửa',
+    delete: 'Xóa',
+    confirmDelete: 'Bạn có chắc chắn muốn xóa mục này?',
+    noData: 'Không tìm thấy dữ liệu',
+    loading: 'Đang tải...',
+    search: 'Tìm kiếm',
+    filter: 'Lọc',
+  },
   actions: {
     view: 'Xem',
     add: 'Thêm',
@@ -25,6 +50,7 @@ export default {
     import: 'Nhập',
     print: 'In',
     download: 'Tải xuống',
+    clear: 'Xóa',
   },
   messages: {
     success: 'Thao tác hoàn tất thành công',
@@ -32,5 +58,6 @@ export default {
     confirmDelete: 'Bạn có chắc chắn muốn xóa mục này?',
     noData: 'Không tìm thấy dữ liệu',
     loading: 'Đang tải...',
+    areYouSure: 'Bạn có chắc chắn?',
   },
 };

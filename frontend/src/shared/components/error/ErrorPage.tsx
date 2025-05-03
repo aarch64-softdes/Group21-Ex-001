@@ -1,6 +1,7 @@
 import { Button } from '@ui/button';
 import { AlertCircle, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface ErrorPageProps {
   error: Error;
@@ -16,6 +17,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
   resetError,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
 
   return (
     <div className='h-screen w-full flex flex-col items-center justify-center bg-gray-50'>
@@ -37,7 +39,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
           className='flex items-center gap-2 w-full'
         >
           <Home className='h-4 w-4' />
-          Return to Home
+          {t('error.returnHome')}
         </Button>
       </div>
     </div>

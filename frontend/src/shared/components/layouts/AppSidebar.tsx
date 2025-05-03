@@ -19,44 +19,46 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@ui/sidebar';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 export function AppSidebar() {
+  const { t } = useTranslation('common');
+
   // Menu items.
   const items = [
     {
-      title: t('common:students'),
+      title: t('students'),
       url: 'student',
       icon: GraduationCap,
     },
     {
-      title: t('common:faculties'),
+      title: t('faculties'),
       url: 'faculty',
       icon: Users,
     },
     {
-      title: t('common:programs'),
+      title: t('programs'),
       url: 'program',
       icon: Library,
     },
     {
-      title: t('common:status'),
+      title: t('status'),
       url: 'status',
       icon: Activity,
     },
     {
-      title: t('common:subjects'),
+      title: t('subjects'),
       url: 'subject',
       icon: Bookmark,
     },
     {
-      title: t('common:courses'),
+      title: t('courses'),
       url: 'course',
       icon: FileText,
     },
     {
-      title: t('common:settings'),
+      title: t('settings'),
       url: 'setting',
       icon: Settings,
     },
@@ -70,7 +72,7 @@ export function AppSidebar() {
     >
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{t('common:appName')}</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('appName')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

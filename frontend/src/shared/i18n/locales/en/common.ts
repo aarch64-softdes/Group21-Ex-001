@@ -11,6 +11,31 @@ export default {
   yes: 'Yes',
   no: 'No',
   notes: 'Notes',
+  pagination: {
+    rowsPerPage: 'Rows per page:',
+    showing: 'Showing {{from}} to {{to}} of {{total}} entries',
+    firstPage: 'First page',
+    previousPage: 'Previous page',
+    nextPage: 'Next page',
+    lastPage: 'Last page',
+    page: 'Page {{page}}',
+  },
+  error: {
+    returnHome: 'Return to Home',
+    pageNotFound: 'Page not found',
+    somethingWentWrong: 'Something went wrong',
+  },
+  table: {
+    actions: 'Actions',
+    view: 'View',
+    edit: 'Edit',
+    delete: 'Delete',
+    confirmDelete: 'Are you sure you want to delete this item?',
+    noData: 'No data found',
+    loading: 'Loading...',
+    search: 'Search',
+    filter: 'Filter',
+  },
   actions: {
     view: 'View',
     add: 'Add',
@@ -25,6 +50,7 @@ export default {
     import: 'Import',
     print: 'Print',
     download: 'Download',
+    clear: 'Clear',
   },
   messages: {
     success: 'Operation completed successfully',
@@ -32,5 +58,6 @@ export default {
     confirmDelete: 'Are you sure you want to delete this item?',
     noData: 'No data found',
     loading: 'Loading...',
+    areYouSure: 'Are you sure?',
   },
 };
