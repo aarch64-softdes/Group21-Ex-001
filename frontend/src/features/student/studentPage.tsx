@@ -196,7 +196,7 @@ const StudentPage: React.FC = () => {
         }}
         tableOptions={[
           <FileImportButton onImport={fileOptions.onImport} />,
-          <FileExportButton onExport={fileOptions.onExport} />,
+          <FileExportButton onExport={fileOptions.onExport} prefix='student' />,
         ]}
         filterOptions={[searchNameFilterOption, searchFacultyFilterOption]}
       />

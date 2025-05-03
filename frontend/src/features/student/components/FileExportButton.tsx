@@ -7,18 +7,22 @@ import {
 } from '@ui/dropdown-menu';
 import { FileDown } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface FileExportButtonProps {
   onExport: (format: string) => Promise<Blob>;
   disabled?: boolean;
   className?: string;
+  prefix?: string;
 }
 
 const FileExportButton = ({
   onExport,
   disabled = false,
   className,
+  prefix,
 }: FileExportButtonProps) => {
+  const { t } = useTranslation('common');
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = async (format: string) => {
@@ -31,7 +35,7 @@ const FileExportButton = ({
       const a = document.createElement('a');
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       a.href = url;
-      a.download = `students_${timestamp}.${format}`;
+      a.download = `${prefix}_${timestamp}.${format}`;
       document.body.appendChild(a);
       a.click();
 
@@ -57,15 +61,17 @@ const FileExportButton = ({
           className={`flex items-center gap-2 ${className}`}
         >
           <FileDown className='h-4 w-4' />
-          {isExporting ? 'Exporting...' : 'Export'}
+          {isExporting
+            ? t('common:actions.export.exporting')
+            : t('common:actions.export.title')}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
         <DropdownMenuItem onClick={() => handleExport('csv')}>
-          Export as CSV
+          {t('common:actions.export.asCsv')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleExport('json')}>
-          Export as JSON
+          {t('common:actions.export.asJson')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

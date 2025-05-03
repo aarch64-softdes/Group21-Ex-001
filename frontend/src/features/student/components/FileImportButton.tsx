@@ -16,6 +16,7 @@ import {
 } from '@ui/select';
 import { FileUp, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface FileImportButtonProps {
   onImport: (format: string, file: File) => Promise<void>;
@@ -29,6 +30,8 @@ const FileImportButton = ({
   disabled = false,
   className,
 }: FileImportButtonProps) => {
+  const { t } = useTranslation('common');
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState<string>('csv');
@@ -77,7 +80,9 @@ const FileImportButton = ({
         onClick={() => setIsDialogOpen(true)}
       >
         <FileUp className='h-4 w-4' />
-        Import
+        {isImporting
+          ? t('common:actions.import.importing')
+          : t('common:actions.import.title')}
       </Button>
 
       <Dialog
@@ -89,16 +94,16 @@ const FileImportButton = ({
       >
         <DialogContent className='sm:max-w-[425px]'>
           <DialogHeader>
-            <DialogTitle>Import Students</DialogTitle>
+            <DialogTitle>{t('common:actions.import.title')}</DialogTitle>
             <DialogDescription>
-              Upload a CSV or JSON file with student data.
+              {t('common:actions.import.description')}
             </DialogDescription>
           </DialogHeader>
 
           <div className='grid gap-4 py-4'>
             <div className='grid gap-2'>
               <label htmlFor='format' className='text-sm font-medium'>
-                File Format
+                {t('common:actions.import.formatLabel')}
               </label>
               <Select
                 value={selectedFormat}
@@ -106,7 +111,9 @@ const FileImportButton = ({
                 disabled={isImporting}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Select format' />
+                  <SelectValue
+                    placeholder={t('common:actions.import.formatPlaceholder')}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value='csv'>CSV</SelectItem>
@@ -136,7 +143,9 @@ const FileImportButton = ({
                   className='w-full justify-start text-left'
                 >
                   <Upload className='mr-2 h-4 w-4' />
-                  {selectedFile ? selectedFile.name : 'Choose a file'}
+                  {selectedFile
+                    ? selectedFile.name
+                    : t('common:actions.import.selectFile')}
                 </Button>
               </div>
             </div>
@@ -154,7 +163,9 @@ const FileImportButton = ({
               onClick={handleImport}
               disabled={!selectedFile || isImporting}
             >
-              {isImporting ? 'Importing...' : 'Import'}
+              {isImporting
+                ? t('common:actions.import.importing')
+                : t('common:actions.import.title')}
             </Button>
           </DialogFooter>
         </DialogContent>
