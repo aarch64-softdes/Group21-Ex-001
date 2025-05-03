@@ -13,8 +13,11 @@ import Program, {
 } from '@/features/program/types/program';
 import { Column } from '@/core/types/table';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const ProgramPage: React.FC = () => {
+  const { t } = useTranslation(['program', 'common']);
+
   const createProgram = useCreateProgram();
   const updateProgram = useUpdateProgram();
   const deleteProgram = useDeleteProgram();
@@ -22,18 +25,18 @@ const ProgramPage: React.FC = () => {
   const columns: Column<Program>[] = React.useMemo(
     () => [
       {
-        header: 'ID',
+        header: t('program:fields.id'),
         key: 'id',
         style: {
           width: '80px',
         },
       },
       {
-        header: 'Name',
+        header: t('program:fields.name'),
         key: 'name',
       },
     ],
-    [],
+    [t],
   );
 
   const actions = React.useMemo(
@@ -57,8 +60,8 @@ const ProgramPage: React.FC = () => {
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
-        tableTitle='Program Management'
-        addingTitle='Add Program'
+        tableTitle={t('program:title')}
+        addingTitle={t('program:addNew')}
         queryHook={usePrograms}
         columns={columns}
         actions={actions}
