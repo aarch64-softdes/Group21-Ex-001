@@ -59,9 +59,9 @@ export const StudentFormSchema = z.object({
     return birthDate < today;
   }, t('student:validation.pastDate')),
   gender: z.string().min(1, t('student:validation.required')),
-  faculty: z.string().min(1, t('student:validation.required')),
+  facultyId: z.string().min(1, t('student:validation.required')),
   schoolYear: z.number().int().positive(),
-  program: z.string(),
+  programId: z.string().min(1, t('student:validation.required')),
   email: z.string().email(t('student:validation.email')),
   address: z.string().optional(),
   phone: z.object({
@@ -69,7 +69,7 @@ export const StudentFormSchema = z.object({
     countryCode: z.string(),
   }),
 
-  status: z
+  statusId: z
     .string()
     .min(1, t('student:validation.required'))
     .default('Studying'),
@@ -204,9 +204,23 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 }) => {
   const { t } = useTranslation(['student', 'common']);
 
-  const faculties = useFacultiesDropdown(isEditing ? 100 : 5);
-  const programs = useProgramsDropdown(isEditing ? 100 : 5);
-  const statuses = useStatusesDropdown(isEditing ? 100 : 5);
+  const faculties = useFacultiesDropdown(5, (faculty) => ({
+    id: faculty.id,
+    label: faculty.name,
+    value: faculty.id,
+  }));
+
+  const programs = useProgramsDropdown(5, (program) => ({
+    id: program.id,
+    label: program.name,
+    value: program.id,
+  }));
+
+  const statuses = useStatusesDropdown(5, (status) => ({
+    id: status.id,
+    label: status.name,
+    value: status.id,
+  }));
 
   const gendersQuery = useGenders();
 
@@ -231,7 +245,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       displayName: t('student:fields.address.mailing'),
     },
   ];
-
   const form = useForm<StudentFormValues>({
     resolver: zodResolver(StudentFormSchema),
     defaultValues: {
@@ -239,15 +252,15 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       name: '',
       dob: '',
       gender: '',
-      faculty: '',
+      facultyId: '',
       schoolYear: 1,
-      program: '',
+      programId: '',
       email: '',
       phone: {
         phoneNumber: '',
         countryCode: 'VN',
       },
-      status: 'Studying',
+      statusId: '1',
       permanentAddress: {
         street: '',
         ward: '',
@@ -300,9 +313,9 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
         name: studentData.name || '',
         dob: formattedDob || '',
         gender: studentData.gender || '',
-        faculty: studentData.faculty || '',
+        facultyId: studentData.facultyId || '',
         schoolYear: parseInt(studentData.schoolYear?.toString() || '1', 10),
-        program: studentData.program || '',
+        programId: studentData.programId || '',
         email: studentData.email || '',
         phone: {
           phoneNumber:
@@ -312,7 +325,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
             ) || '',
           countryCode: studentData.phone?.countryCode || 'VN',
         },
-        status: studentData.status || 'Studying',
+        statusId: studentData.statusId || '1',
         permanentAddress: studentData.permanentAddress || {
           street: '',
           ward: '',
@@ -346,7 +359,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
       // Log values being set for debugging
       console.log('Setting form values:', formValues);
 
-      // Use setTimeout to ensure the form resets after the component has fully rendered
       setTimeout(() => {
         form.reset(formValues);
       }, 0);
@@ -395,26 +407,6 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
   // Determine if we should show loading state
   const isFormLoading = isLoading || (isEditing && isLoadingStudent);
-
-  // Use form.watch() to debug values
-  const watchedValues = {
-    gender: form.watch('gender'),
-    faculty: form.watch('faculty'),
-    program: form.watch('program'),
-    status: form.watch('status'),
-    phone: form.watch('phone'),
-  };
-
-  // Log watched values for debugging
-  useEffect(() => {
-    console.log('Watched form values:', watchedValues);
-  }, [
-    watchedValues.gender,
-    watchedValues.faculty,
-    watchedValues.program,
-    watchedValues.status,
-    watchedValues.phone,
-  ]);
 
   return (
     <div className='sticky inset-0'>
@@ -826,7 +818,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
                   <div className='grid grid-cols-2 gap-4'>
                     <FormField
                       control={form.control}
-                      name='faculty'
+                      name='facultyId'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>{t('student:fields.faculty')}</FormLabel>
@@ -883,7 +875,7 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name='program'
+                      name='programId'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>{t('student:fields.program')}</FormLabel>
@@ -910,12 +902,12 @@ const StudentForm: React.FC<FormComponentProps<Student>> = ({
 
                     <FormField
                       control={form.control}
-                      name='status'
+                      name='statusId'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>{t('student:fields.status')}</FormLabel>
                           <LoadMoreSelect
-                            value={field.value || ''}
+                            value={field.value || '1'}
                             onValueChange={field.onChange}
                             placeholder={t('student:fields.selectStatus')}
                             items={statuses.selectItems}

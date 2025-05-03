@@ -6,12 +6,12 @@ export interface MetadataItem {
 }
 
 export default class MetadataService {
-  getGenders = async (): Promise<String[]> => {
+  getGenders = async (): Promise<string[]> => {
     const response = await api.get('/metadata/gender');
     return response.data;
   };
 
-  getIdentityTypes = async (): Promise<String[]> => {
+  getIdentityTypes = async (): Promise<string[]> => {
     const response = await api.get('/metadata/identity-type');
     return response.data;
   };

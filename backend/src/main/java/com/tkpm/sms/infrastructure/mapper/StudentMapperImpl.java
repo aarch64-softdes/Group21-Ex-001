@@ -5,10 +5,7 @@ import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.dto.response.student.StudentMinimalDto;
-import com.tkpm.sms.application.mapper.AddressMapper;
-import com.tkpm.sms.application.mapper.IdentityMapper;
-import com.tkpm.sms.application.mapper.PhoneMapper;
-import com.tkpm.sms.application.mapper.StudentMapper;
+import com.tkpm.sms.application.mapper.*;
 import com.tkpm.sms.domain.enums.Gender;
 import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.infrastructure.utils.ImportFileUtils;
@@ -19,16 +16,14 @@ import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring", imports = {Gender.class, ImportFileUtils.class}, uses = {
-        PhoneMapper.class, AddressMapper.class, IdentityMapper.class})
+        PhoneMapper.class, AddressMapper.class, IdentityMapper.class, FacultyMapper.class,
+        StatusMapper.class, ProgramMapper.class})
 public abstract class StudentMapperImpl implements StudentMapper {
 
     @Autowired
     protected PhoneMapper phoneMapper;
 
     @Override
-    @Mapping(target = "faculty", source = "faculty.name")
-    @Mapping(target = "program", source = "program.name")
-    @Mapping(target = "status", source = "status.name")
     @Mapping(target = "phone", expression = "java(phoneMapper.toPhoneDto(student.getPhone()))")
     @Mapping(target = "gender", source = "gender", qualifiedByName = "genderEnumToString")
     public abstract StudentDto toStudentDto(Student student);
@@ -74,9 +69,9 @@ public abstract class StudentMapperImpl implements StudentMapper {
     @Mapping(target = "mailingAddress", expression = "java(ImportFileUtils.parseAddressCreateRequestDto(studentFileDto.getMailingAddress()))")
     @Mapping(target = "identity", expression = "java(ImportFileUtils.parseIdentityCreateRequestDto(studentFileDto))")
     @Mapping(target = "phone", expression = "java(phoneMapper.toPhoneRequestDto(studentFileDto.getPhone()))")
-    @Mapping(target = "faculty", source = "faculty")
-    @Mapping(target = "program", source = "program")
-    @Mapping(target = "status", source = "status")
+    @Mapping(target = "facultyId", ignore = true)
+    @Mapping(target = "programId", ignore = true)
+    @Mapping(target = "statusId", ignore = true)
     public abstract StudentCreateRequestDto toStudentCreateRequest(StudentFileDto studentFileDto);
 
     @Override
