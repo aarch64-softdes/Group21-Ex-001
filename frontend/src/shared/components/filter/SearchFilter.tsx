@@ -65,12 +65,12 @@ const SearchFilter: React.FC<SearchFilterOption> = ({
             value={localValue}
             onChange={handleInputChange}
             placeholder={placeholder || t('table.search')}
-            className='w-56 pl-9'
+            className='w-64 pl-9'
           />
           {hasValue && (
             <button
               onClick={handleClear}
-              className='absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground'
+              className='absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground'
               aria-label={t('actions.clear')}
             >
               <X className='h-4 w-4' />
@@ -100,9 +100,7 @@ const SearchFilter: React.FC<SearchFilterOption> = ({
         <PopoverTrigger asChild>
           <Button variant='outline'>{triggerContent}</Button>
         </PopoverTrigger>
-        <PopoverContent className='w-[320px] p-4'>
-          {searchContent}
-        </PopoverContent>
+        <PopoverContent className='w-[320px]'>{searchContent}</PopoverContent>
       </Popover>
     );
   }

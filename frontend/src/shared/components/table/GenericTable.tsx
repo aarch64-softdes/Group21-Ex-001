@@ -64,14 +64,12 @@ const GenericTable = <T extends { id: string }>({
     delete: actionCellProperties.delete.disabled,
   };
 
-  const defaultSortColumn = columns.find(
-    (column) => column.isDefaultSort,
-  )?.header;
+  const defaultSortColumn = columns.find((column) => column.isDefaultSort)?.key;
 
   const { data, pagination, state, sort, filters } = useGenericTableData({
     useQueryHook: queryHook,
     filterOptions,
-    defaultSortColumn,
+    defaultSortColumn: defaultSortColumn as string,
   });
 
   // State for detail dialog
@@ -228,7 +226,7 @@ const GenericTable = <T extends { id: string }>({
           ))}
           {disabledActionCell ? null : (
             <TableHead className='w-16 text-blue-500 text-center'>
-              Action
+              {t('common:table.actions')}
             </TableHead>
           )}
           <TableHead className='w-4' />

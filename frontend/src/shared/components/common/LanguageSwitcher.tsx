@@ -24,9 +24,9 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='sm' className='h-8 w-8 px-0'>
+        <Button variant='ghost' size='sm' className='justify-start w-fit'>
           <Globe className='h-4 w-4' />
-          <span className='sr-only'>Toggle language</span>
+          <span>{i18n.language === 'en' ? 'English' : 'Tiếng Việt'}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
