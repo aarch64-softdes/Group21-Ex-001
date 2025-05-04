@@ -18,7 +18,7 @@ import { Textarea } from '@ui/textarea';
 import { useSubject, useSubjectsDropdown } from '@subject/api/useSubjectApi';
 import { FormComponentPropsWithoutType } from '@/core/types/table';
 import { Loader2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import LoadingButton from '@ui/loadingButton';
 import { Badge } from '@/components/ui/badge';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
@@ -78,11 +78,6 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
     id,
   );
 
-  // Store selected prerequisites
-  const [selectedPrerequisites, setSelectedPrerequisites] = useState<
-    { id: string; label: string; value: string }[]
-  >([]);
-
   const form = useForm<SubjectFormValues>({
     resolver: zodResolver(SubjectFormSchema),
     defaultValues: {
@@ -115,16 +110,6 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
           value: subjectData.faculty.id,
         });
       }
-
-      // Initialize selected prerequisites from subject data
-      if (subjectData.prerequisites?.length) {
-        const prereqs = subjectData.prerequisites.map((subject) => ({
-          id: subject.id || '',
-          label: `${subject.code} - ${subject.name}`,
-          value: subject.id || '',
-        }));
-        setSelectedPrerequisites(prereqs);
-      }
     }
   }, [subjectData, id, form]);
 
@@ -133,34 +118,8 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
       let { code, ...updateData } = values;
       onSubmit(updateData);
     } else {
-      onSubmit({
-        ...values,
-        prerequisitesId: selectedPrerequisites.map((item) => item.id),
-      });
+      onSubmit(values);
     }
-  };
-
-  // Handle adding a prerequisite
-  const handleAddPrerequisite = (selectedId: string) => {
-    if (!selectedId) return;
-
-    // Find the selected item from the dropdown options
-    const selectedItem = subjects.selectItems.find(
-      (item) => item.id === selectedId,
-    );
-    if (
-      selectedItem &&
-      !selectedPrerequisites.some((item) => item.id === selectedId)
-    ) {
-      setSelectedPrerequisites((prev) => [...prev, selectedItem]);
-    }
-  };
-
-  // Handle removing a prerequisite
-  const handleRemovePrerequisite = (prerequisiteId: string) => {
-    setSelectedPrerequisites((prev) =>
-      prev.filter((item) => item.id !== prerequisiteId),
-    );
   };
 
   // Determine if we should show loading state
@@ -301,61 +260,99 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                       <FormField
                         control={form.control}
                         name='prerequisitesId'
-                        render={() => (
-                          <FormItem className='col-span-2'>
-                            <FormLabel>Prerequisites</FormLabel>
-                            <div>
-                              <div className='flex flex-wrap gap-2 mb-2 min-h-10 border rounded-md p-2'>
-                                {selectedPrerequisites.length > 0 ? (
-                                  selectedPrerequisites.map((prerequisite) => (
-                                    <Badge
-                                      key={prerequisite.id}
-                                      variant='secondary'
-                                      className='flex items-center gap-1'
-                                    >
-                                      <div>{prerequisite.label}</div>
-                                      <button
-                                        type='button'
-                                        className='ml-1 p-1 rounded-full hover:bg-gray-200 focus:outline-none'
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          e.preventDefault();
-                                          handleRemovePrerequisite(
-                                            prerequisite.id,
-                                          );
-                                        }}
-                                      >
-                                        <X className='h-3 w-3' />
-                                      </button>
-                                    </Badge>
-                                  ))
-                                ) : (
-                                  <span className='text-sm text-muted-foreground'>
-                                    No prerequisites selected
-                                  </span>
-                                )}
+                        render={({ field }) => {
+                          const handleAddPrerequisite = (
+                            selectedId: string,
+                          ) => {
+                            if (!selectedId) return;
+
+                            const selectedItem = subjects.selectItems.find(
+                              (item) => item.id === selectedId,
+                            );
+                            if (
+                              selectedItem &&
+                              !field.value.includes(selectedId)
+                            ) {
+                              field.onChange([...field.value, selectedId]);
+                            }
+                          };
+
+                          const handleRemovePrerequisite = (
+                            prerequisiteId: string,
+                          ) => {
+                            field.onChange(
+                              field.value.filter(
+                                (id: string) => id !== prerequisiteId,
+                              ),
+                            );
+                          };
+
+                          return (
+                            <FormItem className='col-span-2'>
+                              <FormLabel>Prerequisites</FormLabel>
+                              <div>
+                                <div className='flex flex-wrap gap-2 mb-2 min-h-10 border rounded-md p-2'>
+                                  {field.value && field.value.length > 0 ? (
+                                    field.value.map((prerequisiteId) => {
+                                      const prerequisite =
+                                        subjects.selectItems.find(
+                                          (item) => item.id === prerequisiteId,
+                                        );
+                                      if (!prerequisite) return null;
+
+                                      return (
+                                        <Badge
+                                          key={prerequisiteId}
+                                          variant='secondary'
+                                          className='flex items-center gap-1'
+                                        >
+                                          <div>{prerequisite.label}</div>
+                                          <button
+                                            type='button'
+                                            className='ml-1 p-1 rounded-full hover:bg-gray-200 focus:outline-none'
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              e.preventDefault();
+                                              handleRemovePrerequisite(
+                                                prerequisiteId,
+                                              );
+                                            }}
+                                          >
+                                            <X className='h-3 w-3' />
+                                          </button>
+                                        </Badge>
+                                      );
+                                    })
+                                  ) : (
+                                    <span className='text-sm text-muted-foreground'>
+                                      No prerequisites selected
+                                    </span>
+                                  )}
+                                </div>
+                                <LoadMoreSelect
+                                  value=''
+                                  onValueChange={handleAddPrerequisite}
+                                  placeholder='Add prerequisite'
+                                  items={subjects.selectItems.filter(
+                                    (item) => !field.value.includes(item.id),
+                                  )}
+                                  isLoading={subjects.isLoading}
+                                  isLoadingMore={subjects.isLoadingMore}
+                                  hasMore={subjects.hasMore}
+                                  onLoadMore={subjects.loadMore}
+                                  disabled={subjects.isLoading}
+                                  emptyMessage='No prerequisites found.'
+                                  searchPlaceholder='Search prerequisites...'
+                                  onSearch={subjects.setSubjectSearch}
+                                  disabledItems={(metadata) => {
+                                    return !metadata.isActive;
+                                  }}
+                                />
+                                <FormMessage />
                               </div>
-                              <LoadMoreSelect
-                                value=''
-                                onValueChange={handleAddPrerequisite}
-                                placeholder='Add prerequisite'
-                                items={subjects.selectItems}
-                                isLoading={subjects.isLoading}
-                                isLoadingMore={subjects.isLoadingMore}
-                                hasMore={subjects.hasMore}
-                                onLoadMore={subjects.loadMore}
-                                disabled={subjects.isLoading}
-                                emptyMessage='No prerequisites found.'
-                                searchPlaceholder='Search prerequisites...'
-                                onSearch={subjects.setSubjectSearch}
-                                disabledItems={(metadata) => {
-                                  return !metadata.isActive;
-                                }}
-                              />
-                              <FormMessage />
-                            </div>
-                          </FormItem>
-                        )}
+                            </FormItem>
+                          );
+                        }}
                       />
                     )}
 

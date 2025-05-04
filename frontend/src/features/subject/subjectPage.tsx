@@ -12,7 +12,7 @@ import Subject, {
   UpdateSubjectDTO,
 } from '@/features/subject/types/subject';
 import { Column } from '@/core/types/table';
-import React from 'react';
+import React, { useCallback } from 'react';
 import SubjectForm from '@subject/components/SubjectForm';
 import SubjectDetail from '@subject/components/SubjectDetail';
 
@@ -49,6 +49,7 @@ const SubjectPage: React.FC = () => {
         key: 'credits',
         style: {
           width: '100px',
+          textAlign: 'center',
         },
       },
       {
@@ -61,6 +62,7 @@ const SubjectPage: React.FC = () => {
         key: 'isActive',
         style: {
           width: '100px',
+          textAlign: 'center',
         },
         transform: (value: boolean) => {
           return value ? 'Active' : 'Inactive';
@@ -70,60 +72,72 @@ const SubjectPage: React.FC = () => {
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onSave: async (id: string, value: UpdateSubjectDTO) => {
-        await updateSubject.mutateAsync({
-          id,
-          data: value,
-        });
-      },
-      onAdd: async (value: CreateSubjectDTO) => {
-        await createSubject.mutateAsync(value);
-      },
-      onDelete: async (id: string) => {
-        await deleteSubject.mutateAsync(id);
-      },
-    }),
-    [updateSubject, createSubject, deleteSubject],
+  const onSave = useCallback(
+    async (id: string, value: UpdateSubjectDTO) => {
+      await updateSubject.mutateAsync({
+        id: id,
+        data: value,
+      });
+    },
+    [updateSubject],
+  );
+
+  const onDelete = useCallback(
+    async (id: string) => {
+      await deleteSubject.mutateAsync(id);
+    },
+    [deleteSubject],
+  );
+
+  const onAdd = useCallback(
+    async (value: CreateSubjectDTO) => {
+      await createSubject.mutateAsync(value);
+    },
+    [createSubject],
   );
 
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Subject Management'
-        addingTitle='Add Subject'
+        addAction={{
+          onAdd,
+          title: 'Add Subject',
+        }}
         queryHook={useSubjects}
         columns={columns}
-        actions={actions}
-        formComponent={SubjectForm}
-        detailComponent={SubjectDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
+          },
+          delete: {
+            onDelete,
+          },
+          detailComponent: SubjectDetail,
+          formComponent: SubjectForm,
+          additionalActions: [
+            {
+              label: 'Activate',
+              handler: async (id: string) => {
+                await activateSubject.mutateAsync(id);
+              },
+              disabled: (row: Subject) => {
+                return row.isActive;
+              },
+            },
+            {
+              label: 'Deactivate',
+              handler: async (id: string) => {
+                await deactivateSubject.mutateAsync(id);
+              },
+              disabled: (row: Subject) => {
+                return !row.isActive;
+              },
+            },
+          ],
         }}
-        requireDeleteConfirmation={true}
         filterOptions={[]}
-        additionalActions={[
-          {
-            label: 'Activate',
-            handler: async (id: string) => {
-              await activateSubject.mutateAsync(id);
-            },
-            disabled: (row: Subject) => {
-              return row.isActive;
-            },
-          },
-          {
-            label: 'Deactivate',
-            handler: async (id: string) => {
-              await deactivateSubject.mutateAsync(id);
-            },
-            disabled: (row: Subject) => {
-              return !row.isActive;
-            },
-          },
-        ]}
       />
     </div>
   );

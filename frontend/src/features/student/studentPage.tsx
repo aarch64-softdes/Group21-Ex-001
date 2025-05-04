@@ -16,6 +16,8 @@ import { Column } from '@/core/types/table';
 import { FolderSearch, UserSearch } from 'lucide-react';
 import StudentService from '@/features/student/api/studentService';
 import { useNavigate } from 'react-router-dom';
+import FileImportButton from './components/FileImportButton';
+import FileExportButton from './components/FileExportButton';
 
 const StudentPage: React.FC = () => {
   const studentService = new StudentService();
@@ -72,6 +74,7 @@ const StudentPage: React.FC = () => {
         key: 'schoolYear',
         style: {
           width: '80px',
+          textAlign: 'center',
         },
       },
       {
@@ -79,6 +82,7 @@ const StudentPage: React.FC = () => {
         key: 'status',
         style: {
           width: '112px',
+          textAlign: 'center',
         },
 
         // render: (value: string) => {
@@ -113,21 +117,6 @@ const StudentPage: React.FC = () => {
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onSave: async (id: string, value: CreateStudentDTO) => {
-        await updateStudent.mutateAsync({ id, data: value });
-      },
-      onAdd: async (value: CreateStudentDTO) => {
-        await createStudent.mutateAsync(value);
-      },
-      onDelete: async (id: string) => {
-        await deleteStudent.mutateAsync(id);
-      },
-    }),
-    [updateStudent, createStudent, deleteStudent],
-  );
-
   const searchNameFilterOption: SearchFilterOption = {
     id: 'search',
     label: 'Search by name',
@@ -155,36 +144,71 @@ const StudentPage: React.FC = () => {
     [],
   );
 
+  const fileOptions = React.useMemo(
+    () => ({
+      enableExport: true,
+      onExport: handleExportStudents,
+      enableImport: true,
+      onImport: handleImportStudents,
+    }),
+    [handleExportStudents, handleImportStudents],
+  );
+
+  const onSave = useCallback(
+    async (id: string, value: CreateStudentDTO) => {
+      await updateStudent.mutateAsync({ id, data: value });
+    },
+    [updateStudent],
+  );
+
+  const onDelete = useCallback(
+    async (id: string) => {
+      await deleteStudent.mutateAsync(id);
+    },
+    [deleteStudent],
+  );
+
+  const onAdd = useCallback(
+    async (value: CreateStudentDTO) => {
+      await createStudent.mutateAsync(value);
+    },
+    [createStudent],
+  );
+
   return (
     <div className='min-h-3/4 m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Student Management'
-        addingTitle='Add Student'
+        addAction={{
+          title: 'Add Student',
+          onAdd,
+        }}
         queryHook={useStudents}
         columns={columns}
-        actions={actions}
-        formComponent={StudentForm}
-        detailComponent={StudentDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
-        }}
-        requireDeleteConfirmation={true}
-        filterOptions={[searchNameFilterOption, searchFacultyFilterOption]}
-        fileOptions={{
-          enableExport: true,
-          onExport: handleExportStudents,
-          enableImport: true,
-          onImport: handleImportStudents,
-        }}
-        additionalActions={[
-          {
-            label: 'Enrollment',
-            handler(id) {
-              navigate(`/student/${id}/enrollments`);
-            },
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
           },
+          delete: {
+            onDelete,
+          },
+          formComponent: StudentForm,
+          detailComponent: StudentDetail,
+          additionalActions: [
+            {
+              label: 'Enrollment',
+              handler(id) {
+                navigate(`/student/${id}/enrollments`);
+              },
+            },
+          ],
+        }}
+        tableOptions={[
+          <FileImportButton onImport={fileOptions.onImport} />,
+          <FileExportButton onExport={fileOptions.onExport} />,
         ]}
+        filterOptions={[searchNameFilterOption, searchFacultyFilterOption]}
       />
     </div>
   );

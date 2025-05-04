@@ -2,14 +2,7 @@ import React, { useState } from 'react';
 import { useCourses } from '@/features/course/api/useCourseApi';
 import { useEnrollCourse } from '../api/useEnrollmentApi';
 import { Button } from '@ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@ui/table';
+
 import {
   Dialog,
   DialogContent,
@@ -19,116 +12,45 @@ import {
   DialogTitle,
 } from '@ui/dialog';
 import { Loader2 } from 'lucide-react';
-import TablePagination from '@/components/table/TablePagination';
+import GenericTable from '@/components/table/GenericTable';
+import Course from '@/features/course/types/course';
+import { Column } from '@/core/types/table';
 
 interface AvailableCoursesTableProps {
   studentId: string;
 }
 
-const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
+interface CustomEnrollButtonProps {
+  id: string;
+  studentId: string;
+  code: string;
+}
+
+const CustomEnrollButton: React.FC<CustomEnrollButtonProps> = ({
+  id,
   studentId,
 }) => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
-
-  const { data: coursesResponse, isLoading } = useCourses({
-    page,
-    pageSize,
-    filters: {},
-    sort: { key: 'code', direction: 'asc' },
-  });
-
   const enrollCourse = useEnrollCourse();
 
-  const handleEnrollClick = (courseId: string) => {
-    setSelectedCourse(courseId);
+  const handleEnrollClick = () => {
     setIsEnrollDialogOpen(true);
   };
 
   const handleConfirmEnroll = async () => {
-    if (selectedCourse) {
-      await enrollCourse.mutateAsync({
-        studentId,
-        courseId: selectedCourse,
-      });
-      setIsEnrollDialogOpen(false);
-      setSelectedCourse(null);
-    }
+    await enrollCourse.mutateAsync({
+      studentId,
+      courseId: id,
+    });
+    setIsEnrollDialogOpen(false);
   };
-
-  // Format semester display
-  const formatSemester = (year: number, semester: number) => {
-    return `${year}, Semester ${semester}`;
-  };
-
-  if (isLoading) {
-    return (
-      <div className='flex items-center justify-center h-48'>
-        <Loader2 className='h-8 w-8 animate-spin text-primary' />
-      </div>
-    );
-  }
 
   return (
-    <div className='bg-white rounded-md p-4'>
-      {!coursesResponse?.data || coursesResponse.data.length === 0 ? (
-        <div className='text-center py-8'>
-          <p className='text-muted-foreground'>No available courses found.</p>
-        </div>
-      ) : (
-        <>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Subject</TableHead>
-                <TableHead>Schedule</TableHead>
-                <TableHead>Room</TableHead>
-                <TableHead>Semester</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {coursesResponse.data.map((course) => (
-                <TableRow key={course.id}>
-                  <TableCell className='font-medium'>{course.code}</TableCell>
-                  <TableCell>{course.subject?.name}</TableCell>
-                  <TableCell>{course.schedule}</TableCell>
-                  <TableCell>{course.room}</TableCell>
-                  <TableCell>
-                    {formatSemester(course.year, course.semester)}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size='sm'
-                      onClick={() => handleEnrollClick(course.id)}
-                      disabled={enrollCourse.isPending}
-                    >
-                      Enroll
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-          <div className='py-4'>
-            <TablePagination
-              currentPage={page}
-              totalPages={coursesResponse.totalPages}
-              totalItems={coursesResponse.totalItems}
-              pageSize={pageSize}
-              onPageChange={setPage}
-              onPageSizeChange={setPageSize}
-            />
-          </div>
-        </>
-      )}
+    <>
+      <Button onClick={handleEnrollClick}>Enroll</Button>
 
       <Dialog open={isEnrollDialogOpen} onOpenChange={setIsEnrollDialogOpen}>
-        <DialogContent>
+        <DialogContent className='max-w-[425px]'>
           <DialogHeader>
             <DialogTitle>Confirm Enrollment</DialogTitle>
             <DialogDescription>
@@ -159,7 +81,50 @@ const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
+  );
+};
+
+const AvailableCoursesTable: React.FC<AvailableCoursesTableProps> = ({
+  studentId,
+}) => {
+  const columns: Column<Course>[] = [
+    {
+      header: 'Code',
+      key: 'code',
+    },
+    {
+      header: 'Subject',
+      key: 'subject.name',
+      nested: true,
+    },
+    {
+      header: 'Schedule',
+      key: 'schedule',
+    },
+    {
+      header: 'Room',
+      key: 'room',
+    },
+    {
+      header: 'Semester',
+      key: 'semester',
+      transform: (value, row) => `${row?.year}, Semester ${value}`,
+    },
+  ];
+
+  return (
+    <GenericTable
+      columns={columns}
+      addAction={{
+        disabled: true,
+        onAdd: () => {},
+      }}
+      queryHook={useCourses}
+      filterOptions={[]}
+      customActionCellComponent={CustomEnrollButton}
+      metadata={studentId}
+    />
   );
 };
 

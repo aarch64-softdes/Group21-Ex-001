@@ -1,6 +1,7 @@
 import { UseQueryResult } from '@tanstack/react-query';
 import { ApiResponse } from './apiResponse';
 import { FilterOption, FilterParams } from './filter';
+import { ReactElement } from 'react';
 
 export type SortConfig = {
   key: string | null;
@@ -19,6 +20,7 @@ export type ColumnStyle = {
   width?: string;
   minWidth?: string;
   maxWidth?: string;
+  textAlign?: 'left' | 'center' | 'right';
 };
 
 export interface Column<T> {
@@ -28,24 +30,12 @@ export interface Column<T> {
   isDefaultSort?: boolean;
   sortable?: boolean;
   style?: ColumnStyle;
-  transform?: (value: any) => string; // Use any to allow for any type of value
+  transform?: (value: any, row?: T) => string | ReactElement; // Use any to allow for any type of value
 }
 
-export interface TableFileOptions {
-  enableExport?: boolean;
-  onExport?: (format: string) => Promise<Blob>;
-
-  enableImport?: boolean;
-  onImport?: (format: string, file: File) => Promise<void>;
-  onImportSuccess?: () => void;
-}
-
-// NOTE: Must use "any" here because the type of the data is not known
-export interface TableActions {
-  onSave?: (id: string, updatedData: any) => void | Promise<void>;
-  onDelete?: (id: string) => void | Promise<void>;
-  onAdd?: (data: any) => void | Promise<void>;
-}
+export type SaveAction = (id: string, updatedData: any) => void | Promise<void>;
+export type DeleteAction = (id: string) => void | Promise<void>;
+export type AddAction = (data: any) => void | Promise<void>;
 
 export interface TablePaginationProps {
   currentPage: number;
@@ -100,22 +90,35 @@ export interface DetailComponentProps {
 }
 
 export interface GenericTableProps<T extends { id: string }> {
-  tableTitle: string;
-  addingTitle: string;
+  tableTitle?: string;
   columns: Column<T>[];
-  actions?: TableActions;
-  formComponent: React.FC<FormComponentProps<T>>;
-  detailComponent: React.FC<DetailComponentProps>;
-  disabledActions?: {
-    edit?: boolean;
-    delete?: boolean;
+  addAction: {
+    onAdd: AddAction;
+    disabled?: boolean;
+    title?: string;
   };
+  actionCellProperties?: {
+    requireDeleteConfirmation?: boolean;
+    edit: {
+      onSave: SaveAction;
+      disabled?: boolean;
+    };
+    delete: {
+      onDelete: DeleteAction;
+      disabled?: boolean;
+    };
+    formComponent?: React.FC<FormComponentProps<T>>;
+    detailComponent?: React.FC<DetailComponentProps>;
+    additionalActions?: AdditionalAction[];
+  };
+  disabledActionCell?: boolean;
+  customActionCellComponent?: React.FC<any>;
   queryHook: QueryHook<T>;
   filterOptions: FilterOption[];
-  requireDeleteConfirmation?: boolean;
-  additionalActions?: AdditionalAction[];
+  tableOptions?: ReactElement<{ disabled?: boolean }>[];
   disablePagination?: boolean;
-  fileOptions?: TableFileOptions;
+  emptyMessage?: string;
+  metadata?: any;
 }
 
 export interface ActionCellProps {

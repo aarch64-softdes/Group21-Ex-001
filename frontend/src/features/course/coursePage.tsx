@@ -41,6 +41,7 @@ const CoursePage: React.FC = () => {
         key: 'room',
         style: {
           width: '80px',
+          textAlign: 'center',
         },
       },
       {
@@ -48,6 +49,7 @@ const CoursePage: React.FC = () => {
         key: 'schedule',
         style: {
           width: '100px',
+          textAlign: 'center',
         },
       },
       {
@@ -55,6 +57,7 @@ const CoursePage: React.FC = () => {
         key: 'year',
         style: {
           width: '60px',
+          textAlign: 'center',
         },
       },
       {
@@ -62,54 +65,70 @@ const CoursePage: React.FC = () => {
         key: 'semester',
         style: {
           width: '80px',
+          textAlign: 'center',
         },
       },
     ],
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onSave: async (id: string, value: UpdateCourseDTO) => {
-        await updateCourse.mutateAsync({
-          id,
-          data: value,
-        });
-      },
-      onAdd: async (value: CreateCourseDTO) => {
-        await createCourse.mutateAsync(value);
-      },
-      onDelete: async (id: string) => {
-        await deleteCourse.mutateAsync(id);
-      },
-    }),
-    [updateCourse, createCourse, deleteCourse],
+  const onSave = React.useCallback(
+    async (id: string, value: UpdateCourseDTO) => {
+      await updateCourse.mutateAsync({
+        id,
+        data: value,
+      });
+    },
+    [updateCourse],
+  );
+
+  const onDelete = React.useCallback(
+    async (id: string) => {
+      await deleteCourse.mutateAsync(id);
+    },
+    [deleteCourse],
+  );
+
+  const onAdd = React.useCallback(
+    async (value: CreateCourseDTO) => {
+      await createCourse.mutateAsync(value);
+    },
+    [createCourse],
   );
 
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Course Management'
-        addingTitle='Add Course'
+        addAction={{
+          onAdd,
+          disabled: false,
+          title: 'Add Course',
+        }}
         queryHook={useCourses}
         columns={columns}
-        actions={actions}
-        formComponent={CourseForm}
-        detailComponent={CourseDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
-        }}
-        requireDeleteConfirmation={true}
-        filterOptions={[]}
-        additionalActions={[
-          {
-            label: 'Enrollment',
-            handler(id) {
-              navigate(`/course/${id}/enrollments`);
-            },
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
+            disabled: false,
           },
-        ]}
+          delete: {
+            onDelete,
+            disabled: false,
+          },
+          detailComponent: CourseDetail,
+          formComponent: CourseForm,
+          additionalActions: [
+            {
+              label: 'Enrollment',
+              handler(id) {
+                navigate(`/course/${id}/enrollments`);
+              },
+            },
+          ],
+        }}
+        filterOptions={[]}
       />
     </div>
   );

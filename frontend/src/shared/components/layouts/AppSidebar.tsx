@@ -18,6 +18,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSubItem,
 } from '@ui/sidebar';
 
 // Menu items.
@@ -73,7 +74,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={window.location.pathname == `/${item.url}`}
+                  >
                     <a href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>

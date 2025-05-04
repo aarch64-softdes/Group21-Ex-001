@@ -33,39 +33,51 @@ const StatusPage: React.FC = () => {
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onSave: async (id: string, value: UpdateStatusDTO) => {
-        await updateStatus.mutateAsync({
-          id,
-          data: value,
-        });
-      },
-      onAdd: async (value: CreateStatusDTO) => {
-        await createStatus.mutateAsync(value);
-      },
-      onDelete: async (id: string) => {
-        await deleteStatus.mutateAsync(id);
-      },
-    }),
-    [updateStatus, createStatus, deleteStatus],
+  const onSave = React.useCallback(
+    async (id: string, value: UpdateStatusDTO) => {
+      await updateStatus.mutateAsync({
+        id,
+        data: value,
+      });
+    },
+    [updateStatus],
+  );
+
+  const onDelete = React.useCallback(
+    async (id: string) => {
+      await deleteStatus.mutateAsync(id);
+    },
+    [deleteStatus],
+  );
+
+  const onAdd = React.useCallback(
+    async (value: CreateStatusDTO) => {
+      await createStatus.mutateAsync(value);
+    },
+    [createStatus],
   );
 
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
         tableTitle='Status Management'
-        addingTitle='Add Status'
+        addAction={{
+          onAdd,
+          title: 'Add Status',
+        }}
         queryHook={useStatuses}
         columns={columns}
-        actions={actions}
-        formComponent={StatusForm}
-        detailComponent={StatusDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
+          },
+          delete: {
+            onDelete,
+          },
+          detailComponent: StatusDetail,
+          formComponent: StatusForm,
         }}
-        requireDeleteConfirmation={true}
         filterOptions={[]}
       />
     </div>
