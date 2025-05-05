@@ -15,6 +15,8 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/statuses")
@@ -38,18 +41,20 @@ public class StatusController {
         PageResponse<Status> pageResponse = statusService.getAllStatuses(search);
         List<StatusDto> statusDtos = ListUtils.transform(pageResponse.getData(),
                 statusMapper::toStatusDto);
+
         PageResponse<StatusDto> listResponse = PageResponse.of(pageResponse, statusDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<StatusDto>> getStatus(@PathVariable Integer id) {
+        var languageCode = LocaleContextHolder.getLocale().getLanguage();
         Status status = statusService.getStatusById(id);
 
         List<AllowedTransitionDto> allowedTransitions = status.getValidTransitionIds().stream()
                 .map(toId -> {
                     Status toStatus = statusService.getStatusById(toId);
-                    return new AllowedTransitionDto(toId, toStatus.getName());
+                    return new AllowedTransitionDto(toId, toStatus.getNameByLanguage(languageCode));
                 }).collect(Collectors.toList());
 
         StatusDto statusDto = statusMapper.toStatusDto(status);
@@ -62,6 +67,8 @@ public class StatusController {
     public ResponseEntity<ApplicationResponseDto<StatusDto>> createStatus(
             @Valid @RequestBody StatusRequestDto statusRequestDto,
             UriComponentsBuilder uriComponentsBuilder) {
+        var languageCode = LocaleContextHolder.getLocale().getLanguage();
+
         Status status = statusService.createStatus(statusRequestDto);
         StatusDto statusDto = statusMapper.toStatusDto(status);
 

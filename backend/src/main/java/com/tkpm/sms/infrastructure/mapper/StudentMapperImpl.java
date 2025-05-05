@@ -31,7 +31,8 @@ public abstract class StudentMapperImpl implements StudentMapper {
     @Override
     @Mapping(target = "faculty", source = "faculty.name")
     @Mapping(target = "program", source = "program.name")
-    @Mapping(target = "status", source = "status.name")
+    // @Mapping(target = "status", source = "status.name")
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "phone", expression = "java(phoneMapper.toPhoneDto(student.getPhone()))")
     @Mapping(target = "gender", source = "gender", qualifiedByName = "genderEnumToString")
     public abstract StudentMinimalDto toStudentMinimalDto(Student student);
@@ -88,7 +89,8 @@ public abstract class StudentMapperImpl implements StudentMapper {
     @Mapping(target = "identityCountry", source = "identity.country")
     @Mapping(target = "faculty", source = "faculty.name")
     @Mapping(target = "program", source = "program.name")
-    @Mapping(target = "status", source = "status.name")
+    // @Mapping(target = "status", source = "status.name")
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "phone", expression = "java(student.getPhone().toString())")
     @Mapping(target = "gender", source = "gender", qualifiedByName = "genderEnumToString")
     public abstract StudentFileDto toStudentFileDto(Student student);

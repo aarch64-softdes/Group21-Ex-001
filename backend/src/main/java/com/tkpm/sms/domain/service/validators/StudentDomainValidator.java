@@ -5,6 +5,7 @@ import com.tkpm.sms.domain.exception.UnsupportedStatusTransitionException;
 import com.tkpm.sms.domain.exception.UnsupportedEmailException;
 import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.model.Student;
+import com.tkpm.sms.domain.valueobject.Translation;
 import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,9 +59,16 @@ public class StudentDomainValidator {
 
     public void validateStatusTransition(Student student, Status newStatus) {
         if (student.getStatus() != null && !student.isStatusTransitionAllowed(newStatus)) {
+            var translations = student.getStatus().getName().getTranslations();
+            var fromStatus = translations.stream().filter(Translation::isOriginal).findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Original status name not found"));
+
+            var toStatus = newStatus.getName().getTranslations().stream()
+                    .filter(Translation::isOriginal).findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Original status name not found"));
+
             throw new UnsupportedStatusTransitionException(
-                    String.format("Transition from %s to %s is not allowed",
-                            student.getStatus().getName(), newStatus.getName()));
+                    String.format("Transition from %s to %s is not allowed", fromStatus, toStatus));
         }
     }
 }

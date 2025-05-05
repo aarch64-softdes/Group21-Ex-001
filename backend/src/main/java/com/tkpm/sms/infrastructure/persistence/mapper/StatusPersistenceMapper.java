@@ -7,7 +7,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {TranslationPersistenceMapper.class,
+        TranslationPersistenceMapper.class})
 public interface StatusPersistenceMapper {
 
     @Mapping(target = "students", ignore = true)

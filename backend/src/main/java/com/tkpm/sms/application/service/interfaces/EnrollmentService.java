@@ -14,19 +14,20 @@ import java.util.List;
 
 public interface EnrollmentService {
     PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId,
-            BaseCollectionRequest baseCollectionRequest);
+            BaseCollectionRequest baseCollectionRequest, String languageCode);
 
     PageResponse<History> findEnrollmentHistoryOfStudent(String studentId,
-            BaseCollectionRequest baseCollectionRequest);
+            BaseCollectionRequest baseCollectionRequest, String languageCode);
 
-    Enrollment updateTranscriptOfEnrollment(String studentId, Integer courseId,
+    void updateTranscriptOfEnrollment(String studentId, Integer courseId,
             TranscriptUpdateRequestDto transcriptUpdateRequestDto);
 
     void updateTranscripts(List<EnrollmentFileImportDto> enrollmentFileImportDtos);
 
-    Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto);
+    Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto,
+            String languageCode);
 
     void deleteEnrollment(EnrollmentDeleteRequestDto enrollmentDeleteRequestDto);
 
-    AcademicTranscriptDto getAcademicTranscriptOfStudent(String studentId);
+    AcademicTranscriptDto getAcademicTranscriptOfStudent(String studentId, String languageCode);
 }

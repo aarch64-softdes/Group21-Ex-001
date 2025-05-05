@@ -47,38 +47,37 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     public PageResponse<Enrollment> findAllEnrollmentsOfStudent(String studentId,
-            BaseCollectionRequest request) {
+            BaseCollectionRequest request, String languageCode) {
         PageRequest pageRequest = PageRequest.from(request);
 
         // it will throw ResourceNotFoundException when there is no student with studentId-parameter
-        studentService.getStudentDetail(studentId);
+        studentService.getStudentDetail(studentId, languageCode);
 
-        var debug = enrollmentRepository.findAllEnrollmentsOfStudentWithPaging(studentId,
-                pageRequest);
-        return debug;
+        return enrollmentRepository.findAllEnrollmentsOfStudentWithPaging(studentId, pageRequest);
     }
 
     @Override
     public PageResponse<History> findEnrollmentHistoryOfStudent(String studentId,
-            BaseCollectionRequest request) {
+            BaseCollectionRequest request, String languageCode) {
         request.setSortBy("createdAt");
         request.setSortDirection("desc");
         PageRequest pageRequest = PageRequest.from(request);
 
         // it will throw ResourceNotFoundException when there is no student with studentId-parameter
-        studentService.getStudentDetail(studentId);
+        studentService.getStudentDetail(studentId, languageCode);
 
         return enrollmentRepository.findEnrollmentHistoryOfStudent(studentId, pageRequest);
     }
 
     @Override
     @Transactional
-    public Enrollment updateTranscriptOfEnrollment(String studentId, Integer courseId,
+    public void updateTranscriptOfEnrollment(String studentId, Integer courseId,
             TranscriptUpdateRequestDto transcriptUpdateRequestDto) {
         Course course = courseService.getCourseById(courseId);
         courseDomainValidator.validateCourseInTimePeriod(course);
 
-        Student student = studentService.getStudentDetail(studentId);
+        // TODO: Language Support
+        Student student = studentService.getStudentDetail(studentId, "en");
 
         var enrollment = enrollmentRepository
                 .findEnrollmentByStudentIdAndCourseId(studentId, courseId)
@@ -89,7 +88,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         var score = scoreMapper.toScore(transcriptUpdateRequestDto);
         enrollment.setScore(score);
 
-        return enrollmentRepository.save(enrollment);
+        enrollmentRepository.save(enrollment);
     }
 
     @Override
@@ -107,7 +106,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     @Transactional
-    public Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto) {
+    public Enrollment createEnrollment(EnrollmentCreateRequestDto enrollmentCreateRequestDto,
+            String languageCode) {
         var course = courseService.getCourseById(enrollmentCreateRequestDto.getCourseId());
 
         courseDomainValidator.validateCourseInTimePeriod(course);
@@ -125,8 +125,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         }
 
         Enrollment enrollment = enrollmentMapper.toEnrollment(enrollmentCreateRequestDto);
-        enrollment.setStudent(
-                studentService.getStudentDetail(enrollmentCreateRequestDto.getStudentId()));
+        enrollment.setStudent(studentService
+                .getStudentDetail(enrollmentCreateRequestDto.getStudentId(), languageCode));
         enrollment.setCourse(courseService.getCourseById(enrollmentCreateRequestDto.getCourseId()));
         enrollment.setScore(new Score());
 
@@ -152,9 +152,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     @Transactional
-    public AcademicTranscriptDto getAcademicTranscriptOfStudent(String studentId) {
+    public AcademicTranscriptDto getAcademicTranscriptOfStudent(String studentId,
+            String languageCode) {
         // it will throw ResourceNotFoundException when there is no student with studentId-parameter
-        var student = studentService.getStudentDetail(studentId);
+        var student = studentService.getStudentDetail(studentId, languageCode);
         List<Enrollment> enrollments = enrollmentRepository.findAllEnrollmentsOfStudent(studentId)
                 .stream()
                 .filter(enrollment -> enrollment.getScore() != null

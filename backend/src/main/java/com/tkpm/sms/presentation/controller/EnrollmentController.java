@@ -4,7 +4,6 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentCreateRequestDto;
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentDeleteRequestDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
-import com.tkpm.sms.application.dto.response.enrollment.AcademicTranscriptDto;
 import com.tkpm.sms.application.dto.response.enrollment.EnrollmentDto;
 import com.tkpm.sms.application.dto.response.enrollment.EnrollmentMinimalDto;
 import com.tkpm.sms.application.dto.response.enrollment.HistoryDto;
@@ -14,8 +13,8 @@ import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.utils.ListUtils;
 import com.tkpm.sms.domain.valueobject.History;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +34,8 @@ public class EnrollmentController {
     public ResponseEntity<ApplicationResponseDto<PageResponse<EnrollmentMinimalDto>>> getAllEnrollmentsOfStudent(
             @PathVariable String studentId,
             @ModelAttribute BaseCollectionRequest baseCollectionRequest) {
-        PageResponse<Enrollment> pageResponse = enrollmentService
-                .findAllEnrollmentsOfStudent(studentId, baseCollectionRequest);
+        PageResponse<Enrollment> pageResponse = enrollmentService.findAllEnrollmentsOfStudent(
+                studentId, baseCollectionRequest, LocaleContextHolder.getLocale().getLanguage());
         List<EnrollmentMinimalDto> enrollmentDtos = ListUtils.transform(pageResponse.getData(),
                 enrollmentMapper::toEnrollmentListDto);
         PageResponse<EnrollmentMinimalDto> listResponse = PageResponse.of(pageResponse,
@@ -48,8 +47,8 @@ public class EnrollmentController {
     public ResponseEntity<ApplicationResponseDto<PageResponse<HistoryDto>>> getEnrollmentHistoryOfStudent(
             @PathVariable String studentId,
             @ModelAttribute BaseCollectionRequest baseCollectionRequest) {
-        PageResponse<History> pageResponse = enrollmentService
-                .findEnrollmentHistoryOfStudent(studentId, baseCollectionRequest);
+        PageResponse<History> pageResponse = enrollmentService.findEnrollmentHistoryOfStudent(
+                studentId, baseCollectionRequest, LocaleContextHolder.getLocale().getLanguage());
         List<HistoryDto> historyDtos = ListUtils.transform(pageResponse.getData(),
                 enrollmentMapper::toHistoryDto);
         PageResponse<HistoryDto> listResponse = PageResponse.of(pageResponse, historyDtos);
@@ -60,7 +59,8 @@ public class EnrollmentController {
     public ResponseEntity<ApplicationResponseDto<EnrollmentDto>> enrollStudent(
             @RequestBody EnrollmentCreateRequestDto enrollmentCreateRequestDto,
             UriComponentsBuilder uriComponentsBuilder) {
-        Enrollment enrollment = enrollmentService.createEnrollment(enrollmentCreateRequestDto);
+        Enrollment enrollment = enrollmentService.createEnrollment(enrollmentCreateRequestDto,
+                LocaleContextHolder.getLocale().getLanguage());
         EnrollmentDto enrollmentDto = enrollmentMapper.toEnrollmentCreatedDto(enrollment);
         var locationOfNewUser = uriComponentsBuilder.path("api/enrollments/{id}")
                 .buildAndExpand(enrollment.getId()).toUri();
@@ -75,12 +75,5 @@ public class EnrollmentController {
         enrollmentService.deleteEnrollment(enrollmentDeleteRequestDto);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @GetMapping("/{studentId}/transcript")
-    public ResponseEntity<ApplicationResponseDto<AcademicTranscriptDto>> getTranscriptOfStudent(
-            @PathVariable String studentId) {
-        AcademicTranscriptDto data = enrollmentService.getAcademicTranscriptOfStudent(studentId);
-        return ResponseEntity.ok(ApplicationResponseDto.success(data));
     }
 }

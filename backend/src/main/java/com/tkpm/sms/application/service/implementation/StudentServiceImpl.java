@@ -60,14 +60,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student getStudentDetail(String id) {
+    public Student getStudentDetail(String id, String languageCode) {
         return studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 String.format("Student with id %s not found", id)));
     }
 
     @Override
     @Transactional
-    public Student createStudent(StudentCreateRequestDto requestDto) {
+    public Student createStudent(StudentCreateRequestDto requestDto, String languageCode) {
         // Validate student fields
         studentValidator.validateStudentIdUniqueness(requestDto.getStudentId());
         studentValidator.validateEmailUniqueness(requestDto.getEmail());
@@ -84,6 +84,7 @@ public class StudentServiceImpl implements StudentService {
         // Set related entities
         var faculty = facultyService.getFacultyById(requestDto.getFacultyId());
         var program = programService.getProgramById(requestDto.getProgramId());
+        // TODO: Add language support
         var status = statusService.getStatusById(requestDto.getStatusId());
 
         student.setFaculty(faculty);
@@ -100,7 +101,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public Student updateStudent(String id, StudentUpdateRequestDto requestDto) {
+    public Student updateStudent(String id, StudentUpdateRequestDto requestDto,
+            String languageCode) {
         // Find existing student
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -127,6 +129,7 @@ public class StudentServiceImpl implements StudentService {
         // Update related entities
         var faculty = facultyService.getFacultyById(requestDto.getFacultyId());
         var program = programService.getProgramById(requestDto.getProgramId());
+        // TODO: Add language support
         var newStatus = statusService.getStatusById(requestDto.getStatusId());
 
         // Validate status transition
@@ -336,6 +339,7 @@ public class StudentServiceImpl implements StudentService {
         for (String name : statusNames) {
             try {
                 log.info("Searching for status: {}", name);
+                // TODO: Add language support
                 result.put(name, statusService.getStatusByName(name));
             } catch (Exception e) {
                 log.warn("Status not found: {}", name);

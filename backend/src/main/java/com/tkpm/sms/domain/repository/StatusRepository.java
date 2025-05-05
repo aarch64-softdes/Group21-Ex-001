@@ -19,7 +19,7 @@ public interface StatusRepository {
 
     boolean existsByFromStatusIdAndToStatusId(Integer fromStatusId, Integer toStatusId);
 
-    PageResponse<Status> findAll(PageRequest pageRequest);
-
     void delete(Status status);
+
+    PageResponse<Status> findAll(PageRequest pageRequest);
 }

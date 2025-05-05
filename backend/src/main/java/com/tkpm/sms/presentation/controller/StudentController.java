@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,8 @@ public class StudentController {
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<StudentDto>> getStudentDetail(
             @PathVariable String id) {
-        var student = studentService.getStudentDetail(id);
+        var student = studentService.getStudentDetail(id,
+                LocaleContextHolder.getLocale().getLanguage());
         var studentDto = studentMapper.toStudentDto(student);
         return ResponseEntity.ok(ApplicationResponseDto.success(studentDto));
     }
@@ -61,7 +63,8 @@ public class StudentController {
     public ResponseEntity<ApplicationResponseDto<StudentDto>> createStudent(
             @Valid @RequestBody StudentCreateRequestDto student,
             UriComponentsBuilder uriComponentsBuilder) {
-        var newStudent = studentService.createStudent(student);
+        var newStudent = studentService.createStudent(student,
+                LocaleContextHolder.getLocale().getLanguage());
         var studentDto = studentMapper.toStudentDto(newStudent);
         var locationOfNewUser = uriComponentsBuilder.path("api/students/{id}")
                 .buildAndExpand(newStudent.getId()).toUri();
@@ -79,15 +82,17 @@ public class StudentController {
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<StudentDto>> updateStudent(@PathVariable String id,
             @Valid @RequestBody StudentUpdateRequestDto student) {
-        var updatedStudent = studentService.updateStudent(id, student);
+        var updatedStudent = studentService.updateStudent(id, student,
+                LocaleContextHolder.getLocale().getLanguage());
         var studentDto = studentMapper.toStudentDto(updatedStudent);
         return ResponseEntity.ok(ApplicationResponseDto.success(studentDto));
     }
 
     @GetMapping("/{id}/transcript")
-    public ResponseEntity<byte[]> getTranscript(@PathVariable String id) {
+    public ResponseEntity<byte[]> getTranscript(@PathVariable String id,
+            @RequestParam(value = "language", required = false) String languageCode) {
         try {
-            var actualData = enrollmentService.getAcademicTranscriptOfStudent(id);
+            var actualData = enrollmentService.getAcademicTranscriptOfStudent(id, languageCode);
             var data = Map.of("studentId", actualData.getStudentId(), "studentName",
                     actualData.getStudentName(), "courseName", actualData.getCourseName(),
                     "studentDob", actualData.getStudentDob(), "gpa", actualData.getGpa(),

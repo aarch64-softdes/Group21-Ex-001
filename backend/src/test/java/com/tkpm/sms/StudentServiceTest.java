@@ -110,7 +110,7 @@ class StudentServiceTest {
             Student student = new Student();
             when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
 
-            Student result = studentService.getStudentDetail(studentId);
+            Student result = studentService.getStudentDetail(studentId, "en");
 
             assertNotNull(result);
             assertEquals(student, result);
@@ -123,7 +123,7 @@ class StudentServiceTest {
             when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
             assertThrows(ResourceNotFoundException.class,
-                    () -> studentService.getStudentDetail(studentId));
+                    () -> studentService.getStudentDetail(studentId, "en"));
         }
     }
 
@@ -142,7 +142,7 @@ class StudentServiceTest {
 
             setupCreateStudentMocks(requestDto, student, phone, faculty, program, status);
 
-            Student result = studentService.createStudent(requestDto);
+            Student result = studentService.createStudent(requestDto, "en");
 
             assertNotNull(result);
             verifyCreateStudentMocks(requestDto);
@@ -199,7 +199,7 @@ class StudentServiceTest {
 
             setupUpdateStudentMocks(id, requestDto, student, phone, faculty, program, status);
 
-            Student result = studentService.updateStudent(id, requestDto);
+            Student result = studentService.updateStudent(id, requestDto, "en");
 
             assertNotNull(result);
             verifyUpdateStudentMocks(id, requestDto, student);
@@ -271,7 +271,7 @@ class StudentServiceTest {
             when(studentRepository.findById(id)).thenReturn(Optional.empty());
 
             assertThrows(ResourceNotFoundException.class,
-                    () -> studentService.updateStudent(id, requestDto));
+                    () -> studentService.updateStudent(id, requestDto, "en"));
         }
     }
 
