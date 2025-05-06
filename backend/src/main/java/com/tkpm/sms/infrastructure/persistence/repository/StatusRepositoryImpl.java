@@ -5,9 +5,7 @@ import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.repository.StatusRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.StatusEntity;
-import com.tkpm.sms.infrastructure.persistence.entity.TranslationEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.StatusJpaRepository;
-import com.tkpm.sms.infrastructure.persistence.jpa.TextContentJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.jpa.TranslationJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.StatusPersistenceMapper;
 import com.tkpm.sms.infrastructure.utils.PagingUtils;
@@ -25,7 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatusRepositoryImpl implements StatusRepository {
     private final StatusJpaRepository statusJpaRepository;
-    private final TextContentJpaRepository textContentJpaRepository;
     private final TranslationJpaRepository translationJpaRepository;
 
     private final StatusPersistenceMapper statusPersistenceMapper;
@@ -55,23 +52,7 @@ public class StatusRepositoryImpl implements StatusRepository {
 
     @Override
     public Optional<Status> findByName(String name) {
-        var translation = translationJpaRepository.findByTextAndLanguageCode(name,
-                LocaleContextHolder.getLocale().getLanguage());
-        List<StatusEntity> statuses = statusJpaRepository.findAll();
-
-        var statusWithOriginalName = statuses.stream().filter(status -> status.getName()
-                .getTranslations().stream().anyMatch(TranslationEntity::isOriginal));
-
-        statuses = statuses.stream()
-                .filter(status -> status.getName().getTranslations().stream()
-                        .anyMatch(translationEntity -> translationEntity.equals(translation)))
-                .toList();
-
-        if (statuses.isEmpty()) {
-            return statusWithOriginalName.findFirst().map(statusPersistenceMapper::toDomain);
-        } else {
-            return statuses.stream().findFirst().map(statusPersistenceMapper::toDomain);
-        }
+        return statusJpaRepository.findByName(name).map(statusPersistenceMapper::toDomain);
     }
 
     @Override
