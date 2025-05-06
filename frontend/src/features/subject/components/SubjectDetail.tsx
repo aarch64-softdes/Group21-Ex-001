@@ -5,8 +5,10 @@ import { useSubject } from '@/features/subject/api/useSubjectApi';
 import { DetailComponentProps } from '@/core/types/table';
 import { Loader2, School, BookOpen, FileText } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SubjectDetail: React.FC<DetailComponentProps> = ({ id: subjectId }) => {
+  const { t } = useTranslation(['subject', 'common']);
   const { data: subject, isLoading } = useSubject(subjectId as string);
 
   if (isLoading) {
@@ -20,7 +22,7 @@ const SubjectDetail: React.FC<DetailComponentProps> = ({ id: subjectId }) => {
   if (!subject) {
     return (
       <div className='flex items-center justify-center h-48'>
-        <p className='text-muted-foreground'>Subject not found</p>
+        <p className='text-muted-foreground'>{t('common:messages.noData')}</p>
       </div>
     );
   }
@@ -37,7 +39,7 @@ const SubjectDetail: React.FC<DetailComponentProps> = ({ id: subjectId }) => {
               <p className='text-muted-foreground text-sm'>{subject.code}</p>
             </div>
             <Badge variant='secondary' className='px-3 py-1'>
-              {subject.credits} Credits
+              {subject.credits} {t('subject:fields.credits')}
             </Badge>
           </div>
           <Separator />
@@ -47,10 +49,10 @@ const SubjectDetail: React.FC<DetailComponentProps> = ({ id: subjectId }) => {
             <div>
               <h3 className='text-lg font-medium flex items-center gap-2 mb-2'>
                 <FileText className='h-5 w-5' />
-                Description
+                {t('subject:sections.description')}
               </h3>
               <p className='text-muted-foreground'>
-                {subject.description || 'No description provided.'}
+                {subject.description || t('common:messages.noData')}
               </p>
             </div>
 
@@ -59,7 +61,7 @@ const SubjectDetail: React.FC<DetailComponentProps> = ({ id: subjectId }) => {
                 <div>
                   <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                     <School className='h-4 w-4' />
-                    Faculty
+                    {t('subject:fields.faculty')}
                   </h3>
                   <p>{subject.faculty.name}</p>
                 </div>
@@ -68,7 +70,7 @@ const SubjectDetail: React.FC<DetailComponentProps> = ({ id: subjectId }) => {
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                   <BookOpen className='h-4 w-4' />
-                  Prerequisites
+                  {t('subject:fields.prerequisites')}
                 </h3>
                 <div className='flex flex-wrap gap-2'>
                   {subject.prerequisites && subject.prerequisites.length > 0 ? (
@@ -79,7 +81,7 @@ const SubjectDetail: React.FC<DetailComponentProps> = ({ id: subjectId }) => {
                       </Badge>
                     ))
                   ) : (
-                    <p>No prerequisites</p>
+                    <p>{t('subject:messages.noPrerequisites')}</p>
                   )}
                 </div>
               </div>

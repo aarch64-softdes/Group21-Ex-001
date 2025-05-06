@@ -38,8 +38,10 @@ import {
 import React, { useEffect, useState } from 'react';
 import { cn, getErrorMessage } from '@/shared/lib/utils';
 import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
+import { useTranslation } from 'react-i18next';
 
-const PhoneSettings: React.FC<{ className?: string }> = (className) => {
+const PhoneSettings: React.FC<{ className?: string }> = ({ className }) => {
+  const { t } = useTranslation(['setting', 'common']);
   const { data, isLoading } = usePhoneSetting();
   const updatePhoneSetting = useUpdatePhoneSetting();
 
@@ -77,10 +79,19 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
         supportedCountryCodes: codes,
       });
       setIsEditing(false);
-      showSuccessToast('Phone settings updated successfully');
+      showSuccessToast(
+        t('setting:messages.updated', {
+          setting: t('setting:phoneNumber.title'),
+        }),
+      );
     } catch (err) {
       console.error('Failed to update phone settings:', err);
-      showErrorToast('Failed to update phone settings: ', getErrorMessage(err));
+      showErrorToast(
+        t('setting:messages.updateFailed', {
+          setting: t('setting:phoneNumber.title'),
+          error: getErrorMessage(err),
+        }),
+      );
     }
   };
 
@@ -119,9 +130,9 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
   return (
     <Card className={cn('w-160', className)}>
       <CardHeader>
-        <CardTitle>Phone Number Settings</CardTitle>
+        <CardTitle>{t('setting:phoneNumber.title')}</CardTitle>
         <CardDescription>
-          Configure allowed country codes for phone numbers
+          {t('setting:phoneNumber.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -134,12 +145,12 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
             <div className='flex flex-col space-y-2'>
               <div className='flex justify-between items-center'>
                 <label className='text-sm font-medium text-gray-700 mb-1'>
-                  Supported Country Codes
+                  {t('setting:phoneNumber.label')}
                 </label>
                 <div className='flex gap-2'>
                   {isEditing && (
                     <Button variant='outline' onClick={handleCancel}>
-                      Cancel
+                      {t('setting:actions.cancel')}
                     </Button>
                   )}
                   <Button
@@ -150,12 +161,12 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
                     {isEditing ? (
                       <>
                         <Save className='mr-2 h-4 w-4' />
-                        Save
+                        {t('setting:actions.save')}
                       </>
                     ) : (
                       <>
                         <Pencil className='mr-2 h-4 w-4' />
-                        Edit
+                        {t('setting:actions.edit')}
                       </>
                     )}
                   </Button>
@@ -166,7 +177,7 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
               <div className='flex flex-wrap gap-2 mb-2 min-h-10'>
                 {selectedCountries.length === 0 ? (
                   <p className='text-sm text-gray-500'>
-                    No country codes selected
+                    {t('setting:phoneNumber.noCountry')}
                   </p>
                 ) : (
                   selectedCountries.map((country) => (
@@ -200,14 +211,16 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
                       aria-expanded={open}
                       className='justify-between w-full'
                     >
-                      Select countries...
+                      {t('setting:phoneNumber.selectCountry')}
                       <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className='w-full p-0'>
                     <Command>
-                      <CommandInput placeholder='Search countries...' />
-                      <CommandEmpty>No country found.</CommandEmpty>
+                      <CommandInput
+                        placeholder={t('setting:phoneNumber.searchCountry')}
+                      />
+                      <CommandEmpty>{t('common:messages.noData')}</CommandEmpty>
                       <CommandList>
                         <ScrollArea className='h-60'>
                           <CommandGroup>
@@ -242,9 +255,7 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
               )}
             </div>
             <div className='text-sm text-gray-500'>
-              <p>
-                These country codes will be allowed for student phone numbers.
-              </p>
+              <p>{t('setting:phoneNumber.help')}</p>
             </div>
           </div>
         )}
@@ -253,19 +264,19 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
         <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
           <DialogContent className='w-160 p-8'>
             <DialogHeader>
-              <DialogTitle>Confirm Country Code Changes</DialogTitle>
+              <DialogTitle>{t('setting:phoneNumber.confirmTitle')}</DialogTitle>
               <DialogDescription>
-                You are about to update the allowed country codes for phone
-                numbers. This will affect validation for all student phone
-                numbers. Are you sure?
+                {t('setting:phoneNumber.confirmDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className='py-4'>
-              <h4 className='text-sm font-medium mb-2'>Selected Countries:</h4>
+              <h4 className='text-sm font-medium mb-2'>
+                {t('setting:phoneNumber.selectedCountries')}
+              </h4>
               <div className='flex flex-wrap gap-2'>
                 {selectedCountries.length === 0 ? (
                   <p className='text-sm text-gray-500'>
-                    No country codes selected
+                    {t('setting:phoneNumber.noCountry')}
                   </p>
                 ) : (
                   selectedCountries.map((country) => (
@@ -282,7 +293,7 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
                 variant='outline'
                 onClick={() => setShowConfirmDialog(false)}
               >
-                Cancel
+                {t('common:actions.cancel')}
               </Button>
               <Button
                 onClick={handleSave}
@@ -291,10 +302,10 @@ const PhoneSettings: React.FC<{ className?: string }> = (className) => {
                 {updatePhoneSetting.isPending ? (
                   <>
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                    Saving...
+                    {t('setting:actions.saving')}
                   </>
                 ) : (
-                  'Confirm'
+                  t('setting:actions.confirm')
                 )}
               </Button>
             </DialogFooter>

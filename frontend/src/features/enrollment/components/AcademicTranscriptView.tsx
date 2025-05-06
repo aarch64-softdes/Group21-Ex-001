@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import { Separator } from '@ui/separator';
 import StudentService from '@/features/student/api/studentService';
 import '../styles/transcript-print.css';
+import { useTranslation } from 'react-i18next';
 
 interface AcademicTranscriptProps {
   studentId: string;
@@ -34,6 +35,7 @@ const studentService = new StudentService();
 const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
   studentId,
 }) => {
+  const { t } = useTranslation('enrollment');
   const transcriptRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
   const {
@@ -106,7 +108,7 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
   if (error) {
     return (
       <div className='bg-white rounded-md p-6 text-center'>
-        <p className='text-red-500'>Failed to load transcript data.</p>
+        <p className='text-red-500'>{t('transcript.noTranscriptData')}</p>
       </div>
     );
   }
@@ -114,7 +116,9 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
   if (!transcript) {
     return (
       <div className='bg-white rounded-md p-6 text-center'>
-        <p className='text-muted-foreground'>No transcript data available.</p>
+        <p className='text-muted-foreground'>
+          {t('transcript.noTranscriptData')}
+        </p>
       </div>
     );
   }
@@ -128,13 +132,13 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
       <CardHeader className='print:pb-2'>
         <div className='flex justify-between items-start'>
           <div>
-            <CardTitle className='text-2xl'>Academic Transcript</CardTitle>
-            <CardDescription>Official student transcript</CardDescription>
+            <CardTitle className='text-2xl'>{t('transcript.title')}</CardTitle>
+            <CardDescription>{t('transcript.subtitle')}</CardDescription>
           </div>
           <div className='flex space-x-2 print-hidden'>
             <Button variant='outline' size='sm' onClick={handlePrint}>
               <Printer className='h-4 w-4 mr-2' />
-              Print
+              {t('transcript.print')}
             </Button>
             <Button
               variant='outline'
@@ -145,12 +149,12 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
               {isExporting ? (
                 <>
                   <Loader2 className='h-4 w-4 mr-2 animate-spin' />
-                  Exporting...
+                  {t('transcript.exporting')}
                 </>
               ) : (
                 <>
                   <Download className='h-4 w-4 mr-2' />
-                  Download
+                  {t('transcript.download')}
                 </>
               )}
             </Button>
@@ -162,35 +166,37 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
         <div className='grid grid-cols-2 gap-4'>
           <div>
             <h3 className='text-sm font-medium text-muted-foreground'>
-              Student Information
+              {t('transcript.studentInfo')}
             </h3>
             <div className='mt-2 space-y-1'>
               <p>
-                <strong>Name:</strong> {transcript.studentName}
+                <strong>{t('transcript.name')}:</strong>{' '}
+                {transcript.studentName}
               </p>
               <p>
-                <strong>ID:</strong> {transcript.studentId}
+                <strong>{t('transcript.id')}:</strong> {transcript.studentId}
               </p>
               <p>
-                <strong>Date of Birth:</strong>{' '}
+                <strong>{t('transcript.dob')}:</strong>{' '}
                 {transcript.studentDob
                   ? format(new Date(transcript.studentDob), 'PPP')
                   : 'N/A'}
               </p>
               <p>
-                <strong>Program:</strong> {transcript.courseName || 'N/A'}
+                <strong>{t('transcript.program')}:</strong>{' '}
+                {transcript.courseName || 'N/A'}
               </p>
             </div>
           </div>
 
           <div>
             <h3 className='text-sm font-medium text-muted-foreground'>
-              Academic Summary
+              {t('transcript.academicSummary')}
             </h3>
             <div className='mt-2 space-y-1'>
               <p className='flex items-center justify-between'>
                 <span>
-                  <strong>Cumulative GPA:</strong>
+                  <strong>{t('transcript.cumulativeGPA')}:</strong>
                 </span>
                 <Badge
                   variant='outline'
@@ -200,12 +206,11 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
                 </Badge>
               </p>
               <p>
-                <strong>Total Credits:</strong>{' '}
+                <strong>{t('transcript.totalCredits')}:</strong>{' '}
                 {transcript.transcriptList.length * 3}
-              </p>{' '}
-              {/* Assuming each course is 3 credits */}
+              </p>
               <p>
-                <strong>Courses Completed:</strong>{' '}
+                <strong>{t('transcript.coursesCompleted')}:</strong>{' '}
                 {transcript.transcriptList.length}
               </p>
             </div>
@@ -216,15 +221,19 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
 
         <div>
           <h3 className='text-sm font-medium text-muted-foreground mb-3'>
-            Course Details
+            {t('transcript.courseDetails')}
           </h3>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Subject Code</TableHead>
-                <TableHead>Subject Name</TableHead>
-                <TableHead className='text-center'>Grade</TableHead>
-                <TableHead className='text-center'>GPA</TableHead>
+                <TableHead>{t('transcript.subjectCode')}</TableHead>
+                <TableHead>{t('transcript.subjectName')}</TableHead>
+                <TableHead className='text-center'>
+                  {t('transcript.grade')}
+                </TableHead>
+                <TableHead className='text-center'>
+                  {t('transcript.gpa')}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -255,8 +264,10 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
 
       <CardFooter className='text-sm text-muted-foreground border-t pt-4'>
         <div className='w-full flex justify-between items-center'>
-          <span>Generated on {format(new Date(), 'PPP')}</span>
-          <span>Student Management System</span>
+          <span>
+            {t('transcript.generatedOn')} {format(new Date(), 'PPP')}
+          </span>
+          <span>{t('transcript.system')}</span>
         </div>
       </CardFooter>
     </Card>

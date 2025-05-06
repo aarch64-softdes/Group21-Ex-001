@@ -25,6 +25,7 @@ import SubjectPage from '@subject/subjectPage';
 import CoursePage from '@/features/course/coursePage';
 import StudentEnrollmentPage from './features/enrollment/pages/studentEnrollmentPage';
 import CourseEnrollmentPage from './features/enrollment/pages/courseEnrollmentPage';
+import '@/shared/i18n/i18n';
 
 const queryClient = new QueryClient({
   defaultOptions: {

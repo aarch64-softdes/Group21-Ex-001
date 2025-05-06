@@ -28,6 +28,7 @@ import TableSort from './TableSort';
 import { getNestedValue } from '@/shared/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import React from 'react';
+import { t } from 'i18next';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
@@ -54,7 +55,7 @@ const GenericTable = <T extends { id: string }>({
     additionalActions: [],
   },
   customActionCellComponent = undefined,
-  emptyMessage = 'No data available',
+  emptyMessage,
   metadata = {},
   disabledActionCell = false,
 }: GenericTableProps<T>) => {
@@ -63,14 +64,12 @@ const GenericTable = <T extends { id: string }>({
     delete: actionCellProperties.delete.disabled,
   };
 
-  const defaultSortColumn = columns.find(
-    (column) => column.isDefaultSort,
-  )?.header;
+  const defaultSortColumn = columns.find((column) => column.isDefaultSort)?.key;
 
   const { data, pagination, state, sort, filters } = useGenericTableData({
     useQueryHook: queryHook,
     filterOptions,
-    defaultSortColumn,
+    defaultSortColumn: defaultSortColumn as string,
   });
 
   // State for detail dialog
@@ -227,7 +226,7 @@ const GenericTable = <T extends { id: string }>({
           ))}
           {disabledActionCell ? null : (
             <TableHead className='w-16 text-blue-500 text-center'>
-              Action
+              {t('common:table.actions')}
             </TableHead>
           )}
           <TableHead className='w-4' />
@@ -295,7 +294,9 @@ const GenericTable = <T extends { id: string }>({
       <div className='border rounded-md'>
         {data.length === 0 && !state.isLoading ? (
           <div className='flex items-center justify-center h-24'>
-            <p className='text-muted-foreground'>{emptyMessage}</p>
+            <p className='text-muted-foreground'>
+              {emptyMessage ?? t('common:table.noData')}
+            </p>
           </div>
         ) : state.isLoading ? (
           <SkeletonTable rows={pagination.pageSize} columns={columns.length} />

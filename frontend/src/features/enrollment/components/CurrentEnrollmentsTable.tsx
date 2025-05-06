@@ -32,54 +32,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@ui/alert-dialog';
+import { useTranslation } from 'react-i18next';
 
 interface CurrentEnrollmentsTableProps {
   studentId: string;
 }
-
-const GradeDisplay = ({ grade, gpa }: { grade?: string; gpa?: number }) => {
-  if (!grade && !gpa) {
-    return (
-      <div className='flex items-center text-gray-400'>
-        <Clock className='h-4 w-4 mr-1' />
-        <span>Pending</span>
-      </div>
-    );
-  }
-
-  let color = 'text-gray-500';
-  let icon = <Clock className='h-4 w-4 mr-1' />;
-
-  if (gpa !== undefined) {
-    if (gpa >= 3.5) {
-      color = 'text-green-600';
-      icon = <CheckCircle2 className='h-4 w-4 mr-1' />;
-    } else if (gpa >= 2.0) {
-      color = 'text-amber-500';
-      icon = <AlertTriangle className='h-4 w-4 mr-1' />;
-    } else {
-      color = 'text-red-500';
-      icon = <XCircle className='h-4 w-4 mr-1' />;
-    }
-  }
-
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className={`flex items-center ${color}`}>
-            {icon}
-            <span className='font-medium'>{grade || 'N/A'}</span>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Grade: {grade || 'Not available'}</p>
-          <p>GPA: {gpa !== undefined ? gpa.toFixed(2) : 'Not available'}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-};
 
 interface CustomUnenrollButtonProps extends EnrollmentMinimal {
   studentId: string;
@@ -90,6 +47,7 @@ const UnenrollButton: React.FC<CustomUnenrollButtonProps> = ({
   course: { id: courseId },
   studentId,
 }) => {
+  const { t } = useTranslation('enrollment');
   const [isUnenrollDialogOpen, setIsUnenrollDialogOpen] = useState(false);
   const unenrollCourse = useUnenrollCourse();
   const handleUnenrollClick = () => {
@@ -107,7 +65,7 @@ const UnenrollButton: React.FC<CustomUnenrollButtonProps> = ({
   return (
     <>
       <Button variant={'destructive'} size='sm' onClick={handleUnenrollClick}>
-        Unenroll
+        {t('currentEnrollments.unenroll')}
       </Button>
 
       <AlertDialog
@@ -116,15 +74,16 @@ const UnenrollButton: React.FC<CustomUnenrollButtonProps> = ({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Unenrollment</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t('currentEnrollments.confirmUnenrollment')}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to unenroll from this course? This action
-              cannot be undone.
+              {t('currentEnrollments.confirmUnenrollmentMessage')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={unenrollCourse.isPending}>
-              Cancel
+              {t('common:actions.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmUnenroll}
@@ -134,10 +93,10 @@ const UnenrollButton: React.FC<CustomUnenrollButtonProps> = ({
               {unenrollCourse.isPending ? (
                 <>
                   <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  Unenrolling...
+                  {t('currentEnrollments.unenrolling')}
                 </>
               ) : (
-                'Unenroll'
+                t('currentEnrollments.unenroll')
               )}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -150,20 +109,83 @@ const UnenrollButton: React.FC<CustomUnenrollButtonProps> = ({
 const CurrentEnrollmentsTable: React.FC<CurrentEnrollmentsTableProps> = ({
   studentId,
 }) => {
+  const { t } = useTranslation('enrollment');
+
+  const GradeDisplay = ({ grade, gpa }: { grade?: string; gpa?: number }) => {
+    if (!grade && !gpa) {
+      return (
+        <div className='flex items-center text-gray-400'>
+          <Clock className='h-4 w-4 mr-1' />
+          <span>{t('currentEnrollments.gradeStatus.pending')}</span>
+        </div>
+      );
+    }
+
+    let color = 'text-gray-500';
+    let icon = <Clock className='h-4 w-4 mr-1' />;
+
+    if (gpa !== undefined) {
+      if (gpa >= 3.5) {
+        color = 'text-green-600';
+        icon = <CheckCircle2 className='h-4 w-4 mr-1' />;
+      } else if (gpa >= 2.0) {
+        color = 'text-amber-500';
+        icon = <AlertTriangle className='h-4 w-4 mr-1' />;
+      } else {
+        color = 'text-red-500';
+        icon = <XCircle className='h-4 w-4 mr-1' />;
+      }
+    }
+
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className={`flex items-center ${color}`}>
+              {icon}
+              <span className='font-medium'>{grade || 'N/A'}</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>
+              {t('currentEnrollments.grade')}:{' '}
+              {grade || t('currentEnrollments.gradeStatus.notAvailable')}
+            </p>
+            <p>
+              GPA:{' '}
+              {gpa !== undefined
+                ? gpa.toFixed(2)
+                : t('currentEnrollments.gradeStatus.notAvailable')}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
   // Column definitions
   const columns: Column<EnrollmentMinimal>[] = [
-    { header: 'Code', key: 'course.code', nested: true },
-    { header: 'Subject', key: 'course.subject.name', nested: true },
-    { header: 'Schedule', key: 'course.schedule', nested: true },
-    { header: 'Room', key: 'course.room', nested: true },
+    { header: t('currentEnrollments.code'), key: 'course.code', nested: true },
     {
-      header: 'Semester',
-      key: 'course.semester',
+      header: t('currentEnrollments.subject'),
+      key: 'course.subject.name',
       nested: true,
-      transform: (value, row) => `${row?.course?.year}, Semester ${value}`,
     },
     {
-      header: 'Grade',
+      header: t('currentEnrollments.schedule'),
+      key: 'course.schedule',
+      nested: true,
+    },
+    { header: t('currentEnrollments.room'), key: 'course.room', nested: true },
+    {
+      header: t('currentEnrollments.semester'),
+      key: 'course.semester',
+      nested: true,
+      transform: (value, row) =>
+        `${row?.course?.year}, ${t('currentEnrollments.semester')} ${value}`,
+    },
+    {
+      header: t('currentEnrollments.grade'),
       key: 'score',
       nested: true,
       transform: (value) => (
@@ -183,7 +205,7 @@ const CurrentEnrollmentsTable: React.FC<CurrentEnrollmentsTableProps> = ({
         metadata={{
           studentId,
         }}
-        emptyMessage='You are not currently enrolled in any courses.'
+        emptyMessage={t('currentEnrollments.noEnrollments')}
       />
     </div>
   );

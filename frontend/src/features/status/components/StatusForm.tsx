@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
@@ -33,24 +34,25 @@ import { Badge } from '@ui/badge';
 import Status, { CreateStatusDTO, UpdateStatusDTO } from '@status/types/status';
 
 // Define schema
-export const StatusFormSchema = z.object({
-  name: z
-    .string()
-    .min(1, 'Name is required')
-    .max(255, 'Name must be less than 255 characters')
-    .regex(/^[\p{L}\s]*$/u, 'Name must contain only letters and spaces'),
-  allowedTransitions: z
-    .array(
-      z
-        .object({
-          id: z.string(),
-        })
-        .optional(),
-    )
-    .optional(),
-});
+const StatusFormSchema = (t: any) =>
+  z.object({
+    name: z
+      .string()
+      .min(1, t('validation.required'))
+      .max(255, t('validation.maxLength', { length: 255 }))
+      .regex(/^[\p{L}\s]*$/u, t('validation.nameFormat')),
+    allowedTransitions: z
+      .array(
+        z
+          .object({
+            id: z.string(),
+          })
+          .optional(),
+      )
+      .optional(),
+  });
 
-export type StatusFormValues = z.infer<typeof StatusFormSchema>;
+export type StatusFormValues = z.infer<ReturnType<typeof StatusFormSchema>>;
 
 const StatusForm: React.FC<FormComponentProps<Status>> = ({
   onSubmit,
@@ -59,6 +61,8 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   isLoading = false,
   isEditing = false,
 }) => {
+  const { t } = useTranslation(['status', 'common']);
+
   const { data: statusData, isLoading: isLoadingStatus } = useStatus(id || '');
   const { data: statusesData, isLoading: isLoadingStatuses } = useStatuses({
     page: 1,
@@ -74,7 +78,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   const [selectedStatuses, setSelectedStatuses] = useState<Status[]>([]);
 
   const form = useForm<StatusFormValues>({
-    resolver: zodResolver(StatusFormSchema),
+    resolver: zodResolver(StatusFormSchema(t)),
     defaultValues: {
       name: '',
       allowedTransitions: [],
@@ -121,13 +125,12 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
   };
 
   // Remove a status from allowedTransitions
-  const removeStatus = (statusId: number) => {
+  const removeStatus = (statusId: string) => {
     if (!statusId) {
       return;
     }
 
     const currentTransitions = form.getValues('allowedTransitions') || [];
-    console.log(currentTransitions);
     const newTransitions = currentTransitions.filter(
       (status) => status?.id !== statusId,
     );
@@ -151,7 +154,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
       {/* Header */}
       <div className='border-b px-4 py-2 flex items-center justify-between'>
         <h2 className='text-xl font-semibold'>
-          {isEditing ? 'Edit Status' : 'Add New Status'}
+          {isEditing ? t('status:editStatus') : t('status:addNew')}
         </h2>
       </div>
 
@@ -172,7 +175,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                 <Card className='mb-6'>
                   <CardHeader>
                     <CardTitle className='text-lg font-medium'>
-                      Status Information
+                      {t('status:sections.statusInfo')}
                     </CardTitle>
                     <Separator />
                   </CardHeader>
@@ -182,10 +185,13 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                       name='name'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel>{t('status:fields.name')}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='Enter status name'
+                              placeholder={t(
+                                'status:fields.namePlaceholder',
+                                'Enter status name',
+                              )}
                               {...field}
                               autoComplete='off'
                               onKeyDown={(e) => {
@@ -205,7 +211,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                 <Card className='mb-6'>
                   <CardHeader>
                     <CardTitle className='text-lg font-medium'>
-                      Allowed Transitions
+                      {t('status:sections.transitions')}
                     </CardTitle>
                     <Separator />
                   </CardHeader>
@@ -234,14 +240,16 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                                   >
                                     <X
                                       className='h-4 w-4'
-                                      aria-label={`Remove ${status.name}`}
+                                      aria-label={t('status:actions.remove', {
+                                        name: status.name,
+                                      })}
                                     />
                                   </button>
                                 </Badge>
                               ))}
                               {selectedStatuses.length === 0 && (
                                 <span className='text-sm flex items-center text-gray-500'>
-                                  No transitions selected
+                                  {t('status:messages.noTransitions')}
                                 </span>
                               )}
 
@@ -258,7 +266,7 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                                       <Loader2 className='h-4 w-4 animate-spin' />
                                     ) : (
                                       <>
-                                        Select status
+                                        {t('status:messages.selectStatus')}
                                         <ChevronsUpDown className='ml-auto h-4 w-4 shrink-0 opacity-50' />
                                       </>
                                     )}
@@ -266,9 +274,14 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                                 </PopoverTrigger>
                                 <PopoverContent className='w-[300px] p-0'>
                                   <Command>
-                                    <CommandInput placeholder='Search status...' />
+                                    <CommandInput
+                                      placeholder={t(
+                                        'status:fields.searchPlaceholder',
+                                        'Search status...',
+                                      )}
+                                    />
                                     <CommandEmpty>
-                                      No status found.
+                                      {t('common:messages.noData')}
                                     </CommandEmpty>
                                     <CommandList>
                                       <ScrollArea className='max-h-[200px] min-h-full'>
@@ -316,10 +329,12 @@ const StatusForm: React.FC<FormComponentProps<Status>> = ({
                       onCancel();
                     }}
                   >
-                    Cancel
+                    {t('common:actions.cancel')}
                   </Button>
                   <LoadingButton type='submit' isLoading={isLoading}>
-                    {isEditing ? 'Save Changes' : 'Add Status'}
+                    {isEditing
+                      ? t('common:actions.save')
+                      : t('common:actions.add')}
                   </LoadingButton>
                 </div>
               </form>

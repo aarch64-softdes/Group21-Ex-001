@@ -1,20 +1,25 @@
-import FacultyDetail from '@/features/faculty/components/FacultyDetail';
-import FacultyForm from '@/features/faculty/components/FacultyForm';
 import GenericTable from '@components/table/GenericTable';
+import FacultyForm from '@/features/faculty/components/FacultyForm';
+import FacultyDetail from '@/features/faculty/components/FacultyDetail';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import {
   useCreateFaculty,
   useDeleteFaculty,
   useFaculties,
   useUpdateFaculty,
 } from '@/features/faculty/api/useFacultyApi';
+
+import { Column } from '@/core/types/table';
 import Faculty, {
   CreateFacultyDTO,
   UpdateFacultyDTO,
 } from '@/features/faculty/types/faculty';
-import { Column } from '@/core/types/table';
-import React from 'react';
 
 const FacultyPage: React.FC = () => {
+  const { t } = useTranslation(['faculty', 'common']);
+
   const createFaculty = useCreateFaculty();
   const updateFaculty = useUpdateFaculty();
   const deleteFaculty = useDeleteFaculty();
@@ -22,18 +27,18 @@ const FacultyPage: React.FC = () => {
   const columns: Column<Faculty>[] = React.useMemo(
     () => [
       {
-        header: 'ID',
+        header: t('faculty:fields.id'),
         key: 'id',
         style: {
           width: '80px',
         },
       },
       {
-        header: 'Name',
+        header: t('faculty:fields.name'),
         key: 'name',
       },
     ],
-    [],
+    [t],
   );
 
   const onSave = React.useCallback(
@@ -63,10 +68,10 @@ const FacultyPage: React.FC = () => {
   return (
     <div className='min-h-3/4 w-full m-auto flex flex-row gap-4 p-4'>
       <GenericTable
-        tableTitle='Faculty Management'
+        tableTitle={t('faculty:title')}
         addAction={{
           onAdd,
-          title: 'Add Faculty',
+          title: t('faculty:addNew'),
         }}
         queryHook={useFaculties}
         columns={columns}

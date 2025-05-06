@@ -10,6 +10,8 @@ import { getErrorMessage } from '@/shared/lib/utils';
 import { useLoadMore } from '@/shared/hooks/useLoadMore';
 import { useState } from 'react';
 import { SelectItem } from '@/components/common/LoadMoreSelect';
+import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const facultyService = new FacultyService();
 
@@ -88,7 +90,7 @@ export const useCreateFaculty = () => {
     mutationFn: (data: CreateFacultyDTO) => facultyService.addNewFaculty(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
-      showSuccessToast('Faculty added successfully');
+      showSuccessToast(t('faculty:messages.facultyAdded'));
     },
     onError: (error: any) => {
       showErrorToast(getErrorMessage(error));
@@ -104,7 +106,7 @@ export const useUpdateFaculty = () => {
       facultyService.updateFaculty(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
-      showSuccessToast('Faculty updated successfully');
+      showSuccessToast(t('faculty:messages.facultyUpdated'));
     },
     onError: (error: any) => {
       showErrorToast(getErrorMessage(error));
@@ -119,7 +121,7 @@ export const useDeleteFaculty = () => {
     mutationFn: (id: string) => facultyService.deleteFaculty(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['faculties'] });
-      showSuccessToast('Faculty deleted successfully');
+      showSuccessToast(t('faculty:messages.facultyDeleted'));
     },
     onError: (error: any) => {
       showErrorToast(getErrorMessage(error));

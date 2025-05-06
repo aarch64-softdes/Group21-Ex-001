@@ -1,4 +1,5 @@
 import { Button } from '@ui/button';
+import { useTranslation } from 'react-i18next';
 import {
   Command,
   CommandEmpty,
@@ -26,6 +27,7 @@ import {
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import { t } from 'i18next';
 
 interface PhoneFieldProps {
   form: UseFormReturn<any>;
@@ -60,7 +62,7 @@ const PhoneField = ({ form }: PhoneFieldProps) => {
 
   return (
     <div className='space-y-2'>
-      <FormLabel className='block'>Phone</FormLabel>
+      <FormLabel className='block'>{t('student:fields.phone.label')}</FormLabel>
       <div className='flex gap-2'>
         {/* Country Code Selector */}
         <Popover open={open} onOpenChange={setOpen}>
@@ -77,15 +79,20 @@ const PhoneField = ({ form }: PhoneFieldProps) => {
                   <span>{selectedCountry.dialCode}</span>
                 </>
               ) : (
-                'Select code'
+                t('student:fields.phone.selectCode', 'Select code')
               )}
               <ChevronsUpDown className='ml-auto h-4 w-4 shrink-0 opacity-50' />
             </Button>
           </PopoverTrigger>
           <PopoverContent className='w-[250px] p-0'>
             <Command>
-              <CommandInput placeholder='Search country...' />
-              <CommandEmpty>No country found.</CommandEmpty>
+              <CommandInput
+                placeholder={t(
+                  'student:fields.phone.searchCountry',
+                  'Search country...',
+                )}
+              />
+              <CommandEmpty>{t('common:messages.noData')}</CommandEmpty>
               <CommandList>
                 <ScrollArea className='max-h-[120px] min-h-full'>
                   <CommandGroup>
@@ -122,7 +129,10 @@ const PhoneField = ({ form }: PhoneFieldProps) => {
               <FormControl>
                 <Input
                   {...field}
-                  placeholder='0123456789'
+                  placeholder={t(
+                    'student:fields.phone.placeholder',
+                    '0123456789',
+                  )}
                   autoComplete='off'
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {

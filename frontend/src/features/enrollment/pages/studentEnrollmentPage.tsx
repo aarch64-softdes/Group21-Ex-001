@@ -9,9 +9,11 @@ import { ChevronLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ResourceNotFoundError } from '@/shared/lib/errors';
 import AcademicTranscript from '../components/AcademicTranscriptView';
+import { useTranslation } from 'react-i18next';
 
 const StudentEnrollmentPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['enrollment', 'common']);
   const { studentId } = useParams<{ studentId: string }>();
   const { data: student, isLoading, error } = useStudent(studentId || '');
 
@@ -44,11 +46,9 @@ const StudentEnrollmentPage: React.FC = () => {
     <div className='container mx-auto p-6'>
       <div className='mb-6 flex items-center justify-between'>
         <div>
-          <h1 className='text-2xl font-bold mb-2'>
-            Student Enrollment Management
-          </h1>
+          <h1 className='text-2xl font-bold mb-2'>{t('title')}</h1>
           <p className='text-muted-foreground'>
-            Student: {student.name} ({student.studentId})
+            {t('student')}: {student.name} ({student.studentId})
           </p>
         </div>
 
@@ -60,16 +60,16 @@ const StudentEnrollmentPage: React.FC = () => {
           }}
         >
           <ChevronLeft className='mr-2 h-4 w-4' />
-          Return
+          {t('return')}
         </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className='mb-6'>
-          <TabsTrigger value='available'>Available Courses</TabsTrigger>
-          <TabsTrigger value='current'>Current Enrollments</TabsTrigger>
-          <TabsTrigger value='transcript'>Transcript</TabsTrigger>
-          <TabsTrigger value='history'>Enrollment History</TabsTrigger>
+          <TabsTrigger value='available'>{t('tabs.available')}</TabsTrigger>
+          <TabsTrigger value='current'>{t('tabs.current')}</TabsTrigger>
+          <TabsTrigger value='transcript'>{t('tabs.transcript')}</TabsTrigger>
+          <TabsTrigger value='history'>{t('tabs.history')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value='available'>

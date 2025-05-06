@@ -9,6 +9,7 @@ import {
 import { Input } from '@ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { StudentFormValues } from '@student/components/StudentForm';
+import { t } from 'i18next';
 
 interface AddressFormProps {
   form: UseFormReturn<StudentFormValues>;
@@ -26,10 +27,13 @@ const AddressForm: FC<AddressFormProps> = ({ form, type, title }) => {
           name={`${type}.street`}
           render={({ field }) => (
             <FormItem className='col-span-2'>
-              <FormLabel>Street Address</FormLabel>
+              <FormLabel>{t('student:fields.address.street')}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder='Street name, house number'
+                  placeholder={t(
+                    'student:fields.address.streetPlaceholder',
+                    'Street name, house number',
+                  )}
                   {...field}
                   value={field.value || ''}
                   autoComplete='off'
@@ -48,10 +52,13 @@ const AddressForm: FC<AddressFormProps> = ({ form, type, title }) => {
           name={`${type}.country`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Country</FormLabel>
+              <FormLabel>{t('student:fields.address.country')}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder='Country'
+                  placeholder={t(
+                    'student:fields.address.countryPlaceholder',
+                    'Country',
+                  )}
                   {...field}
                   value={field.value || 'Việt Nam'}
                   autoComplete='off'
@@ -70,10 +77,13 @@ const AddressForm: FC<AddressFormProps> = ({ form, type, title }) => {
           name={`${type}.ward`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Ward</FormLabel>
+              <FormLabel>{t('student:fields.address.ward')}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder='Ward/Commune'
+                  placeholder={t(
+                    'student:fields.address.wardPlaceholder',
+                    'Ward/Commune',
+                  )}
                   {...field}
                   value={field.value || ''}
                   autoComplete='off'
@@ -92,10 +102,13 @@ const AddressForm: FC<AddressFormProps> = ({ form, type, title }) => {
           name={`${type}.district`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>District</FormLabel>
+              <FormLabel>{t('student:fields.address.district')}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder='District'
+                  placeholder={t(
+                    'student:fields.address.districtPlaceholder',
+                    'District',
+                  )}
                   {...field}
                   value={field.value || ''}
                   autoComplete='off'
@@ -114,10 +127,13 @@ const AddressForm: FC<AddressFormProps> = ({ form, type, title }) => {
           name={`${type}.province`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>City/Province</FormLabel>
+              <FormLabel>{t('student:fields.address.province')}</FormLabel>
               <FormControl>
                 <Input
-                  placeholder='City/Province'
+                  placeholder={t(
+                    'student:fields.address.provincePlaceholder',
+                    'City/Province',
+                  )}
                   {...field}
                   value={field.value || ''}
                   autoComplete='off'

@@ -18,9 +18,11 @@ import {
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['course', 'common']);
 
   const { data: courseData, isLoading } = useCourse(courseId as string);
 
@@ -35,7 +37,7 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
   if (!courseData) {
     return (
       <div className='flex items-center justify-center h-48'>
-        <p className='text-muted-foreground'>Course not found</p>
+        <p className='text-muted-foreground'>{t('common:messages.noData')}</p>
       </div>
     );
   }
@@ -52,12 +54,12 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
   // Helper to interpret schedule
   const interpretSchedule = (schedule: string) => {
     const days = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
+      t('course:days.monday'),
+      t('course:days.tuesday'),
+      t('course:days.wednesday'),
+      t('course:days.thursday'),
+      t('course:days.friday'),
+      t('course:days.saturday'),
     ];
 
     try {
@@ -73,7 +75,9 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
       const startPeriod = parseInt(periodMatch[1]);
       const endPeriod = parseInt(periodMatch[2]);
 
-      return `${days[day]}, Period ${startPeriod}-${endPeriod}`;
+      return `${days[day]}, ${t(
+        'course:fields.schedule',
+      )} ${startPeriod}-${endPeriod}`;
     } catch (error) {
       return schedule;
     }
@@ -86,7 +90,8 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
           <div className='flex justify-between items-start'>
             <div>
               <CardTitle className='text-2xl font-bold'>
-                {courseData.code || `Course #${courseData.id}`}
+                {courseData.code ||
+                  `${t('course:fields.code')} #${courseData.id}`}
               </CardTitle>
               <p className='text-muted-foreground text-sm'>
                 {courseData.subject?.name}
@@ -94,14 +99,15 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
             </div>
             <div className='flex flex-col gap-3 items-end'>
               <Badge variant='secondary' className='px-3 py-1'>
-                {courseData.year} - Semester {courseData.semester}
+                {courseData.year} - {t('course:fields.semester')}{' '}
+                {courseData.semester}
               </Badge>
               <Button
                 variant='outline'
                 className='mt-2 md:mt-0'
                 onClick={() => navigate(`/course/${courseId}/enrollments`)}
               >
-                Enrollments for {courseData.code}
+                {t('enrollment:title')} {courseData.code}
                 <CornerUpRight className='ml-2 h-4 w-4' />
               </Button>
             </div>
@@ -114,18 +120,18 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                   <BookOpen className='h-4 w-4' />
-                  Subject
+                  {t('course:fields.subject')}
                 </h3>
                 <p>{courseData.subject?.name}</p>
                 <p className='text-xs text-muted-foreground mt-1'>
-                  Code: {courseData.subject?.code}
+                  {t('course:fields.code')}: {courseData.subject?.code}
                 </p>
               </div>
 
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                   <GraduationCap className='h-4 w-4' />
-                  Program
+                  {t('course:fields.program')}
                 </h3>
                 <p>{courseData.program?.name}</p>
               </div>
@@ -133,7 +139,7 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                   <User className='h-4 w-4' />
-                  Lecturer
+                  {t('course:fields.lecturer')}
                 </h3>
                 <p>{courseData.lecturer}</p>
               </div>
@@ -141,7 +147,7 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                   <Users className='h-4 w-4' />
-                  Maximum Students
+                  {t('course:fields.maxStudent')}
                 </h3>
                 <p>{courseData.maxStudent}</p>
               </div>
@@ -149,10 +155,11 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                   <CalendarRange className='h-4 w-4' />
-                  Academic Year and Semester
+                  {t('course:sections.scheduleInfo')}
                 </h3>
                 <p>
-                  Year {courseData.year}, Semester {courseData.semester}
+                  {t('course:fields.year')} {courseData.year},{' '}
+                  {t('course:fields.semester')} {courseData.semester}
                 </p>
               </div>
             </div>
@@ -161,7 +168,7 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                   <Calendar className='h-4 w-4' />
-                  Start Date
+                  {t('course:fields.startDate')}
                 </h3>
                 <p>{formatDate(courseData.startDate)}</p>
               </div>
@@ -169,18 +176,18 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                   <Clock className='h-4 w-4' />
-                  Schedule
+                  {t('course:fields.schedule')}
                 </h3>
                 <p>{interpretSchedule(courseData.schedule)}</p>
                 <p className='text-xs text-muted-foreground mt-1'>
-                  Raw format: {courseData.schedule}
+                  {t('course:messages.scheduleFormat')}: {courseData.schedule}
                 </p>
               </div>
 
               <div>
                 <h3 className='text-sm font-medium flex items-center gap-2 mb-1 text-muted-foreground'>
                   <MapPin className='h-4 w-4' />
-                  Room
+                  {t('course:fields.room')}
                 </h3>
                 <p>{courseData.room}</p>
               </div>

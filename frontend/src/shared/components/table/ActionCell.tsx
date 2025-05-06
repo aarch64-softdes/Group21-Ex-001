@@ -20,7 +20,8 @@ import {
   AlertDialogTitle,
 } from '@ui/alert-dialog';
 import { EllipsisVertical, Loader2 } from 'lucide-react';
-import React, { act } from 'react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const ActionCell: React.FC<ActionCellProps> = ({
   requireDeleteConfirmation = true,
@@ -35,6 +36,7 @@ const ActionCell: React.FC<ActionCellProps> = ({
   },
   additionalActions = [],
 }) => {
+  const { t } = useTranslation('common');
   const handleDeleteClick = () => {
     if (requireDeleteConfirmation) {
       setShowDeleteDialog(true);
@@ -69,14 +71,18 @@ const ActionCell: React.FC<ActionCellProps> = ({
           side='left'
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>{t('table.actions')}</DropdownMenuLabel>
           {!disabledActions.view && (
-            <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
+            <DropdownMenuItem onClick={onView}>
+              {t('table.view')}
+            </DropdownMenuItem>
           )}
           {!disabledActions.edit && (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
+              <DropdownMenuItem onClick={onEdit}>
+                {t('table.edit')}
+              </DropdownMenuItem>
             </>
           )}
 
@@ -101,7 +107,7 @@ const ActionCell: React.FC<ActionCellProps> = ({
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleDeleteClick}>
-                Delete
+                {t('table.delete')}
               </DropdownMenuItem>
             </>
           )}
@@ -111,14 +117,13 @@ const ActionCell: React.FC<ActionCellProps> = ({
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('messages.areYouSure')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              record.
+              {t('messages.confirmDelete')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 setShowDeleteDialog(false);
@@ -126,7 +131,7 @@ const ActionCell: React.FC<ActionCellProps> = ({
               }}
               className='bg-red-600 hover:bg-red-700'
             >
-              Delete
+              {t('actions.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
