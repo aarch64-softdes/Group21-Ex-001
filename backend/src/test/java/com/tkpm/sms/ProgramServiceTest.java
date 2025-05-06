@@ -71,7 +71,7 @@ class ProgramServiceTest {
         requestDto.setName("New Program");
 
         Program program = new Program();
-        when(programMapper.toEntity(requestDto)).thenReturn(program);
+        when(programMapper.toDomain(requestDto)).thenReturn(program);
         when(programRepository.save(program)).thenReturn(program);
 
         Program createdProgram = programService.createProgram(requestDto);
@@ -100,7 +100,7 @@ class ProgramServiceTest {
         when(programRepository.findById(1)).thenReturn(Optional.of(program));
         doNothing().when(programDomainValidator).validateNameUniquenessForUpdate("Updated Program",
                 1);
-        doNothing().when(programMapper).updateProgramFromDto(requestDto, program);
+        doNothing().when(programMapper).toDomain(requestDto, program);
         when(programRepository.save(program)).thenReturn(program);
 
         Program updatedProgram = programService.updateProgram(1, requestDto);
@@ -108,7 +108,7 @@ class ProgramServiceTest {
         assertNotNull(updatedProgram);
         verify(programDomainValidator, times(1)).validateNameUniquenessForUpdate("Updated Program",
                 1);
-        verify(programMapper, times(1)).updateProgramFromDto(requestDto, program);
+        verify(programMapper, times(1)).toDomain(requestDto, program);
         verify(programRepository, times(1)).save(program);
     }
 

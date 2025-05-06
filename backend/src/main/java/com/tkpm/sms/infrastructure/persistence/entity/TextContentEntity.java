@@ -23,6 +23,6 @@ public class TextContentEntity {
     @Column(name = "created_at")
     LocalDateTime createdAt;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "textContent", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     List<TranslationEntity> translations;
 }

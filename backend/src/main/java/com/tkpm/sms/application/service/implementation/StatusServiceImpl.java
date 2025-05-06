@@ -4,12 +4,11 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.status.StatusRequestDto;
 import com.tkpm.sms.application.mapper.StatusMapper;
 import com.tkpm.sms.application.service.interfaces.StatusService;
+import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Status;
-import com.tkpm.sms.domain.valueobject.TextContent;
-import com.tkpm.sms.domain.valueobject.Translation;
 import com.tkpm.sms.domain.repository.StatusRepository;
 import com.tkpm.sms.domain.service.validators.StatusDomainValidator;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +16,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
 
 @Slf4j
 @Service
@@ -32,6 +27,7 @@ public class StatusServiceImpl implements StatusService {
     StatusRepository statusRepository;
     StatusDomainValidator statusDomainValidator;
     StatusMapper statusMapper;
+    TextContentService textContentService;
 
     @NonFinal
     @Value("${app.locale.default}")
@@ -61,18 +57,9 @@ public class StatusServiceImpl implements StatusService {
     public Status createStatus(StatusRequestDto statusRequestDto) {
         // Validate name uniqueness
         statusDomainValidator.validateNameUniqueness(statusRequestDto.getName());
-        var languageCode = LocaleContextHolder.getLocale().getLanguage();
-
-        var translation = Translation.builder().text(statusRequestDto.getName())
-                .languageCode(languageCode).isOriginal(languageCode.equals(DEFAULT_LANGUAGE))
-                .build();
-
-        var textContent = TextContent.builder().createdAt(LocalDateTime.now())
-                .translations(Collections.singletonList(translation)).build();
-
         // Map DTO to domain entity
         Status status = statusMapper.toStatus(statusRequestDto);
-        status.setName(textContent);
+        status.setName(textContentService.createTextContent(statusRequestDto.getName()));
 
         // Save and return
         return statusRepository.save(status);
@@ -82,7 +69,6 @@ public class StatusServiceImpl implements StatusService {
     @Transactional
     public Status updateStatus(Integer id, StatusRequestDto statusRequestDto) {
         // Validate name uniqueness for update
-        var languageCode = LocaleContextHolder.getLocale().getLanguage();
 
         statusDomainValidator.validateNameUniquenessForUpdate(statusRequestDto.getName(), id);
 
@@ -91,20 +77,9 @@ public class StatusServiceImpl implements StatusService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Status with id %s not found", id)));
 
-        var translation = status.getName().getTranslations().stream().filter(
-                translationEntity -> translationEntity.getLanguageCode().equals(languageCode))
-                .findFirst();
-
-        if (translation.isEmpty()) {
-            var newTranslation = Translation.builder().text(statusRequestDto.getName())
-                    .languageCode(languageCode).isOriginal(languageCode.equals(DEFAULT_LANGUAGE))
-                    .build();
-
-            // Add new translation
-            status.getName().getTranslations().add(newTranslation);
-        } else {
-            translation.get().setText(statusRequestDto.getName());
-        }
+        statusMapper.updateStatusFromDto(statusRequestDto, status);
+        status.setName(
+                textContentService.updateTextContent(status.getName(), statusRequestDto.getName()));
 
         // Save and return
         return statusRepository.save(status);

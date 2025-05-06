@@ -42,7 +42,7 @@ public class FacultyController {
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationResponseDto<FacultyDto>> getFaculty(@PathVariable Integer id) {
         var faculty = facultyService.getFacultyById(id);
-        var facultyDto = new FacultyDto(faculty.getId(), faculty.getName());
+        var facultyDto = facultyMapper.toDto(faculty);
 
         return ResponseEntity.ok(ApplicationResponseDto.success(facultyDto));
     }
@@ -51,9 +51,8 @@ public class FacultyController {
     public ResponseEntity<ApplicationResponseDto<FacultyDto>> createFaculty(
             @Valid @RequestBody FacultyRequestDto faculty,
             UriComponentsBuilder uriComponentsBuilder) {
-
         var newFaculty = facultyService.createFaculty(faculty);
-        var facultyDto = new FacultyDto(newFaculty.getId(), newFaculty.getName());
+        var facultyDto = facultyMapper.toDto(newFaculty);
 
         return ResponseEntity
                 .created(uriComponentsBuilder.path("/api/faculties/{id}")
@@ -65,7 +64,7 @@ public class FacultyController {
     public ResponseEntity<ApplicationResponseDto<FacultyDto>> updateFaculty(
             @PathVariable Integer id, @Valid @RequestBody FacultyRequestDto faculty) {
         var updatedFaculty = facultyService.updateFaculty(id, faculty);
-        var facultyDto = new FacultyDto(updatedFaculty.getId(), updatedFaculty.getName());
+        var facultyDto = facultyMapper.toDto(updatedFaculty);
 
         return ResponseEntity.ok(ApplicationResponseDto.success(facultyDto));
     }

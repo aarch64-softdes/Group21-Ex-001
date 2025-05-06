@@ -7,7 +7,7 @@ import com.tkpm.sms.domain.model.Program;
 public interface ProgramMapper {
     ProgramDto toDto(Program program);
 
-    Program toEntity(ProgramRequestDto programRequestDto);
+    Program toDomain(ProgramRequestDto programRequestDto);
 
-    void updateProgramFromDto(ProgramRequestDto programRequestDto, Program program);
+    void toDomain(ProgramRequestDto programRequestDto, Program program);
 }

@@ -2,6 +2,7 @@ package com.tkpm.sms;
 
 import com.tkpm.sms.application.dto.request.faculty.FacultyRequestDto;
 import com.tkpm.sms.application.service.implementation.FacultyServiceImpl;
+import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.repository.FacultyRepository;
@@ -31,6 +32,9 @@ class FacultyServiceTest {
 
     @InjectMocks
     private FacultyServiceImpl facultyService;
+
+    @InjectMocks
+    TextContentService textContentService;
 
     @BeforeEach
     void setUp() {
@@ -93,7 +97,8 @@ class FacultyServiceTest {
         requestDto.setName("New Faculty");
 
         doNothing().when(facultyValidator).validateNameUniqueness("New Faculty");
-        Faculty faculty = Faculty.builder().name("New Faculty").build();
+        Faculty faculty = Faculty.builder()
+                .name(textContentService.createTextContent("New Faculty")).build();
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
         Faculty createdFaculty = facultyService.createFaculty(requestDto);
@@ -108,7 +113,8 @@ class FacultyServiceTest {
         FacultyRequestDto requestDto = new FacultyRequestDto();
         requestDto.setName("New Faculty");
 
-        Faculty faculty = Faculty.builder().name("New Faculty").build();
+        Faculty faculty = Faculty.builder()
+                .name(textContentService.createTextContent("New Faculty")).build();
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
         Faculty result = facultyService.createFaculty(requestDto);
@@ -134,7 +140,8 @@ class FacultyServiceTest {
         FacultyRequestDto requestDto = new FacultyRequestDto();
         requestDto.setName("Updated Faculty");
 
-        Faculty faculty = Faculty.builder().id(1).name("Old Faculty").build();
+        Faculty faculty = Faculty.builder().id(1)
+                .name(textContentService.createTextContent("Old Faculty")).build();
         when(facultyRepository.findById(1)).thenReturn(Optional.of(faculty));
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
@@ -149,7 +156,8 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void testDeleteFaculty() {
-        Faculty faculty = Faculty.builder().id(1).name("Test Faculty").build();
+        Faculty faculty = Faculty.builder().id(1)
+                .name(textContentService.createTextContent("Faculty to delete")).build();
         when(facultyRepository.findById(1)).thenReturn(Optional.of(faculty));
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 

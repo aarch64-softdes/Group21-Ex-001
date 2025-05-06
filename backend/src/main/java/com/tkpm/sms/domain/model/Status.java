@@ -1,7 +1,7 @@
 package com.tkpm.sms.domain.model;
 
+import com.tkpm.sms.domain.utils.TranslationUtils;
 import com.tkpm.sms.domain.valueobject.TextContent;
-import com.tkpm.sms.domain.valueobject.Translation;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -33,29 +33,26 @@ public class Status {
     }
 
     public String getDefaultName() {
-        log.info("Getting name by default language");
-        if (name == null || name.getTranslations().isEmpty()) {
-            return null;
-        }
-        var translations = name.getTranslations();
-
-        var defaultName = translations.stream().filter(Translation::isOriginal).findFirst()
-                .map(Translation::getText).orElse(translations.getFirst().getText());
-        log.info("Default name: {}", defaultName);
-
-        return defaultName;
+        // if (name == null || name.getTranslations().isEmpty()) {
+        // return null;
+        // }
+        // var translations = name.getTranslations();
+        //
+        // return translations.stream().filter(Translation::isOriginal).findFirst()
+        // .map(Translation::getText).orElse(translations.getFirst().getText());
+        return TranslationUtils.getDefaultText(name);
     }
 
     public String getNameByLanguage(String language) {
-        log.info("Getting name by language: language={}", language);
-        if (name == null || name.getTranslations().isEmpty()) {
-            return null;
-        }
-
-        var translations = name.getTranslations();
-
-        return translations.stream()
-                .filter(translation -> translation.getLanguageCode().equals(language)).findFirst()
-                .map(Translation::getText).orElse(getDefaultName());
+        // if (name == null || name.getTranslations().isEmpty()) {
+        // return null;
+        // }
+        //
+        // var translations = name.getTranslations();
+        //
+        // return translations.stream()
+        // .filter(translation -> translation.getLanguageCode().equals(language)).findFirst()
+        // .map(Translation::getText).orElse(getDefaultName());
+        return TranslationUtils.getTextByLanguage(name, language);
     }
 }

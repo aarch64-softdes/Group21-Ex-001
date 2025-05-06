@@ -2,7 +2,9 @@ package com.tkpm.sms.application.service.implementation;
 
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.faculty.FacultyRequestDto;
+import com.tkpm.sms.application.mapper.FacultyMapper;
 import com.tkpm.sms.application.service.interfaces.FacultyService;
+import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
@@ -11,6 +13,8 @@ import com.tkpm.sms.domain.repository.FacultyRepository;
 import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class FacultyServiceImpl implements FacultyService {
+    @NonFinal
+    @Value("${app.locale.default}")
+    String DEFAULT_LANGUAGE;
+
     FacultyRepository facultyRepository;
     FacultyDomainValidator facultyValidator;
+    FacultyMapper facultyMapper;
+    TextContentService textContentService;
 
     @Override
     public PageResponse<Faculty> getAllFaculties(BaseCollectionRequest search) {
@@ -41,26 +51,31 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     @Transactional
-    public Faculty createFaculty(FacultyRequestDto faculty) {
+    public Faculty createFaculty(FacultyRequestDto facultyRequest) {
         // Use domain service for business validation
-        facultyValidator.validateNameUniqueness(faculty.getName());
+        facultyValidator.validateNameUniqueness(facultyRequest.getName());
 
-        var newFaculty = Faculty.builder().name(faculty.getName()).build();
-        return facultyRepository.save(newFaculty);
+        var faculty = facultyMapper.toDomain(facultyRequest);
+        faculty.setName(textContentService.createTextContent(facultyRequest.getName()));
+
+        return facultyRepository.save(faculty);
     }
 
     @Override
     @Transactional
-    public Faculty updateFaculty(Integer id, FacultyRequestDto faculty) {
+    public Faculty updateFaculty(Integer id, FacultyRequestDto facultyRequest) {
         // Use domain service for business validation
-        facultyValidator.validateNameUniquenessForUpdate(faculty.getName(), id);
+        facultyValidator.validateNameUniquenessForUpdate(facultyRequest.getName(), id);
 
-        Faculty facultyToUpdate = facultyRepository.findById(id)
+        Faculty faculty = facultyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Faculty with id %s not found", id)));
 
-        facultyToUpdate.setName(faculty.getName());
-        return facultyRepository.save(facultyToUpdate);
+        facultyMapper.toDomain(facultyRequest, faculty);
+        faculty.setName(
+                textContentService.updateTextContent(faculty.getName(), facultyRequest.getName()));
+
+        return facultyRepository.save(faculty);
     }
 
     @Override

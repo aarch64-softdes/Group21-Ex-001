@@ -10,7 +10,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {FacultyMapperImpl.class, ProgramMapperImpl.class})
 public interface SubjectMapperImpl extends SubjectMapper {
 
     @Override
@@ -18,7 +18,6 @@ public interface SubjectMapperImpl extends SubjectMapper {
     Subject toSubject(SubjectCreateRequestDto subjectRequestDto);
 
     @Override
-    @Mapping(target = "faculty", source = "faculty")
     @Mapping(target = "isActive", source = "active")
     SubjectDto toSubjectDto(Subject subject);
 

@@ -4,6 +4,7 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.program.ProgramRequestDto;
 import com.tkpm.sms.application.mapper.ProgramMapper;
 import com.tkpm.sms.application.service.interfaces.ProgramService;
+import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
@@ -25,6 +26,7 @@ public class ProgramServiceImpl implements ProgramService {
     ProgramRepository programRepository;
     ProgramDomainValidator programDomainValidator;
     ProgramMapper programMapper;
+    TextContentService textContentService;
 
     @Override
     public PageResponse<Program> getAllPrograms(BaseCollectionRequest search) {
@@ -52,7 +54,9 @@ public class ProgramServiceImpl implements ProgramService {
         programDomainValidator.validateNameUniqueness(programRequestDto.getName());
 
         // Convert DTO to domain entity using mapper
-        Program program = programMapper.toEntity(programRequestDto);
+        Program program = programMapper.toDomain(programRequestDto);
+        program.setName(textContentService.createTextContent(programRequestDto.getName()));
+
         return programRepository.save(program);
     }
 
@@ -62,13 +66,16 @@ public class ProgramServiceImpl implements ProgramService {
         // Use domain service for business validation
         programDomainValidator.validateNameUniquenessForUpdate(programRequestDto.getName(), id);
 
-        Program programToUpdate = programRepository.findById(id)
+        Program program = programRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Program with id %s not found", id)));
 
+        programMapper.toDomain(programRequestDto, program);
+        program.setName(textContentService.updateTextContent(program.getName(),
+                programRequestDto.getName()));
+
         // Update domain entity using mapper
-        programMapper.updateProgramFromDto(programRequestDto, programToUpdate);
-        return programRepository.save(programToUpdate);
+        return programRepository.save(program);
     }
 
     @Override

@@ -21,23 +21,29 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FacultyRepositoryImpl implements FacultyRepository {
     private final FacultyJpaRepository jpaRepository;
-    private final FacultyPersistenceMapper mapper;
+    private final FacultyPersistenceMapper facultyMapper;
 
     @Override
     public Faculty save(Faculty faculty) {
-        var entity = mapper.toEntity(faculty);
+        var entity = facultyMapper.toEntity(faculty);
+
+        var textContent = entity.getName();
+        if (textContent != null && textContent.getTranslations() != null) {
+            textContent.getTranslations().forEach(te -> te.setTextContent(textContent));
+        }
+
         var savedEntity = jpaRepository.save(entity);
-        return mapper.toDomain(savedEntity);
+        return facultyMapper.toDomain(savedEntity);
     }
 
     @Override
     public Optional<Faculty> findById(Integer id) {
-        return jpaRepository.findById(id).map(mapper::toDomain);
+        return jpaRepository.findById(id).map(facultyMapper::toDomain);
     }
 
     @Override
     public Optional<Faculty> findByName(String name) {
-        return jpaRepository.findFacultyByName(name).map(mapper::toDomain);
+        return jpaRepository.findFacultyByName(name).map(facultyMapper::toDomain);
     }
 
     @Override
@@ -64,7 +70,7 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         Page<FacultyEntity> page = jpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Faculty> content = page.getContent().stream().map(mapper::toDomain)
+        List<Faculty> content = page.getContent().stream().map(facultyMapper::toDomain)
                 .collect(Collectors.toList());
 
         return PageResponse.of(content, page.getNumber() + 1, page.getSize(),
@@ -73,7 +79,7 @@ public class FacultyRepositoryImpl implements FacultyRepository {
 
     @Override
     public void delete(Faculty faculty) {
-        var entity = mapper.toEntity(faculty);
+        var entity = facultyMapper.toEntity(faculty);
         jpaRepository.delete(entity);
     }
 }

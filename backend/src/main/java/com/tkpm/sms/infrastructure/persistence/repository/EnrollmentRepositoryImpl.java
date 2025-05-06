@@ -19,6 +19,7 @@ import com.tkpm.sms.infrastructure.persistence.mapper.HistoryPersistenceMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -165,7 +166,9 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
         return AcademicTranscriptDto.builder().studentId(student.getId())
                 .studentName(student.getName()).studentDob(student.getDob())
-                .gpa(getTotalGpa(enrollments)).courseName(student.getFaculty().getName())
+                .gpa(getTotalGpa(enrollments))
+                .courseName(student.getFaculty()
+                        .getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))
                 .transcriptList(enrollments.stream().map(enrollment -> {
                     var course = enrollment.getCourse();
                     var subject = subjectRepository.findById(course.getSubject().getId())
