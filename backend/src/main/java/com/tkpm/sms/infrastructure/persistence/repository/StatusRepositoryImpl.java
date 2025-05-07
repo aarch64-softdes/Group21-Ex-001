@@ -31,15 +31,6 @@ public class StatusRepositoryImpl implements StatusRepository {
     public Status save(Status status) {
         StatusEntity entity = statusPersistenceMapper.toEntity(status);
 
-        // TODO: ALTERNATIVE: Find the reason why the CASCADE.ALL is not working (saving textContent
-        // does not save translations)
-        // Save translations
-        // var textContent = entity.getName();
-        // if (textContent != null && textContent.getTranslations() != null) {
-        // textContent.getTranslations().forEach(te -> te.setTextContent(textContent));
-        // }
-
-        // Save the status entity
         entity = statusJpaRepository.save(entity);
 
         return statusPersistenceMapper.toDomain(entity);

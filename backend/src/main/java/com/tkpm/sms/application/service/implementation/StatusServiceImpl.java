@@ -42,8 +42,9 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     public Status getStatusById(Integer id) {
-        return statusRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Status with id %s not found", id)));
+        return statusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found",
+                        Status.class.getSimpleName(), id));
     }
 
     @Override

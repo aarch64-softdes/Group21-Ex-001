@@ -272,11 +272,7 @@
                             # Run formatter on all Java files in the project using Spotless
                             mvn spotless:apply
 
-                            # Stage all Java files that were changed by the formatter
-                            echo "Staging all formatted Java files..."
-                            git add $(find . -name "*.java")
-
-                            echo "All formatted Java files have been staged for commit."
+                            echo "File formatter applied to all Java files."
                         </pre-commit>
                     </hooks>
                 </configuration>
