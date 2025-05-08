@@ -27,7 +27,8 @@ public interface EnrollmentMapperImpl extends EnrollmentMapper {
 
     @Override
     @Mapping(target = "transcript.subjectCode", source = "course.subject.code")
-    @Mapping(target = "transcript.subjectName", source = "course.subject.name")
+    // @Mapping(target = "transcript.subjectName", source = "course.subject.name")
+    @Mapping(target = "transcript.subjectName", ignore = true)
     EnrollmentDto toEnrollmentCreatedDto(Enrollment enrollment);
 
     @Override

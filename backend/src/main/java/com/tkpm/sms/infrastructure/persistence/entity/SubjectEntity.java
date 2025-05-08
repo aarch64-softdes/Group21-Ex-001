@@ -20,14 +20,19 @@ public class SubjectEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    @NotNull
-    String name;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "name_id")
+    TextContentEntity name;
 
     @NotNull
     String code;
     @Column(name = "is_active", columnDefinition = "boolean default true")
     boolean isActive;
-    String description;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "description_id")
+    TextContentEntity description;
 
     @NotNull
     Integer credits;

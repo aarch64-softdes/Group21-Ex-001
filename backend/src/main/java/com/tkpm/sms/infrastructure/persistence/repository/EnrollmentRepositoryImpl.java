@@ -164,6 +164,8 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     public AcademicTranscriptDto getAcademicTranscript(Student student,
             List<Enrollment> enrollments) {
 
+        var languageCode = LocaleContextHolder.getLocale().getLanguage();
+
         return AcademicTranscriptDto.builder().studentId(student.getId())
                 .studentName(student.getName()).studentDob(student.getDob())
                 .gpa(getTotalGpa(enrollments))
@@ -176,7 +178,8 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                                     String.format("Subject with id %s cannot be found",
                                             course.getSubject().getId())));
 
-                    return TranscriptDto.builder().subjectName(subject.getName())
+                    return TranscriptDto.builder()
+                            .subjectName(subject.getNameByLanguage(languageCode))
                             .subjectCode(subject.getCode()).grade(enrollment.getScore().getGrade())
                             .gpa(enrollment.getScore().getGpa()).build();
                 }).toList()).build();
