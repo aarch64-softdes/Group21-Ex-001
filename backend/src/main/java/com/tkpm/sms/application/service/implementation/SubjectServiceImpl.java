@@ -85,10 +85,16 @@ public class SubjectServiceImpl implements SubjectService {
         subject.setName(nameTextContent);
         subject.setDescription(descriptionTextContent);
 
-        subjectValidator.validatePrerequisites(createRequestDto.getPrerequisitesId());
+        if (createRequestDto.getPrerequisitesId() == null) {
+            createRequestDto.setPrerequisitesId(Collections.emptyList());
+        } else {
+            subjectValidator.validatePrerequisites(createRequestDto.getPrerequisitesId());
 
-        var prerequisites = subjectRepository.findAllByIds(createRequestDto.getPrerequisitesId());
-        subject.setPrerequisites(prerequisites);
+            var prerequisites = subjectRepository
+                    .findAllByIds(createRequestDto.getPrerequisitesId());
+            subject.setPrerequisites(prerequisites);
+        }
+
         subject.setCreatedAt(LocalDateTime.now());
         subject.setActive(true);
 
