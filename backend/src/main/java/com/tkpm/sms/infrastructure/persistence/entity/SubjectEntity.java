@@ -21,7 +21,7 @@ public class SubjectEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "name_id")
     TextContentEntity name;
 
@@ -30,7 +30,7 @@ public class SubjectEntity {
     @Column(name = "is_active", columnDefinition = "boolean default true")
     boolean isActive;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "description_id")
     TextContentEntity description;
 

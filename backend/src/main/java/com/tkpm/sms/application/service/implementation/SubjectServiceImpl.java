@@ -6,6 +6,7 @@ import com.tkpm.sms.application.dto.request.subject.SubjectUpdateRequestDto;
 import com.tkpm.sms.application.mapper.SubjectMapper;
 import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.application.service.interfaces.SubjectService;
+import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
@@ -37,6 +38,8 @@ public class SubjectServiceImpl implements SubjectService {
     SubjectDomainValidator subjectValidator;
     SubjectMapper subjectMapper;
 
+    TextContentService textContentService;
+
     FacultyService facultyService;
 
     @NonFinal
@@ -64,26 +67,10 @@ public class SubjectServiceImpl implements SubjectService {
         subjectValidator.validateSubjectCodeUniqueness(createRequestDto.getCode());
         subjectValidator.validateSubjectNameUniqueness(createRequestDto.getName());
 
-        var languageCode = LocaleContextHolder.getLocale().getLanguage();
-
-        var nameTranslation = Translation.builder().text(createRequestDto.getName())
-                .languageCode(languageCode).isOriginal(languageCode.equals(DEFAULT_LANGUAGE))
-                .build();
-
-        var nameTextContent = TextContent.builder().createdAt(LocalDateTime.now())
-                .translations(Collections.singletonList(nameTranslation)).build();
-
-        var descriptionTranslation = Translation.builder().text(createRequestDto.getDescription())
-                .languageCode(languageCode).isOriginal(languageCode.equals(DEFAULT_LANGUAGE))
-                .build();
-
-        var descriptionTextContent = TextContent.builder().createdAt(LocalDateTime.now())
-                .translations(Collections.singletonList(descriptionTranslation)).build();
-
         Subject subject = subjectMapper.toSubject(createRequestDto);
         subject.setFaculty(facultyService.getFacultyById(createRequestDto.getFacultyId()));
-        subject.setName(nameTextContent);
-        subject.setDescription(descriptionTextContent);
+        subject.setName(textContentService.createTextContent(createRequestDto.getName()));
+        subject.setDescription(textContentService.createTextContent(createRequestDto.getDescription()));
 
         if (createRequestDto.getPrerequisitesId() == null) {
             createRequestDto.setPrerequisitesId(Collections.emptyList());
@@ -105,46 +92,22 @@ public class SubjectServiceImpl implements SubjectService {
     public Subject updateSubject(Integer id, SubjectUpdateRequestDto updateRequestDto) {
         subjectValidator.validateSubjectNameUniquenessForUpdate(updateRequestDto.getName(), id);
 
-        var languageCode = LocaleContextHolder.getLocale().getLanguage();
-
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
 
-        subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
-
-        var nameTranslation = subject.getName().getTranslations().stream()
-                .filter(subjectEntity -> subjectEntity.getLanguageCode().equals(languageCode))
-                .findFirst();
-
-        if (nameTranslation.isEmpty()) {
-            var newNameTranslation = Translation.builder().text(updateRequestDto.getName())
-                    .languageCode(languageCode).isOriginal(languageCode.equals(DEFAULT_LANGUAGE))
-                    .build();
-
-            subject.getName().getTranslations().add(newNameTranslation);
-        } else {
-            nameTranslation.get().setText(updateRequestDto.getName());
-        }
-
-        var descriptionTranslation = subject.getDescription().getTranslations().stream()
-                .filter(subjectEntity -> subjectEntity.getLanguageCode().equals(languageCode))
-                .findFirst();
-
-        if (descriptionTranslation.isEmpty()) {
-            var newDescriptionTranslation = Translation.builder()
-                    .text(updateRequestDto.getDescription()).languageCode(languageCode)
-                    .isOriginal(languageCode.equals(DEFAULT_LANGUAGE)).build();
-
-            subject.getDescription().getTranslations().add(newDescriptionTranslation);
-        } else {
-            descriptionTranslation.get().setText(updateRequestDto.getDescription());
+        if(updateRequestDto.getPrerequisitesId() != null) {
+            subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
+            var prerequisites = subjectRepository
+                    .findAllByIds(updateRequestDto.getPrerequisitesId());
+            subject.setPrerequisites(prerequisites);
         }
 
         subjectMapper.updateSubjectFromDto(subject, updateRequestDto);
-
-        var prerequisites = subjectRepository.findAllByIds(updateRequestDto.getPrerequisitesId());
-        subject.setPrerequisites(prerequisites);
+        subject.setName(
+                textContentService.updateTextContent(subject.getName(), updateRequestDto.getName()));
+        subject.setDescription(
+                textContentService.updateTextContent(subject.getDescription(), updateRequestDto.getDescription()));
 
         return subjectRepository.save(subject);
     }
