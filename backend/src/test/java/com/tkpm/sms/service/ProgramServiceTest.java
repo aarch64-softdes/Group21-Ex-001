@@ -1,12 +1,15 @@
-package com.tkpm.sms;
+package com.tkpm.sms.service;
 
 import com.tkpm.sms.application.dto.request.program.ProgramRequestDto;
 import com.tkpm.sms.application.mapper.ProgramMapper;
 import com.tkpm.sms.application.service.implementation.ProgramServiceImpl;
+import com.tkpm.sms.application.service.implementation.TextContentServiceImpl;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Program;
 import com.tkpm.sms.domain.repository.ProgramRepository;
+import com.tkpm.sms.domain.repository.TextContentRepository;
 import com.tkpm.sms.domain.service.validators.ProgramDomainValidator;
+import com.tkpm.sms.domain.valueobject.TextContent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,6 +27,9 @@ class ProgramServiceTest {
     private ProgramRepository programRepository;
 
     @Mock
+    private TextContentRepository textContentRepository;
+
+    @Mock
     private ProgramDomainValidator programDomainValidator;
 
     @Mock
@@ -31,6 +37,9 @@ class ProgramServiceTest {
 
     @InjectMocks
     private ProgramServiceImpl programService;
+
+    @Mock
+    private TextContentServiceImpl textContentService;
 
     @BeforeEach
     void setUp() {
@@ -67,10 +76,12 @@ class ProgramServiceTest {
 
     @Test
     void testCreateProgram() {
+        saveTextContent();
         ProgramRequestDto requestDto = new ProgramRequestDto();
         requestDto.setName("New Program");
 
-        Program program = new Program();
+        Program program = Program.builder().id(1)
+                .name(textContentService.createTextContent("New Program")).build();
         when(programMapper.toDomain(requestDto)).thenReturn(program);
         when(programRepository.save(program)).thenReturn(program);
 
@@ -93,10 +104,12 @@ class ProgramServiceTest {
 
     @Test
     void testUpdateProgram_Success() {
+        saveTextContent();
         ProgramRequestDto requestDto = new ProgramRequestDto();
         requestDto.setName("Updated Program");
 
-        Program program = new Program();
+        Program program = Program.builder().id(1)
+                .name(textContentService.createTextContent("New Program")).build();
         when(programRepository.findById(1)).thenReturn(Optional.of(program));
         doNothing().when(programDomainValidator).validateNameUniquenessForUpdate("Updated Program",
                 1);
@@ -122,5 +135,12 @@ class ProgramServiceTest {
 
         assertNotNull(program.getDeletedAt());
         verify(programRepository, times(1)).save(program);
+    }
+
+    private void saveTextContent() {
+        when(textContentRepository.save(any())).thenAnswer(invocation -> {
+            Object[] args = invocation.getArguments();
+            return (TextContent) args[0];
+        });
     }
 }

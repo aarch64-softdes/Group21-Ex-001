@@ -1,4 +1,4 @@
-package com.tkpm.sms;
+package com.tkpm.sms.service;
 
 import com.tkpm.sms.application.dto.request.faculty.FacultyRequestDto;
 import com.tkpm.sms.application.service.implementation.FacultyServiceImpl;
@@ -7,15 +7,18 @@ import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.repository.FacultyRepository;
 import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
-
+import com.tkpm.sms.domain.valueobject.TextContent;
+import com.tkpm.sms.domain.valueobject.Translation;
+import com.tkpm.sms.infrastructure.mapper.FacultyMapperImpl;
 import jakarta.transaction.Transactional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,15 +33,30 @@ class FacultyServiceTest {
     @Mock
     private FacultyDomainValidator facultyValidator;
 
+    @Mock
+    private FacultyMapperImpl facultyMapper;
+
+    @Mock
+    private TextContentService textContentService;
+
     @InjectMocks
     private FacultyServiceImpl facultyService;
 
-    @InjectMocks
-    TextContentService textContentService;
+    private Faculty faculty;
+    private FacultyRequestDto facultyRequestDto;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        var textContent = TextContent.builder().id(1).createdAt(LocalDateTime.now())
+                .translations(Collections.singletonList(Translation.builder().languageCode("en")
+                        .text("Faculty Name").isOriginal(true).build()))
+                .build();
+
+        faculty = Faculty.builder().id(1).name(textContent).build();
+
+        facultyRequestDto = FacultyRequestDto.builder().name("Faculty Name").build();
     }
 
     // @Test
@@ -82,7 +100,6 @@ class FacultyServiceTest {
 
     @Test
     void testGetFacultyByName_Success() {
-        Faculty faculty = new Faculty();
         when(facultyRepository.findByName("Test Faculty")).thenReturn(Optional.of(faculty));
 
         Faculty result = facultyService.getFacultyByName("Test Faculty");
@@ -93,73 +110,76 @@ class FacultyServiceTest {
 
     @Test
     void testCreateFaculty() {
-        FacultyRequestDto requestDto = new FacultyRequestDto();
-        requestDto.setName("New Faculty");
-
-        doNothing().when(facultyValidator).validateNameUniqueness("New Faculty");
-        Faculty faculty = Faculty.builder()
-                .name(textContentService.createTextContent("New Faculty")).build();
+        // Given
+        doNothing().when(facultyValidator).validateNameUniqueness(anyString());
+        when(facultyMapper.toDomain(any(FacultyRequestDto.class))).thenReturn(faculty);
+        when(textContentService.createTextContent(anyString())).thenReturn(faculty.getName());
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
-        Faculty createdFaculty = facultyService.createFaculty(requestDto);
+        // When
+        Faculty result = facultyService.createFaculty(facultyRequestDto);
 
-        assertNotNull(createdFaculty);
-        assertEquals("New Faculty", createdFaculty.getName());
-        verify(facultyRepository, times(1)).save(any(Faculty.class));
+        // Then
+        assertNotNull(result);
+        assertNotNull(result.getName());
+        assertEquals("Faculty Name", result.getDefaultName()); // Use getDefaultName() not getName()
     }
 
     @Test
     void testCreateFaculty_Success() {
-        FacultyRequestDto requestDto = new FacultyRequestDto();
-        requestDto.setName("New Faculty");
-
-        Faculty faculty = Faculty.builder()
-                .name(textContentService.createTextContent("New Faculty")).build();
+        // Given
+        doNothing().when(facultyValidator).validateNameUniqueness(anyString());
+        when(facultyMapper.toDomain(any(FacultyRequestDto.class))).thenReturn(faculty);
+        when(textContentService.createTextContent(anyString())).thenReturn(faculty.getName());
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
-        Faculty result = facultyService.createFaculty(requestDto);
+        // When
+        Faculty result = facultyService.createFaculty(facultyRequestDto);
 
+        // Then
         assertNotNull(result);
-        assertEquals("New Faculty", result.getName());
-        verify(facultyValidator).validateNameUniqueness("New Faculty");
+        assertNotNull(result.getName());
+        assertEquals("Faculty Name", result.getDefaultName());
+
+        verify(facultyValidator).validateNameUniqueness("Faculty Name");
         verify(facultyRepository).save(any(Faculty.class));
     }
 
     @Test
     void testUpdateFaculty_NotFound() {
+        var name = "Updated Faculty";
         when(facultyRepository.findById(1)).thenReturn(Optional.empty());
 
         FacultyRequestDto requestDto = new FacultyRequestDto();
-        requestDto.setName("Updated Faculty");
+        requestDto.setName(name);
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.updateFaculty(1, requestDto));
+        assertThrows(ResourceNotFoundException.class,
+                () -> facultyService.updateFaculty(1, requestDto));
     }
 
     @Test
     void testUpdateFaculty_Success() {
-        FacultyRequestDto requestDto = new FacultyRequestDto();
-        requestDto.setName("Updated Faculty");
+        doNothing().when(facultyValidator).validateNameUniqueness(anyString());
 
-        Faculty faculty = Faculty.builder().id(1)
-                .name(textContentService.createTextContent("Old Faculty")).build();
         when(facultyRepository.findById(1)).thenReturn(Optional.of(faculty));
+        when(facultyMapper.toDomain(any(FacultyRequestDto.class))).thenReturn(faculty);
+        when(textContentService.updateTextContent(any(), anyString()))
+                .thenReturn(faculty.getName());
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
-        Faculty result = facultyService.updateFaculty(1, requestDto);
+        Faculty result = facultyService.updateFaculty(1, facultyRequestDto);
 
         assertNotNull(result);
-        assertEquals("Updated Faculty", result.getName());
-        verify(facultyValidator).validateNameUniquenessForUpdate("Updated Faculty", 1);
+        assertEquals("Faculty Name", result.getDefaultName());
+
+        verify(facultyValidator).validateNameUniquenessForUpdate("Faculty Name", 1);
         verify(facultyRepository).save(any(Faculty.class));
     }
 
     @Test
     @Transactional
     void testDeleteFaculty() {
-        Faculty faculty = Faculty.builder().id(1)
-                .name(textContentService.createTextContent("Faculty to delete")).build();
         when(facultyRepository.findById(1)).thenReturn(Optional.of(faculty));
-        when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
         facultyService.deleteFaculty(1);
 

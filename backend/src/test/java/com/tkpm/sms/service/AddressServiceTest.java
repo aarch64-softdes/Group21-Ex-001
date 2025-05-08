@@ -1,4 +1,4 @@
-package com.tkpm.sms;
+package com.tkpm.sms.service;
 
 import com.tkpm.sms.application.dto.request.address.AddressCreateRequestDto;
 import com.tkpm.sms.application.dto.request.address.AddressUpdateRequestDto;

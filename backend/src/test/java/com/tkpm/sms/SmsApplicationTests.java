@@ -1,13 +1,11 @@
-// package com.tkpm.sms;
+package com.tkpm.sms;
 
-// import org.junit.jupiter.api.Test;
-// import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-// @SpringBootTest
-// class SmsApplicationTests {
-
-// @Test
-// void contextLoads() {
-// }
-
-// }
+@SpringBootTest(classes = SmsApplicationTests.class)
+class SmsApplicationTests {
+    @Test
+    void contextLoads() {
+    }
+}

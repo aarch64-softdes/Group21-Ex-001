@@ -1,4 +1,4 @@
-package com.tkpm.sms;
+package com.tkpm.sms.service;
 
 import com.tkpm.sms.application.dto.request.course.CourseCreateRequestDto;
 import com.tkpm.sms.application.dto.request.course.CourseUpdateRequestDto;
