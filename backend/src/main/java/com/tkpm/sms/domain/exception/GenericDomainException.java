@@ -17,4 +17,8 @@ public class GenericDomainException extends DomainException {
     public GenericDomainException(String message, Throwable cause) {
         super(message, ErrorCode.INTERNAL_SERVER_ERROR, cause);
     }
+
+    public GenericDomainException(ErrorCode errorCode, String message, Object... args) {
+        super(errorCode, message, args);
+    }
 }
