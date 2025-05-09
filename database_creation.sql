@@ -1265,3 +1265,260 @@ INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUE
 ('hist_085', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '5 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'BUS301_02')),
 ('hist_086', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '4 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'BUS201_01')),
 ('hist_087', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '4 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'CS201_02'));
+
+-- Create text_contents table
+CREATE TABLE text_contents (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    created_at TIMESTAMP
+);
+
+-- Create translations table
+CREATE TABLE translations (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    text TEXT,
+    is_original BOOLEAN,
+    language_code VARCHAR(10),
+    text_content_id INTEGER,
+    CONSTRAINT fk_translations_text_content FOREIGN KEY (text_content_id) REFERENCES text_contents (id)
+);
+
+-- Alter faculties table to add name_id column
+ALTER TABLE faculties
+ADD COLUMN name_id INTEGER,
+ADD CONSTRAINT fk_faculties_name FOREIGN KEY (name_id) REFERENCES text_contents (id);
+
+-- Alter programs table to add name_id column
+ALTER TABLE programs
+ADD COLUMN name_id INTEGER,
+ADD CONSTRAINT fk_programs_name FOREIGN KEY (name_id) REFERENCES text_contents (id);
+
+-- Alter subjects table to add name_id and description_id columns
+ALTER TABLE subjects
+ADD COLUMN name_id INTEGER,
+ADD COLUMN description_id INTEGER,
+ADD CONSTRAINT fk_subjects_name FOREIGN KEY (name_id) REFERENCES text_contents (id),
+ADD CONSTRAINT fk_subjects_description FOREIGN KEY (description_id) REFERENCES text_contents (id);
+
+-- Alter statuses table to add name_id column
+ALTER TABLE statuses
+ADD COLUMN name_id INTEGER,
+ADD CONSTRAINT fk_statuses_name FOREIGN KEY (name_id) REFERENCES text_contents (id);
+
+-- Populate text_contents and translations for faculties
+INSERT INTO text_contents (created_at)
+SELECT CURRENT_TIMESTAMP FROM faculties;
+
+-- Insert translations for faculties (English original)
+INSERT INTO translations (text, is_original, language_code, text_content_id)
+SELECT f.name, TRUE, 'en', tc.id
+FROM faculties f
+JOIN text_contents tc ON tc.id = (
+    SELECT id FROM text_contents ORDER BY id LIMIT 1 OFFSET (f.id - 1)
+);
+
+-- Add Vietnamese translations for faculties
+INSERT INTO translations (text, is_original, language_code, text_content_id)
+SELECT 
+    CASE f.name
+        WHEN 'Faculty of Business English' THEN 'Khoa Tiếng Anh Thương mại'
+        WHEN 'Faculty of Law' THEN 'Khoa Luật'
+        WHEN 'Faculty of Japanese' THEN 'Khoa Tiếng Nhật'
+        WHEN 'Faculty of French' THEN 'Khoa Tiếng Pháp'
+    END,
+    FALSE, 'vi', tc.id
+FROM faculties f
+JOIN text_contents tc ON tc.id = (
+    SELECT id FROM text_contents ORDER BY id LIMIT 1 OFFSET (f.id - 1)
+);
+
+-- Update faculties with references to text_contents
+UPDATE faculties f
+SET name_id = (
+    SELECT id FROM text_contents ORDER BY id LIMIT 1 OFFSET (f.id - 1)
+);
+
+-- Populate text_contents and translations for programs
+INSERT INTO text_contents (created_at)
+SELECT CURRENT_TIMESTAMP FROM programs;
+
+-- Insert translations for programs (English original)
+INSERT INTO translations (text, is_original, language_code, text_content_id)
+SELECT p.name, TRUE, 'en', tc.id
+FROM programs p
+JOIN text_contents tc ON tc.id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + p.id - 1)
+);
+
+-- Add Vietnamese translations for programs
+INSERT INTO translations (text, is_original, language_code, text_content_id)
+SELECT 
+    CASE p.name
+        WHEN 'Business Administration' THEN 'Quản trị Kinh doanh'
+        WHEN 'Criminal Justice' THEN 'Tư pháp Hình sự'
+        WHEN 'Japanese Literature' THEN 'Văn học Nhật Bản'
+        WHEN 'French Studies' THEN 'Nghiên cứu Pháp'
+        WHEN 'International Business' THEN 'Kinh doanh Quốc tế'
+        WHEN 'Japanese Culture' THEN 'Văn hóa Nhật Bản'
+        WHEN 'Corporate Law' THEN 'Luật Doanh nghiệp'
+        WHEN 'French Language' THEN 'Ngôn ngữ Pháp'
+        WHEN 'Japanese Economics' THEN 'Kinh tế học Nhật Bản'
+        WHEN 'Business Communication' THEN 'Giao tiếp Kinh doanh'
+    END,
+    FALSE, 'vi', tc.id
+FROM programs p
+JOIN text_contents tc ON tc.id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + p.id - 1)
+);
+
+-- Update programs with references to text_contents
+UPDATE programs p
+SET name_id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + p.id - 1)
+);
+
+-- Populate text_contents and translations for statuses
+INSERT INTO text_contents (created_at)
+SELECT CURRENT_TIMESTAMP FROM statuses;
+
+-- Insert translations for statuses (English original)
+INSERT INTO translations (text, is_original, language_code, text_content_id)
+SELECT s.name, TRUE, 'en', tc.id
+FROM statuses s
+JOIN text_contents tc ON tc.id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + (SELECT COUNT(*) FROM programs) + s.id - 1)
+);
+
+-- Add Vietnamese translations for statuses
+INSERT INTO translations (text, is_original, language_code, text_content_id)
+SELECT 
+    CASE s.name
+        WHEN 'Studying' THEN 'Đang học'
+        WHEN 'Graduated' THEN 'Đã tốt nghiệp'
+        WHEN 'Suspended' THEN 'Đình chỉ'
+        WHEN 'Dropped' THEN 'Đã thôi học'
+    END,
+    FALSE, 'vi', tc.id
+FROM statuses s
+JOIN text_contents tc ON tc.id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + (SELECT COUNT(*) FROM programs) + s.id - 1)
+);
+
+-- Update statuses with references to text_contents
+UPDATE statuses s
+SET name_id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + (SELECT COUNT(*) FROM programs) + s.id - 1)
+);
+
+-- Create text_contents for subjects (names)
+INSERT INTO text_contents (created_at)
+SELECT CURRENT_TIMESTAMP FROM subjects;
+
+-- Insert translations for subject names (English original)
+INSERT INTO translations (text, is_original, language_code, text_content_id)
+SELECT sub.name, TRUE, 'en', tc.id
+FROM subjects sub
+JOIN text_contents tc ON tc.id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + (SELECT COUNT(*) FROM programs) + (SELECT COUNT(*) FROM statuses) + sub.id - 1)
+);
+
+-- Update subjects with references to text_contents for names
+UPDATE subjects sub
+SET name_id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + (SELECT COUNT(*) FROM programs) + (SELECT COUNT(*) FROM statuses) + sub.id - 1)
+);
+
+-- Create text_contents for subjects (descriptions)
+INSERT INTO text_contents (created_at)
+SELECT CURRENT_TIMESTAMP FROM subjects;
+
+-- Insert translations for subject descriptions (English original)
+INSERT INTO translations (text, is_original, language_code, text_content_id)
+SELECT 
+    COALESCE(sub.description, 'No description available'), 
+    TRUE, 
+    'en', 
+    tc.id
+FROM subjects sub
+JOIN text_contents tc ON tc.id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + (SELECT COUNT(*) FROM programs) + (SELECT COUNT(*) FROM statuses) + (SELECT COUNT(*) FROM subjects) + sub.id - 1)
+);
+
+-- Update subjects with references to text_contents for descriptions
+UPDATE subjects sub
+SET description_id = (
+    SELECT id FROM text_contents 
+    ORDER BY id 
+    LIMIT 1 
+    OFFSET ((SELECT COUNT(*) FROM faculties) + (SELECT COUNT(*) FROM programs) + (SELECT COUNT(*) FROM statuses) + (SELECT COUNT(*) FROM subjects) + sub.id - 1)
+);
+
+-- Add Vietnamese translations for select subjects (just a few examples)
+INSERT INTO translations (text, is_original, language_code, text_content_id)
+VALUES
+-- CS101 name
+(N'Nhập môn Khoa học Máy tính', FALSE, 'vi', 
+ (SELECT tc.id FROM subjects s JOIN text_contents tc ON s.name_id = tc.id WHERE s.code = 'CS101')),
+-- CS101 description
+(N'Giới thiệu cơ bản về các nguyên lý khoa học máy tính', FALSE, 'vi',
+ (SELECT tc.id FROM subjects s JOIN text_contents tc ON s.description_id = tc.id WHERE s.code = 'CS101')),
+
+-- MATH101 name
+(N'Giải tích I', FALSE, 'vi',
+ (SELECT tc.id FROM subjects s JOIN text_contents tc ON s.name_id = tc.id WHERE s.code = 'MATH101')),
+-- MATH101 description
+(N'Giới hạn, đạo hàm và tích phân cơ bản', FALSE, 'vi',
+ (SELECT tc.id FROM subjects s JOIN text_contents tc ON s.description_id = tc.id WHERE s.code = 'MATH101')),
+
+-- BUS101 name
+(N'Nhập môn Kinh doanh', FALSE, 'vi',
+ (SELECT tc.id FROM subjects s JOIN text_contents tc ON s.name_id = tc.id WHERE s.code = 'BUS101')),
+-- BUS101 description
+(N'Các nguyên tắc cơ bản của kinh doanh và khởi nghiệp', FALSE, 'vi',
+ (SELECT tc.id FROM subjects s JOIN text_contents tc ON s.description_id = tc.id WHERE s.code = 'BUS101'));
+
+ -- Remove the duplicate text_contents and translations table creation
+-- Since these tables are already created earlier in the script
+
+-- Alter faculties table to remove name column (since we're using name_id now)
+ALTER TABLE faculties 
+DROP COLUMN name CASCADE;
+
+-- Alter programs table to remove name column (since we're using name_id now)
+ALTER TABLE programs
+DROP COLUMN name CASCADE;
+
+-- Alter subjects table to remove name and description columns (since we're using name_id and description_id now)
+ALTER TABLE subjects
+DROP COLUMN name CASCADE,
+DROP COLUMN description CASCADE;
+
+-- Alter statuses table to remove name column (since we're using name_id now)
+ALTER TABLE statuses
+DROP COLUMN name CASCADE;
