@@ -14,15 +14,12 @@ import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.SubjectRepository;
 import com.tkpm.sms.domain.service.validators.SubjectDomainValidator;
-import com.tkpm.sms.domain.valueobject.TextContent;
-import com.tkpm.sms.domain.valueobject.Translation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -70,7 +67,8 @@ public class SubjectServiceImpl implements SubjectService {
         Subject subject = subjectMapper.toSubject(createRequestDto);
         subject.setFaculty(facultyService.getFacultyById(createRequestDto.getFacultyId()));
         subject.setName(textContentService.createTextContent(createRequestDto.getName()));
-        subject.setDescription(textContentService.createTextContent(createRequestDto.getDescription()));
+        subject.setDescription(
+                textContentService.createTextContent(createRequestDto.getDescription()));
 
         if (createRequestDto.getPrerequisitesId() == null) {
             createRequestDto.setPrerequisitesId(Collections.emptyList());
@@ -96,7 +94,7 @@ public class SubjectServiceImpl implements SubjectService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("Subject with id %s not found", id)));
 
-        if(updateRequestDto.getPrerequisitesId() != null) {
+        if (updateRequestDto.getPrerequisitesId() != null) {
             subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
             var prerequisites = subjectRepository
                     .findAllByIds(updateRequestDto.getPrerequisitesId());
@@ -104,10 +102,10 @@ public class SubjectServiceImpl implements SubjectService {
         }
 
         subjectMapper.updateSubjectFromDto(subject, updateRequestDto);
-        subject.setName(
-                textContentService.updateTextContent(subject.getName(), updateRequestDto.getName()));
-        subject.setDescription(
-                textContentService.updateTextContent(subject.getDescription(), updateRequestDto.getDescription()));
+        subject.setName(textContentService.updateTextContent(subject.getName(),
+                updateRequestDto.getName()));
+        subject.setDescription(textContentService.updateTextContent(subject.getDescription(),
+                updateRequestDto.getDescription()));
 
         return subjectRepository.save(subject);
     }

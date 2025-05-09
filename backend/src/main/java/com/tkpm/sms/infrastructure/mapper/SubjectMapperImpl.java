@@ -35,7 +35,7 @@ public interface SubjectMapperImpl extends SubjectMapper {
             SubjectUpdateRequestDto subjectRequestDto);
 
     @Override
-    @Mapping(target = "name", ignore = true)
-    @Mapping(target = "description", ignore = true)
+    @Mapping(target = "name", expression = "java(subject.getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
+    @Mapping(target = "description", expression = "java(subject.getDescriptionByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
     PrerequisiteSubjectDto toPrerequisiteSubjectDto(Subject subject);
 }
