@@ -15,7 +15,10 @@ import com.tkpm.sms.application.service.interfaces.SubjectService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
-import com.tkpm.sms.domain.model.*;
+import com.tkpm.sms.domain.model.Course;
+import com.tkpm.sms.domain.model.Enrollment;
+import com.tkpm.sms.domain.model.Student;
+import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import com.tkpm.sms.domain.service.validators.EnrollmentDomainValidator;
@@ -76,14 +79,13 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Course course = courseService.getCourseById(courseId);
         courseDomainValidator.validateCourseInTimePeriod(course);
 
-        // TODO: Language Support
         Student student = studentService.getStudentDetail(studentId, "en");
 
         var enrollment = enrollmentRepository
                 .findEnrollmentByStudentIdAndCourseId(studentId, courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Student %s is not enrolled into course %s",
-                                student.getStudentId(), course.getCode())));
+                        "error.enrollment.student_is_not_enrolled", student.getStudentId(),
+                        course.getCode()));
 
         var score = scoreMapper.toScore(transcriptUpdateRequestDto);
         enrollment.setScore(score);
@@ -143,9 +145,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .findEnrollmentByStudentIdAndCourseId(enrollmentDeleteRequestDto.getStudentId(),
                         enrollmentDeleteRequestDto.getCourseId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Enrollment not found for studentId: %s and courseId: %s",
-                                enrollmentDeleteRequestDto.getStudentId(),
-                                enrollmentDeleteRequestDto.getCourseId())));
+                        "error.enrollment.student_is_not_enrolled",
+                        enrollmentDeleteRequestDto.getStudentId(), course.getCode()));
 
         enrollmentRepository.delete(enrollment);
     }

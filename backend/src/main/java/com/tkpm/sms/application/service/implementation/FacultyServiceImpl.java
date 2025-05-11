@@ -10,11 +10,10 @@ import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.repository.FacultyRepository;
+import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class FacultyServiceImpl implements FacultyService {
-    @NonFinal
-    @Value("${app.locale.default}")
-    String DEFAULT_LANGUAGE;
-
     FacultyRepository facultyRepository;
     FacultyDomainValidator facultyValidator;
     FacultyMapper facultyMapper;
     TextContentService textContentService;
+    DomainEntityNameTranslator domainEntityNameTranslator;
 
     @Override
     public PageResponse<Faculty> getAllFaculties(BaseCollectionRequest search) {
@@ -39,14 +35,16 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty getFacultyById(Integer id) {
-        return facultyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Faculty with id %s not found", id)));
+        return facultyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Faculty.class), id));
     }
 
     @Override
     public Faculty getFacultyByName(String name) {
-        return facultyRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Faculty with name %s not found", name)));
+        return facultyRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
+                        domainEntityNameTranslator.getEntityTranslatedName(Faculty.class), name));
     }
 
     @Override
@@ -68,8 +66,8 @@ public class FacultyServiceImpl implements FacultyService {
         facultyValidator.validateNameUniquenessForUpdate(facultyRequest.getName(), id);
 
         Faculty faculty = facultyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Faculty with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Faculty.class), id));
 
         facultyMapper.toDomain(facultyRequest, faculty);
         faculty.setName(
@@ -82,8 +80,8 @@ public class FacultyServiceImpl implements FacultyService {
     @Transactional
     public void deleteFaculty(Integer id) {
         Faculty faculty = facultyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Faculty with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Faculty.class), id));
 
         facultyRepository.delete(faculty);
     }

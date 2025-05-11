@@ -12,6 +12,7 @@ import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.SubjectRepository;
+import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import com.tkpm.sms.domain.service.validators.SubjectDomainValidator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     FacultyService facultyService;
 
+    DomainEntityNameTranslator domainEntityNameTranslator;
+
     @NonFinal
     @Value("${app.constraint.deletable-duration:30}")
     int deletableDuration;
@@ -47,8 +50,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject getSubjectById(Integer id) {
-        return subjectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Subject with id %s not found", id)));
+        return subjectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
     }
 
     @Override
@@ -74,8 +78,8 @@ public class SubjectServiceImpl implements SubjectService {
         subjectValidator.validateSubjectNameUniquenessForUpdate(updateRequestDto.getName(), id);
 
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
 
         subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
 
@@ -90,18 +94,17 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void deleteSubject(Integer id) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
 
         // Add time constraint check
         var createdAt = subject.getCreatedAt();
         if (createdAt != null) {
             var timeGap = ChronoUnit.MINUTES.between(createdAt, LocalDateTime.now());
             // in minutes
-            if (timeGap > deletableDuration) {
-                throw new SubjectDeletionConstraintException(
-                        "Target subject cannot be deleted after 30 minutes of creation. You can deactivate it instead.");
-            }
+            if (timeGap > deletableDuration)
+                throw new SubjectDeletionConstraintException("error.subject.delete.out_of_time",
+                        subject.getCode(), deletableDuration);
         }
 
         subjectValidator.validateSubjectForDeletionAndDeactivation(id);
@@ -112,8 +115,8 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void deactivateSubject(Integer id) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
 
         subjectValidator.validateSubjectForDeletionAndDeactivation(id);
 
@@ -125,8 +128,8 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void activateSubject(Integer id) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
 
         subject.setActive(true);
 

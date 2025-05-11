@@ -7,6 +7,7 @@ import com.tkpm.sms.application.service.interfaces.AddressService;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Address;
 import com.tkpm.sms.domain.repository.AddressRepository;
+import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AddressServiceImpl implements AddressService {
     AddressRepository addressRepository;
     AddressMapper addressMapper;
+    DomainEntityNameTranslator domainEntityNameTranslator;
 
     @Override
     @Transactional
@@ -34,8 +36,8 @@ public class AddressServiceImpl implements AddressService {
     public Address updateAddress(String id, AddressUpdateRequestDto requestDto) {
         // Find existing address
         Address address = addressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Address with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Address.class), id));
 
         // Update the address
         addressMapper.updateAddressFromDto(requestDto, address);
@@ -46,7 +48,8 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address getAddressById(String id) {
-        return addressRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Address with id %s not found", id)));
+        return addressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Address.class), id));
     }
 }

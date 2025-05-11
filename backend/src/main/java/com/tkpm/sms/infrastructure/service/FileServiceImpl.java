@@ -17,7 +17,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -68,7 +67,8 @@ public class FileServiceImpl implements FileService {
     @Override
     public void importStudentFile(String format, Object multipartFile) {
         if (!(multipartFile instanceof MultipartFile)) {
-            throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
+            throw new FileProcessingException(ErrorCode.INVALID_FILE_FORMAT,
+                    "error.file_processing.invalid_file_format");
         }
 
         List<StudentFileDto> students = fileStrategyFactory.getStrategy(format)
@@ -80,7 +80,8 @@ public class FileServiceImpl implements FileService {
     @Override
     public void importTranscriptFile(String format, Object multipartFile) {
         if (!(multipartFile instanceof MultipartFile)) {
-            throw new FileProcessingException("Invalid file type", ErrorCode.INVALID_FILE_FORMAT);
+            throw new FileProcessingException(ErrorCode.INVALID_FILE_FORMAT,
+                    "error.file_processing.invalid_file_format");
         }
 
         List<EnrollmentFileImportDto> transcripts = fileStrategyFactory.getStrategy(format)
@@ -95,8 +96,8 @@ public class FileServiceImpl implements FileService {
             return documentService.processTemplateAsHtmlToPdf("templates/template.html", data);
         } catch (Exception e) {
             log.error("Failed to generate transcript PDF for student {}", data.get("studentId"), e);
-            throw new FileProcessingException("Failed to generate transcript PDF",
-                    ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException(ErrorCode.FAIL_TO_EXPORT_FILE,
+                    "error.file_processing.generate_failed", "PDF");
         }
     }
 }

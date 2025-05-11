@@ -33,26 +33,10 @@ public class Status {
     }
 
     public String getDefaultName() {
-        // if (name == null || name.getTranslations().isEmpty()) {
-        // return null;
-        // }
-        // var translations = name.getTranslations();
-        //
-        // return translations.stream().filter(Translation::isOriginal).findFirst()
-        // .map(Translation::getText).orElse(translations.getFirst().getText());
         return TranslationUtils.getDefaultText(name);
     }
 
     public String getNameByLanguage(String language) {
-        // if (name == null || name.getTranslations().isEmpty()) {
-        // return null;
-        // }
-        //
-        // var translations = name.getTranslations();
-        //
-        // return translations.stream()
-        // .filter(translation -> translation.getLanguageCode().equals(language)).findFirst()
-        // .map(Translation::getText).orElse(getDefaultName());
         return TranslationUtils.getTextByLanguage(name, language);
     }
 }

@@ -5,10 +5,11 @@ import com.tkpm.sms.domain.exception.UnsupportedStatusTransitionException;
 import com.tkpm.sms.domain.exception.UnsupportedEmailException;
 import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.model.Student;
-import com.tkpm.sms.domain.valueobject.Translation;
+import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Optional;
 
@@ -16,34 +17,37 @@ import java.util.Optional;
 public class StudentDomainValidator {
     private final StudentRepository studentRepository;
     private final SettingRepository settingRepository;
+    private final DomainEntityNameTranslator domainEntityNameTranslator;
 
     public void validateStudentIdUniqueness(String studentId) {
         if (studentRepository.existsByStudentId(studentId)) {
-            throw new DuplicateResourceException(
-                    String.format("Student with ID %s already exists", studentId));
+            throw new DuplicateResourceException("error.student.duplicate_resource.student_id",
+                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), studentId);
+            // throw new DuplicateResourceException(
+            // String.format("Student with ID %s already exists", studentId));
         }
     }
 
     public void validateStudentIdUniquenessForUpdate(String studentId, String id) {
         Optional<Student> existingStudent = studentRepository.findByStudentId(studentId);
         if (existingStudent.isPresent() && !existingStudent.get().getId().equals(id)) {
-            throw new DuplicateResourceException(
-                    String.format("Student with ID %s already exists", studentId));
+            throw new DuplicateResourceException("error.student.duplicate_resource.student_id",
+                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), studentId);
         }
     }
 
     public void validateEmailUniqueness(String email) {
         if (studentRepository.existsByEmail(email)) {
-            throw new DuplicateResourceException(
-                    String.format("Student with email %s already exists", email));
+            throw new DuplicateResourceException("error.student.duplicate_resource.email",
+                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), email);
         }
     }
 
     public void validateEmailUniquenessForUpdate(String email, String id) {
         Optional<Student> existingStudent = studentRepository.findByEmail(email);
         if (existingStudent.isPresent() && !existingStudent.get().getId().equals(id)) {
-            throw new DuplicateResourceException(
-                    String.format("Student with email %s already exists", email));
+            throw new DuplicateResourceException("error.student.duplicate_resource.email",
+                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), email);
         }
     }
 
@@ -51,24 +55,21 @@ public class StudentDomainValidator {
         var validDomain = settingRepository.getEmailSetting();
 
         if (!email.endsWith(validDomain)) {
-            throw new UnsupportedEmailException(
-                    String.format("This %s email domain is not supported, only %s is allowed",
-                            email, validDomain));
+            throw new UnsupportedEmailException("error.student.invalid_email_domain",
+                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), email,
+                    validDomain);
         }
     }
 
     public void validateStatusTransition(Student student, Status newStatus) {
         if (student.getStatus() != null && !student.isStatusTransitionAllowed(newStatus)) {
-            var translations = student.getStatus().getName().getTranslations();
-            var fromStatus = translations.stream().filter(Translation::isOriginal).findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Original status name not found"));
-
-            var toStatus = newStatus.getName().getTranslations().stream()
-                    .filter(Translation::isOriginal).findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Original status name not found"));
+            var fromStatus = student.getStatus()
+                    .getNameByLanguage(LocaleContextHolder.getLocale().getLanguage());
+            var toStatus = newStatus
+                    .getNameByLanguage(LocaleContextHolder.getLocale().getLanguage());
 
             throw new UnsupportedStatusTransitionException(
-                    String.format("Transition from %s to %s is not allowed", fromStatus, toStatus));
+                    "error.status.unsupported_status_transition", fromStatus, toStatus);
         }
     }
 }

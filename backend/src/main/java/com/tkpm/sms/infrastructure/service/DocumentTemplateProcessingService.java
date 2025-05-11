@@ -2,8 +2,6 @@ package com.tkpm.sms.infrastructure.service;
 
 import com.tkpm.sms.domain.exception.ErrorCode;
 import com.tkpm.sms.domain.exception.FileProcessingException;
-
-import org.xhtmlrenderer.pdf.ITextRenderer;
 import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLConverter;
 import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLOptions;
 import fr.opensagres.xdocreport.converter.ConverterTypeTo;
@@ -18,15 +16,16 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.jsoup.Jsoup;
-// import org.jsoup.nodes.Document;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Slf4j
@@ -54,13 +53,7 @@ public class DocumentTemplateProcessingService {
 
     public String convertDocumentToHtml(byte[] documentBytes, String sourceFormat) {
         if (sourceFormat.endsWith(".html")) {
-            try {
-                return new String(documentBytes, "UTF-8");
-            } catch (IOException e) {
-                log.error("Failed to convert HTML bytes to string", e);
-                throw new FileProcessingException("Failed to process HTML",
-                        ErrorCode.FAIL_TO_EXPORT_FILE);
-            }
+            return new String(documentBytes, StandardCharsets.UTF_8);
         } else if (sourceFormat.endsWith(".docx")) {
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(documentBytes);
                     XWPFDocument document = new XWPFDocument(inputStream);
@@ -69,11 +62,11 @@ public class DocumentTemplateProcessingService {
                 XHTMLOptions options = XHTMLOptions.create();
                 XHTMLConverter.getInstance().convert(document, outputStream, options);
 
-                return outputStream.toString("UTF-8");
+                return outputStream.toString(StandardCharsets.UTF_8);
             } catch (IOException e) {
                 log.error("Failed to convert DOCX to HTML", e);
-                throw new FileProcessingException("Failed to convert DOCX to HTML",
-                        ErrorCode.FAIL_TO_EXPORT_FILE);
+                throw new FileProcessingException(ErrorCode.FAIL_TO_EXPORT_FILE,
+                        "error.file_processing.convert_failed", "DOCX", "HTML");
             }
         } else if (sourceFormat.endsWith(".odt")) {
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(documentBytes);
@@ -85,16 +78,16 @@ public class DocumentTemplateProcessingService {
                 Options options = Options.getTo(ConverterTypeTo.XHTML).via(ConverterTypeVia.ODFDOM);
                 report.convert(report.createContext(), options, outputStream);
 
-                return outputStream.toString("UTF-8");
+                return outputStream.toString(StandardCharsets.UTF_8);
             } catch (IOException | XDocReportException e) {
                 log.error("Failed to convert ODT to HTML", e);
-                throw new FileProcessingException("Failed to convert ODT to HTML",
-                        ErrorCode.FAIL_TO_EXPORT_FILE);
+                throw new FileProcessingException(ErrorCode.FAIL_TO_EXPORT_FILE,
+                        "error.file_processing.convert_failed", "ODT", "HTML");
             }
         } else {
             log.error("Unsupported source format for HTML conversion: {}", sourceFormat);
-            throw new FileProcessingException("Unsupported source format for HTML conversion",
-                    ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException(ErrorCode.FAIL_TO_EXPORT_FILE,
+                    "error.file_processing.unsupported_source_format", "HTML");
         }
     }
 
@@ -108,8 +101,8 @@ public class DocumentTemplateProcessingService {
             return templateEngine.process(document.html(), thymeleafContext);
         } catch (Exception e) {
             log.error("Failed to process HTML template", e);
-            throw new FileProcessingException("Failed to process HTML template",
-                    ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException(ErrorCode.FAIL_TO_EXPORT_FILE,
+                    "error.file_processing.template", "HTML");
         }
     }
 
@@ -142,8 +135,8 @@ public class DocumentTemplateProcessingService {
         } catch (Exception e) {
             log.error("Failed to convert HTML to PDF: {}", e.getMessage());
             log.error("Error details:", e);
-            throw new FileProcessingException("Failed to convert HTML to PDF",
-                    ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException(ErrorCode.FAIL_TO_EXPORT_FILE,
+                    "error.file_processing.convert_failed", "HTML", "PDF");
         }
     }
 
@@ -159,8 +152,8 @@ public class DocumentTemplateProcessingService {
             return convertHtmlToPdf(processedHtml);
         } catch (IOException e) {
             log.error("Failed to process template as HTML to PDF", e);
-            throw new FileProcessingException("Failed to process template as HTML to PDF",
-                    ErrorCode.FAIL_TO_EXPORT_FILE);
+            throw new FileProcessingException(ErrorCode.FAIL_TO_EXPORT_FILE,
+                    "error.file_processing.failed_process_template", "HTML", "PDF");
         }
     }
 }

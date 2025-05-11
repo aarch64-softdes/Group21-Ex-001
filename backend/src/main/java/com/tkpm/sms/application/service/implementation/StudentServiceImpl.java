@@ -6,7 +6,6 @@ import com.tkpm.sms.application.dto.request.student.StudentUpdateRequestDto;
 import com.tkpm.sms.application.dto.response.student.StudentFileDto;
 import com.tkpm.sms.application.mapper.AddressMapper;
 import com.tkpm.sms.application.mapper.IdentityMapper;
-import com.tkpm.sms.application.mapper.PhoneMapper;
 import com.tkpm.sms.application.service.interfaces.*;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
@@ -15,6 +14,7 @@ import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.*;
 import com.tkpm.sms.domain.repository.StudentRepository;
+import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.domain.valueobject.Phone;
@@ -42,14 +42,14 @@ public class StudentServiceImpl implements StudentService {
     StatusService statusService;
     ProgramService programService;
     FacultyService facultyService;
-    IdentityService identityService;
 
     StudentMapperImpl studentMapper;
     AddressMapper addressMapper;
     IdentityMapper identityMapper;
-    PhoneMapper phoneMapper;
 
     PhoneParser phoneParser;
+
+    DomainEntityNameTranslator domainEntityNameTranslator;
 
     @Override
     public PageResponse<Student> findAll(StudentCollectionRequest search) {
@@ -61,8 +61,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student getStudentDetail(String id, String languageCode) {
-        return studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Student with id %s not found", id)));
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Student.class), id));
     }
 
     @Override
@@ -84,7 +85,6 @@ public class StudentServiceImpl implements StudentService {
         // Set related entities
         var faculty = facultyService.getFacultyById(requestDto.getFacultyId());
         var program = programService.getProgramById(requestDto.getProgramId());
-        // TODO: Add language support
         var status = statusService.getStatusById(requestDto.getStatusId());
 
         student.setFaculty(faculty);
@@ -92,8 +92,8 @@ public class StudentServiceImpl implements StudentService {
         student.setStatus(status);
 
         // Handle addresses
-        studentAddressesHandler(student, requestDto);
-        studentIdentityHandler(student, requestDto);
+        handleStudentAddresses(student, requestDto);
+        handleStudentIdentity(student, requestDto);
 
         // Save student
         return studentRepository.save(student);
@@ -105,8 +105,8 @@ public class StudentServiceImpl implements StudentService {
             String languageCode) {
         // Find existing student
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Student with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Student.class), id));
 
         // Validate student fields
         if (!student.getStudentId().equals(requestDto.getStudentId())) {
@@ -129,7 +129,6 @@ public class StudentServiceImpl implements StudentService {
         // Update related entities
         var faculty = facultyService.getFacultyById(requestDto.getFacultyId());
         var program = programService.getProgramById(requestDto.getProgramId());
-        // TODO: Add language support
         var newStatus = statusService.getStatusById(requestDto.getStatusId());
 
         // Validate status transition
@@ -218,8 +217,8 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public void deleteStudentById(String id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Student with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Student.class), id));
 
         studentRepository.delete(student);
     }
@@ -240,17 +239,23 @@ public class StudentServiceImpl implements StudentService {
                 Student student = studentMapper.toStudent(createRequest);
 
                 if (!facultyNameCache.containsKey(dto.getFaculty())) {
-                    throw new ResourceNotFoundException("Faculty not found: " + dto.getFaculty());
+                    throw new ResourceNotFoundException("error.not_found.name",
+                            domainEntityNameTranslator.getEntityTranslatedName(Faculty.class),
+                            dto.getFaculty());
                 }
                 student.setFaculty(facultyNameCache.get(dto.getFaculty()));
 
                 if (!statusNameCache.containsKey(dto.getStatus())) {
-                    throw new ResourceNotFoundException("Program not found: " + dto.getStatus());
+                    throw new ResourceNotFoundException("error.not_found.name",
+                            domainEntityNameTranslator.getEntityTranslatedName(Status.class),
+                            dto.getStatus());
                 }
                 student.setStatus(statusNameCache.get(dto.getStatus()));
 
                 if (!programNameCache.containsKey(dto.getProgram())) {
-                    throw new ResourceNotFoundException("Status not found: " + dto.getProgram());
+                    throw new ResourceNotFoundException("error.not_found.name",
+                            domainEntityNameTranslator.getEntityTranslatedName(Program.class),
+                            dto.getProgram());
                 }
                 student.setProgram(programNameCache.get(dto.getProgram()));
 
@@ -262,8 +267,8 @@ public class StudentServiceImpl implements StudentService {
                     student.setPhone(phone);
                 }
 
-                studentAddressesHandler(student, createRequest);
-                studentIdentityHandler(student, createRequest);
+                handleStudentAddresses(student, createRequest);
+                handleStudentIdentity(student, createRequest);
 
                 // Basic validation
                 studentValidator.validateStudentIdUniqueness(student.getStudentId());
@@ -284,13 +289,14 @@ public class StudentServiceImpl implements StudentService {
         }
 
         if (!errors.isEmpty()) {
-            throw new FileProcessingException(
-                    "Failed to import students: " + String.join("; ", errors),
-                    ErrorCode.FAIL_TO_IMPORT_FILE);
+            log.error("Failed to import students: {}", String.join("; ", errors));
+
+            throw new FileProcessingException(ErrorCode.FAIL_TO_IMPORT_FILE,
+                    "error.file_processing.failed_import_students");
         }
     }
 
-    private void studentAddressesHandler(Student student, StudentCreateRequestDto requestDto) {
+    private void handleStudentAddresses(Student student, StudentCreateRequestDto requestDto) {
         if (requestDto.getPermanentAddress() != null) {
             Address address = addressMapper.toAddress(requestDto.getPermanentAddress());
             student.setPermanentAddress(address);
@@ -307,7 +313,7 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-    private void studentIdentityHandler(Student student, StudentCreateRequestDto requestDto) {
+    private void handleStudentIdentity(Student student, StudentCreateRequestDto requestDto) {
         if (requestDto.getIdentity() != null) {
             Identity identity = identityMapper.toIdentity(requestDto.getIdentity());
             identityValidator.validateIdentityUniqueness(identity.getType(), identity.getNumber());
@@ -339,7 +345,6 @@ public class StudentServiceImpl implements StudentService {
         for (String name : statusNames) {
             try {
                 log.info("Searching for status: {}", name);
-                // TODO: Add language support
                 result.put(name, statusService.getStatusByName(name));
             } catch (Exception e) {
                 log.warn("Status not found: {}", name);

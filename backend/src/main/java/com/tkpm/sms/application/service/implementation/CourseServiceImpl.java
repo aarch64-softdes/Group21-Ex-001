@@ -4,7 +4,6 @@ import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.course.CourseCreateRequestDto;
 import com.tkpm.sms.application.dto.request.course.CourseUpdateRequestDto;
 import com.tkpm.sms.application.mapper.CourseMapper;
-import com.tkpm.sms.application.mapper.ScheduleMapper;
 import com.tkpm.sms.application.service.interfaces.CourseService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
@@ -16,6 +15,7 @@ import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
+import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +27,14 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class CourseServiceImpl implements CourseService {
     CourseMapper courseMapper;
+
     CourseRepository courseRepository;
     ProgramRepository programRepository;
     SubjectRepository subjectRepository;
-    ScheduleMapper scheduleMapper;
+
     CourseDomainValidator courseValidator;
+
+    DomainEntityNameTranslator domainEntityNameTranslator;
 
     @Override
     public PageResponse<Course> findAll(BaseCollectionRequest request) {
@@ -41,24 +44,28 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getCourseById(Integer id) {
-        return courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Course with id %s not found", id)));
+        return courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Course.class), id));
     }
 
     @Override
     @Transactional
     public Course createCourse(CourseCreateRequestDto createRequestDto) {
         Program program = programRepository.findById(createRequestDto.getProgramId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Program with id " + createRequestDto.getProgramId() + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Program.class),
+                        createRequestDto.getProgramId()));
 
         Subject subject = subjectRepository.findById(createRequestDto.getSubjectId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Subject with id " + createRequestDto.getSubjectId() + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class),
+                        createRequestDto.getSubjectId()));
 
         if (!subject.isActive()) {
-            throw new SubjectDeactivatedException(
-                    "Subject with id " + createRequestDto.getSubjectId() + " is not active");
+            throw new SubjectDeactivatedException("error.subject.is_deactivated",
+                    domainEntityNameTranslator.getEntityTranslatedName(Subject.class),
+                    subject.getCode());
         }
 
         // Map DTO to domain object (excluding foreign keys)
@@ -77,8 +84,9 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public Course updateCourse(Integer id, CourseUpdateRequestDto updateRequestDto) {
-        var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Course with id %s not found", id)));
+        var course = courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Course.class), id));
 
         courseMapper.toDomain(course, updateRequestDto);
 
@@ -91,8 +99,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void deleteCourse(Integer id) {
-        var course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Course with id %s not found", id)));
+        var course = courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Course.class), id));
 
         courseValidator.validateCourseInTimePeriod(course);
         courseValidator.validateEnrollmentExistenceForCourse(course);

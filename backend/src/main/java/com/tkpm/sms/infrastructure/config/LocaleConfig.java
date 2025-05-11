@@ -19,7 +19,7 @@ public class LocaleConfig {
     @Value("${app.locale.default}")
     private String DEFAULT_LOCALE;
 
-    @Value("${app.locale.supported-languages}")
+    @Value("${app.locale.supported}")
     private List<String> SUPPORTED_LANGUAGES;
 
     @Bean

@@ -8,6 +8,7 @@ import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Identity;
 import com.tkpm.sms.domain.repository.IdentityRepository;
+import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +22,7 @@ public class IdentityServiceImpl implements IdentityService {
     IdentityRepository identityRepository;
     IdentityDomainValidator identityDomainValidator;
     IdentityMapper identityMapper;
+    DomainEntityNameTranslator domainEntityNameTranslator;
 
     @Override
     @Transactional
@@ -48,8 +50,8 @@ public class IdentityServiceImpl implements IdentityService {
 
         // Find existing identity
         Identity identity = identityRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Identity with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        domainEntityNameTranslator.getEntityTranslatedName(Identity.class), id));
 
         // Update domain entity and save
         identityMapper.updateIdentityFromDto(requestDto, identity);

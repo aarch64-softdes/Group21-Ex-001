@@ -62,8 +62,7 @@ public class PhoneParserImpl implements PhoneParser {
 
             return Phone.of(countryCode, internationalNumber);
         } catch (Exception e) {
-            throw new InvalidPhoneNumberException(
-                    String.format("Invalid phone number: %s", phoneString), e);
+            throw new InvalidPhoneNumberException("error.phone_number.invalid", phoneString);
         }
     }
 
@@ -101,8 +100,7 @@ public class PhoneParserImpl implements PhoneParser {
             return new PhoneDto(phone, phoneNumberUtil.getRegionCodeForNumber(phoneNumber));
 
         } catch (Exception e) {
-            throw new InvalidPhoneNumberException(String.format("Invalid phone number: %s", phone),
-                    e);
+            throw new InvalidPhoneNumberException("error.phone_number.invalid", phone);
         }
     }
 
@@ -113,8 +111,7 @@ public class PhoneParserImpl implements PhoneParser {
             return new PhoneRequestDto(phoneNumberUtil.getRegionCodeForNumber(phoneNumber), phone);
 
         } catch (Exception e) {
-            throw new InvalidPhoneNumberException(String.format("Invalid phone number: %s", phone),
-                    e);
+            throw new InvalidPhoneNumberException("error.phone_number.invalid", phone);
         }
     }
 

@@ -17,6 +17,7 @@ import com.tkpm.sms.domain.exception.GenericDomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Setting;
 import com.tkpm.sms.domain.repository.SettingRepository;
+import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -32,6 +33,7 @@ public class SettingServiceImpl implements SettingService {
 
     ObjectMapper objectMapper;
     SettingRepository settingRepository;
+    DomainEntityNameTranslator domainEntityNameTranslator;
 
     @Override
     public PhoneSettingDto getPhoneSetting() {
@@ -48,7 +50,9 @@ public class SettingServiceImpl implements SettingService {
     public EmailDomainSettingDto updateEmailSetting(
             EmailDomainSettingRequestDto settingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.EMAIL.getValue())
-                .orElseThrow(() -> new ResourceNotFoundException("Email setting not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
+                        domainEntityNameTranslator.getEntityTranslatedName(Setting.class),
+                        SettingType.EMAIL.getValue()));
 
         String domain = settingRequestDto.getDomain();
         if (!domain.contains(AT_SIGN)) {
@@ -64,7 +68,9 @@ public class SettingServiceImpl implements SettingService {
     @Transactional
     public PhoneSettingDto updatePhoneSetting(PhoneSettingRequestDto phoneSettingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.PHONE_NUMBER.getValue())
-                .orElseThrow(() -> new ResourceNotFoundException("Phone setting not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
+                        domainEntityNameTranslator.getEntityTranslatedName(Setting.class),
+                        SettingType.PHONE_NUMBER.getValue()));
 
         try {
             String details = objectMapper
@@ -74,8 +80,8 @@ public class SettingServiceImpl implements SettingService {
 
             return fromDomainModel(savedSetting);
         } catch (JsonProcessingException e) {
-            throw new GenericDomainException("Error processing phone setting",
-                    ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new GenericDomainException(ErrorCode.INTERNAL_SERVER_ERROR,
+                    "error.setting.processing", SettingType.PHONE_NUMBER.getValue());
         }
     }
 
@@ -85,8 +91,8 @@ public class SettingServiceImpl implements SettingService {
                     List.class);
             return new PhoneSettingDto(supportedCountryCodes);
         } catch (JsonProcessingException e) {
-            throw new GenericDomainException("Error processing phone setting",
-                    ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new GenericDomainException(ErrorCode.INTERNAL_SERVER_ERROR,
+                    "error.setting.processing", SettingType.PHONE_NUMBER.getValue());
         }
     }
 
@@ -101,8 +107,9 @@ public class SettingServiceImpl implements SettingService {
     public AdjustmentDurationSettingDto updateAdjustmentDurationSetting(
             AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.ADJUSTMENT_DURATION.getValue())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Adjustment duration setting not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
+                        domainEntityNameTranslator.getEntityTranslatedName(Setting.class),
+                        SettingType.ADJUSTMENT_DURATION.getValue()));
 
         setting.setDetails(adjustmentDurationSettingRequestDto.getAdjustmentDuration());
 
@@ -119,8 +126,9 @@ public class SettingServiceImpl implements SettingService {
     public FailingGradeSettingDto updateFailingGradeSetting(
             FailingGradeSettingRequestDto failingGradeSettingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.FAILING_GRADE.getValue())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Failing grade setting not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
+                        domainEntityNameTranslator.getEntityTranslatedName(Setting.class),
+                        SettingType.FAILING_GRADE.getValue()));
 
         // TODO: check if the value is valid
         Double failingGrade = failingGradeSettingRequestDto.getFailingGrade();
