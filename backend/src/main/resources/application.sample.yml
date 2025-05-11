@@ -26,6 +26,6 @@ logging:
 app:
   locale:
     default: en
-    supported-languages: en,vi
+    supported: en,vi
   constraint:
     deletable-duration: 30 # in minutes
