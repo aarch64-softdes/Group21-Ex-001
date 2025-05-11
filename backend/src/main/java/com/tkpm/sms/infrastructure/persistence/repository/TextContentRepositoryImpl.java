@@ -2,6 +2,7 @@ package com.tkpm.sms.infrastructure.persistence.repository;
 
 import com.tkpm.sms.domain.repository.TextContentRepository;
 import com.tkpm.sms.domain.valueobject.TextContent;
+import com.tkpm.sms.infrastructure.persistence.entity.TranslationEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.TextContentJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.TextContentPersistenceMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,13 @@ public class TextContentRepositoryImpl implements TextContentRepository {
     @Override
     public TextContent save(TextContent textContent) {
         var entity = textContentPersistenceMapper.toEntity(textContent);
+
+        if (entity.getTranslations() != null) {
+            for (TranslationEntity translation : entity.getTranslations()) {
+                translation.setTextContent(entity);
+            }
+        }
+
         entity = textContentJpaRepository.save(entity);
 
         return textContentPersistenceMapper.toDomain(entity);

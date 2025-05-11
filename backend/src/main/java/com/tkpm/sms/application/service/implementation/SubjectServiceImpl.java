@@ -6,6 +6,7 @@ import com.tkpm.sms.application.dto.request.subject.SubjectUpdateRequestDto;
 import com.tkpm.sms.application.mapper.SubjectMapper;
 import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.application.service.interfaces.SubjectService;
+import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 
 @Slf4j
 @Service
@@ -34,6 +36,8 @@ public class SubjectServiceImpl implements SubjectService {
     SubjectDomainValidator subjectValidator;
     SubjectMapper subjectMapper;
 
+    TextContentService textContentService;
+
     FacultyService facultyService;
 
     DomainEntityNameTranslator domainEntityNameTranslator;
@@ -41,6 +45,10 @@ public class SubjectServiceImpl implements SubjectService {
     @NonFinal
     @Value("${app.constraint.deletable-duration:30}")
     int deletableDuration;
+
+    @NonFinal
+    @Value("${app.locale.default}")
+    String DEFAULT_LANGUAGE;
 
     @Override
     public PageResponse<Subject> findAll(BaseCollectionRequest request) {
@@ -62,11 +70,20 @@ public class SubjectServiceImpl implements SubjectService {
 
         Subject subject = subjectMapper.toSubject(createRequestDto);
         subject.setFaculty(facultyService.getFacultyById(createRequestDto.getFacultyId()));
+        subject.setName(textContentService.createTextContent(createRequestDto.getName()));
+        subject.setDescription(
+                textContentService.createTextContent(createRequestDto.getDescription()));
 
-        subjectValidator.validatePrerequisites(createRequestDto.getPrerequisitesId());
+        if (createRequestDto.getPrerequisitesId() == null) {
+            createRequestDto.setPrerequisitesId(Collections.emptyList());
+        } else {
+            subjectValidator.validatePrerequisites(createRequestDto.getPrerequisitesId());
 
-        var prerequisites = subjectRepository.findAllByIds(createRequestDto.getPrerequisitesId());
-        subject.setPrerequisites(prerequisites);
+            var prerequisites = subjectRepository
+                    .findAllByIds(createRequestDto.getPrerequisitesId());
+            subject.setPrerequisites(prerequisites);
+        }
+
         subject.setCreatedAt(LocalDateTime.now());
         subject.setActive(true);
 
@@ -81,12 +98,18 @@ public class SubjectServiceImpl implements SubjectService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
                         domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
 
-        subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
+        if (updateRequestDto.getPrerequisitesId() != null) {
+            subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
+            var prerequisites = subjectRepository
+                    .findAllByIds(updateRequestDto.getPrerequisitesId());
+            subject.setPrerequisites(prerequisites);
+        }
 
         subjectMapper.updateSubjectFromDto(subject, updateRequestDto);
-
-        var prerequisites = subjectRepository.findAllByIds(updateRequestDto.getPrerequisitesId());
-        subject.setPrerequisites(prerequisites);
+        subject.setName(textContentService.updateTextContent(subject.getName(),
+                updateRequestDto.getName()));
+        subject.setDescription(textContentService.updateTextContent(subject.getDescription(),
+                updateRequestDto.getDescription()));
 
         return subjectRepository.save(subject);
     }

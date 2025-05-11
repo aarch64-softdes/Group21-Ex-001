@@ -12,6 +12,7 @@ import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class EnrollmentDomainValidator {
     public void validateStudentSatisfiedPrerequisitesSubject(String studentId,
             List<Integer> subjectIds) {
 
+        var languageCode = LocaleContextHolder.getLocale().getLanguage();
         var missingEnrollments = enrollmentRepository
                 .getUnenrolledOrUnfinishedCourseOfSubjects(studentId, subjectIds);
         var student = studentRepository.findById(studentId)
@@ -50,8 +52,11 @@ public class EnrollmentDomainValidator {
                         studentId));
 
         if (!missingEnrollments.isEmpty()) {
-            List<String> subjects = missingEnrollments.stream()
-                    .map(enrollment -> enrollment.getCourse().getSubject().getName()).toList();
+            // List<String> subjects = missingEnrollments.stream()
+            // .map(enrollment -> enrollment.getCourse().getSubject().getName()).toList();
+            List<String> subjects = missingEnrollments.stream().map(enrollment -> enrollment
+                    .getCourse().getSubject().getNameByLanguage(languageCode)).toList();
+
             throw new StudentPrerequisitesNotSatisfiedException(
                     "error.enrollment.student_prerequisite_not_met.has_not_finished",
                     student.getStudentId(), String.join(", ", subjects));

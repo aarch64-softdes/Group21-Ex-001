@@ -12,9 +12,10 @@ import com.tkpm.sms.domain.model.Course;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 @Mapper(componentModel = "spring", uses = {SubjectMapper.class, ProgramMapper.class,
-        ScheduleMapper.class})
+        ScheduleMapper.class}, imports = {LocaleContextHolder.class})
 public interface CourseMapperImpl extends CourseMapper {
     Course toDomain(CourseCreateRequestDto createRequestDto);
 
@@ -23,7 +24,7 @@ public interface CourseMapperImpl extends CourseMapper {
     @Mapping(target = "credits", source = "subject.credits")
     CourseDto toDto(Course entity);
 
-    @Mapping(target = "subject", source = "subject.name")
+    @Mapping(target = "subject", expression = "java(entity.getSubject().getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
     @Mapping(target = "subjectCode", source = "subject.code")
     @Mapping(target = "code", source = "code")
     CourseMinimalDto toMinimalDto(Course entity);

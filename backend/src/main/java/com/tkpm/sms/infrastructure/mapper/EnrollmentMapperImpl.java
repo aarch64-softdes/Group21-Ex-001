@@ -13,9 +13,10 @@ import com.tkpm.sms.domain.valueobject.History;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 @Mapper(componentModel = "spring", uses = {StudentMapper.class, CourseMapper.class,
-        ScoreMapper.class})
+        ScoreMapper.class}, imports = {LocaleContextHolder.class})
 public interface EnrollmentMapperImpl extends EnrollmentMapper {
     @Override
     @Mapping(target = "student", ignore = true)
@@ -27,7 +28,7 @@ public interface EnrollmentMapperImpl extends EnrollmentMapper {
 
     @Override
     @Mapping(target = "transcript.subjectCode", source = "course.subject.code")
-    @Mapping(target = "transcript.subjectName", source = "course.subject.name")
+    @Mapping(target = "transcript.subjectName", expression = "java(course.getSubject().getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
     EnrollmentDto toEnrollmentCreatedDto(Enrollment enrollment);
 
     @Override

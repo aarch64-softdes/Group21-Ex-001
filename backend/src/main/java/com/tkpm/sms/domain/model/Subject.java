@@ -1,5 +1,7 @@
 package com.tkpm.sms.domain.model;
 
+import com.tkpm.sms.domain.utils.TranslationUtils;
+import com.tkpm.sms.domain.valueobject.TextContent;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,12 +16,20 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Subject {
     Integer id;
-    String name;
+    TextContent name;
     String code;
     boolean isActive;
-    String description;
+    TextContent description;
     LocalDateTime createdAt;
     Integer credits;
     Faculty faculty;
     List<Subject> prerequisites;
+
+    public String getNameByLanguage(String language) {
+        return TranslationUtils.getTextByLanguage(name, language);
+    }
+
+    public String getDescriptionByLanguage(String language) {
+        return TranslationUtils.getTextByLanguage(description, language);
+    }
 }
