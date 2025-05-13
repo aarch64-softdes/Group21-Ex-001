@@ -6,6 +6,7 @@ import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.repository.FacultyRepository;
+import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
 import com.tkpm.sms.domain.valueobject.TextContent;
 import com.tkpm.sms.domain.valueobject.Translation;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class FacultyServiceTest {
@@ -39,6 +41,9 @@ class FacultyServiceTest {
     @Mock
     private TextContentService textContentService;
 
+    @Mock
+    private DomainEntityNameTranslator domainEntityNameTranslator;
+
     @InjectMocks
     private FacultyServiceImpl facultyService;
 
@@ -48,6 +53,9 @@ class FacultyServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        // Setup default translator response
+        when(domainEntityNameTranslator.getEntityTranslatedName(Faculty.class)).thenReturn("Faculty");
 
         var textContent = TextContent.builder().id(1).createdAt(LocalDateTime.now())
                 .translations(Collections.singletonList(Translation.builder().languageCode("en")
@@ -75,9 +83,17 @@ class FacultyServiceTest {
 
     @Test
     void testGetFacultyById_NotFound() {
-        when(facultyRepository.findById(1)).thenReturn(Optional.empty());
+        // Setup
+        Integer id = 1;
+        when(facultyRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.getFacultyById(1));
+        // Execute & Verify
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, 
+                () -> facultyService.getFacultyById(id));
+        
+        // Verify the correct parameters were used
+        verify(facultyRepository).findById(id);
+        verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
     }
 
     @Test
@@ -93,9 +109,17 @@ class FacultyServiceTest {
 
     @Test
     void testGetFacultyByName_NotFound() {
-        when(facultyRepository.findByName("Test Faculty")).thenReturn(Optional.empty());
+        // Setup
+        String name = "Test Faculty";
+        when(facultyRepository.findByName(name)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.getFacultyByName("Test Faculty"));
+        // Execute & Verify
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, 
+                () -> facultyService.getFacultyByName(name));
+        
+        // Verify the correct parameters were used
+        verify(facultyRepository).findByName(name);
+        verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
     }
 
     @Test
@@ -147,14 +171,24 @@ class FacultyServiceTest {
 
     @Test
     void testUpdateFaculty_NotFound() {
-        var name = "Updated Faculty";
-        when(facultyRepository.findById(1)).thenReturn(Optional.empty());
-
+        // Setup
+        Integer id = 1;
+        String updatedName = "Updated Faculty";
+        
         FacultyRequestDto requestDto = new FacultyRequestDto();
-        requestDto.setName(name);
+        requestDto.setName(updatedName);
+        
+        when(facultyRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class,
-                () -> facultyService.updateFaculty(1, requestDto));
+        // Execute & Verify
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> facultyService.updateFaculty(id, requestDto));
+        
+        verify(facultyValidator).validateNameUniquenessForUpdate(updatedName, id);
+        verify(facultyRepository).findById(id);
+        verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
+        verifyNoInteractions(textContentService, facultyMapper);
+        verifyNoMoreInteractions(facultyRepository);
     }
 
     @Test
@@ -178,11 +212,26 @@ class FacultyServiceTest {
 
     @Test
     @Transactional
-    void testDeleteFaculty() {
+    void testDeleteFaculty_Success() {
         when(facultyRepository.findById(1)).thenReturn(Optional.of(faculty));
 
         facultyService.deleteFaculty(1);
 
         verify(facultyRepository).delete(faculty);
+    }
+
+    @Test
+    void testDeleteFaculty_NotFound() {
+        // Setup
+        Integer id = 1;
+        when(facultyRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Execute & Verify
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> facultyService.deleteFaculty(id));
+        
+        verify(facultyRepository).findById(id);
+        verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
+        verifyNoMoreInteractions(facultyRepository);
     }
 }
