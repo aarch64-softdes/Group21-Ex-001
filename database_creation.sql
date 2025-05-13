@@ -116,7 +116,7 @@ CREATE TABLE courses (
     subject_id INTEGER NOT NULL,
     CONSTRAINT fk_courses_program FOREIGN KEY (program_id) REFERENCES programs (id),
     CONSTRAINT fk_courses_subject FOREIGN KEY (subject_id) REFERENCES subjects (id),
-    CONSTRAINT uc_courses_code UNIQUE (code)
+    CONSTRAINT uc_courses_code UNIQUE (code, subject_id)
 );
 
 -- Create enrollments table
@@ -1279,7 +1279,8 @@ CREATE TABLE translations (
     is_original BOOLEAN,
     language_code VARCHAR(10),
     text_content_id INTEGER,
-    CONSTRAINT fk_translations_text_content FOREIGN KEY (text_content_id) REFERENCES text_contents (id)
+    CONSTRAINT fk_translations_text_content FOREIGN KEY (text_content_id) REFERENCES text_contents (id),
+    CONSTRAINT uq_translations_text_language UNIQUE (language_code, text_content_id)
 );
 
 -- Alter faculties table to add name_id column
