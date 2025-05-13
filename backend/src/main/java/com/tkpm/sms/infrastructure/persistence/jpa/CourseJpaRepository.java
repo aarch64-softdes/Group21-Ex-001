@@ -20,4 +20,6 @@ public interface CourseJpaRepository
     List<CourseEntity> findAllByRoom(String room);
 
     List<CourseEntity> findAllBySemesterAndYearAndRoom(int semester, int year, String room);
+
+    List<CourseEntity> findAllBySubjectId(Integer subjectId);
 }

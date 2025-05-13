@@ -23,10 +23,9 @@ CREATE TABLE addresses (
 );
 
 CREATE TABLE settings (
-    id VARCHAR(255) NOT NULL,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(255) NOT NULL,
     details TEXT,
-    CONSTRAINT pk_settings PRIMARY KEY (id),
     CONSTRAINT uc_settings_name UNIQUE (name)
 );
 
@@ -216,11 +215,11 @@ ALTER TABLE histories
 
 
 -- Insert settings records
-INSERT INTO settings (id, name, details) VALUES
-('d5a2c7e1-3b4f-48ae-90d5-8f6e7a9c1b2d', 'phonenumber', '["VN"]'),
-('f8e7d6c5-b4a3-42d1-90e8-7f6d5c4b3a2e', 'email', '@student.hcmus.edu.vn'),
-('4f119207-3838-4261-a570-0e1e3e008c84', 'failinggrade', '2.0'),
-('a8b56101-2cb3-48b1-8e5d-5134e2409ed7', 'adjustmentduration', '10');
+INSERT INTO settings (name, details) VALUES
+('phonenumber', '["VN"]'),
+('email', '@student.hcmus.edu.vn'),
+('failinggrade', '2.0'),
+('adjustmentduration', '10');
 
 -- Seed faculties data based on the existing student data (uppercase)
 INSERT INTO faculties (name) VALUES

@@ -25,34 +25,51 @@ import { GenericTableProps } from '@/core/types/table';
 import { PlusCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import TableSort from './TableSort';
-import FileImportButton from './FileImportButton';
-import FileExportButton from './FileExportButton';
 import { getNestedValue } from '@/shared/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
+import React from 'react';
+import { t } from 'i18next';
 
 const GenericTable = <T extends { id: string }>({
   tableTitle,
-  addingTitle,
+  addAction = {
+    onAdd: () => {},
+    disabled: false,
+    title: 'Add',
+  },
   columns,
-  actions,
-  formComponent: FormComponent,
-  detailComponent: DetailComponent,
-  disabledActions = {},
   queryHook,
   filterOptions,
-  requireDeleteConfirmation,
-  additionalActions = [],
   disablePagination = false,
-  fileOptions,
+  tableOptions,
+  actionCellProperties = {
+    requireDeleteConfirmation: false,
+    edit: {
+      onSave: () => {},
+      disabled: false,
+    },
+    delete: {
+      onDelete: () => {},
+      disabled: false,
+    },
+    additionalActions: [],
+  },
+  customActionCellComponent = undefined,
+  emptyMessage,
+  metadata = {},
+  disabledActionCell = false,
 }: GenericTableProps<T>) => {
-  const defaultSortColumn = columns.find(
-    (column) => column.isDefaultSort,
-  )?.header;
+  const disabledActions = {
+    edit: actionCellProperties.edit.disabled,
+    delete: actionCellProperties.delete.disabled,
+  };
+
+  const defaultSortColumn = columns.find((column) => column.isDefaultSort)?.key;
 
   const { data, pagination, state, sort, filters } = useGenericTableData({
     useQueryHook: queryHook,
     filterOptions,
-    defaultSortColumn,
+    defaultSortColumn: defaultSortColumn as string,
   });
 
   // State for detail dialog
@@ -67,11 +84,13 @@ const GenericTable = <T extends { id: string }>({
     isEditSaving,
     handleEditClick,
     handleEditSave,
-  } = useTableEdit<T>(actions);
+  } = useTableEdit<T>(actionCellProperties?.edit.onSave);
 
-  const { isDeleting, deletingRow, handleDelete } = useTableDelete(actions);
+  const { isDeleting, deletingRow, handleDelete } = useTableDelete(
+    actionCellProperties?.delete.onDelete,
+  );
   const { isAdding, dialogOpen, setDialogOpen, handleAdd, handleShowDialog } =
-    useTableAdd(actions);
+    useTableAdd(addAction?.onAdd);
 
   const tableBody = useMemo(() => {
     if (state.isFetching) {
@@ -93,20 +112,45 @@ const GenericTable = <T extends { id: string }>({
           </TableBody>
         );
       }
+    }
+
+    const getActionCell = (cell: T) => {
+      if (disabledActionCell) {
+        return null;
+      }
 
       return (
-        <TableBody>
-          <TableRow>
-            <TableCell
-              className='text-center text-red-500'
-              colSpan={columns.length + 1}
-            >
-              No data found
-            </TableCell>
-          </TableRow>
-        </TableBody>
+        <TableCell className='min-w-20 py-1 flex justify-center items-center'>
+          {customActionCellComponent ? (
+            React.createElement(customActionCellComponent, {
+              ...cell,
+              ...metadata,
+            })
+          ) : (
+            <ActionCell
+              requireDeleteConfirmation={
+                actionCellProperties.requireDeleteConfirmation
+              }
+              isDeleting={deletingRow === cell.id && isDeleting}
+              onView={() => {
+                setCurrentDetailItem(cell);
+                setDetailDialogOpen(true);
+              }}
+              onEdit={() => handleEditClick(cell.id, data)}
+              onDelete={() => handleDelete(cell.id)}
+              disabledActions={disabledActions}
+              additionalActions={actionCellProperties.additionalActions?.map(
+                (action) => ({
+                  label: action.label,
+                  handler: () => action.handler(cell.id),
+                  disabled: action.disabled ? action.disabled(cell) : false,
+                }),
+              )}
+            />
+          )}
+        </TableCell>
       );
-    }
+    };
 
     return (
       <TableBody>
@@ -115,11 +159,12 @@ const GenericTable = <T extends { id: string }>({
             {columns.map((column) => (
               <TableCell
                 key={column.key.toString()}
-                className='py-1'
+                className='py-1 h-10'
                 style={{
                   minWidth: column.style?.minWidth,
                   maxWidth: column.style?.maxWidth,
                   width: column.style?.width,
+                  textAlign: column.style?.textAlign,
                 }}
               >
                 {(() => {
@@ -130,31 +175,14 @@ const GenericTable = <T extends { id: string }>({
 
                   // Apply transform if specified or convert to string
                   return column.transform
-                    ? column.transform(value)
+                    ? column.transform(value, cell)
                     : value !== null && value !== undefined
                     ? String(value)
                     : '';
                 })()}
               </TableCell>
             ))}
-            <TableCell className='min-w-20 py-1'>
-              <ActionCell
-                requireDeleteConfirmation={requireDeleteConfirmation}
-                isDeleting={deletingRow === cell.id && isDeleting}
-                onView={() => {
-                  setCurrentDetailItem(cell);
-                  setDetailDialogOpen(true);
-                }}
-                onEdit={() => handleEditClick(cell.id, data)}
-                onDelete={() => handleDelete(cell.id)}
-                disabledActions={disabledActions}
-                additionalActions={additionalActions.map((action) => ({
-                  label: action.label,
-                  handler: () => action.handler(cell.id),
-                  disabled: action.disabled ? action.disabled(cell) : false,
-                }))}
-              />
-            </TableCell>
+            {getActionCell(cell)}
           </TableRow>
         ))}
       </TableBody>
@@ -177,7 +205,16 @@ const GenericTable = <T extends { id: string }>({
       <TableHeader>
         <TableRow>
           {columns.map((column) => (
-            <TableHead key={column.header} className='text-blue-500'>
+            <TableHead
+              key={column.header}
+              className='text-blue-500'
+              style={{
+                minWidth: column.style?.minWidth,
+                maxWidth: column.style?.maxWidth,
+                width: column.style?.width,
+                textAlign: column.style?.textAlign,
+              }}
+            >
               <TableSort
                 columnKey={String(column.key)}
                 columnHeader={column.header}
@@ -187,7 +224,12 @@ const GenericTable = <T extends { id: string }>({
               />
             </TableHead>
           ))}
-          <TableHead className='w-4 text-blue-500'>Action</TableHead>
+          {disabledActionCell ? null : (
+            <TableHead className='w-16 text-blue-500 text-center'>
+              {t('common:table.actions')}
+            </TableHead>
+          )}
+          <TableHead className='w-4' />
         </TableRow>
       </TableHeader>
     ),
@@ -225,36 +267,38 @@ const GenericTable = <T extends { id: string }>({
         <div className='flex justify-between items-center'>
           <div className='flex items-center gap-2'>{renderFilters}</div>
           <div className='flex items-center gap-2'>
-            {fileOptions?.enableImport && fileOptions.onImport && (
-              <FileImportButton
-                onImport={fileOptions.onImport}
-                disabled={state.isLoading || state.isFetching}
-              />
-            )}
+            {tableOptions?.map((option, index) => (
+              <React.Fragment key={`table-option-${index}`}>
+                {React.cloneElement(option, {
+                  disabled: state.isLoading || state.isFetching,
+                })}
+              </React.Fragment>
+            ))}
 
-            {fileOptions?.enableExport && fileOptions.onExport && (
-              <FileExportButton
-                onExport={fileOptions.onExport}
-                disabled={state.isLoading || data.length === 0}
-              />
+            {addAction && !addAction.disabled && (
+              <LoadingButton
+                variant='outline'
+                className='flex items-center gap-2'
+                onClick={handleShowDialog}
+                isLoading={isAdding}
+              >
+                <PlusCircle className='h-5 w-5' />
+                {addAction.title}
+              </LoadingButton>
             )}
-
-            <LoadingButton
-              variant='outline'
-              className='flex items-center gap-2'
-              onClick={handleShowDialog}
-              isLoading={isAdding}
-            >
-              <PlusCircle className='h-5 w-5' />
-              {addingTitle}
-            </LoadingButton>
           </div>
         </div>
       </div>
 
       {/* Table content */}
       <div className='border rounded-md'>
-        {state.isLoading ? (
+        {data.length === 0 && !state.isLoading ? (
+          <div className='flex items-center justify-center h-24'>
+            <p className='text-muted-foreground'>
+              {emptyMessage ?? t('common:table.noData')}
+            </p>
+          </div>
+        ) : state.isLoading ? (
           <SkeletonTable rows={pagination.pageSize} columns={columns.length} />
         ) : (
           <div className='overflow-x-auto'>
@@ -282,10 +326,12 @@ const GenericTable = <T extends { id: string }>({
           </DialogHeader>
           <div className='flex-1 overflow-hidden my-4'>
             <ScrollArea className='h-[calc(90vh-50px)] w-full'>
-              <FormComponent
-                onSubmit={handleAdd}
-                onCancel={() => setDialogOpen(false)}
-              />
+              {actionCellProperties.formComponent && (
+                <actionCellProperties.formComponent
+                  onSubmit={handleAdd}
+                  onCancel={() => setDialogOpen(false)}
+                />
+              )}
             </ScrollArea>
           </div>
         </DialogContent>
@@ -299,13 +345,15 @@ const GenericTable = <T extends { id: string }>({
           </DialogHeader>
           <div className='flex-1 overflow-hidden my-4'>
             <ScrollArea className='h-[calc(90vh-50px)] w-full'>
-              <FormComponent
-                id={currentEditItem?.id}
-                onSubmit={handleEditSave}
-                onCancel={() => setEditDialogOpen(false)}
-                isLoading={isEditSaving}
-                isEditing={true}
-              />
+              {actionCellProperties.formComponent && (
+                <actionCellProperties.formComponent
+                  id={currentEditItem?.id}
+                  onSubmit={handleEditSave}
+                  onCancel={() => setEditDialogOpen(false)}
+                  isLoading={isEditSaving}
+                  isEditing={true}
+                />
+              )}
             </ScrollArea>
           </div>
         </DialogContent>
@@ -319,7 +367,11 @@ const GenericTable = <T extends { id: string }>({
           </DialogHeader>
           <div className='flex-1 overflow-hidden my-4'>
             <ScrollArea className='h-[calc(90vh-50px)] w-full'>
-              <DetailComponent id={currentDetailItem?.id} />
+              {actionCellProperties.detailComponent && (
+                <actionCellProperties.detailComponent
+                  id={currentDetailItem?.id}
+                />
+              )}
             </ScrollArea>
           </div>
         </DialogContent>

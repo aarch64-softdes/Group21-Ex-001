@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
@@ -22,15 +23,16 @@ import { useEffect } from 'react';
 import LoadingButton from '@ui/loadingButton';
 
 // Define schema
-export const ProgramFormSchema = z.object({
-  name: z
-    .string()
-    .min(1, 'Name is required')
-    .max(255, 'Name must be less than 255 characters')
-    .regex(/^[\p{L}\s]*$/u, 'Name must contain only letters and spaces'),
-});
+const ProgramFormSchema = (t: any) =>
+  z.object({
+    name: z
+      .string()
+      .min(1, t('validation.required'))
+      .max(255, t('validation.maxLength', { length: 255 }))
+      .regex(/^[\p{L}\s]*$/u, t('validation.nameFormat')),
+  });
 
-export type ProgramFormValues = z.infer<typeof ProgramFormSchema>;
+export type ProgramFormValues = z.infer<ReturnType<typeof ProgramFormSchema>>;
 
 const ProgramForm: React.FC<FormComponentProps<Program>> = ({
   onSubmit,
@@ -39,12 +41,14 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
   isLoading = false,
   isEditing = false,
 }) => {
+  const { t } = useTranslation(['program', 'common']);
+
   const { data: programData, isLoading: isLoadingProgram } = useProgram(
     id || '',
   );
 
   const form = useForm<ProgramFormValues>({
-    resolver: zodResolver(ProgramFormSchema),
+    resolver: zodResolver(ProgramFormSchema(t)),
     defaultValues: {
       name: '',
     },
@@ -71,7 +75,7 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
       {/* Header */}
       <div className='border-b px-4 py-2 flex items-center justify-between'>
         <h2 className='text-xl font-semibold'>
-          {isEditing ? 'Edit Program' : 'Add New Program'}
+          {isEditing ? t('program:editProgram') : t('program:addNew')}
         </h2>
       </div>
 
@@ -92,7 +96,7 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
                 <Card className='mb-6'>
                   <CardHeader>
                     <CardTitle className='text-lg font-medium'>
-                      Program Information
+                      {t('program:sections.programInfo')}
                     </CardTitle>
                     <Separator />
                   </CardHeader>
@@ -102,10 +106,13 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
                       name='name'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel>{t('program:fields.name')}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='Enter program name'
+                              placeholder={t(
+                                'program:fields.namePlaceholder',
+                                'Enter program name',
+                              )}
                               {...field}
                               autoComplete='off'
                               onKeyDown={(e) => {
@@ -131,10 +138,12 @@ const ProgramForm: React.FC<FormComponentProps<Program>> = ({
                       onCancel();
                     }}
                   >
-                    Cancel
+                    {t('common:actions.cancel')}
                   </Button>
                   <LoadingButton type='submit' isLoading={isLoading}>
-                    {isEditing ? 'Save Changes' : 'Add Program'}
+                    {isEditing
+                      ? t('common:actions.save')
+                      : t('common:actions.add')}
                   </LoadingButton>
                 </div>
               </form>

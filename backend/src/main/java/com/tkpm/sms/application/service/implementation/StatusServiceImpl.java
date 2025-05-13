@@ -93,6 +93,8 @@ public class StatusServiceImpl implements StatusService {
     @Override
     @Transactional
     public void deleteStatus(Integer id) {
+        statusDomainValidator.validateStatusTransitionForDeletion(id);
+
         Status status = statusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
                         translatorService.getEntityTranslatedName(Status.class), id));

@@ -4,6 +4,7 @@ import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Status;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface StatusRepository {
@@ -22,4 +23,8 @@ public interface StatusRepository {
     void delete(Status status);
 
     PageResponse<Status> findAll(PageRequest pageRequest);
+
+    List<Status> findAllStatusesHaveThisAsTransition(Integer id);
+
+    void delete(Status status);
 }

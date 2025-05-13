@@ -5,9 +5,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { showSuccessToast, showErrorToast } from '@/shared/lib/toast-utils';
 import { getErrorMessage } from '@/shared/lib/utils';
 import Status from '@/features/faculty/types/faculty';
-import programService from '@/features/program/api/programService';
 import { useLoadMore } from '@/shared/hooks/useLoadMore';
 import { useState } from 'react';
+import { t } from 'i18next';
 import { SelectItem } from '@/components/common/LoadMoreSelect';
 
 const statusService = new StatusService();
@@ -42,6 +42,7 @@ export const useStatusesDropdown = (
   mapFn?: (status: Status) => SelectItem,
 ) => {
   const [statusSearch, setStatusSearch] = useState<string>('');
+
   const statuses = useLoadMore<Status>({
     queryKey: ['statuses', 'dropdown'],
     fetchFn: (page, size, searchQuery) =>
@@ -84,7 +85,7 @@ export const useCreateStatus = () => {
     mutationFn: (data: CreateStatusDTO) => statusService.addNewStatus(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
-      showSuccessToast('Status created successfully');
+      showSuccessToast(t('status:messages.statusAdded'));
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -100,7 +101,7 @@ export const useUpdateStatus = () => {
       statusService.updateStatus(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
-      showSuccessToast('Status updated successfully');
+      showSuccessToast(t('status:messages.statusUpdated'));
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -115,7 +116,7 @@ export const useDeleteStatus = () => {
     mutationFn: (id: string) => statusService.deleteStatus(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['statuses'] });
-      showSuccessToast('Status deleted successfully');
+      showSuccessToast(t('status:messages.statusDeleted'));
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));

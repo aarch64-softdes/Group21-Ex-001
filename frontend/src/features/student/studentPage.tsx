@@ -1,5 +1,5 @@
-import StudentForm from '@student/components/StudentForm';
 import GenericTable from '@components/table/GenericTable';
+import StudentForm from '@student/components/StudentForm';
 import React, { useCallback } from 'react';
 
 import {
@@ -9,13 +9,16 @@ import {
   useUpdateStudent,
 } from '@/features/student/api/useStudentApi';
 
-import StudentDetail from '@student/components/StudentDetail';
 import { SearchFilterOption } from '@/core/types/filter';
-import Student, { CreateStudentDTO } from '@/features/student/types/student';
 import { Column } from '@/core/types/table';
-import { FolderSearch, UserSearch } from 'lucide-react';
 import StudentService from '@/features/student/api/studentService';
+import Student, { CreateStudentDTO } from '@/features/student/types/student';
+import StudentDetail from '@student/components/StudentDetail';
+import { t } from 'i18next';
+import { FolderSearch, UserSearch } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import FileImportButton from './components/FileImportButton';
+import FileExportButton from './components/FileExportButton';
 
 const StudentPage: React.FC = () => {
   const studentService = new StudentService();
@@ -28,14 +31,14 @@ const StudentPage: React.FC = () => {
   const columns: Column<Student>[] = React.useMemo(
     () => [
       {
-        header: 'Student ID',
+        header: t('student:fields.studentId'),
         key: 'studentId',
         style: {
           width: '120px',
         },
       },
       {
-        header: 'Name',
+        header: t('student:fields.name'),
         key: 'name',
         isDefaultSort: true,
         sortable: false,
@@ -44,7 +47,7 @@ const StudentPage: React.FC = () => {
         },
       },
       {
-        header: 'Date of Birth',
+        header: t('student:fields.dob'),
         key: 'dob',
         style: {
           width: '150px',
@@ -54,31 +57,34 @@ const StudentPage: React.FC = () => {
         },
       },
       {
-        header: 'Gender',
+        header: t('student:fields.gender'),
         key: 'gender',
         style: {
           width: '100px',
         },
       },
       {
-        header: 'Faculty',
+        header: t('student:fields.faculty'),
         key: 'faculty',
         style: {
           width: '150px',
         },
       },
+
       {
-        header: 'School Year',
+        header: t('student:fields.schoolYear'),
         key: 'schoolYear',
         style: {
           width: '80px',
+          textAlign: 'center',
         },
       },
       {
-        header: 'Status',
+        header: t('student:fields.program'),
         key: 'status',
         style: {
           width: '112px',
+          textAlign: 'center',
         },
 
         // render: (value: string) => {
@@ -92,19 +98,7 @@ const StudentPage: React.FC = () => {
         //         return "bg-amber-100 text-amber-800 hover:bg-amber-100";
         //       case "expelled":
         //         return "bg-red-100 text-red-800 hover:bg-red-100";
-        //       case "on leave":
-        //         return "bg-purple-100 text-purple-800 hover:bg-purple-100";
-        //       default:
-        //         return "bg-gray-100 text-gray-800 hover:bg-gray-100";
-        //     }
-        //   };
-
-        //   return (
-        //     <Badge
-        //       className={`font-medium ${getStatusStyles(value)}`}
-        //       variant="outline"
-        //     >
-        //       {value}
+        //       case "on leave":enrollment
         //     </Badge>
         //   );
         // },
@@ -113,34 +107,19 @@ const StudentPage: React.FC = () => {
     [],
   );
 
-  const actions = React.useMemo(
-    () => ({
-      onSave: async (id: string, value: CreateStudentDTO) => {
-        await updateStudent.mutateAsync({ id, data: value });
-      },
-      onAdd: async (value: CreateStudentDTO) => {
-        await createStudent.mutateAsync(value);
-      },
-      onDelete: async (id: string) => {
-        await deleteStudent.mutateAsync(id);
-      },
-    }),
-    [updateStudent, createStudent, deleteStudent],
-  );
-
   const searchNameFilterOption: SearchFilterOption = {
     id: 'search',
-    label: 'Search by name',
+    label: t('common:actions.search'),
     labelIcon: UserSearch,
-    placeholder: 'Search by id, name',
+    placeholder: t('student:search.nameIdPlaceholder'),
     type: 'search',
   };
 
   const searchFacultyFilterOption: SearchFilterOption = {
     id: 'faculty',
-    label: 'Search by faculty',
+    label: t('student:search.byFaculty'),
     labelIcon: FolderSearch,
-    placeholder: 'Search by faculty',
+    placeholder: t('student:search.facultyPlaceholder'),
     type: 'search',
   };
 
@@ -155,36 +134,71 @@ const StudentPage: React.FC = () => {
     [],
   );
 
+  const fileOptions = React.useMemo(
+    () => ({
+      enableExport: true,
+      onExport: handleExportStudents,
+      enableImport: true,
+      onImport: handleImportStudents,
+    }),
+    [handleExportStudents, handleImportStudents],
+  );
+
+  const onSave = useCallback(
+    async (id: string, value: CreateStudentDTO) => {
+      await updateStudent.mutateAsync({ id, data: value });
+    },
+    [updateStudent],
+  );
+
+  const onDelete = useCallback(
+    async (id: string) => {
+      await deleteStudent.mutateAsync(id);
+    },
+    [deleteStudent],
+  );
+
+  const onAdd = useCallback(
+    async (value: CreateStudentDTO) => {
+      await createStudent.mutateAsync(value);
+    },
+    [createStudent],
+  );
+
   return (
     <div className='min-h-3/4 m-auto flex flex-row gap-4 p-4'>
       <GenericTable
-        tableTitle='Student Management'
-        addingTitle='Add Student'
+        tableTitle={t('student:title')}
+        addAction={{
+          title: t('student:addNew'),
+          onAdd,
+        }}
         queryHook={useStudents}
         columns={columns}
-        actions={actions}
-        formComponent={StudentForm}
-        detailComponent={StudentDetail}
-        disabledActions={{
-          edit: false,
-          delete: false,
-        }}
-        requireDeleteConfirmation={true}
-        filterOptions={[searchNameFilterOption, searchFacultyFilterOption]}
-        fileOptions={{
-          enableExport: true,
-          onExport: handleExportStudents,
-          enableImport: true,
-          onImport: handleImportStudents,
-        }}
-        additionalActions={[
-          {
-            label: 'Enrollment',
-            handler(id) {
-              navigate(`/student/${id}/enrollments`);
-            },
+        actionCellProperties={{
+          requireDeleteConfirmation: true,
+          edit: {
+            onSave,
           },
+          delete: {
+            onDelete,
+          },
+          formComponent: StudentForm,
+          detailComponent: StudentDetail,
+          additionalActions: [
+            {
+              label: t('student:enrollments'),
+              handler(id) {
+                navigate(`/student/${id}/enrollments`);
+              },
+            },
+          ],
+        }}
+        tableOptions={[
+          <FileImportButton onImport={fileOptions.onImport} />,
+          <FileExportButton onExport={fileOptions.onExport} prefix='student' />,
         ]}
+        filterOptions={[searchNameFilterOption, searchFacultyFilterOption]}
       />
     </div>
   );

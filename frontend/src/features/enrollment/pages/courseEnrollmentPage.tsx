@@ -5,9 +5,11 @@ import AvailableStudentsTable from '../components/AvailableStudentsTable';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ResourceNotFoundError } from '@/shared/lib/errors';
+import { useTranslation } from 'react-i18next';
 
 const CourseEnrollmentPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['enrollment', 'common']);
   const { courseId } = useParams<{ courseId: string }>();
   const { data: course, isLoading, error } = useCourse(courseId || '');
 
@@ -31,15 +33,15 @@ const CourseEnrollmentPage: React.FC = () => {
     <div className='container mx-auto p-6'>
       <div className='mb-6 flex items-center justify-between'>
         <div>
-          <h1 className='text-2xl font-bold mb-2'>
-            Course Enrollment Management
-          </h1>
+          <h1 className='text-2xl font-bold mb-2'>{t('title')}</h1>
           <p className='text-muted-foreground'>
-            Course: {course.subject?.name} ({course.code})
+            {t('course:fields.subject')}: {course.subject?.name} ({course.code})
           </p>
           <p className='text-sm text-muted-foreground'>
-            Semester: {course.year}, Semester {course.semester} | Room:{' '}
-            {course.room} | Schedule: {course.schedule}
+            {t('course:fields.semester')}: {course.year},{' '}
+            {t('course:fields.semester')} {course.semester} |{' '}
+            {t('course:fields.room')}: {course.room} |{' '}
+            {t('course:fields.schedule')}: {course.schedule}
           </p>
         </div>
 
@@ -51,7 +53,7 @@ const CourseEnrollmentPage: React.FC = () => {
           }}
         >
           <ChevronLeft className='mr-2 h-4 w-4' />
-          Return
+          {t('return')}
         </Button>
       </div>
 

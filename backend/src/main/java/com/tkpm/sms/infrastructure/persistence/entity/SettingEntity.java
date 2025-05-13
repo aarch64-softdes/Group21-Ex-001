@@ -15,8 +15,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SettingEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @Pattern(regexp = "^[a-z]+$")
     @Column(unique = true, nullable = false, updatable = false)

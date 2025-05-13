@@ -38,7 +38,7 @@ public class CourseDomainValidator {
             }
 
             var schedule = course.getSchedule();
-            var existedSchedule = Schedule.of(other.getSchedule());
+            var existedSchedule = Schedule.of(other.getSchedule().toString());
             if (schedule.isOverlapping(existedSchedule)) {
                 throw new DuplicateResourceException("error.course.duplicate_resource.overlapping",
                         course.getRoom(), schedule);

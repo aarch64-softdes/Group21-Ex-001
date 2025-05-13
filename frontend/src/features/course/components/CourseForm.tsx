@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card';
@@ -38,44 +39,42 @@ import { parseSchedule } from '../types/courseSchedule';
 const schedulePattern = /^T[2-7]\([1-9]-([1-9]|1[0-2])\)$/;
 
 // Define schema
-export const CourseFormSchema = z.object({
-  subjectId: z.string().min(1, 'Subject is required'),
-  programId: z.string().min(1, 'Program is required'),
-  code: z.string().min(1, 'Code is required'),
-  year: z
-    .number({ invalid_type_error: 'Year must be a number' })
-    .min(2020, 'Year must be 2020 or later')
-    .max(2050, 'Year must be before 2050')
-    .or(z.string().regex(/^\d+$/).transform(Number)),
-  semester: z
-    .number({ invalid_type_error: 'Semester must be a number' })
-    .min(1, 'Semester must be at least 1')
-    .max(3, 'Semester must be at most 3')
-    .or(z.string().regex(/^\d+$/).transform(Number)),
-  startDate: z.string().min(1, 'Start date is required'),
-  lecturer: z
-    .string()
-    .min(1, 'Lecturer name is required')
-    .max(100, 'Lecturer name must be less than 100 characters'),
-  maxStudent: z
-    .number({ invalid_type_error: 'Max students must be a number' })
-    .min(1, 'Max students must be at least 1')
-    .max(200, 'Max students must be at most 200')
-    .or(z.string().regex(/^\d+$/).transform(Number)),
-  schedule: z
-    .string()
-    .min(1, 'Schedule is required')
-    .regex(
-      schedulePattern,
-      'Schedule must be in format T2(3-6), day(start-end)',
-    ),
-  room: z
-    .string()
-    .min(1, 'Room is required')
-    .max(50, 'Room must be less than 50 characters'),
-});
+export const CourseFormSchema = (t: any) =>
+  z.object({
+    subjectId: z.string().min(1, t('course:validation.subjectRequired')),
+    programId: z.string().min(1, t('course:validation.programRequired')),
+    code: z.string().min(1, t('course:validation.codeRequired')),
+    year: z
+      .number({ invalid_type_error: t('course:validation.yearRequired') })
+      .min(2020, t('course:validation.yearRequired'))
+      .max(2050, t('course:validation.yearMax'))
+      .or(z.string().regex(/^\d+$/).transform(Number)),
+    semester: z
+      .number({ invalid_type_error: t('course:validation.semesterMin') })
+      .min(1, t('course:validation.semesterMin'))
+      .max(3, t('course:validation.semesterMax'))
+      .or(z.string().regex(/^\d+$/).transform(Number)),
+    startDate: z.string().min(1, t('course:validation.startDateRequired')),
+    lecturer: z
+      .string()
+      .min(1, t('course:validation.lecturerRequired'))
+      .max(100, t('course:validation.lecturerMax')),
+    maxStudent: z
+      .number({ invalid_type_error: t('course:validation.maxStudentInvalid') })
+      .min(1, t('course:validation.maxStudentMin'))
+      .max(200, t('course:validation.maxStudentMax'))
+      .or(z.string().regex(/^\d+$/).transform(Number)),
+    schedule: z
+      .string()
+      .min(1, t('course:validation.scheduleRequired'))
+      .regex(schedulePattern, t('course:validation.scheduleFormat')),
+    room: z
+      .string()
+      .min(1, t('course:validation.roomRequired'))
+      .max(50, t('course:validation.roomMax')),
+  });
 
-export type CourseFormValues = z.infer<typeof CourseFormSchema>;
+export type CourseFormValues = z.infer<ReturnType<typeof CourseFormSchema>>;
 
 const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
   onSubmit,
@@ -84,6 +83,8 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
   isLoading = false,
   isEditing = false,
 }) => {
+  const { t } = useTranslation(['course', 'common']);
+
   const { data: courseData, isLoading: isLoadingCourse } = useCourse(id || '');
   const subjects = useSubjectsDropdown(isEditing ? 100 : 5, (subject) => ({
     id: subject.id,
@@ -100,7 +101,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
   }));
 
   const form = useForm<CourseFormValues>({
-    resolver: zodResolver(CourseFormSchema),
+    resolver: zodResolver(CourseFormSchema(t)),
     defaultValues: {
       subjectId: '',
       programId: '',
@@ -150,7 +151,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
     };
 
     if (isEditing) {
-      const { subjectId, programId, ...updateData } = submissionValues;
+      const { subjectId, programId, code, ...updateData } = submissionValues;
       onSubmit(updateData as UpdateCourseDTO);
     } else {
       onSubmit(submissionValues as CreateCourseDTO);
@@ -165,7 +166,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
       {/* Header */}
       <div className='border-b px-4 py-2 flex items-center justify-between'>
         <h2 className='text-xl font-semibold'>
-          {isEditing ? 'Edit Course' : 'Add New Course'}
+          {isEditing ? t('course:editCourse') : t('course:addNew')}
         </h2>
       </div>
 
@@ -186,7 +187,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                 <Card className='mb-6'>
                   <CardHeader>
                     <CardTitle className='text-lg font-medium'>
-                      Course Information
+                      {t('course:sections.courseInfo')}
                     </CardTitle>
                     <Separator />
                   </CardHeader>
@@ -196,18 +197,18 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='subjectId'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Subject</FormLabel>
+                          <FormLabel>{t('course:fields.subject')}</FormLabel>
                           <LoadMoreSelect
                             value={field.value}
                             onValueChange={field.onChange}
-                            placeholder='Select subject'
+                            placeholder={t('course:fields.selectSubject')}
                             items={subjects.selectItems}
                             isLoading={subjects.isLoading}
                             isLoadingMore={subjects.isLoadingMore}
                             hasMore={subjects.hasMore}
                             onLoadMore={subjects.loadMore}
-                            emptyMessage='No subjects found.'
-                            searchPlaceholder='Search subject...'
+                            emptyMessage={t('common:messages.noData')}
+                            searchPlaceholder={t('course:fields.searchSubject')}
                             onSearch={subjects.setSubjectSearch}
                             disabled={isEditing || isLoading}
                             disabledItems={(metadata) =>
@@ -224,18 +225,18 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='programId'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Program</FormLabel>
+                          <FormLabel>{t('course:fields.program')}</FormLabel>
                           <LoadMoreSelect
                             value={field.value}
                             onValueChange={field.onChange}
-                            placeholder='Select program'
+                            placeholder={t('course:fields.selectProgram')}
                             items={programs.selectItems}
                             isLoading={programs.isLoading}
                             isLoadingMore={programs.isLoadingMore}
                             hasMore={programs.hasMore}
                             onLoadMore={programs.loadMore}
-                            emptyMessage='No programs found.'
-                            searchPlaceholder='Search programs...'
+                            emptyMessage={t('common:messages.noData')}
+                            searchPlaceholder={t('course:fields.searchProgram')}
                             onSearch={programs.setProgramSearch}
                             disabled={isEditing || isLoading}
                           />
@@ -249,10 +250,10 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='code'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Code</FormLabel>
+                          <FormLabel>{t('course:fields.code')}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='e.g. CS101'
+                              placeholder={t('course:fields.codePlaceholder')}
                               {...field}
                               autoComplete='off'
                               onKeyDown={(e) => {
@@ -260,6 +261,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                                   e.preventDefault();
                                 }
                               }}
+                              disabled={isEditing}
                             />
                           </FormControl>
                           <FormMessage />
@@ -272,7 +274,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='year'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Academic Year</FormLabel>
+                          <FormLabel>{t('course:fields.year')}</FormLabel>
                           <FormControl>
                             <Input
                               type='number'
@@ -288,6 +290,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                                   e.preventDefault();
                                 }
                               }}
+                              placeholder={t('course:fields.yearPlaceholder')}
                             />
                           </FormControl>
                           <FormMessage />
@@ -300,7 +303,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='semester'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Semester</FormLabel>
+                          <FormLabel>{t('course:fields.semester')}</FormLabel>
                           <FormControl>
                             <Input
                               type='number'
@@ -316,6 +319,9 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                                   e.preventDefault();
                                 }
                               }}
+                              placeholder={t(
+                                'course:fields.semesterPlaceholder',
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -328,7 +334,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='startDate'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Start Date</FormLabel>
+                          <FormLabel>{t('course:fields.startDate')}</FormLabel>
                           <FormControl>
                             <Input
                               type='date'
@@ -351,10 +357,12 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='lecturer'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Lecturer</FormLabel>
+                          <FormLabel>{t('course:fields.lecturer')}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='e.g. Dr. John Smith'
+                              placeholder={t(
+                                'course:fields.lecturerPlaceholder',
+                              )}
                               {...field}
                               autoComplete='off'
                               onKeyDown={(e) => {
@@ -374,7 +382,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='maxStudent'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Maximum Students</FormLabel>
+                          <FormLabel>{t('course:fields.maxStudent')}</FormLabel>
                           <FormControl>
                             <Input
                               type='number'
@@ -390,6 +398,9 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                                   e.preventDefault();
                                 }
                               }}
+                              placeholder={t(
+                                'course:fields.maxStudentPlaceholder',
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -402,10 +413,12 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='schedule'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Schedule</FormLabel>
+                          <FormLabel>{t('course:fields.schedule')}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='e.g. T2(3-6)'
+                              placeholder={t(
+                                'course:fields.schedulePlaceholder',
+                              )}
                               {...field}
                               autoComplete='off'
                               onKeyDown={(e) => {
@@ -417,7 +430,7 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                           </FormControl>
                           <FormMessage />
                           <p className='text-xs text-muted-foreground'>
-                            Format: T2(3-6) means Monday from 3rd to 6th period
+                            {t('course:messages.scheduleFormat')}
                           </p>
                         </FormItem>
                       )}
@@ -428,10 +441,10 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='room'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Room</FormLabel>
+                          <FormLabel>{t('course:fields.room')}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='e.g. A101'
+                              placeholder={t('course:fields.roomPlaceholder')}
                               {...field}
                               autoComplete='off'
                               onKeyDown={(e) => {
@@ -457,10 +470,12 @@ const CourseForm: React.FC<FormComponentPropsWithoutType> = ({
                       onCancel();
                     }}
                   >
-                    Cancel
+                    {t('common:actions.cancel')}
                   </Button>
                   <LoadingButton type='submit' isLoading={isLoading}>
-                    {isEditing ? 'Save Changes' : 'Add Course'}
+                    {isEditing
+                      ? t('course:actions.update')
+                      : t('course:actions.create')}
                   </LoadingButton>
                 </div>
               </form>

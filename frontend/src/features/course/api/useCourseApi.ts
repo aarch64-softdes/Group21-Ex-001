@@ -7,6 +7,7 @@ import {
 import { QueryHookParams } from '@/core/types/table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getErrorMessage } from '@/shared/lib/utils';
+import { t } from 'i18next';
 
 const courseService = new CourseService();
 
@@ -48,7 +49,7 @@ export const useCreateCourse = () => {
     mutationFn: (data: CreateCourseDTO) => courseService.addCourse(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['courses'] });
-      showSuccessToast('Course created successfully');
+      showSuccessToast(t('course:messages.courseAdded'));
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -64,7 +65,7 @@ export const useUpdateCourse = () => {
       courseService.updateCourse(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['courses'] });
-      showSuccessToast('Course updated successfully');
+      showSuccessToast(t('course:messages.courseUpdated'));
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -79,7 +80,7 @@ export const useDeleteCourse = () => {
     mutationFn: (id: string) => courseService.deleteCourse(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['courses'] });
-      showSuccessToast('Course deleted successfully');
+      showSuccessToast(t('course:messages.courseDeleted'));
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));

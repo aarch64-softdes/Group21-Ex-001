@@ -1,17 +1,21 @@
 import { FilterOption, FilterParams } from '@/core/types/filter';
-import { QueryHook, TableActions, SortConfig } from '@/core/types/table';
+import {
+  QueryHook,
+  SortConfig,
+  SaveAction,
+  DeleteAction,
+  AddAction,
+} from '@/core/types/table';
 import { useCallback, useEffect, useState } from 'react';
 
-export const useTableAdd = <T extends { id: string }>(
-  actions?: TableActions,
-) => {
+export const useTableAdd = <T extends { id: string }>(onAdd: AddAction) => {
   const [isAdding, setIsAdding] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleAdd = async (value: Partial<T>) => {
     try {
       setIsAdding(true);
-      await actions?.onAdd?.(value);
+      await onAdd?.(value);
       setDialogOpen(false);
     } catch (error) {
       console.error(error);
@@ -27,9 +31,7 @@ export const useTableAdd = <T extends { id: string }>(
   return { isAdding, dialogOpen, setDialogOpen, handleAdd, handleShowDialog };
 };
 
-export const useTableEdit = <T extends { id: string }>(
-  actions?: TableActions,
-) => {
+export const useTableEdit = <T extends { id: string }>(onSave: SaveAction) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currentEditItem, setCurrentEditItem] = useState<T | null>(null);
   const [isEditSaving, setIsEditSaving] = useState(false);
@@ -49,7 +51,7 @@ export const useTableEdit = <T extends { id: string }>(
 
     try {
       setIsEditSaving(true);
-      await actions?.onSave?.(currentEditItem.id, updatedData as T);
+      await onSave(currentEditItem.id, updatedData as T);
       setEditDialogOpen(false);
       setCurrentEditItem(null);
     } catch (error) {
@@ -70,7 +72,7 @@ export const useTableEdit = <T extends { id: string }>(
   };
 };
 
-export const useTableDelete = (actions?: TableActions) => {
+export const useTableDelete = (onDelete: DeleteAction) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletingRow, setDeletingRow] = useState<string | null>(null);
 
@@ -78,7 +80,7 @@ export const useTableDelete = (actions?: TableActions) => {
     try {
       setIsDeleting(true);
       setDeletingRow(id);
-      await actions?.onDelete?.(id);
+      await onDelete?.(id);
       setDeletingRow(null);
     } catch (error) {
       console.error(error);

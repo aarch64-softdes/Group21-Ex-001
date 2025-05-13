@@ -24,23 +24,12 @@ import {
 import { Loader2 } from 'lucide-react';
 import { cn, getErrorMessage } from '@/shared/lib/utils';
 import { showErrorToast, showSuccessToast } from '@/shared/lib/toast-utils';
+import { useTranslation } from 'react-i18next';
 
-const validateEmailDomain = (domain: string): string | null => {
-  if (!domain.startsWith('@')) {
-    return 'Domain must start with @';
-  }
-
-  // Simple regex to validate domain format after the @
-  const domainRegex =
-    /^@[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/;
-  if (!domainRegex.test(domain)) {
-    return 'Invalid domain format';
-  }
-
-  return null;
-};
-
-const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
+const EmailDomainSettings: React.FC<{ className?: string }> = ({
+  className,
+}) => {
+  const { t } = useTranslation(['setting', 'common']);
   const { data, isLoading } = useEmailDomainSetting();
   const updateEmailDomain = useUpdateEmailDomainSetting();
 
@@ -53,6 +42,21 @@ const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
   if (data && tempDomain === '' && !isEditing) {
     setTempDomain(data.domain || '');
   }
+
+  const validateEmailDomain = (domain: string): string | null => {
+    if (!domain.startsWith('@')) {
+      return t('setting:emailDomain.validation.mustStartWithAt');
+    }
+
+    // Simple regex to validate domain format after the @
+    const domainRegex =
+      /^@[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/;
+    if (!domainRegex.test(domain)) {
+      return t('setting:emailDomain.validation.invalidFormat');
+    }
+
+    return null;
+  };
 
   const handleEditToggle = () => {
     if (isEditing) {
@@ -75,10 +79,19 @@ const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
       await updateEmailDomain.mutateAsync({ domain: tempDomain });
       setIsEditing(false);
       setError(null);
-      showSuccessToast('Email domain updated successfully');
+      showSuccessToast(
+        t('setting:messages.updated', {
+          setting: t('setting:emailDomain.title'),
+        }),
+      );
     } catch (err) {
       console.error('Failed to update email domain:', err);
-      showErrorToast('Failed to update email domain: ' + getErrorMessage(err));
+      showErrorToast(
+        t('setting:messages.updateFailed', {
+          setting: t('setting:emailDomain.title'),
+          error: getErrorMessage(err),
+        }),
+      );
     }
   };
 
@@ -98,9 +111,9 @@ const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
   return (
     <Card className={cn('w-160', className)}>
       <CardHeader>
-        <CardTitle>Email Domain Setting</CardTitle>
+        <CardTitle>{t('setting:emailDomain.title')}</CardTitle>
         <CardDescription>
-          Configure the allowed email domain for all students
+          {t('setting:emailDomain.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -116,14 +129,14 @@ const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
                   htmlFor='emailDomain'
                   className='block text-sm font-medium text-gray-700 mb-1'
                 >
-                  Email Domain
+                  {t('setting:emailDomain.label')}
                 </label>
                 <Input
                   id='emailDomain'
                   value={tempDomain}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  placeholder='@example.com'
+                  placeholder={t('setting:emailDomain.placeholder')}
                   className={error ? 'border-red-500' : ''}
                 />
                 {error && <p className='text-red-500 text-sm mt-1'>{error}</p>}
@@ -136,25 +149,23 @@ const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
                 {isEditing ? (
                   <>
                     <Save className='mr-2 h-4 w-4' />
-                    Save
+                    {t('setting:actions.save')}
                   </>
                 ) : (
                   <>
                     <Pencil className='mr-2 h-4 w-4' />
-                    Edit
+                    {t('setting:actions.edit')}
                   </>
                 )}
               </Button>
               {isEditing && (
                 <Button variant='outline' onClick={handleCancel}>
-                  Cancel
+                  {t('setting:actions.cancel')}
                 </Button>
               )}
             </div>
             <div className='text-sm text-gray-500'>
-              <p>
-                This domain will be enforced for all student email addresses.
-              </p>
+              <p>{t('setting:emailDomain.help')}</p>
             </div>
           </div>
         )}
@@ -163,11 +174,11 @@ const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
         <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
           <DialogContent className='w-160 p-8'>
             <DialogHeader>
-              <DialogTitle>Confirm Email Domain Change</DialogTitle>
+              <DialogTitle>{t('setting:emailDomain.confirmTitle')}</DialogTitle>
               <DialogDescription>
-                You are about to change the email domain to{' '}
-                <strong>{tempDomain}</strong>. This will affect all new student
-                registrations. Are you sure?
+                {t('setting:emailDomain.confirmDescription', {
+                  domain: tempDomain,
+                })}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -175,7 +186,7 @@ const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
                 variant='outline'
                 onClick={() => setShowConfirmDialog(false)}
               >
-                Cancel
+                {t('common:actions.cancel')}
               </Button>
               <Button
                 onClick={handleSave}
@@ -184,10 +195,10 @@ const EmailDomainSettings: React.FC<{ className?: string }> = (className) => {
                 {updateEmailDomain.isPending ? (
                   <>
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                    Saving...
+                    {t('setting:actions.saving')}
                   </>
                 ) : (
-                  'Confirm'
+                  t('setting:actions.confirm')
                 )}
               </Button>
             </DialogFooter>

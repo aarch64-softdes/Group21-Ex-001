@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,5 +85,11 @@ public class StatusRepositoryImpl implements StatusRepository {
     public void delete(Status status) {
         var entity = statusPersistenceMapper.toEntity(status);
         statusJpaRepository.delete(entity);
+    }
+
+    @Override
+    public List<Status> findAllStatusesHaveThisAsTransition(Integer id) {
+        return jpaRepository.findAllByValidTransitionIdsContains(Collections.singletonList(id))
+                .stream().map(mapper::toDomain).collect(Collectors.toList());
     }
 }

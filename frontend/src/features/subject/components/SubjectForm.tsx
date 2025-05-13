@@ -18,36 +18,38 @@ import { Textarea } from '@ui/textarea';
 import { useSubject, useSubjectsDropdown } from '@subject/api/useSubjectApi';
 import { FormComponentPropsWithoutType } from '@/core/types/table';
 import { Loader2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import LoadingButton from '@ui/loadingButton';
 import { Badge } from '@/components/ui/badge';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 import { useFacultiesDropdown } from '@faculty/api/useFacultyApi';
+import { useTranslation } from 'react-i18next';
 
 // Define schema
-export const SubjectFormSchema = z.object({
-  name: z
-    .string()
-    .min(1, 'Name is required')
-    .max(255, 'Name must be less than 255 characters'),
-  code: z
-    .string()
-    .min(1, 'Code is required')
-    .max(20, 'Code must be less than 20 characters'),
-  credits: z
-    .number({ invalid_type_error: 'Credits must be a number' })
-    .min(2, 'Credits must be at least 2')
-    .max(10, 'Credits must be at most 10')
-    .or(z.string().regex(/^\d+$/).transform(Number)),
-  description: z
-    .string()
-    .max(1000, 'Description must be less than 1000 characters')
-    .optional(),
-  facultyId: z.string().min(1, 'Faculty is required'),
-  prerequisitesId: z.array(z.string()).optional().default([]),
-});
+export const SubjectFormSchema = (t: any) =>
+  z.object({
+    name: z
+      .string()
+      .min(1, t('subject:validation.nameRequired'))
+      .max(255, t('subject:validation.nameTooLong')),
+    code: z
+      .string()
+      .min(1, t('subject:validation.codeRequired'))
+      .max(20, t('subject:validation.codeTooLong')),
+    credits: z
+      .number({ invalid_type_error: t('subject:validation.creditsInvalid') })
+      .min(2, t('subject:validation.creditsMin'))
+      .max(10, t('subject:validation.creditsMax'))
+      .or(z.string().regex(/^\d+$/).transform(Number)),
+    description: z
+      .string()
+      .max(1000, t('subject:validation.descriptionTooLong'))
+      .optional(),
+    facultyId: z.string().min(1, t('subject:validation.facultyRequired')),
+    prerequisitesId: z.array(z.string()).optional().default([]),
+  });
 
-export type SubjectFormValues = z.infer<typeof SubjectFormSchema>;
+export type SubjectFormValues = z.infer<ReturnType<typeof SubjectFormSchema>>;
 
 const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
   onSubmit,
@@ -56,6 +58,8 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
   isLoading = false,
   isEditing = false,
 }) => {
+  const { t } = useTranslation(['subject', 'common']);
+
   const { data: subjectData, isLoading: isLoadingSubject } = useSubject(
     id || '',
   );
@@ -78,13 +82,8 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
     id,
   );
 
-  // Store selected prerequisites
-  const [selectedPrerequisites, setSelectedPrerequisites] = useState<
-    { id: string; label: string; value: string }[]
-  >([]);
-
   const form = useForm<SubjectFormValues>({
-    resolver: zodResolver(SubjectFormSchema),
+    resolver: zodResolver(SubjectFormSchema(t)),
     defaultValues: {
       name: '',
       code: '',
@@ -115,16 +114,6 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
           value: subjectData.faculty.id,
         });
       }
-
-      // Initialize selected prerequisites from subject data
-      if (subjectData.prerequisites?.length) {
-        const prereqs = subjectData.prerequisites.map((subject) => ({
-          id: subject.id || '',
-          label: `${subject.code} - ${subject.name}`,
-          value: subject.id || '',
-        }));
-        setSelectedPrerequisites(prereqs);
-      }
     }
   }, [subjectData, id, form]);
 
@@ -133,34 +122,8 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
       let { code, ...updateData } = values;
       onSubmit(updateData);
     } else {
-      onSubmit({
-        ...values,
-        prerequisitesId: selectedPrerequisites.map((item) => item.id),
-      });
+      onSubmit(values);
     }
-  };
-
-  // Handle adding a prerequisite
-  const handleAddPrerequisite = (selectedId: string) => {
-    if (!selectedId) return;
-
-    // Find the selected item from the dropdown options
-    const selectedItem = subjects.selectItems.find(
-      (item) => item.id === selectedId,
-    );
-    if (
-      selectedItem &&
-      !selectedPrerequisites.some((item) => item.id === selectedId)
-    ) {
-      setSelectedPrerequisites((prev) => [...prev, selectedItem]);
-    }
-  };
-
-  // Handle removing a prerequisite
-  const handleRemovePrerequisite = (prerequisiteId: string) => {
-    setSelectedPrerequisites((prev) =>
-      prev.filter((item) => item.id !== prerequisiteId),
-    );
   };
 
   // Determine if we should show loading state
@@ -171,7 +134,7 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
       {/* Header */}
       <div className='border-b px-4 py-2 flex items-center justify-between'>
         <h2 className='text-xl font-semibold'>
-          {isEditing ? 'Edit Subject' : 'Add New Subject'}
+          {isEditing ? t('subject:editSubject') : t('subject:addNew')}
         </h2>
       </div>
 
@@ -192,7 +155,7 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                 <Card className='mb-6'>
                   <CardHeader>
                     <CardTitle className='text-lg font-medium'>
-                      Subject Information
+                      {t('subject:sections.subjectInfo')}
                     </CardTitle>
                     <Separator />
                   </CardHeader>
@@ -202,10 +165,10 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='name'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel>{t('subject:fields.name')}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='Enter subject name'
+                              placeholder={t('subject:fields.namePlaceholder')}
                               {...field}
                               autoComplete='off'
                               onKeyDown={(e) => {
@@ -225,7 +188,7 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='code'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Code</FormLabel>
+                          <FormLabel>{t('subject:fields.code')}</FormLabel>
                           <FormControl>
                             <Input
                               placeholder='e.g. CS101'
@@ -249,7 +212,7 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='credits'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Credits</FormLabel>
+                          <FormLabel>{t('subject:fields.credits')}</FormLabel>
                           <FormControl>
                             <Input
                               type='number'
@@ -277,19 +240,21 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='facultyId'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Faculty</FormLabel>
+                          <FormLabel>{t('subject:fields.faculty')}</FormLabel>
                           <LoadMoreSelect
                             value={field.value || ''}
                             onValueChange={field.onChange}
-                            placeholder='Select faculty'
+                            placeholder={t('subject:fields.selectFaculty')}
                             items={faculties.selectItems}
                             isLoading={faculties.isLoading}
                             isLoadingMore={faculties.isLoadingMore}
                             hasMore={faculties.hasMore}
                             onLoadMore={faculties.loadMore}
                             disabled={faculties.isLoading}
-                            emptyMessage='No faculties found.'
-                            searchPlaceholder='Search faculties...'
+                            emptyMessage={t('common:messages.noData')}
+                            searchPlaceholder={t(
+                              'subject:fields.searchFaculty',
+                            )}
                             onSearch={faculties.setFacultySearch}
                           />
                           <FormMessage />
@@ -301,61 +266,105 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                       <FormField
                         control={form.control}
                         name='prerequisitesId'
-                        render={() => (
-                          <FormItem className='col-span-2'>
-                            <FormLabel>Prerequisites</FormLabel>
-                            <div>
-                              <div className='flex flex-wrap gap-2 mb-2 min-h-10 border rounded-md p-2'>
-                                {selectedPrerequisites.length > 0 ? (
-                                  selectedPrerequisites.map((prerequisite) => (
-                                    <Badge
-                                      key={prerequisite.id}
-                                      variant='secondary'
-                                      className='flex items-center gap-1'
-                                    >
-                                      <div>{prerequisite.label}</div>
-                                      <button
-                                        type='button'
-                                        className='ml-1 p-1 rounded-full hover:bg-gray-200 focus:outline-none'
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          e.preventDefault();
-                                          handleRemovePrerequisite(
-                                            prerequisite.id,
-                                          );
-                                        }}
-                                      >
-                                        <X className='h-3 w-3' />
-                                      </button>
-                                    </Badge>
-                                  ))
-                                ) : (
-                                  <span className='text-sm text-muted-foreground'>
-                                    No prerequisites selected
-                                  </span>
-                                )}
+                        render={({ field }) => {
+                          const handleAddPrerequisite = (
+                            selectedId: string,
+                          ) => {
+                            if (!selectedId) return;
+
+                            const selectedItem = subjects.selectItems.find(
+                              (item) => item.id === selectedId,
+                            );
+                            if (
+                              selectedItem &&
+                              !field.value.includes(selectedId)
+                            ) {
+                              field.onChange([...field.value, selectedId]);
+                            }
+                          };
+
+                          const handleRemovePrerequisite = (
+                            prerequisiteId: string,
+                          ) => {
+                            field.onChange(
+                              field.value.filter(
+                                (id: string) => id !== prerequisiteId,
+                              ),
+                            );
+                          };
+
+                          return (
+                            <FormItem className='col-span-2'>
+                              <FormLabel>
+                                {t('subject:fields.prerequisites')}
+                              </FormLabel>
+                              <div>
+                                <div className='flex flex-wrap gap-2 mb-2 min-h-10 border rounded-md p-2'>
+                                  {field.value && field.value.length > 0 ? (
+                                    field.value.map((prerequisiteId) => {
+                                      const prerequisite =
+                                        subjects.selectItems.find(
+                                          (item) => item.id === prerequisiteId,
+                                        );
+                                      if (!prerequisite) return null;
+
+                                      return (
+                                        <Badge
+                                          key={prerequisiteId}
+                                          variant='secondary'
+                                          className='flex items-center gap-1'
+                                        >
+                                          <div>{prerequisite.label}</div>
+                                          <button
+                                            type='button'
+                                            className='ml-1 p-1 rounded-full hover:bg-gray-200 focus:outline-none'
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              e.preventDefault();
+                                              handleRemovePrerequisite(
+                                                prerequisiteId,
+                                              );
+                                            }}
+                                          >
+                                            <X className='h-3 w-3' />
+                                          </button>
+                                        </Badge>
+                                      );
+                                    })
+                                  ) : (
+                                    <span className='text-sm text-muted-foreground'>
+                                      {t('subject:messages.noPrerequisites')}
+                                    </span>
+                                  )}
+                                </div>
+                                <LoadMoreSelect
+                                  value=''
+                                  onValueChange={handleAddPrerequisite}
+                                  placeholder={t(
+                                    'subject:fields.selectPrerequisites',
+                                  )}
+                                  items={subjects.selectItems.filter(
+                                    (item) => !field.value.includes(item.id),
+                                  )}
+                                  isLoading={subjects.isLoading}
+                                  isLoadingMore={subjects.isLoadingMore}
+                                  hasMore={subjects.hasMore}
+                                  onLoadMore={subjects.loadMore}
+                                  disabled={subjects.isLoading}
+                                  emptyMessage={t('common:messages.noData')}
+                                  searchPlaceholder={t(
+                                    'subject:fields.searchPrerequisites',
+                                  )}
+                                  onSearch={subjects.setSubjectSearch}
+                                  disabledItems={(metadata) => {
+                                    return !metadata.isActive;
+                                  }}
+                                />
+                                <FormMessage />
                               </div>
-                              <LoadMoreSelect
-                                value=''
-                                onValueChange={handleAddPrerequisite}
-                                placeholder='Add prerequisite'
-                                items={subjects.selectItems}
-                                isLoading={subjects.isLoading}
-                                isLoadingMore={subjects.isLoadingMore}
-                                hasMore={subjects.hasMore}
-                                onLoadMore={subjects.loadMore}
-                                disabled={subjects.isLoading}
-                                emptyMessage='No prerequisites found.'
-                                searchPlaceholder='Search prerequisites...'
-                                onSearch={subjects.setSubjectSearch}
-                                disabledItems={(metadata) => {
-                                  return !metadata.isActive;
-                                }}
-                              />
-                              <FormMessage />
-                            </div>
-                          </FormItem>
-                        )}
+                            </FormItem>
+                          );
+                        }}
                       />
                     )}
 
@@ -364,10 +373,14 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                       name='description'
                       render={({ field }) => (
                         <FormItem className='col-span-2'>
-                          <FormLabel>Description</FormLabel>
+                          <FormLabel>
+                            {t('subject:fields.description')}
+                          </FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder='Enter subject description'
+                              placeholder={t(
+                                'subject:fields.descriptionPlaceholder',
+                              )}
                               className='min-h-[100px]'
                               {...field}
                             />
@@ -388,10 +401,12 @@ const SubjectForm: React.FC<FormComponentPropsWithoutType> = ({
                       onCancel();
                     }}
                   >
-                    Cancel
+                    {t('common:actions.cancel')}
                   </Button>
                   <LoadingButton type='submit' isLoading={isLoading}>
-                    {isEditing ? 'Save Changes' : 'Add Subject'}
+                    {isEditing
+                      ? t('subject:actions.update')
+                      : t('subject:actions.create')}
                   </LoadingButton>
                 </div>
               </form>

@@ -11,6 +11,8 @@ import Program from '@/features/faculty/types/faculty';
 import { useLoadMore } from '@/shared/hooks/useLoadMore';
 import { useState } from 'react';
 import { SelectItem } from '@/components/common/LoadMoreSelect';
+import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const programService = new ProgramService();
 
@@ -86,7 +88,7 @@ export const useCreateProgram = () => {
     mutationFn: (data: CreateProgramDTO) => programService.addNewProgram(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
-      showSuccessToast('Program created successfully');
+      showSuccessToast(t('program:messages.programAdded'));
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -102,7 +104,7 @@ export const useUpdateProgram = () => {
       programService.updateProgram(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
-      showSuccessToast('Program updated successfully');
+      showSuccessToast(t('program:messages.programUpdated'));
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
@@ -117,7 +119,7 @@ export const useDeleteProgram = () => {
     mutationFn: (id: string) => programService.deleteProgram(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs'] });
-      showSuccessToast('Program deleted successfully');
+      showSuccessToast(t('program:messages.programDeleted'));
     },
     onError: (error) => {
       showErrorToast(getErrorMessage(error));
