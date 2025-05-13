@@ -2,14 +2,14 @@ package com.tkpm.sms.infrastructure.mapper;
 
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentCreateRequestDto;
 import com.tkpm.sms.application.dto.response.enrollment.EnrollmentDto;
+import com.tkpm.sms.application.dto.response.enrollment.EnrollmentHistoryDto;
 import com.tkpm.sms.application.dto.response.enrollment.EnrollmentMinimalDto;
-import com.tkpm.sms.application.dto.response.enrollment.HistoryDto;
 import com.tkpm.sms.application.mapper.CourseMapper;
 import com.tkpm.sms.application.mapper.EnrollmentMapper;
 import com.tkpm.sms.application.mapper.ScoreMapper;
 import com.tkpm.sms.application.mapper.StudentMapper;
 import com.tkpm.sms.domain.model.Enrollment;
-import com.tkpm.sms.domain.valueobject.History;
+import com.tkpm.sms.domain.valueobject.EnrollmentHistory;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -32,5 +32,5 @@ public interface EnrollmentMapperImpl extends EnrollmentMapper {
     EnrollmentDto toEnrollmentCreatedDto(Enrollment enrollment);
 
     @Override
-    HistoryDto toHistoryDto(History history);
+    EnrollmentHistoryDto toHistoryDto(EnrollmentHistory enrollmentHistory);
 }

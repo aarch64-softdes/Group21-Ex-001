@@ -8,10 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CourseJpaRepository
-        extends
-            JpaRepository<CourseEntity, Integer>,
-            PagingAndSortingRepository<CourseEntity, Integer> {
+public interface CourseJpaRepository extends JpaRepository<CourseEntity, Integer>, PagingAndSortingRepository<CourseEntity, Integer> {
 
     boolean existsByCodeAndSubjectId(String code, Integer subjectId);
 

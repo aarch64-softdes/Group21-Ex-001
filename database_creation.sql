@@ -608,7 +608,7 @@ INSERT INTO enrollments (student_id, course_id) VALUES
 ('ST009_ID', 1), -- Intro to Computer Science (same as Student 1)
 ('ST009_ID', 3); -- Data Structures (same as Student 3)
 
--- Insert enrollment history records (these would typically be generated automatically)
+-- Insert enrollment enrollmentHistory records (these would typically be generated automatically)
 INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
 -- Enrollment actions
 ('hist_001', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST001_ID', 1),
@@ -698,7 +698,7 @@ INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- Electricity & Magnetism
 INSERT INTO enrollments (student_id, course_id, score_id) VALUES
 ('ST005_ID', 10, currval('scores_id_seq'));
 
--- Add a history record for this enrollment
+-- Add a enrollmentHistory record for this enrollment
 INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
 ('hist_019', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '20 days', 'ST005_ID', 10);
 
@@ -707,7 +707,7 @@ INSERT INTO scores (grade, gpa) VALUES ('F', 0.0); -- Intro to Business
 INSERT INTO enrollments (student_id, course_id, score_id) VALUES
 ('ST008_ID', 11, currval('scores_id_seq'));
 
--- Add a history record for this enrollment
+-- Add a enrollmentHistory record for this enrollment
 INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
 ('hist_020', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '25 days', 'ST008_ID', 11);
 
@@ -937,45 +937,45 @@ INSERT INTO enrollments (student_id, course_id, score_id) VALUES
 -- HISTORY RECORDS FOR NEW ENROLLMENTS
 -- ===============================
 
--- Add history records for all new enrollments
+-- Add enrollmentHistory records for all new enrollments
 INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
--- Student 1 new enrollments history
+-- Student 1 new enrollments enrollmentHistory
 ('hist_021', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'BUS301_01')),
 ('hist_022', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'MGT201_01')),
 
--- Student 2 new enrollments history
+-- Student 2 new enrollments enrollmentHistory
 ('hist_023', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW201_01')),
 ('hist_024', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW301_01')),
 
--- Student 3 new enrollments history
+-- Student 3 new enrollments enrollmentHistory
 ('hist_025', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN201_01')),
 ('hist_026', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN301_01')),
 
--- Student 4 new enrollments history
+-- Student 4 new enrollments enrollmentHistory
 ('hist_027', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN201_01')),
 ('hist_028', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN301_01')),
 
--- Student 5 new enrollments history
+-- Student 5 new enrollments enrollmentHistory
 ('hist_029', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '18 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'MKT301_01')),
 ('hist_030', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '18 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'BUS301_01')),
 
--- Student 6 new enrollments history
+-- Student 6 new enrollments enrollmentHistory
 ('hist_031', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN201_01')),
 ('hist_032', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN302_01')),
 
--- Student 7 new enrollments history
+-- Student 7 new enrollments enrollmentHistory
 ('hist_033', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW201_01')),
 ('hist_034', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW302_01')),
 
--- Student 8 new enrollments history
+-- Student 8 new enrollments enrollmentHistory
 ('hist_035', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '22 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'FRN201_01')),
 ('hist_036', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '22 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'FRN302_01')),
 
--- Student 9 new enrollments history
+-- Student 9 new enrollments enrollmentHistory
 ('hist_037', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'JPN301_01')),
 ('hist_038', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'JPN302_01')),
 
--- Student 10 new enrollments history
+-- Student 10 new enrollments enrollmentHistory
 ('hist_039', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '7 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'BUS301_01')),
 ('hist_040', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '7 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'MKT301_01')),
 ('hist_041', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '7 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'MGT201_01'));
@@ -1195,66 +1195,66 @@ INSERT INTO enrollments (student_id, course_id, score_id) VALUES
 -- HISTORY RECORDS FOR ALL NEW ENROLLMENTS
 -- ===============================
 
--- Add history records for the second batch of enrollments
+-- Add enrollmentHistory records for the second batch of enrollments
 INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
--- Student 1 new enrollments history
+-- Student 1 new enrollments enrollmentHistory
 ('hist_042', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '15 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'MGT401_01')),
 ('hist_043', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '15 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'COMM201_01')),
 ('hist_044', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '15 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'CS201_02')),
 
--- Student 2 new enrollments history
+-- Student 2 new enrollments enrollmentHistory
 ('hist_045', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW401_01')),
 ('hist_046', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW202_01')),
 ('hist_047', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'LAW302_01')),
 ('hist_048', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '14 days', 'ST002_ID', (SELECT id FROM courses WHERE code = 'BUS301_02')),
 
--- Student 3 new enrollments history
+-- Student 3 new enrollments enrollmentHistory
 ('hist_049', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '17 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN401_01')),
 ('hist_050', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '17 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN402_01')),
 ('hist_051', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '17 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'JPN302_01')),
 ('hist_052', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '17 days', 'ST003_ID', (SELECT id FROM courses WHERE code = 'MGT201_01')),
 
--- Student 4 new enrollments history
+-- Student 4 new enrollments enrollmentHistory
 ('hist_053', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '13 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN302_01')),
 ('hist_054', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '13 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN401_01')),
 ('hist_055', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '13 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'FRN402_01')),
 ('hist_056', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '13 days', 'ST004_ID', (SELECT id FROM courses WHERE code = 'MATH101_02')),
 
--- Student 5 new enrollments history
+-- Student 5 new enrollments enrollmentHistory
 ('hist_057', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '19 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'COMM201_01')),
 ('hist_058', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '19 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'MGT401_01')),
 ('hist_059', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '19 days', 'ST005_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
 
--- Student 6 new enrollments history
+-- Student 6 new enrollments enrollmentHistory
 ('hist_060', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN401_01')),
 ('hist_061', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN402_01')),
 ('hist_062', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'JPN301_01')),
 ('hist_063', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '12 days', 'ST006_ID', (SELECT id FROM courses WHERE code = 'BUS101_01')),
 
--- Student 7 new enrollments history
+-- Student 7 new enrollments enrollmentHistory
 ('hist_064', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW301_01')),
 ('hist_065', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW401_01')),
 ('hist_066', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'LAW202_01')),
 ('hist_067', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '11 days', 'ST007_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
 
--- Student 8 new enrollments history
+-- Student 8 new enrollments enrollmentHistory
 ('hist_068', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '21 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'FRN402_01')),
 ('hist_069', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '21 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'FRN401_01')),
 ('hist_070', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '21 days', 'ST008_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
 
--- Student 9 new enrollments history
+-- Student 9 new enrollments enrollmentHistory
 ('hist_071', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'JPN401_01')),
 ('hist_072', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'JPN402_01')),
 ('hist_073', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'MATH201_02')),
 ('hist_074', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '10 days', 'ST009_ID', (SELECT id FROM courses WHERE code = 'BUS101_01')),
 
--- Student 10 new enrollments history
+-- Student 10 new enrollments enrollmentHistory
 ('hist_075', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'COMM201_01')),
 ('hist_076', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'MGT401_01')),
 ('hist_077', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'CS101_03')),
 ('hist_078', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '9 days', 'ST010_ID', (SELECT id FROM courses WHERE code = 'MATH201_02'));
 
--- Add history records for the third batch of enrollments
+-- Add enrollmentHistory records for the third batch of enrollments
 INSERT INTO histories (id, action_type, created_at, student_id, course_id) VALUES
 ('hist_079', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'BUS201_01')),
 ('hist_080', 'ENROLLED', CURRENT_TIMESTAMP - INTERVAL '8 days', 'ST001_ID', (SELECT id FROM courses WHERE code = 'MATH201_02')),

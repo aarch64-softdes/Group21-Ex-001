@@ -10,12 +10,12 @@ import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
-import com.tkpm.sms.domain.valueobject.History;
-import com.tkpm.sms.infrastructure.persistence.entity.HistoryEntity;
+import com.tkpm.sms.domain.valueobject.EnrollmentHistory;
+import com.tkpm.sms.infrastructure.persistence.entity.EnrollmentHistoryEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.EnrollmentJpaRepository;
-import com.tkpm.sms.infrastructure.persistence.jpa.HistoryJpaRepository;
+import com.tkpm.sms.infrastructure.persistence.jpa.EnrollmentHistoryJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.EnrollmentPersistenceMapper;
-import com.tkpm.sms.infrastructure.persistence.mapper.HistoryPersistenceMapper;
+import com.tkpm.sms.infrastructure.persistence.mapper.EnrollmentHistoryPersistenceMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,12 +34,12 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     EnrollmentJpaRepository enrollmentJpaRepository;
-    HistoryJpaRepository historyJpaRepository;
+    EnrollmentHistoryJpaRepository enrollmentHistoryJpaRepository;
     SettingRepository settingRepository;
     SubjectRepository subjectRepository;
 
     EnrollmentPersistenceMapper enrollmentPersistenceMapper;
-    HistoryPersistenceMapper historyPersistenceMapper;
+    EnrollmentHistoryPersistenceMapper enrollmentHistoryPersistenceMapper;
 
     @Override
     public PageResponse<Enrollment> findAllEnrollmentsOfStudentWithPaging(String studentId,
@@ -61,8 +61,8 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public PageResponse<History> findEnrollmentHistoryOfStudent(String studentId,
-            PageRequest pageRequest) {
+    public PageResponse<EnrollmentHistory> findEnrollmentHistoryOfStudent(String studentId,
+                                                                          PageRequest pageRequest) {
         Pageable pageable = org.springframework.data.domain.PageRequest.of(
                 pageRequest.getPageNumber() - 1, pageRequest.getPageSize(),
                 pageRequest.getSortDirection() == PageRequest.SortDirection.DESC
@@ -70,9 +70,9 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                         : Sort.Direction.ASC,
                 pageRequest.getSortBy());
 
-        var page = historyJpaRepository.findAllEnrollmentHistoriesOfStudent(studentId, pageable);
+        var page = enrollmentHistoryJpaRepository.findAllEnrollmentHistoriesOfStudent(studentId, pageable);
 
-        var contents = page.getContent().stream().map(historyPersistenceMapper::toDomain).toList();
+        var contents = page.getContent().stream().map(enrollmentHistoryPersistenceMapper::toDomain).toList();
 
         return PageResponse.of(contents, page.getNumber() + 1, // Convert 0-based to 1-based
                 page.getSize(), page.getTotalElements(), page.getTotalPages());
@@ -97,10 +97,10 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         var enrollmentEntity = enrollmentPersistenceMapper.toEntity(enrollment);
         var savedEnrollmentEntity = enrollmentJpaRepository.save(enrollmentEntity);
 
-        var historyEntity = HistoryEntity.builder().student(enrollmentEntity.getStudent())
+        var historyEntity = EnrollmentHistoryEntity.builder().student(enrollmentEntity.getStudent())
                 .course(enrollmentEntity.getCourse()).createdAt(LocalDateTime.now())
-                .actionType(History.ActionType.ENROLLED.name()).build();
-        historyJpaRepository.save(historyEntity);
+                .actionType(EnrollmentHistory.ActionType.ENROLLED.name()).build();
+        enrollmentHistoryJpaRepository.save(historyEntity);
 
         return enrollmentPersistenceMapper.toDomain(savedEnrollmentEntity);
     }
@@ -109,10 +109,10 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     public void delete(Enrollment enrollment) {
         var enrollmentEntity = enrollmentPersistenceMapper.toEntity(enrollment);
 
-        var historyEntity = HistoryEntity.builder().student(enrollmentEntity.getStudent())
+        var historyEntity = EnrollmentHistoryEntity.builder().student(enrollmentEntity.getStudent())
                 .course(enrollmentEntity.getCourse()).createdAt(LocalDateTime.now())
-                .actionType(History.ActionType.DELETED.name()).build();
-        historyJpaRepository.save(historyEntity);
+                .actionType(EnrollmentHistory.ActionType.DELETED.name()).build();
+        enrollmentHistoryJpaRepository.save(historyEntity);
 
         enrollmentJpaRepository.delete(enrollmentEntity);
     }

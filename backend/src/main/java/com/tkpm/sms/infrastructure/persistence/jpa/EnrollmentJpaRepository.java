@@ -9,9 +9,9 @@ import java.util.Collection;
 
 public interface EnrollmentJpaRepository extends JpaRepository<EnrollmentEntity, Integer> {
     @Query("""
-            SELECT DISTINCT e FROM EnrollmentEntity e 
-            LEFT JOIN FETCH e.student st 
-            LEFT JOIN FETCH e.course c LEFT JOIN FETCH e.score sc 
+            SELECT DISTINCT e FROM EnrollmentEntity e
+            LEFT JOIN FETCH e.student st
+            LEFT JOIN FETCH e.course c LEFT JOIN FETCH e.score sc
             WHERE st.id = :studentId
             """)
     Page<EnrollmentEntity> findAllEnrollmentOfStudent(String studentId, Pageable pageable);

@@ -69,7 +69,7 @@ const StudentEnrollmentPage: React.FC = () => {
           <TabsTrigger value='available'>Available Courses</TabsTrigger>
           <TabsTrigger value='current'>Current Enrollments</TabsTrigger>
           <TabsTrigger value='transcript'>Transcript</TabsTrigger>
-          <TabsTrigger value='history'>Enrollment History</TabsTrigger>
+          <TabsTrigger value='enrollmentHistory'>Enrollment History</TabsTrigger>
         </TabsList>
 
         <TabsContent value='available'>
@@ -80,7 +80,7 @@ const StudentEnrollmentPage: React.FC = () => {
           <CurrentEnrollmentsTable studentId={studentId} />
         </TabsContent>
 
-        <TabsContent value='history'>
+        <TabsContent value='enrollmentHistory'>
           <EnrollmentHistoryTable studentId={studentId} />
         </TabsContent>
 

@@ -5,7 +5,7 @@ import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.model.Student;
-import com.tkpm.sms.domain.valueobject.History;
+import com.tkpm.sms.domain.valueobject.EnrollmentHistory;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +14,7 @@ public interface EnrollmentRepository {
     PageResponse<Enrollment> findAllEnrollmentsOfStudentWithPaging(String studentId,
             PageRequest pageRequest);
 
-    PageResponse<History> findEnrollmentHistoryOfStudent(String studentId, PageRequest pageRequest);
+    PageResponse<EnrollmentHistory> findEnrollmentHistoryOfStudent(String studentId, PageRequest pageRequest);
 
     List<Enrollment> findAllEnrollmentsOfStudent(String studentId);
 

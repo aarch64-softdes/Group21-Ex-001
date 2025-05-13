@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HistoryDto {
+public class EnrollmentHistoryDto {
     String id;
     String actionType;
     CourseDto course;

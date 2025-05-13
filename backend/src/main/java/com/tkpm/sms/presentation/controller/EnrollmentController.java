@@ -5,14 +5,14 @@ import com.tkpm.sms.application.dto.request.enrollment.EnrollmentCreateRequestDt
 import com.tkpm.sms.application.dto.request.enrollment.EnrollmentDeleteRequestDto;
 import com.tkpm.sms.application.dto.response.common.ApplicationResponseDto;
 import com.tkpm.sms.application.dto.response.enrollment.EnrollmentDto;
+import com.tkpm.sms.application.dto.response.enrollment.EnrollmentHistoryDto;
 import com.tkpm.sms.application.dto.response.enrollment.EnrollmentMinimalDto;
-import com.tkpm.sms.application.dto.response.enrollment.HistoryDto;
 import com.tkpm.sms.application.mapper.EnrollmentMapper;
 import com.tkpm.sms.application.service.interfaces.EnrollmentService;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.model.Enrollment;
 import com.tkpm.sms.domain.utils.ListUtils;
-import com.tkpm.sms.domain.valueobject.History;
+import com.tkpm.sms.domain.valueobject.EnrollmentHistory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -44,14 +44,14 @@ public class EnrollmentController {
     }
 
     @GetMapping("/{studentId}/history")
-    public ResponseEntity<ApplicationResponseDto<PageResponse<HistoryDto>>> getEnrollmentHistoryOfStudent(
+    public ResponseEntity<ApplicationResponseDto<PageResponse<EnrollmentHistoryDto>>> getEnrollmentHistoryOfStudent(
             @PathVariable String studentId,
             @ModelAttribute BaseCollectionRequest baseCollectionRequest) {
-        PageResponse<History> pageResponse = enrollmentService.findEnrollmentHistoryOfStudent(
+        PageResponse<EnrollmentHistory> pageResponse = enrollmentService.findEnrollmentHistoryOfStudent(
                 studentId, baseCollectionRequest, LocaleContextHolder.getLocale().getLanguage());
-        List<HistoryDto> historyDtos = ListUtils.transform(pageResponse.getData(),
+        List<EnrollmentHistoryDto> enrollmentHistoryDtos = ListUtils.transform(pageResponse.getData(),
                 enrollmentMapper::toHistoryDto);
-        PageResponse<HistoryDto> listResponse = PageResponse.of(pageResponse, historyDtos);
+        PageResponse<EnrollmentHistoryDto> listResponse = PageResponse.of(pageResponse, enrollmentHistoryDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 

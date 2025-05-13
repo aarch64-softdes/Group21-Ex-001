@@ -150,8 +150,8 @@ Now you can use Discover to search and filter your logs, or create visualization
   ![Enrollment Detail](documents/assets/week04/enrollment-transcript.png)
 - Enrollment transcript export:
   ![Enrollment Export](documents/assets/week04/enrollment-transcript-pdf.png)
-- Enrollment history:
-  ![Enrollment History](documents/assets/week04/enrollment-history.png)
+- Enrollment enrollmentHistory:
+  ![Enrollment History](documents/assets/week04/enrollment-enrollmentHistory.png)
 
 ### Subject
 

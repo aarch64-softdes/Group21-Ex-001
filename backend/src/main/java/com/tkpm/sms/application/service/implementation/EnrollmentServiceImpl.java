@@ -22,7 +22,7 @@ import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import com.tkpm.sms.domain.service.validators.EnrollmentDomainValidator;
-import com.tkpm.sms.domain.valueobject.History;
+import com.tkpm.sms.domain.valueobject.EnrollmentHistory;
 import com.tkpm.sms.domain.valueobject.Score;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -60,8 +60,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
-    public PageResponse<History> findEnrollmentHistoryOfStudent(String studentId,
-            BaseCollectionRequest request, String languageCode) {
+    public PageResponse<EnrollmentHistory> findEnrollmentHistoryOfStudent(String studentId,
+                                                                          BaseCollectionRequest request, String languageCode) {
         request.setSortBy("createdAt");
         request.setSortDirection("desc");
         PageRequest pageRequest = PageRequest.from(request);
