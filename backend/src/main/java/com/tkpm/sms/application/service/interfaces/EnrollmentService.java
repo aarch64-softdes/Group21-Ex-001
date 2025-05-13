@@ -17,7 +17,7 @@ public interface EnrollmentService {
             BaseCollectionRequest baseCollectionRequest, String languageCode);
 
     PageResponse<EnrollmentHistory> findEnrollmentHistoryOfStudent(String studentId,
-                                                                   BaseCollectionRequest baseCollectionRequest, String languageCode);
+            BaseCollectionRequest baseCollectionRequest, String languageCode);
 
     void updateTranscriptOfEnrollment(String studentId, Integer courseId,
             TranscriptUpdateRequestDto transcriptUpdateRequestDto);

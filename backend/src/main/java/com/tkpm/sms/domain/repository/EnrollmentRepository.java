@@ -14,7 +14,8 @@ public interface EnrollmentRepository {
     PageResponse<Enrollment> findAllEnrollmentsOfStudentWithPaging(String studentId,
             PageRequest pageRequest);
 
-    PageResponse<EnrollmentHistory> findEnrollmentHistoryOfStudent(String studentId, PageRequest pageRequest);
+    PageResponse<EnrollmentHistory> findEnrollmentHistoryOfStudent(String studentId,
+            PageRequest pageRequest);
 
     List<Enrollment> findAllEnrollmentsOfStudent(String studentId);
 

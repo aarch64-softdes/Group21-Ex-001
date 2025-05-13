@@ -37,66 +37,57 @@ class ProgramServiceTest {
 
     @Mock
     private ProgramMapper programMapper;
-    
+
     @Mock
     private TextContentService textContentService;
-    
+
     @Mock
     private DomainEntityNameTranslator domainEntityNameTranslator;
 
     @InjectMocks
     private ProgramServiceImpl programService;
-    
+
     private TextContent textContent;
     private Program program;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         // Setup common mock behaviors
-        when(domainEntityNameTranslator.getEntityTranslatedName(Program.class)).thenReturn("Program");
-        
+        when(domainEntityNameTranslator.getEntityTranslatedName(Program.class))
+                .thenReturn("Program");
+
         // Create test data
-        textContent = TextContent.builder()
-                .id(1)
-                .createdAt(LocalDateTime.now())
-                .translations(Collections.singletonList(
-                        Translation.builder()
-                                .languageCode("en")
-                                .text("Program Name")
-                                .isOriginal(true)
-                                .build()
-                ))
+        textContent = TextContent.builder().id(1).createdAt(LocalDateTime.now())
+                .translations(Collections.singletonList(Translation.builder().languageCode("en")
+                        .text("Program Name").isOriginal(true).build()))
                 .build();
-        
-        program = Program.builder()
-                .id(1)
-                .name(textContent)
-                .build();
+
+        program = Program.builder().id(1).name(textContent).build();
     }
 
     // @Test
     // void testGetAllPrograms() {
-    //     // Setup
-    //     BaseCollectionRequest request = new BaseCollectionRequest();
-    //     request.setPage(1);
-    //     request.setSize(10);
-    //     request.setSortBy("id");
-    //     request.setSortDirection("ASC");
-        
-    //     PageResponse<Program> expectedResponse = new PageResponse<>(
-    //         Collections.emptyList(), 0, 0, 0
-    //     );
-        
-    //     when(programRepository.findAll(any(PageRequest.class))).thenReturn(expectedResponse);
+    // // Setup
+    // BaseCollectionRequest request = new BaseCollectionRequest();
+    // request.setPage(1);
+    // request.setSize(10);
+    // request.setSortBy("id");
+    // request.setSortDirection("ASC");
 
-    //     // Execute
-    //     PageResponse<Program> response = programService.getAllPrograms(request);
+    // PageResponse<Program> expectedResponse = new PageResponse<>(
+    // Collections.emptyList(), 0, 0, 0
+    // );
 
-    //     // Verify
-    //     assertNotNull(response);
-    //     verify(programRepository).findAll(any(PageRequest.class));
+    // when(programRepository.findAll(any(PageRequest.class))).thenReturn(expectedResponse);
+
+    // // Execute
+    // PageResponse<Program> response = programService.getAllPrograms(request);
+
+    // // Verify
+    // assertNotNull(response);
+    // verify(programRepository).findAll(any(PageRequest.class));
     // }
 
     @Test
@@ -106,24 +97,22 @@ class ProgramServiceTest {
         when(programRepository.findById(id)).thenReturn(Optional.empty());
 
         // Execute & Verify
-        ResourceNotFoundException exception = assertThrows(
-            ResourceNotFoundException.class, 
-            () -> programService.getProgramById(id)
-        );
-        
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> programService.getProgramById(id));
+
         verify(programRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Program.class);
     }
-    
+
     @Test
     void testGetProgramById_Success() {
         // Setup
         Integer id = 1;
         when(programRepository.findById(id)).thenReturn(Optional.of(program));
-        
+
         // Execute
         Program result = programService.getProgramById(id);
-        
+
         // Verify
         assertNotNull(result);
         assertEquals(program, result);
@@ -137,24 +126,22 @@ class ProgramServiceTest {
         when(programRepository.findByName(name)).thenReturn(Optional.empty());
 
         // Execute & Verify
-        ResourceNotFoundException exception = assertThrows(
-            ResourceNotFoundException.class, 
-            () -> programService.getProgramByName(name)
-        );
-        
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> programService.getProgramByName(name));
+
         verify(programRepository).findByName(name);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Program.class);
     }
-    
+
     @Test
     void testGetProgramByName_Success() {
         // Setup
         String name = "Program Name";
         when(programRepository.findByName(name)).thenReturn(Optional.of(program));
-        
+
         // Execute
         Program result = programService.getProgramByName(name);
-        
+
         // Verify
         assertNotNull(result);
         assertEquals(program, result);
@@ -167,9 +154,9 @@ class ProgramServiceTest {
         String programName = "New Program";
         ProgramRequestDto requestDto = new ProgramRequestDto();
         requestDto.setName(programName);
-        
+
         Program newProgram = new Program();
-        
+
         when(textContentService.createTextContent(programName)).thenReturn(textContent);
         when(programMapper.toDomain(requestDto)).thenReturn(newProgram);
         when(programRepository.save(any(Program.class))).thenReturn(program);
@@ -181,7 +168,7 @@ class ProgramServiceTest {
         // Verify
         assertNotNull(createdProgram);
         assertEquals(program, createdProgram);
-        
+
         verify(programDomainValidator).validateNameUniqueness(programName);
         verify(programMapper).toDomain(requestDto);
         verify(textContentService).createTextContent(programName);
@@ -193,19 +180,17 @@ class ProgramServiceTest {
         // Setup
         Integer id = 1;
         String updatedName = "Updated Program";
-        
+
         ProgramRequestDto requestDto = new ProgramRequestDto();
         requestDto.setName(updatedName);
-        
+
         when(programRepository.findById(id)).thenReturn(Optional.empty());
         doNothing().when(programDomainValidator).validateNameUniquenessForUpdate(updatedName, id);
 
         // Execute & Verify
-        ResourceNotFoundException exception = assertThrows(
-            ResourceNotFoundException.class, 
-            () -> programService.updateProgram(id, requestDto)
-        );
-        
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> programService.updateProgram(id, requestDto));
+
         verify(programDomainValidator).validateNameUniquenessForUpdate(updatedName, id);
         verify(programRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Program.class);
@@ -218,18 +203,19 @@ class ProgramServiceTest {
         // Setup
         Integer id = 1;
         String updatedName = "Updated Program";
-        
+
         ProgramRequestDto requestDto = new ProgramRequestDto();
         requestDto.setName(updatedName);
-        
+
         Program existingProgram = new Program();
         existingProgram.setId(id);
         existingProgram.setName(textContent);
-        
+
         when(programRepository.findById(id)).thenReturn(Optional.of(existingProgram));
         doNothing().when(programDomainValidator).validateNameUniquenessForUpdate(updatedName, id);
         doNothing().when(programMapper).toDomain(requestDto, existingProgram);
-        when(textContentService.updateTextContent(textContent, updatedName)).thenReturn(textContent);
+        when(textContentService.updateTextContent(textContent, updatedName))
+                .thenReturn(textContent);
         when(programRepository.save(existingProgram)).thenReturn(existingProgram);
 
         // Execute
@@ -238,7 +224,7 @@ class ProgramServiceTest {
         // Verify
         assertNotNull(result);
         assertEquals(existingProgram, result);
-        
+
         verify(programDomainValidator).validateNameUniquenessForUpdate(updatedName, id);
         verify(programRepository).findById(id);
         verify(programMapper).toDomain(requestDto, existingProgram);
@@ -253,11 +239,9 @@ class ProgramServiceTest {
         when(programRepository.findById(id)).thenReturn(Optional.empty());
 
         // Execute & Verify
-        ResourceNotFoundException exception = assertThrows(
-            ResourceNotFoundException.class, 
-            () -> programService.deleteProgram(id)
-        );
-        
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> programService.deleteProgram(id));
+
         verify(programRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Program.class);
         verifyNoMoreInteractions(programRepository);
@@ -269,7 +253,7 @@ class ProgramServiceTest {
         Integer id = 1;
         Program program = new Program();
         program.setId(id);
-        
+
         when(programRepository.findById(id)).thenReturn(Optional.of(program));
         when(programRepository.save(program)).thenReturn(program);
 

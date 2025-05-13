@@ -55,7 +55,8 @@ class FacultyServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // Setup default translator response
-        when(domainEntityNameTranslator.getEntityTranslatedName(Faculty.class)).thenReturn("Faculty");
+        when(domainEntityNameTranslator.getEntityTranslatedName(Faculty.class))
+                .thenReturn("Faculty");
 
         var textContent = TextContent.builder().id(1).createdAt(LocalDateTime.now())
                 .translations(Collections.singletonList(Translation.builder().languageCode("en")
@@ -88,9 +89,9 @@ class FacultyServiceTest {
         when(facultyRepository.findById(id)).thenReturn(Optional.empty());
 
         // Execute & Verify
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, 
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> facultyService.getFacultyById(id));
-        
+
         // Verify the correct parameters were used
         verify(facultyRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
@@ -114,9 +115,9 @@ class FacultyServiceTest {
         when(facultyRepository.findByName(name)).thenReturn(Optional.empty());
 
         // Execute & Verify
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, 
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> facultyService.getFacultyByName(name));
-        
+
         // Verify the correct parameters were used
         verify(facultyRepository).findByName(name);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
@@ -174,16 +175,16 @@ class FacultyServiceTest {
         // Setup
         Integer id = 1;
         String updatedName = "Updated Faculty";
-        
+
         FacultyRequestDto requestDto = new FacultyRequestDto();
         requestDto.setName(updatedName);
-        
+
         when(facultyRepository.findById(id)).thenReturn(Optional.empty());
 
         // Execute & Verify
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> facultyService.updateFaculty(id, requestDto));
-        
+
         verify(facultyValidator).validateNameUniquenessForUpdate(updatedName, id);
         verify(facultyRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
@@ -229,7 +230,7 @@ class FacultyServiceTest {
         // Execute & Verify
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> facultyService.deleteFaculty(id));
-        
+
         verify(facultyRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
         verifyNoMoreInteractions(facultyRepository);

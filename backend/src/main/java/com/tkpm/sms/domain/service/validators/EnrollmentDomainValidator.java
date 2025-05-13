@@ -12,7 +12,6 @@ import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
@@ -63,15 +62,12 @@ public class EnrollmentDomainValidator {
 
         var failedSubjects = enrollmentRepository.getFailedSubjectsOfStudent(studentId, subjectIds);
         if (!failedSubjects.isEmpty()) {
-            var failedSubjectNames = failedSubjects.stream()
-                    .map(enrollment -> enrollment.getCourse().getSubject().getNameByLanguage(languageCode))
-                    .toList();
+            var failedSubjectNames = failedSubjects.stream().map(enrollment -> enrollment
+                    .getCourse().getSubject().getNameByLanguage(languageCode)).toList();
 
             throw new StudentPrerequisitesNotSatisfiedException(
                     "error.enrollment.student_prerequisite_not_met.has_not_passed",
-                    student.getStudentId(),
-                    String.join(", ", failedSubjectNames)
-            );
+                    student.getStudentId(), String.join(", ", failedSubjectNames));
         }
     }
 }

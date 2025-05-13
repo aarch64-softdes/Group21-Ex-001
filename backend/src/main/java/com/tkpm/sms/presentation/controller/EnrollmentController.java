@@ -47,11 +47,13 @@ public class EnrollmentController {
     public ResponseEntity<ApplicationResponseDto<PageResponse<EnrollmentHistoryDto>>> getEnrollmentHistoryOfStudent(
             @PathVariable String studentId,
             @ModelAttribute BaseCollectionRequest baseCollectionRequest) {
-        PageResponse<EnrollmentHistory> pageResponse = enrollmentService.findEnrollmentHistoryOfStudent(
-                studentId, baseCollectionRequest, LocaleContextHolder.getLocale().getLanguage());
-        List<EnrollmentHistoryDto> enrollmentHistoryDtos = ListUtils.transform(pageResponse.getData(),
-                enrollmentMapper::toHistoryDto);
-        PageResponse<EnrollmentHistoryDto> listResponse = PageResponse.of(pageResponse, enrollmentHistoryDtos);
+        PageResponse<EnrollmentHistory> pageResponse = enrollmentService
+                .findEnrollmentHistoryOfStudent(studentId, baseCollectionRequest,
+                        LocaleContextHolder.getLocale().getLanguage());
+        List<EnrollmentHistoryDto> enrollmentHistoryDtos = ListUtils
+                .transform(pageResponse.getData(), enrollmentMapper::toHistoryDto);
+        PageResponse<EnrollmentHistoryDto> listResponse = PageResponse.of(pageResponse,
+                enrollmentHistoryDtos);
         return ResponseEntity.ok(ApplicationResponseDto.success(listResponse));
     }
 

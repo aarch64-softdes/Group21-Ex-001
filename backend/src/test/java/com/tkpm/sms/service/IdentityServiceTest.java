@@ -20,7 +20,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class IdentityServiceTest {
@@ -33,7 +32,7 @@ class IdentityServiceTest {
 
     @Mock
     private IdentityMapper identityMapper;
-    
+
     @Mock
     private DomainEntityNameTranslator domainEntityNameTranslator;
 
@@ -43,9 +42,10 @@ class IdentityServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         // Setup common mock behaviors
-        when(domainEntityNameTranslator.getEntityTranslatedName(Identity.class)).thenReturn("Identity");
+        when(domainEntityNameTranslator.getEntityTranslatedName(Identity.class))
+                .thenReturn("Identity");
     }
 
     @Test
@@ -53,21 +53,22 @@ class IdentityServiceTest {
         // Setup
         String identityTypeStr = "Passport";
         String identityNumber = "123456789";
-        
+
         IdentityCreateRequestDto requestDto = new IdentityCreateRequestDto();
         requestDto.setType(identityTypeStr);
         requestDto.setNumber(identityNumber);
 
         Identity identity = new Identity();
         Identity savedIdentity = new Identity();
-        
+
         try (MockedStatic<IdentityType> mockedIdentityType = mockStatic(IdentityType.class)) {
             mockedIdentityType.when(() -> IdentityType.fromDisplayName(identityTypeStr))
-                .thenReturn(IdentityType.PASSPORT);
-            
+                    .thenReturn(IdentityType.PASSPORT);
+
             when(identityMapper.toIdentity(requestDto)).thenReturn(identity);
             when(identityRepository.save(identity)).thenReturn(savedIdentity);
-            doNothing().when(identityDomainValidator).validateIdentityUniqueness(IdentityType.PASSPORT, identityNumber);
+            doNothing().when(identityDomainValidator)
+                    .validateIdentityUniqueness(IdentityType.PASSPORT, identityNumber);
 
             // Execute
             Identity createdIdentity = identityService.createIdentity(requestDto);
@@ -75,8 +76,9 @@ class IdentityServiceTest {
             // Verify
             assertNotNull(createdIdentity);
             assertEquals(savedIdentity, createdIdentity);
-            
-            verify(identityDomainValidator).validateIdentityUniqueness(IdentityType.PASSPORT, identityNumber);
+
+            verify(identityDomainValidator).validateIdentityUniqueness(IdentityType.PASSPORT,
+                    identityNumber);
             verify(identityMapper).toIdentity(requestDto);
             verify(identityRepository).save(identity);
         }
@@ -88,24 +90,25 @@ class IdentityServiceTest {
         String id = "1";
         String identityTypeStr = "Passport";
         String identityNumber = "123456789";
-        
+
         IdentityUpdateRequestDto requestDto = new IdentityUpdateRequestDto();
         requestDto.setType(identityTypeStr);
         requestDto.setNumber(identityNumber);
 
         try (MockedStatic<IdentityType> mockedIdentityType = mockStatic(IdentityType.class)) {
             mockedIdentityType.when(() -> IdentityType.fromDisplayName(identityTypeStr))
-                .thenReturn(IdentityType.PASSPORT);
-                
+                    .thenReturn(IdentityType.PASSPORT);
+
             when(identityRepository.findById(id)).thenReturn(Optional.empty());
-            doNothing().when(identityDomainValidator).validateIdentityUniquenessForUpdate(
-                IdentityType.PASSPORT, identityNumber, id);
+            doNothing().when(identityDomainValidator)
+                    .validateIdentityUniquenessForUpdate(IdentityType.PASSPORT, identityNumber, id);
 
             // Execute & Verify
             ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                     () -> identityService.updateIdentity(id, requestDto));
-            
-            verify(identityDomainValidator).validateIdentityUniquenessForUpdate(IdentityType.PASSPORT, identityNumber, id);
+
+            verify(identityDomainValidator)
+                    .validateIdentityUniquenessForUpdate(IdentityType.PASSPORT, identityNumber, id);
             verify(identityRepository).findById(id);
             verify(domainEntityNameTranslator).getEntityTranslatedName(Identity.class);
             verifyNoInteractions(identityMapper);
@@ -119,7 +122,7 @@ class IdentityServiceTest {
         String id = "1";
         String identityTypeStr = "Passport";
         String identityNumber = "123456789";
-        
+
         IdentityUpdateRequestDto requestDto = new IdentityUpdateRequestDto();
         requestDto.setType(identityTypeStr);
         requestDto.setNumber(identityNumber);
@@ -129,11 +132,11 @@ class IdentityServiceTest {
 
         try (MockedStatic<IdentityType> mockedIdentityType = mockStatic(IdentityType.class)) {
             mockedIdentityType.when(() -> IdentityType.fromDisplayName(identityTypeStr))
-                .thenReturn(IdentityType.PASSPORT);
-                
+                    .thenReturn(IdentityType.PASSPORT);
+
             when(identityRepository.findById(id)).thenReturn(Optional.of(existingIdentity));
-            doNothing().when(identityDomainValidator).validateIdentityUniquenessForUpdate(
-                IdentityType.PASSPORT, identityNumber, id);
+            doNothing().when(identityDomainValidator)
+                    .validateIdentityUniquenessForUpdate(IdentityType.PASSPORT, identityNumber, id);
             doNothing().when(identityMapper).updateIdentityFromDto(requestDto, existingIdentity);
             when(identityRepository.save(existingIdentity)).thenReturn(updatedIdentity);
 
@@ -143,9 +146,9 @@ class IdentityServiceTest {
             // Verify
             assertNotNull(result);
             assertEquals(updatedIdentity, result);
-            
-            verify(identityDomainValidator).validateIdentityUniquenessForUpdate(
-                IdentityType.PASSPORT, identityNumber, id);
+
+            verify(identityDomainValidator)
+                    .validateIdentityUniquenessForUpdate(IdentityType.PASSPORT, identityNumber, id);
             verify(identityRepository).findById(id);
             verify(identityMapper).updateIdentityFromDto(requestDto, existingIdentity);
             verify(identityRepository).save(existingIdentity);

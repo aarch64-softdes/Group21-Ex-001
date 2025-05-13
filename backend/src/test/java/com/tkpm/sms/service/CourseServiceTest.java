@@ -54,8 +54,10 @@ class CourseServiceTest {
 
         // Setup common mock behaviors
         when(domainEntityNameTranslator.getEntityTranslatedName(Course.class)).thenReturn("Course");
-        when(domainEntityNameTranslator.getEntityTranslatedName(Program.class)).thenReturn("Program");
-        when(domainEntityNameTranslator.getEntityTranslatedName(Subject.class)).thenReturn("Subject");
+        when(domainEntityNameTranslator.getEntityTranslatedName(Program.class))
+                .thenReturn("Program");
+        when(domainEntityNameTranslator.getEntityTranslatedName(Subject.class))
+                .thenReturn("Subject");
     }
 
     // @Test
@@ -97,7 +99,7 @@ class CourseServiceTest {
     void testCreateCourse_SubjectNotActive() {
         Integer subjectId = 1;
         Integer programId = 1;
-        
+
         CourseCreateRequestDto createRequestDto = new CourseCreateRequestDto();
         createRequestDto.setSubjectId(subjectId);
         createRequestDto.setProgramId(programId);
@@ -106,11 +108,12 @@ class CourseServiceTest {
         Subject subject = new Subject();
         subject.setActive(false);
         subject.setCode("SUB101");
-        
+
         when(programRepository.findById(programId)).thenReturn(Optional.of(program));
         when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(subject));
 
-        assertThrows(SubjectDeactivatedException.class, () -> courseService.createCourse(createRequestDto));
+        assertThrows(SubjectDeactivatedException.class,
+                () -> courseService.createCourse(createRequestDto));
         verify(programRepository).findById(programId);
         verify(subjectRepository).findById(subjectId);
     }
@@ -121,8 +124,9 @@ class CourseServiceTest {
         when(courseRepository.findById(id)).thenReturn(Optional.empty());
 
         CourseUpdateRequestDto updateRequestDto = new CourseUpdateRequestDto();
-        
-        assertThrows(ResourceNotFoundException.class, () -> courseService.updateCourse(id, updateRequestDto));
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> courseService.updateCourse(id, updateRequestDto));
         verify(courseRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Course.class);
     }

@@ -45,10 +45,10 @@ class SubjectServiceTest {
 
     @Mock
     private FacultyService facultyService;
-    
+
     @Mock
     private TextContentService textContentService;
-    
+
     @Mock
     private DomainEntityNameTranslator domainEntityNameTranslator;
 
@@ -58,10 +58,11 @@ class SubjectServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         // Set up the translator
-        when(domainEntityNameTranslator.getEntityTranslatedName(Subject.class)).thenReturn("Subject");
-        
+        when(domainEntityNameTranslator.getEntityTranslatedName(Subject.class))
+                .thenReturn("Subject");
+
         // Set up the deletableDuration value (default is 30 minutes)
         ReflectionTestUtils.setField(subjectService, "deletableDuration", 30);
         ReflectionTestUtils.setField(subjectService, "DEFAULT_LANGUAGE", "en");
@@ -70,25 +71,25 @@ class SubjectServiceTest {
     // @Test
     // @DisplayName("Should find all subjects successfully")
     // void testFindAll() {
-    //     // Setup
-    //     BaseCollectionRequest request = new BaseCollectionRequest();
-    //     request.setPage(1);
-    //     request.setSize(10);
-    //     request.setSortBy("id");
-    //     request.setSortDirection("ASC");
-        
-    //     PageResponse<Subject> expectedResponse = new PageResponse<>(
-    //         Collections.emptyList(), 0, 0, 0
-    //     );
-        
-    //     when(subjectRepository.findAll(any(PageRequest.class))).thenReturn(expectedResponse);
+    // // Setup
+    // BaseCollectionRequest request = new BaseCollectionRequest();
+    // request.setPage(1);
+    // request.setSize(10);
+    // request.setSortBy("id");
+    // request.setSortDirection("ASC");
 
-    //     // Execute
-    //     PageResponse<Subject> response = subjectService.findAll(request);
+    // PageResponse<Subject> expectedResponse = new PageResponse<>(
+    // Collections.emptyList(), 0, 0, 0
+    // );
 
-    //     // Verify
-    //     assertNotNull(response);
-    //     verify(subjectRepository).findAll(any(PageRequest.class));
+    // when(subjectRepository.findAll(any(PageRequest.class))).thenReturn(expectedResponse);
+
+    // // Execute
+    // PageResponse<Subject> response = subjectService.findAll(request);
+
+    // // Verify
+    // assertNotNull(response);
+    // verify(subjectRepository).findAll(any(PageRequest.class));
     // }
 
     @Test
@@ -116,9 +117,9 @@ class SubjectServiceTest {
         when(subjectRepository.findById(id)).thenReturn(Optional.empty());
 
         // Execute & Verify
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, 
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> subjectService.getSubjectById(id));
-        
+
         verify(subjectRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
     }
@@ -141,8 +142,10 @@ class SubjectServiceTest {
 
         when(facultyService.getFacultyById(1)).thenReturn(faculty);
         when(subjectMapper.toSubject(requestDto)).thenReturn(subject);
-        when(textContentService.createTextContent(requestDto.getName())).thenReturn(nameTextContent);
-        when(textContentService.createTextContent(requestDto.getDescription())).thenReturn(descTextContent);
+        when(textContentService.createTextContent(requestDto.getName()))
+                .thenReturn(nameTextContent);
+        when(textContentService.createTextContent(requestDto.getDescription()))
+                .thenReturn(descTextContent);
         when(subjectRepository.findAllByIds(anyList())).thenReturn(Collections.emptyList());
         when(subjectRepository.save(any(Subject.class))).thenReturn(subject);
 
@@ -178,10 +181,10 @@ class SubjectServiceTest {
         TextContent descTextContent = new TextContent();
         subject.setName(nameTextContent);
         subject.setDescription(descTextContent);
-        
+
         TextContent updatedNameTextContent = new TextContent();
         TextContent updatedDescTextContent = new TextContent();
-        
+
         Faculty faculty = new Faculty();
 
         when(subjectRepository.findById(id)).thenReturn(Optional.of(subject));
@@ -213,13 +216,13 @@ class SubjectServiceTest {
         Integer id = 1;
         SubjectUpdateRequestDto requestDto = new SubjectUpdateRequestDto();
         requestDto.setName("Updated Subject");
-        
+
         when(subjectRepository.findById(id)).thenReturn(Optional.empty());
 
         // Execute & Verify
         assertThrows(ResourceNotFoundException.class,
                 () -> subjectService.updateSubject(id, requestDto));
-        
+
         verify(subjectValidator).validateSubjectNameUniquenessForUpdate(requestDto.getName(), id);
         verify(subjectRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
@@ -259,9 +262,9 @@ class SubjectServiceTest {
         when(subjectRepository.findById(id)).thenReturn(Optional.of(subject));
 
         // Execute & Verify
-        SubjectDeletionConstraintException exception = assertThrows(SubjectDeletionConstraintException.class,
-                () -> subjectService.deleteSubject(id));
-        
+        SubjectDeletionConstraintException exception = assertThrows(
+                SubjectDeletionConstraintException.class, () -> subjectService.deleteSubject(id));
+
         verify(subjectRepository).findById(id);
         verify(subjectRepository, never()).delete(any(Subject.class));
     }
@@ -275,7 +278,7 @@ class SubjectServiceTest {
 
         // Execute & Verify
         assertThrows(ResourceNotFoundException.class, () -> subjectService.deleteSubject(id));
-        
+
         verify(subjectRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
         verifyNoMoreInteractions(subjectRepository);
@@ -332,7 +335,7 @@ class SubjectServiceTest {
 
         // Execute & Verify
         assertThrows(ResourceNotFoundException.class, () -> subjectService.deactivateSubject(id));
-        
+
         verify(subjectRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
         verifyNoMoreInteractions(subjectRepository);
@@ -347,7 +350,7 @@ class SubjectServiceTest {
 
         // Execute & Verify
         assertThrows(ResourceNotFoundException.class, () -> subjectService.activateSubject(id));
-        
+
         verify(subjectRepository).findById(id);
         verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
         verifyNoMoreInteractions(subjectRepository);

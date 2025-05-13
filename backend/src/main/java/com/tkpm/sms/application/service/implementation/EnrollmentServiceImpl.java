@@ -61,7 +61,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     public PageResponse<EnrollmentHistory> findEnrollmentHistoryOfStudent(String studentId,
-                                                                          BaseCollectionRequest request, String languageCode) {
+            BaseCollectionRequest request, String languageCode) {
         request.setSortBy("createdAt");
         request.setSortDirection("desc");
         PageRequest pageRequest = PageRequest.from(request);

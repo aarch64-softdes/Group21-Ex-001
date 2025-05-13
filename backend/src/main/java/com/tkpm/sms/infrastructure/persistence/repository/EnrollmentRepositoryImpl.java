@@ -62,7 +62,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
     @Override
     public PageResponse<EnrollmentHistory> findEnrollmentHistoryOfStudent(String studentId,
-                                                                          PageRequest pageRequest) {
+            PageRequest pageRequest) {
         Pageable pageable = org.springframework.data.domain.PageRequest.of(
                 pageRequest.getPageNumber() - 1, pageRequest.getPageSize(),
                 pageRequest.getSortDirection() == PageRequest.SortDirection.DESC
@@ -70,9 +70,11 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                         : Sort.Direction.ASC,
                 pageRequest.getSortBy());
 
-        var page = enrollmentHistoryJpaRepository.findAllEnrollmentHistoriesOfStudent(studentId, pageable);
+        var page = enrollmentHistoryJpaRepository.findAllEnrollmentHistoriesOfStudent(studentId,
+                pageable);
 
-        var contents = page.getContent().stream().map(enrollmentHistoryPersistenceMapper::toDomain).toList();
+        var contents = page.getContent().stream().map(enrollmentHistoryPersistenceMapper::toDomain)
+                .toList();
 
         return PageResponse.of(contents, page.getNumber() + 1, // Convert 0-based to 1-based
                 page.getSize(), page.getTotalElements(), page.getTotalPages());

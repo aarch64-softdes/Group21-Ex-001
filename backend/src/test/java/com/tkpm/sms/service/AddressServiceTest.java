@@ -108,7 +108,8 @@ class AddressServiceTest {
         String id = "1";
 
         when(addressRepository.findById(id)).thenReturn(Optional.empty());
-        when(domainEntityNameTranslator.getEntityTranslatedName(Address.class)).thenReturn("Address");
+        when(domainEntityNameTranslator.getEntityTranslatedName(Address.class))
+                .thenReturn("Address");
 
         assertThrows(ResourceNotFoundException.class, () -> addressService.getAddressById(id));
         verify(addressRepository).findById(id);

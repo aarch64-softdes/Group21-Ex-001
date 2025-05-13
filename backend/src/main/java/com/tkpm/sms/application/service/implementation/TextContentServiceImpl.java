@@ -31,9 +31,16 @@ public class TextContentServiceImpl implements TextContentService {
         var languageCode = LocaleContextHolder.getLocale().getLanguage();
 
         var textContent = TextContent.builder().createdAt(LocalDateTime.now())
-                .translations(Collections
-                        .singletonList(Translation.builder().languageCode(languageCode).text(text)
-                                .isOriginal(true).build())) // The isOriginal field is always true for the first translation
+                .translations(Collections.singletonList(Translation.builder()
+                        .languageCode(languageCode).text(text).isOriginal(true).build())) // The
+                                                                                          // isOriginal
+                                                                                          // field
+                                                                                          // is
+                                                                                          // always
+                                                                                          // true
+                                                                                          // for the
+                                                                                          // first
+                                                                                          // translation
                 .build();
 
         return textContentRepository.save(textContent);

@@ -39,7 +39,7 @@ class SettingServiceTest {
 
     @Mock
     private SettingRepository settingRepository;
-    
+
     @Mock
     private DomainEntityNameTranslator domainEntityNameTranslator;
 
@@ -49,9 +49,10 @@ class SettingServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         // Setup default translator behavior
-        when(domainEntityNameTranslator.getEntityTranslatedName(Setting.class)).thenReturn("Setting");
+        when(domainEntityNameTranslator.getEntityTranslatedName(Setting.class))
+                .thenReturn("Setting");
     }
 
     @Nested
@@ -107,7 +108,7 @@ class SettingServiceTest {
 
             assertThrows(ResourceNotFoundException.class,
                     () -> settingService.updatePhoneSetting(requestDto));
-            
+
             verify(settingRepository).findByName(SettingType.PHONE_NUMBER.getValue());
             verify(domainEntityNameTranslator).getEntityTranslatedName(Setting.class);
             verifyNoInteractions(objectMapper);
@@ -129,7 +130,7 @@ class SettingServiceTest {
 
             assertThrows(GenericDomainException.class,
                     () -> settingService.updatePhoneSetting(requestDto));
-            
+
             verify(settingRepository).findByName(SettingType.PHONE_NUMBER.getValue());
             verify(objectMapper).writeValueAsString(any());
             verifyNoMoreInteractions(settingRepository);
@@ -160,7 +161,7 @@ class SettingServiceTest {
 
             Setting setting = new Setting();
             setting.setName(SettingType.EMAIL.getValue());
-            
+
             Setting savedSetting = new Setting();
             savedSetting.setName(SettingType.EMAIL.getValue());
             savedSetting.setDetails("@example.com");
@@ -176,7 +177,7 @@ class SettingServiceTest {
             verify(settingRepository).findByName(SettingType.EMAIL.getValue());
             verify(settingRepository).save(any(Setting.class));
         }
-        
+
         @Test
         @DisplayName("Should update email setting successfully without @ symbol")
         void testUpdateEmailSetting_SuccessWithoutAtSymbol() {
@@ -185,7 +186,7 @@ class SettingServiceTest {
 
             Setting setting = new Setting();
             setting.setName(SettingType.EMAIL.getValue());
-            
+
             Setting savedSetting = new Setting();
             savedSetting.setName(SettingType.EMAIL.getValue());
             savedSetting.setDetails("@example.com");
@@ -211,13 +212,13 @@ class SettingServiceTest {
 
             assertThrows(ResourceNotFoundException.class,
                     () -> settingService.updateEmailSetting(requestDto));
-            
+
             verify(settingRepository).findByName(SettingType.EMAIL.getValue());
             verify(domainEntityNameTranslator).getEntityTranslatedName(Setting.class);
             verifyNoMoreInteractions(settingRepository);
         }
     }
-    
+
     @Nested
     @DisplayName("Adjustment Duration Setting Tests")
     class AdjustmentDurationSettingTests {
@@ -242,7 +243,7 @@ class SettingServiceTest {
 
             Setting setting = new Setting();
             setting.setName(SettingType.ADJUSTMENT_DURATION.getValue());
-            
+
             Setting savedSetting = new Setting();
             savedSetting.setName(SettingType.ADJUSTMENT_DURATION.getValue());
             savedSetting.setDetails("14");
@@ -251,7 +252,8 @@ class SettingServiceTest {
                     .thenReturn(Optional.of(setting));
             when(settingRepository.save(any(Setting.class))).thenReturn(savedSetting);
 
-            AdjustmentDurationSettingDto result = settingService.updateAdjustmentDurationSetting(requestDto);
+            AdjustmentDurationSettingDto result = settingService
+                    .updateAdjustmentDurationSetting(requestDto);
 
             assertNotNull(result);
             assertEquals("14", result.getAdjustmentDuration());
@@ -264,19 +266,19 @@ class SettingServiceTest {
         void testUpdateAdjustmentDurationSetting_NotFound() {
             AdjustmentDurationSettingRequestDto requestDto = new AdjustmentDurationSettingRequestDto();
             requestDto.setAdjustmentDuration("14");
-            
+
             when(settingRepository.findByName(SettingType.ADJUSTMENT_DURATION.getValue()))
                     .thenReturn(Optional.empty());
 
             assertThrows(ResourceNotFoundException.class,
                     () -> settingService.updateAdjustmentDurationSetting(requestDto));
-            
+
             verify(settingRepository).findByName(SettingType.ADJUSTMENT_DURATION.getValue());
             verify(domainEntityNameTranslator).getEntityTranslatedName(Setting.class);
             verifyNoMoreInteractions(settingRepository);
         }
     }
-    
+
     @Nested
     @DisplayName("Failing Grade Setting Tests")
     class FailingGradeSettingTests {
@@ -301,7 +303,7 @@ class SettingServiceTest {
 
             Setting setting = new Setting();
             setting.setName(SettingType.FAILING_GRADE.getValue());
-            
+
             Setting savedSetting = new Setting();
             savedSetting.setName(SettingType.FAILING_GRADE.getValue());
             savedSetting.setDetails("4.0");
@@ -323,13 +325,13 @@ class SettingServiceTest {
         void testUpdateFailingGradeSetting_NotFound() {
             FailingGradeSettingRequestDto requestDto = new FailingGradeSettingRequestDto();
             requestDto.setFailingGrade(4.0);
-            
+
             when(settingRepository.findByName(SettingType.FAILING_GRADE.getValue()))
                     .thenReturn(Optional.empty());
 
             assertThrows(ResourceNotFoundException.class,
                     () -> settingService.updateFailingGradeSetting(requestDto));
-            
+
             verify(settingRepository).findByName(SettingType.FAILING_GRADE.getValue());
             verify(domainEntityNameTranslator).getEntityTranslatedName(Setting.class);
             verifyNoMoreInteractions(settingRepository);
