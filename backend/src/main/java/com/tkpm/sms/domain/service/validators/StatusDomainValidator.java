@@ -18,8 +18,6 @@ public class StatusDomainValidator {
         if (statusRepository.existsByName(name)) {
             throw new DuplicateResourceException("error.status.duplicate_resource.name",
                     translatorService.getEntityTranslatedName(Status.class), name);
-            // throw new DuplicateResourceException(
-            // String.format("Status with name %s already exists", name));
         }
     }
 
@@ -27,8 +25,6 @@ public class StatusDomainValidator {
         if (statusRepository.existsByNameAndIdNot(name, id)) {
             throw new DuplicateResourceException("error.status.duplicate_resource.name",
                     translatorService.getEntityTranslatedName(Status.class), name);
-            // throw new DuplicateResourceException(
-            // String.format("Status with name %s already exists", name));
         }
     }
 
@@ -46,9 +42,6 @@ public class StatusDomainValidator {
                     "error.status.unsupported_status_transition",
                     fromStatus.getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()),
                     toStatus.getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()));
-            // throw new UnsupportedStatusTransitionException(
-            // String.format("Transition from status ID %d to status ID %d is not allowed",
-            // fromStatusId, toStatusId));
         }
     }
 }

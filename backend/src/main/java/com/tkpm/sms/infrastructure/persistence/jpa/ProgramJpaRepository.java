@@ -22,7 +22,7 @@ public interface ProgramJpaRepository extends JpaRepository<ProgramEntity, Integ
                     FROM ProgramEntity p
                     JOIN p.name name
                     JOIN name.translations t
-                    WHERE t.text = :name OR t.isOriginal = true
+                    WHERE t.text = :name
             """)
     boolean existsProgramByName(String name);
 
@@ -31,7 +31,7 @@ public interface ProgramJpaRepository extends JpaRepository<ProgramEntity, Integ
                     FROM ProgramEntity p
                     JOIN p.name name
                     JOIN name.translations t
-                    WHERE t.text = :name OR t.isOriginal = true AND p.id <> :id
+                    WHERE t.text = :name AND p.id <> :id
             """)
     boolean existsProgramByNameAndIdNot(String name, Integer id);
 }

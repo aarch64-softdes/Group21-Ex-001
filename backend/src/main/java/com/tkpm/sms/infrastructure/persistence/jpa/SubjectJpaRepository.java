@@ -13,7 +13,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectEntity, Integ
                   FROM SubjectEntity s
                   JOIN s.name name
                   JOIN name.translations t
-                  WHERE t.text = :name AND (t.isOriginal = true OR t.languageCode = :languageCode)
+                  WHERE t.text = :name AND t.languageCode = :languageCode
             """)
     boolean existsByName(String name, String languageCode);
 
@@ -22,7 +22,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectEntity, Integ
                   FROM SubjectEntity s
                   JOIN s.name name
                   JOIN name.translations t
-                  WHERE (t.text = :name AND (t.isOriginal = true OR t.languageCode = :languageCode))
+                  WHERE (t.text = :name AND t.languageCode = :languageCode)
                         AND s.id <> :id
             """)
     boolean existsByNameAndIdNot(String name, Integer id, String languageCode);

@@ -26,7 +26,7 @@ public interface StatusJpaRepository extends JpaRepository<StatusEntity, Integer
                 SELECT COUNT(s) > 0 FROM StatusEntity s
                 JOIN s.name tc
                 JOIN tc.translations tr
-                WHERE (tr.languageCode = :languageCode OR tr.isOriginal = true) AND tr.text = :name
+                WHERE tr.languageCode = :languageCode AND tr.text = :name
             """)
     boolean existsByName(String name, String languageCode);
 
@@ -43,7 +43,7 @@ public interface StatusJpaRepository extends JpaRepository<StatusEntity, Integer
             FROM StatusEntity s
             JOIN s.name tc
             JOIN tc.translations tr
-            WHERE tr.languageCode = :languageCode OR tr.isOriginal = true
+            WHERE tr.languageCode = :languageCode
             """)
     Optional<StatusEntity> findByName(String name);
 }

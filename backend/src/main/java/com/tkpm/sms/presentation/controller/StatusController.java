@@ -1,5 +1,6 @@
 package com.tkpm.sms.presentation.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tkpm.sms.application.dto.request.common.BaseCollectionRequest;
 import com.tkpm.sms.application.dto.request.status.StatusRequestDto;
 import com.tkpm.sms.application.dto.request.status.StatusVerificationDto;
@@ -67,7 +68,6 @@ public class StatusController {
     public ResponseEntity<ApplicationResponseDto<StatusDto>> createStatus(
             @Valid @RequestBody StatusRequestDto statusRequestDto,
             UriComponentsBuilder uriComponentsBuilder) {
-        var languageCode = LocaleContextHolder.getLocale().getLanguage();
 
         Status status = statusService.createStatus(statusRequestDto);
         StatusDto statusDto = statusMapper.toStatusDto(status);
