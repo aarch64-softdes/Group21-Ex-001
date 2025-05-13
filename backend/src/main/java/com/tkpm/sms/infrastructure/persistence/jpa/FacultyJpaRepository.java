@@ -13,7 +13,7 @@ public interface FacultyJpaRepository extends JpaRepository<FacultyEntity, Integ
                     FROM FacultyEntity f
                     JOIN f.name name
                     JOIN name.translations t
-                    WHERE t.text = :name OR t.isOriginal = true
+                    WHERE t.text = :name
             """)
     Optional<FacultyEntity> findFacultyByName(String name);
 
@@ -22,7 +22,7 @@ public interface FacultyJpaRepository extends JpaRepository<FacultyEntity, Integ
                     FROM FacultyEntity f
                     JOIN f.name name
                     JOIN name.translations t
-                    WHERE t.text = :name OR t.isOriginal = true
+                    WHERE t.text = :name
             """)
     boolean existsFacultyByName(String name);
 
@@ -31,7 +31,7 @@ public interface FacultyJpaRepository extends JpaRepository<FacultyEntity, Integ
                     FROM FacultyEntity f
                     JOIN f.name name
                     JOIN name.translations t
-                    WHERE t.text = :name OR t.isOriginal = true AND f.id <> :id
+                    WHERE t.text = :name AND f.id <> :id
             """)
     boolean existsByNameAndIdNot(String name, Integer id);
 }
