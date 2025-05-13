@@ -6,7 +6,7 @@ import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.repository.FacultyRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
 import com.tkpm.sms.domain.valueobject.TextContent;
 import com.tkpm.sms.domain.valueobject.Translation;
@@ -42,7 +42,7 @@ class FacultyServiceTest {
     private TextContentService textContentService;
 
     @Mock
-    private DomainEntityNameTranslator domainEntityNameTranslator;
+    private TranslatorService translatorService;
 
     @InjectMocks
     private FacultyServiceImpl facultyService;
@@ -55,8 +55,7 @@ class FacultyServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // Setup default translator response
-        when(domainEntityNameTranslator.getEntityTranslatedName(Faculty.class))
-                .thenReturn("Faculty");
+        when(translatorService.getEntityTranslatedName(Faculty.class)).thenReturn("Faculty");
 
         var textContent = TextContent.builder().id(1).createdAt(LocalDateTime.now())
                 .translations(Collections.singletonList(Translation.builder().languageCode("en")
@@ -94,7 +93,7 @@ class FacultyServiceTest {
 
         // Verify the correct parameters were used
         verify(facultyRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
+        verify(translatorService).getEntityTranslatedName(Faculty.class);
     }
 
     @Test
@@ -120,7 +119,7 @@ class FacultyServiceTest {
 
         // Verify the correct parameters were used
         verify(facultyRepository).findByName(name);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
+        verify(translatorService).getEntityTranslatedName(Faculty.class);
     }
 
     @Test
@@ -187,7 +186,7 @@ class FacultyServiceTest {
 
         verify(facultyValidator).validateNameUniquenessForUpdate(updatedName, id);
         verify(facultyRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
+        verify(translatorService).getEntityTranslatedName(Faculty.class);
         verifyNoInteractions(textContentService, facultyMapper);
         verifyNoMoreInteractions(facultyRepository);
     }
@@ -232,7 +231,7 @@ class FacultyServiceTest {
                 () -> facultyService.deleteFaculty(id));
 
         verify(facultyRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Faculty.class);
+        verify(translatorService).getEntityTranslatedName(Faculty.class);
         verifyNoMoreInteractions(facultyRepository);
     }
 }

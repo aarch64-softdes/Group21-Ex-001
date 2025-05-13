@@ -17,7 +17,7 @@ import com.tkpm.sms.domain.exception.GenericDomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Setting;
 import com.tkpm.sms.domain.repository.SettingRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,7 +33,7 @@ public class SettingServiceImpl implements SettingService {
 
     ObjectMapper objectMapper;
     SettingRepository settingRepository;
-    DomainEntityNameTranslator domainEntityNameTranslator;
+    TranslatorService translatorService;
 
     @Override
     public PhoneSettingDto getPhoneSetting() {
@@ -51,7 +51,7 @@ public class SettingServiceImpl implements SettingService {
             EmailDomainSettingRequestDto settingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.EMAIL.getValue())
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
-                        domainEntityNameTranslator.getEntityTranslatedName(Setting.class),
+                        translatorService.getEntityTranslatedName(Setting.class),
                         SettingType.EMAIL.getValue()));
 
         String domain = settingRequestDto.getDomain();
@@ -69,7 +69,7 @@ public class SettingServiceImpl implements SettingService {
     public PhoneSettingDto updatePhoneSetting(PhoneSettingRequestDto phoneSettingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.PHONE_NUMBER.getValue())
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
-                        domainEntityNameTranslator.getEntityTranslatedName(Setting.class),
+                        translatorService.getEntityTranslatedName(Setting.class),
                         SettingType.PHONE_NUMBER.getValue()));
 
         try {
@@ -108,7 +108,7 @@ public class SettingServiceImpl implements SettingService {
             AdjustmentDurationSettingRequestDto adjustmentDurationSettingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.ADJUSTMENT_DURATION.getValue())
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
-                        domainEntityNameTranslator.getEntityTranslatedName(Setting.class),
+                        translatorService.getEntityTranslatedName(Setting.class),
                         SettingType.ADJUSTMENT_DURATION.getValue()));
 
         setting.setDetails(adjustmentDurationSettingRequestDto.getAdjustmentDuration());
@@ -127,7 +127,7 @@ public class SettingServiceImpl implements SettingService {
             FailingGradeSettingRequestDto failingGradeSettingRequestDto) {
         Setting setting = settingRepository.findByName(SettingType.FAILING_GRADE.getValue())
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
-                        domainEntityNameTranslator.getEntityTranslatedName(Setting.class),
+                        translatorService.getEntityTranslatedName(Setting.class),
                         SettingType.FAILING_GRADE.getValue()));
 
         // TODO: check if the value is valid

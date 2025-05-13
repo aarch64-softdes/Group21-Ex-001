@@ -13,7 +13,7 @@ import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.SubjectRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.SubjectDomainValidator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     FacultyService facultyService;
 
-    DomainEntityNameTranslator domainEntityNameTranslator;
+    TranslatorService translatorService;
 
     @NonFinal
     @Value("${app.constraint.deletable-duration:30}")
@@ -60,7 +60,7 @@ public class SubjectServiceImpl implements SubjectService {
     public Subject getSubjectById(Integer id) {
         return subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
+                        translatorService.getEntityTranslatedName(Subject.class), id));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class SubjectServiceImpl implements SubjectService {
 
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
+                        translatorService.getEntityTranslatedName(Subject.class), id));
 
         if (updateRequestDto.getPrerequisitesId() != null) {
             subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
@@ -118,7 +118,7 @@ public class SubjectServiceImpl implements SubjectService {
     public void deleteSubject(Integer id) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
+                        translatorService.getEntityTranslatedName(Subject.class), id));
 
         // Add time constraint check
         var createdAt = subject.getCreatedAt();
@@ -139,7 +139,7 @@ public class SubjectServiceImpl implements SubjectService {
     public void deactivateSubject(Integer id) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
+                        translatorService.getEntityTranslatedName(Subject.class), id));
 
         subjectValidator.validateSubjectForDeletionAndDeactivation(id);
 
@@ -152,7 +152,7 @@ public class SubjectServiceImpl implements SubjectService {
     public void activateSubject(Integer id) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class), id));
+                        translatorService.getEntityTranslatedName(Subject.class), id));
 
         subject.setActive(true);
 

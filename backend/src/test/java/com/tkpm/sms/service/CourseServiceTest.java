@@ -12,7 +12,7 @@ import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class CourseServiceTest {
     private SubjectRepository subjectRepository;
 
     @Mock
-    private DomainEntityNameTranslator domainEntityNameTranslator;
+    private TranslatorService translatorService;
 
     @Mock
     private CourseDomainValidator courseValidator;
@@ -53,11 +53,9 @@ class CourseServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // Setup common mock behaviors
-        when(domainEntityNameTranslator.getEntityTranslatedName(Course.class)).thenReturn("Course");
-        when(domainEntityNameTranslator.getEntityTranslatedName(Program.class))
-                .thenReturn("Program");
-        when(domainEntityNameTranslator.getEntityTranslatedName(Subject.class))
-                .thenReturn("Subject");
+        when(translatorService.getEntityTranslatedName(Course.class)).thenReturn("Course");
+        when(translatorService.getEntityTranslatedName(Program.class)).thenReturn("Program");
+        when(translatorService.getEntityTranslatedName(Subject.class)).thenReturn("Subject");
     }
 
     // @Test
@@ -81,7 +79,7 @@ class CourseServiceTest {
 
         assertThrows(ResourceNotFoundException.class, () -> courseService.getCourseById(id));
         verify(courseRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Course.class);
+        verify(translatorService).getEntityTranslatedName(Course.class);
     }
 
     @Test
@@ -128,7 +126,7 @@ class CourseServiceTest {
         assertThrows(ResourceNotFoundException.class,
                 () -> courseService.updateCourse(id, updateRequestDto));
         verify(courseRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Course.class);
+        verify(translatorService).getEntityTranslatedName(Course.class);
     }
 
     @Test

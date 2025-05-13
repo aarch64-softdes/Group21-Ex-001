@@ -10,7 +10,7 @@ import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Program;
 import com.tkpm.sms.domain.repository.ProgramRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.ProgramDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,7 +28,7 @@ public class ProgramServiceImpl implements ProgramService {
     ProgramDomainValidator programDomainValidator;
     ProgramMapper programMapper;
     TextContentService textContentService;
-    DomainEntityNameTranslator domainEntityNameTranslator;
+    TranslatorService translatorService;
 
     @Override
     public PageResponse<Program> getAllPrograms(BaseCollectionRequest search) {
@@ -41,14 +41,14 @@ public class ProgramServiceImpl implements ProgramService {
     public Program getProgramById(Integer id) {
         return programRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Program.class), id));
+                        translatorService.getEntityTranslatedName(Program.class), id));
     }
 
     @Override
     public Program getProgramByName(String name) {
         return programRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
-                        domainEntityNameTranslator.getEntityTranslatedName(Program.class), name));
+                        translatorService.getEntityTranslatedName(Program.class), name));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class ProgramServiceImpl implements ProgramService {
 
         Program program = programRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Program.class), id));
+                        translatorService.getEntityTranslatedName(Program.class), id));
 
         programMapper.toDomain(programRequestDto, program);
         program.setName(textContentService.updateTextContent(program.getName(),
@@ -87,7 +87,7 @@ public class ProgramServiceImpl implements ProgramService {
     public void deleteProgram(Integer id) {
         Program program = programRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Program.class), id));
+                        translatorService.getEntityTranslatedName(Program.class), id));
 
         program.setDeletedAt(LocalDate.now());
         programRepository.save(program);

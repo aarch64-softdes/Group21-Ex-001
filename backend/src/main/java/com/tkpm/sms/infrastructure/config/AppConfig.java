@@ -2,7 +2,7 @@ package com.tkpm.sms.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tkpm.sms.domain.repository.*;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,56 +16,53 @@ public class AppConfig {
 
     @Bean
     public FacultyDomainValidator facultyValidator(FacultyRepository facultyRepository,
-            DomainEntityNameTranslator domainEntityNameTranslator) {
-        return new FacultyDomainValidator(facultyRepository, domainEntityNameTranslator);
+            TranslatorService translatorService) {
+        return new FacultyDomainValidator(facultyRepository, translatorService);
     }
 
     @Bean
     public IdentityDomainValidator identityValidator(IdentityRepository identityRepository,
-            DomainEntityNameTranslator domainEntityNameTranslator) {
-        return new IdentityDomainValidator(identityRepository, domainEntityNameTranslator);
+            TranslatorService translatorService) {
+        return new IdentityDomainValidator(identityRepository, translatorService);
     }
 
     @Bean
     public ProgramDomainValidator programValidator(ProgramRepository programRepository,
-            DomainEntityNameTranslator domainEntityNameTranslator) {
-        return new ProgramDomainValidator(programRepository, domainEntityNameTranslator);
+            TranslatorService translatorService) {
+        return new ProgramDomainValidator(programRepository, translatorService);
     }
 
     @Bean
     public StudentDomainValidator studentValidator(StudentRepository studentRepository,
-            SettingRepository settingRepository,
-            DomainEntityNameTranslator domainEntityNameTranslator) {
-        return new StudentDomainValidator(studentRepository, settingRepository,
-                domainEntityNameTranslator);
+            SettingRepository settingRepository, TranslatorService translatorService) {
+        return new StudentDomainValidator(studentRepository, settingRepository, translatorService);
     }
 
     @Bean
     public StatusDomainValidator statusValidator(StatusRepository statusRepository,
-            DomainEntityNameTranslator domainEntityNameTranslator) {
-        return new StatusDomainValidator(statusRepository, domainEntityNameTranslator);
+            TranslatorService translatorService) {
+        return new StatusDomainValidator(statusRepository, translatorService);
     }
 
     @Bean
     public CourseDomainValidator courseValidator(CourseRepository courseRepository,
             SubjectRepository subjectRepository, SettingRepository settingRepository,
-            EnrollmentRepository enrollmentRepository,
-            DomainEntityNameTranslator domainEntityNameTranslator) {
+            EnrollmentRepository enrollmentRepository, TranslatorService translatorService) {
         return new CourseDomainValidator(courseRepository, subjectRepository, settingRepository,
-                enrollmentRepository, domainEntityNameTranslator);
+                enrollmentRepository, translatorService);
     }
 
     @Bean
     public SubjectDomainValidator subjectValidator(SubjectRepository subjectRepository,
-            DomainEntityNameTranslator domainEntityNameTranslator) {
-        return new SubjectDomainValidator(subjectRepository, domainEntityNameTranslator);
+            TranslatorService translatorService) {
+        return new SubjectDomainValidator(subjectRepository, translatorService);
     }
 
     @Bean
     public EnrollmentDomainValidator enrollmentValidator(EnrollmentRepository enrollmentRepository,
             StudentRepository studentRepository, CourseRepository courseRepository,
-            DomainEntityNameTranslator domainEntityNameTranslator) {
+            TranslatorService translatorService) {
         return new EnrollmentDomainValidator(enrollmentRepository, studentRepository,
-                courseRepository, domainEntityNameTranslator);
+                courseRepository, translatorService);
     }
 }

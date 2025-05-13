@@ -5,7 +5,7 @@ import com.tkpm.sms.domain.exception.UnsupportedStatusTransitionException;
 import com.tkpm.sms.domain.exception.UnsupportedEmailException;
 import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.model.Student;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.repository.SettingRepository;
 import com.tkpm.sms.domain.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,12 @@ import java.util.Optional;
 public class StudentDomainValidator {
     private final StudentRepository studentRepository;
     private final SettingRepository settingRepository;
-    private final DomainEntityNameTranslator domainEntityNameTranslator;
+    private final TranslatorService translatorService;
 
     public void validateStudentIdUniqueness(String studentId) {
         if (studentRepository.existsByStudentId(studentId)) {
             throw new DuplicateResourceException("error.student.duplicate_resource.student_id",
-                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), studentId);
+                    translatorService.getEntityTranslatedName(Student.class), studentId);
             // throw new DuplicateResourceException(
             // String.format("Student with ID %s already exists", studentId));
         }
@@ -32,14 +32,14 @@ public class StudentDomainValidator {
         Optional<Student> existingStudent = studentRepository.findByStudentId(studentId);
         if (existingStudent.isPresent() && !existingStudent.get().getId().equals(id)) {
             throw new DuplicateResourceException("error.student.duplicate_resource.student_id",
-                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), studentId);
+                    translatorService.getEntityTranslatedName(Student.class), studentId);
         }
     }
 
     public void validateEmailUniqueness(String email) {
         if (studentRepository.existsByEmail(email)) {
             throw new DuplicateResourceException("error.student.duplicate_resource.email",
-                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), email);
+                    translatorService.getEntityTranslatedName(Student.class), email);
         }
     }
 
@@ -47,7 +47,7 @@ public class StudentDomainValidator {
         Optional<Student> existingStudent = studentRepository.findByEmail(email);
         if (existingStudent.isPresent() && !existingStudent.get().getId().equals(id)) {
             throw new DuplicateResourceException("error.student.duplicate_resource.email",
-                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), email);
+                    translatorService.getEntityTranslatedName(Student.class), email);
         }
     }
 
@@ -56,8 +56,7 @@ public class StudentDomainValidator {
 
         if (!email.endsWith(validDomain)) {
             throw new UnsupportedEmailException("error.student.invalid_email_domain",
-                    domainEntityNameTranslator.getEntityTranslatedName(Student.class), email,
-                    validDomain);
+                    translatorService.getEntityTranslatedName(Student.class), email, validDomain);
         }
     }
 

@@ -13,7 +13,7 @@ import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.*;
 import com.tkpm.sms.domain.repository.StudentRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.domain.valueobject.Phone;
@@ -69,7 +69,7 @@ class StudentServiceTest {
     private PhoneParser phoneParser;
 
     @Mock
-    private DomainEntityNameTranslator domainEntityNameTranslator;
+    private TranslatorService translatorService;
 
     private StudentService studentService;
 
@@ -81,7 +81,7 @@ class StudentServiceTest {
         MockitoAnnotations.openMocks(this);
         studentService = new StudentServiceImpl(studentRepository, identityValidator,
                 studentValidator, statusService, programService, facultyService, studentMapper,
-                addressMapper, identityMapper, phoneParser, domainEntityNameTranslator);
+                addressMapper, identityMapper, phoneParser, translatorService);
     }
 
     @Nested

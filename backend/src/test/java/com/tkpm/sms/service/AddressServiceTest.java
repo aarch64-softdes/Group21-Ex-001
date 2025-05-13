@@ -7,7 +7,7 @@ import com.tkpm.sms.application.service.implementation.AddressServiceImpl;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Address;
 import com.tkpm.sms.domain.repository.AddressRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class AddressServiceTest {
     private AddressMapper addressMapper;
 
     @Mock
-    private DomainEntityNameTranslator domainEntityNameTranslator;
+    private TranslatorService translatorService;
 
     @InjectMocks
     private AddressServiceImpl addressService;
@@ -37,8 +37,7 @@ class AddressServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        when(domainEntityNameTranslator.getEntityTranslatedName(Address.class))
-                .thenReturn("Address");
+        when(translatorService.getEntityTranslatedName(Address.class)).thenReturn("Address");
     }
 
     @Test
@@ -80,13 +79,12 @@ class AddressServiceTest {
         AddressUpdateRequestDto requestDto = new AddressUpdateRequestDto();
 
         when(addressRepository.findById(id)).thenReturn(Optional.empty());
-        when(domainEntityNameTranslator.getEntityTranslatedName(Address.class))
-                .thenReturn("Address");
+        when(translatorService.getEntityTranslatedName(Address.class)).thenReturn("Address");
 
         assertThrows(ResourceNotFoundException.class,
                 () -> addressService.updateAddress(id, requestDto));
         verify(addressRepository).findById("1");
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Address.class);
+        verify(translatorService).getEntityTranslatedName(Address.class);
         verifyNoMoreInteractions(addressMapper, addressRepository);
     }
 
@@ -108,11 +106,10 @@ class AddressServiceTest {
         String id = "1";
 
         when(addressRepository.findById(id)).thenReturn(Optional.empty());
-        when(domainEntityNameTranslator.getEntityTranslatedName(Address.class))
-                .thenReturn("Address");
+        when(translatorService.getEntityTranslatedName(Address.class)).thenReturn("Address");
 
         assertThrows(ResourceNotFoundException.class, () -> addressService.getAddressById(id));
         verify(addressRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Address.class);
+        verify(translatorService).getEntityTranslatedName(Address.class);
     }
 }

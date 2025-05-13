@@ -11,7 +11,7 @@ import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.SubjectRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.SubjectDomainValidator;
 import com.tkpm.sms.domain.valueobject.TextContent;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +50,7 @@ class SubjectServiceTest {
     private TextContentService textContentService;
 
     @Mock
-    private DomainEntityNameTranslator domainEntityNameTranslator;
+    private TranslatorService translatorService;
 
     @InjectMocks
     private SubjectServiceImpl subjectService;
@@ -60,8 +60,7 @@ class SubjectServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // Set up the translator
-        when(domainEntityNameTranslator.getEntityTranslatedName(Subject.class))
-                .thenReturn("Subject");
+        when(translatorService.getEntityTranslatedName(Subject.class)).thenReturn("Subject");
 
         // Set up the deletableDuration value (default is 30 minutes)
         ReflectionTestUtils.setField(subjectService, "deletableDuration", 30);
@@ -121,7 +120,7 @@ class SubjectServiceTest {
                 () -> subjectService.getSubjectById(id));
 
         verify(subjectRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
+        verify(translatorService).getEntityTranslatedName(Subject.class);
     }
 
     @Test
@@ -225,7 +224,7 @@ class SubjectServiceTest {
 
         verify(subjectValidator).validateSubjectNameUniquenessForUpdate(requestDto.getName(), id);
         verify(subjectRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
+        verify(translatorService).getEntityTranslatedName(Subject.class);
         verifyNoMoreInteractions(subjectRepository);
     }
 
@@ -280,7 +279,7 @@ class SubjectServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> subjectService.deleteSubject(id));
 
         verify(subjectRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
+        verify(translatorService).getEntityTranslatedName(Subject.class);
         verifyNoMoreInteractions(subjectRepository);
     }
 
@@ -337,7 +336,7 @@ class SubjectServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> subjectService.deactivateSubject(id));
 
         verify(subjectRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
+        verify(translatorService).getEntityTranslatedName(Subject.class);
         verifyNoMoreInteractions(subjectRepository);
     }
 
@@ -352,7 +351,7 @@ class SubjectServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> subjectService.activateSubject(id));
 
         verify(subjectRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Subject.class);
+        verify(translatorService).getEntityTranslatedName(Subject.class);
         verifyNoMoreInteractions(subjectRepository);
     }
 }

@@ -15,7 +15,7 @@ import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class CourseServiceImpl implements CourseService {
 
     CourseDomainValidator courseValidator;
 
-    DomainEntityNameTranslator domainEntityNameTranslator;
+    TranslatorService translatorService;
 
     @Override
     public PageResponse<Course> findAll(BaseCollectionRequest request) {
@@ -46,7 +46,7 @@ public class CourseServiceImpl implements CourseService {
     public Course getCourseById(Integer id) {
         return courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Course.class), id));
+                        translatorService.getEntityTranslatedName(Course.class), id));
     }
 
     @Override
@@ -54,18 +54,17 @@ public class CourseServiceImpl implements CourseService {
     public Course createCourse(CourseCreateRequestDto createRequestDto) {
         Program program = programRepository.findById(createRequestDto.getProgramId())
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Program.class),
+                        translatorService.getEntityTranslatedName(Program.class),
                         createRequestDto.getProgramId()));
 
         Subject subject = subjectRepository.findById(createRequestDto.getSubjectId())
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Subject.class),
+                        translatorService.getEntityTranslatedName(Subject.class),
                         createRequestDto.getSubjectId()));
 
         if (!subject.isActive()) {
             throw new SubjectDeactivatedException("error.subject.is_deactivated",
-                    domainEntityNameTranslator.getEntityTranslatedName(Subject.class),
-                    subject.getCode());
+                    translatorService.getEntityTranslatedName(Subject.class), subject.getCode());
         }
 
         // Map DTO to domain object (excluding foreign keys)
@@ -86,7 +85,7 @@ public class CourseServiceImpl implements CourseService {
     public Course updateCourse(Integer id, CourseUpdateRequestDto updateRequestDto) {
         var course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Course.class), id));
+                        translatorService.getEntityTranslatedName(Course.class), id));
 
         courseMapper.toDomain(course, updateRequestDto);
 
@@ -101,7 +100,7 @@ public class CourseServiceImpl implements CourseService {
     public void deleteCourse(Integer id) {
         var course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Course.class), id));
+                        translatorService.getEntityTranslatedName(Course.class), id));
 
         courseValidator.validateCourseInTimePeriod(course);
         courseValidator.validateEnrollmentExistenceForCourse(course);

@@ -8,7 +8,7 @@ import com.tkpm.sms.domain.model.Student;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.EnrollmentRepository;
 import com.tkpm.sms.domain.repository.StudentRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,18 +22,16 @@ public class EnrollmentDomainValidator {
     EnrollmentRepository enrollmentRepository;
     StudentRepository studentRepository;
     CourseRepository courseRepository;
-    DomainEntityNameTranslator domainEntityNameTranslator;
+    TranslatorService translatorService;
 
     public void validateEnrollmentUniqueness(String studentId, Integer courseId) {
         if (enrollmentRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
             var student = studentRepository.findById(studentId)
                     .orElseThrow(() -> new ResourceNotFoundException("error.not_found",
-                            domainEntityNameTranslator.getEntityTranslatedName(Student.class),
-                            studentId));
+                            translatorService.getEntityTranslatedName(Student.class), studentId));
             var course = courseRepository.findById(courseId)
                     .orElseThrow(() -> new ResourceNotFoundException("error.not_found",
-                            domainEntityNameTranslator.getEntityTranslatedName(Course.class),
-                            courseId));
+                            translatorService.getEntityTranslatedName(Course.class), courseId));
             throw new DuplicateResourceException(
                     "error.enrollment.duplicate_resource.student_and_course",
                     student.getStudentId(), course.getCode());
@@ -48,8 +46,7 @@ public class EnrollmentDomainValidator {
                 .getUnenrolledOrUnfinishedCourseOfSubjects(studentId, subjectIds);
         var student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found",
-                        domainEntityNameTranslator.getEntityTranslatedName(Student.class),
-                        studentId));
+                        translatorService.getEntityTranslatedName(Student.class), studentId));
 
         if (!missingEnrollments.isEmpty()) {
             List<String> subjects = missingEnrollments.stream().map(enrollment -> enrollment

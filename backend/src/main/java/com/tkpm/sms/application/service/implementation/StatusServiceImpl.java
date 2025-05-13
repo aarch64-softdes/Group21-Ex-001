@@ -10,7 +10,7 @@ import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.repository.StatusRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.StatusDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,7 +30,7 @@ public class StatusServiceImpl implements StatusService {
     StatusMapper statusMapper;
     TextContentService textContentService;
 
-    DomainEntityNameTranslator domainEntityNameTranslator;
+    TranslatorService translatorService;
 
     @NonFinal
     @Value("${app.locale.default}")
@@ -47,14 +47,14 @@ public class StatusServiceImpl implements StatusService {
     public Status getStatusById(Integer id) {
         return statusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Status.class), id));
+                        translatorService.getEntityTranslatedName(Status.class), id));
     }
 
     @Override
     public Status getStatusByName(String name) {
         return statusRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
-                        domainEntityNameTranslator.getEntityTranslatedName(Status.class), name));
+                        translatorService.getEntityTranslatedName(Status.class), name));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class StatusServiceImpl implements StatusService {
         // Find existing status
         Status status = statusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Status.class), id));
+                        translatorService.getEntityTranslatedName(Status.class), id));
 
         statusMapper.updateStatusFromDto(statusRequestDto, status);
         status.setName(
@@ -95,7 +95,7 @@ public class StatusServiceImpl implements StatusService {
     public void deleteStatus(Integer id) {
         Status status = statusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Status.class), id));
+                        translatorService.getEntityTranslatedName(Status.class), id));
 
         statusRepository.delete(status);
     }

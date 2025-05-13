@@ -16,7 +16,7 @@ import com.tkpm.sms.domain.exception.GenericDomainException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Setting;
 import com.tkpm.sms.domain.repository.SettingRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -41,7 +41,7 @@ class SettingServiceTest {
     private SettingRepository settingRepository;
 
     @Mock
-    private DomainEntityNameTranslator domainEntityNameTranslator;
+    private TranslatorService translatorService;
 
     @InjectMocks
     private SettingServiceImpl settingService;
@@ -51,8 +51,7 @@ class SettingServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // Setup default translator behavior
-        when(domainEntityNameTranslator.getEntityTranslatedName(Setting.class))
-                .thenReturn("Setting");
+        when(translatorService.getEntityTranslatedName(Setting.class)).thenReturn("Setting");
     }
 
     @Nested
@@ -110,7 +109,7 @@ class SettingServiceTest {
                     () -> settingService.updatePhoneSetting(requestDto));
 
             verify(settingRepository).findByName(SettingType.PHONE_NUMBER.getValue());
-            verify(domainEntityNameTranslator).getEntityTranslatedName(Setting.class);
+            verify(translatorService).getEntityTranslatedName(Setting.class);
             verifyNoInteractions(objectMapper);
             verifyNoMoreInteractions(settingRepository);
         }
@@ -214,7 +213,7 @@ class SettingServiceTest {
                     () -> settingService.updateEmailSetting(requestDto));
 
             verify(settingRepository).findByName(SettingType.EMAIL.getValue());
-            verify(domainEntityNameTranslator).getEntityTranslatedName(Setting.class);
+            verify(translatorService).getEntityTranslatedName(Setting.class);
             verifyNoMoreInteractions(settingRepository);
         }
     }
@@ -274,7 +273,7 @@ class SettingServiceTest {
                     () -> settingService.updateAdjustmentDurationSetting(requestDto));
 
             verify(settingRepository).findByName(SettingType.ADJUSTMENT_DURATION.getValue());
-            verify(domainEntityNameTranslator).getEntityTranslatedName(Setting.class);
+            verify(translatorService).getEntityTranslatedName(Setting.class);
             verifyNoMoreInteractions(settingRepository);
         }
     }
@@ -333,7 +332,7 @@ class SettingServiceTest {
                     () -> settingService.updateFailingGradeSetting(requestDto));
 
             verify(settingRepository).findByName(SettingType.FAILING_GRADE.getValue());
-            verify(domainEntityNameTranslator).getEntityTranslatedName(Setting.class);
+            verify(translatorService).getEntityTranslatedName(Setting.class);
             verifyNoMoreInteractions(settingRepository);
         }
     }

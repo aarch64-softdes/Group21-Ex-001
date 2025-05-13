@@ -10,7 +10,7 @@ import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.repository.FacultyRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.FacultyDomainValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,7 +25,7 @@ public class FacultyServiceImpl implements FacultyService {
     FacultyDomainValidator facultyValidator;
     FacultyMapper facultyMapper;
     TextContentService textContentService;
-    DomainEntityNameTranslator domainEntityNameTranslator;
+    TranslatorService translatorService;
 
     @Override
     public PageResponse<Faculty> getAllFaculties(BaseCollectionRequest search) {
@@ -37,14 +37,14 @@ public class FacultyServiceImpl implements FacultyService {
     public Faculty getFacultyById(Integer id) {
         return facultyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Faculty.class), id));
+                        translatorService.getEntityTranslatedName(Faculty.class), id));
     }
 
     @Override
     public Faculty getFacultyByName(String name) {
         return facultyRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.name",
-                        domainEntityNameTranslator.getEntityTranslatedName(Faculty.class), name));
+                        translatorService.getEntityTranslatedName(Faculty.class), name));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class FacultyServiceImpl implements FacultyService {
 
         Faculty faculty = facultyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Faculty.class), id));
+                        translatorService.getEntityTranslatedName(Faculty.class), id));
 
         facultyMapper.toDomain(facultyRequest, faculty);
         faculty.setName(
@@ -81,7 +81,7 @@ public class FacultyServiceImpl implements FacultyService {
     public void deleteFaculty(Integer id) {
         Faculty faculty = facultyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Faculty.class), id));
+                        translatorService.getEntityTranslatedName(Faculty.class), id));
 
         facultyRepository.delete(faculty);
     }

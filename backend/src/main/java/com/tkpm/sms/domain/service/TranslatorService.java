@@ -1,5 +1,5 @@
 package com.tkpm.sms.domain.service;
 
-public interface DomainEntityNameTranslator {
+public interface TranslatorService {
     String getEntityTranslatedName(Class<?> entityClass);
 }

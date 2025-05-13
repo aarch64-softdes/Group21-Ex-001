@@ -8,7 +8,7 @@ import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Identity;
 import com.tkpm.sms.domain.repository.IdentityRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class IdentityServiceTest {
     private IdentityMapper identityMapper;
 
     @Mock
-    private DomainEntityNameTranslator domainEntityNameTranslator;
+    private TranslatorService translatorService;
 
     @InjectMocks
     private IdentityServiceImpl identityService;
@@ -44,8 +44,7 @@ class IdentityServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // Setup common mock behaviors
-        when(domainEntityNameTranslator.getEntityTranslatedName(Identity.class))
-                .thenReturn("Identity");
+        when(translatorService.getEntityTranslatedName(Identity.class)).thenReturn("Identity");
     }
 
     @Test
@@ -110,7 +109,7 @@ class IdentityServiceTest {
             verify(identityDomainValidator)
                     .validateIdentityUniquenessForUpdate(IdentityType.PASSPORT, identityNumber, id);
             verify(identityRepository).findById(id);
-            verify(domainEntityNameTranslator).getEntityTranslatedName(Identity.class);
+            verify(translatorService).getEntityTranslatedName(Identity.class);
             verifyNoInteractions(identityMapper);
             verifyNoMoreInteractions(identityRepository);
         }

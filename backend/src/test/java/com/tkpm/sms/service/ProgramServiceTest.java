@@ -7,7 +7,7 @@ import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Program;
 import com.tkpm.sms.domain.repository.ProgramRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.ProgramDomainValidator;
 import com.tkpm.sms.domain.valueobject.TextContent;
 import com.tkpm.sms.domain.valueobject.Translation;
@@ -42,7 +42,7 @@ class ProgramServiceTest {
     private TextContentService textContentService;
 
     @Mock
-    private DomainEntityNameTranslator domainEntityNameTranslator;
+    private TranslatorService translatorService;
 
     @InjectMocks
     private ProgramServiceImpl programService;
@@ -55,8 +55,7 @@ class ProgramServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // Setup common mock behaviors
-        when(domainEntityNameTranslator.getEntityTranslatedName(Program.class))
-                .thenReturn("Program");
+        when(translatorService.getEntityTranslatedName(Program.class)).thenReturn("Program");
 
         // Create test data
         textContent = TextContent.builder().id(1).createdAt(LocalDateTime.now())
@@ -101,7 +100,7 @@ class ProgramServiceTest {
                 () -> programService.getProgramById(id));
 
         verify(programRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Program.class);
+        verify(translatorService).getEntityTranslatedName(Program.class);
     }
 
     @Test
@@ -130,7 +129,7 @@ class ProgramServiceTest {
                 () -> programService.getProgramByName(name));
 
         verify(programRepository).findByName(name);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Program.class);
+        verify(translatorService).getEntityTranslatedName(Program.class);
     }
 
     @Test
@@ -193,7 +192,7 @@ class ProgramServiceTest {
 
         verify(programDomainValidator).validateNameUniquenessForUpdate(updatedName, id);
         verify(programRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Program.class);
+        verify(translatorService).getEntityTranslatedName(Program.class);
         verifyNoInteractions(textContentService, programMapper);
         verifyNoMoreInteractions(programRepository);
     }
@@ -243,7 +242,7 @@ class ProgramServiceTest {
                 () -> programService.deleteProgram(id));
 
         verify(programRepository).findById(id);
-        verify(domainEntityNameTranslator).getEntityTranslatedName(Program.class);
+        verify(translatorService).getEntityTranslatedName(Program.class);
         verifyNoMoreInteractions(programRepository);
     }
 

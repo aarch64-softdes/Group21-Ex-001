@@ -14,7 +14,7 @@ import com.tkpm.sms.domain.exception.FileProcessingException;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.*;
 import com.tkpm.sms.domain.repository.StudentRepository;
-import com.tkpm.sms.domain.service.DomainEntityNameTranslator;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.domain.valueobject.Phone;
@@ -49,7 +49,7 @@ public class StudentServiceImpl implements StudentService {
 
     PhoneParser phoneParser;
 
-    DomainEntityNameTranslator domainEntityNameTranslator;
+    TranslatorService translatorService;
 
     @Override
     public PageResponse<Student> findAll(StudentCollectionRequest search) {
@@ -63,7 +63,7 @@ public class StudentServiceImpl implements StudentService {
     public Student getStudentDetail(String id, String languageCode) {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Student.class), id));
+                        translatorService.getEntityTranslatedName(Student.class), id));
     }
 
     @Override
@@ -106,7 +106,7 @@ public class StudentServiceImpl implements StudentService {
         // Find existing student
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Student.class), id));
+                        translatorService.getEntityTranslatedName(Student.class), id));
 
         // Validate student fields
         if (!student.getStudentId().equals(requestDto.getStudentId())) {
@@ -218,7 +218,7 @@ public class StudentServiceImpl implements StudentService {
     public void deleteStudentById(String id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
-                        domainEntityNameTranslator.getEntityTranslatedName(Student.class), id));
+                        translatorService.getEntityTranslatedName(Student.class), id));
 
         studentRepository.delete(student);
     }
@@ -240,21 +240,21 @@ public class StudentServiceImpl implements StudentService {
 
                 if (!facultyNameCache.containsKey(dto.getFaculty())) {
                     throw new ResourceNotFoundException("error.not_found.name",
-                            domainEntityNameTranslator.getEntityTranslatedName(Faculty.class),
+                            translatorService.getEntityTranslatedName(Faculty.class),
                             dto.getFaculty());
                 }
                 student.setFaculty(facultyNameCache.get(dto.getFaculty()));
 
                 if (!statusNameCache.containsKey(dto.getStatus())) {
                     throw new ResourceNotFoundException("error.not_found.name",
-                            domainEntityNameTranslator.getEntityTranslatedName(Status.class),
+                            translatorService.getEntityTranslatedName(Status.class),
                             dto.getStatus());
                 }
                 student.setStatus(statusNameCache.get(dto.getStatus()));
 
                 if (!programNameCache.containsKey(dto.getProgram())) {
                     throw new ResourceNotFoundException("error.not_found.name",
-                            domainEntityNameTranslator.getEntityTranslatedName(Program.class),
+                            translatorService.getEntityTranslatedName(Program.class),
                             dto.getProgram());
                 }
                 student.setProgram(programNameCache.get(dto.getProgram()));
