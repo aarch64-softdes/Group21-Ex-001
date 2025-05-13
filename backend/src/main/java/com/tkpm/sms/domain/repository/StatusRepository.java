@@ -25,6 +25,4 @@ public interface StatusRepository {
     PageResponse<Status> findAll(PageRequest pageRequest);
 
     List<Status> findAllStatusesHaveThisAsTransition(Integer id);
-
-    void delete(Status status);
 }

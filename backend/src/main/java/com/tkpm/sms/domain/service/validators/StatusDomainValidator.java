@@ -9,8 +9,6 @@ import com.tkpm.sms.domain.service.TranslatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 public class StatusDomainValidator {
     private final StatusRepository statusRepository;
@@ -44,20 +42,6 @@ public class StatusDomainValidator {
                     "error.status.unsupported_status_transition",
                     fromStatus.getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()),
                     toStatus.getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()));
-        }
-    }
-
-    public void validateStatusTransitionForDeletion(Integer id) {
-        List<Status> statuses = statusRepository.findAllStatusesHaveThisAsTransition(id);
-        var status = statusRepository.findById(id)
-                .orElseThrow(() -> new UnsupportedStatusTransitionException(
-                        String.format("Status with id %s not found", id)));
-
-        if (!statuses.isEmpty()) {
-            throw new UnsupportedStatusTransitionException(String.format(
-                    "Cannot delete status %s as it is involved in a transition to status: %s",
-                    status.getName(),
-                    String.join(", ", statuses.stream().map(Status::getName).toList())));
         }
     }
 }

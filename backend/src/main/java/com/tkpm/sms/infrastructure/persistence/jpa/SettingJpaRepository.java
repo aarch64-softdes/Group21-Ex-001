@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface SettingJpaRepository extends JpaRepository<SettingEntity, String> {
+public interface SettingJpaRepository extends JpaRepository<SettingEntity, Integer> {
     Optional<SettingEntity> findSettingByName(String name);
 
     @Query("SELECT s FROM SettingEntity s WHERE s.name = 'phonenumber'")
