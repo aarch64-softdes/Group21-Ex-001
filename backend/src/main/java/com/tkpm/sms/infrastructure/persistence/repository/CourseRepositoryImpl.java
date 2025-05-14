@@ -65,7 +65,6 @@ public class CourseRepositoryImpl implements CourseRepository {
                 .map(coursePersistenceMapper::toDomain).collect(Collectors.toList());
     }
 
-
     @Override
     public boolean existsByCodeAndSubjectId(String code, Integer subjectId) {
         return courseJpaRepository.existsByCodeAndSubjectId(code, subjectId);

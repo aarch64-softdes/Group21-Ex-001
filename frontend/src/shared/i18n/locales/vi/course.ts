@@ -39,7 +39,7 @@ export default {
     scheduleFormat: 'Định dạng: T2(3-6) nghĩa là Thứ Hai từ tiết 3 đến tiết 6',
   },
   enrollment: {
-    title: 'Quản lý Đăng ký Khóa học',
+    title: 'Đăng ký',
     courseDetails: 'Khóa học',
     studentsList: 'Danh sách Sinh viên',
     return: 'Quay lại',

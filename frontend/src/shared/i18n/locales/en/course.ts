@@ -39,7 +39,7 @@ export default {
     scheduleFormat: 'Format: Mon(3-6) means Monday from 3rd to 6th period',
   },
   enrollment: {
-    title: 'Enrollment Management',
+    title: 'Enrollment',
     courseDetails: 'Course',
     studentsList: 'Students List',
     return: 'Return',

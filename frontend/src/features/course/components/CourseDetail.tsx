@@ -19,6 +19,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FormattedDate } from '@/components/common/FormattedDate';
 
 const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
   const navigate = useNavigate();
@@ -41,15 +42,6 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
       </div>
     );
   }
-
-  // Helper to format date
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
 
   // Helper to interpret schedule
   const interpretSchedule = (schedule: string) => {
@@ -170,7 +162,7 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
                   <Calendar className='h-4 w-4' />
                   {t('course:fields.startDate')}
                 </h3>
-                <p>{formatDate(courseData.startDate)}</p>
+                <FormattedDate date={new Date(courseData.startDate)} />
               </div>
 
               <div>
