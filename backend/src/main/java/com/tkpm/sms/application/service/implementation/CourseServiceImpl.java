@@ -90,7 +90,7 @@ public class CourseServiceImpl implements CourseService {
         courseMapper.toDomain(course, updateRequestDto);
 
         courseValidator.validateRoomAndCourseSchedule(course);
-        courseValidator.validateCodeAndSubjectForUpdate(id, updateRequestDto.getCode(),
+        courseValidator.validateSubjectForCourseUpdate(id,
                 course.getSubject().getId());
 
         return courseRepository.save(course);

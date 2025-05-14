@@ -79,17 +79,16 @@ public class CourseDomainValidator {
         }
     }
 
-    public void validateCodeAndSubjectForUpdate(Integer id, String code, Integer subjectId) {
-        if (courseRepository.existsByCodeAndSubjectIdAndIdNot(code, subjectId, id)) {
+    public void validateSubjectForCourseUpdate(Integer id, Integer subjectId) {
+        if (courseRepository.existsBySubjectIdAndIdNot(subjectId, id)) {
             var course = courseRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("error.not_found",
                             translatorService.getEntityTranslatedName(Course.class), id));
-            log.info("Validating course code and subject id for update: code={}, subjectCode={}",
-                    code, course.getSubject().getCode());
-            throw new DuplicateResourceException("error.course.duplicate_resource.code_and_subject",
-                    code, course.getSubject().getCode());
+            log.info("Validating subject id for update: subjectCode={}", course.getSubject().getCode());
+            throw new DuplicateResourceException("error.course.duplicate_resource.subject", course.getSubject().getCode());
         }
     }
+
 
     public void validateEnrollmentExistenceForCourse(Course course) {
         if (enrollmentRepository.existsByCourseId(course.getId())) {

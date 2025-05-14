@@ -80,4 +80,9 @@ public class CourseRepositoryImpl implements CourseRepository {
     public boolean existsByCodeAndSubjectIdAndIdNot(String code, Integer subjectId, Integer id) {
         return courseJpaRepository.existsByCodeAndSubjectIdAndIdNot(code, subjectId, id);
     }
+
+    @Override
+    public boolean existsBySubjectIdAndIdNot(Integer subjectId, Integer id) {
+        return courseJpaRepository.existsBySubjectIdAndIdNot(subjectId, id);
+    }
 }

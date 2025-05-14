@@ -10,16 +10,16 @@ import java.util.List;
 @Repository
 public interface CourseJpaRepository
         extends
-            JpaRepository<CourseEntity, Integer>,
-            PagingAndSortingRepository<CourseEntity, Integer> {
+        JpaRepository<CourseEntity, Integer>,
+        PagingAndSortingRepository<CourseEntity, Integer> {
 
     boolean existsByCodeAndSubjectId(String code, Integer subjectId);
 
     boolean existsByCodeAndSubjectIdAndIdNot(String code, Integer subjectId, Integer id);
 
-    List<CourseEntity> findAllByRoom(String room);
-
     List<CourseEntity> findAllBySemesterAndYearAndRoom(int semester, int year, String room);
+
+    boolean existsBySubjectIdAndIdNot(Integer subjectId, Integer id);
 
     List<CourseEntity> findAllBySubjectId(Integer subjectId);
 }
