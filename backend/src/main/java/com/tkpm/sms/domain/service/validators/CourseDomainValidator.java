@@ -84,11 +84,12 @@ public class CourseDomainValidator {
             var course = courseRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("error.not_found",
                             translatorService.getEntityTranslatedName(Course.class), id));
-            log.info("Validating subject id for update: subjectCode={}", course.getSubject().getCode());
-            throw new DuplicateResourceException("error.course.duplicate_resource.subject", course.getSubject().getCode());
+            log.info("Validating subject id for update: subjectCode={}",
+                    course.getSubject().getCode());
+            throw new DuplicateResourceException("error.course.duplicate_resource.subject",
+                    course.getSubject().getCode());
         }
     }
-
 
     public void validateEnrollmentExistenceForCourse(Course course) {
         if (enrollmentRepository.existsByCourseId(course.getId())) {
