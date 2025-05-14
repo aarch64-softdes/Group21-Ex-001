@@ -180,7 +180,7 @@ const CourseDetail: React.FC<DetailComponentProps> = ({ id: courseId }) => {
                 </h3>
                 <p>{interpretSchedule(courseData.schedule)}</p>
                 <p className='text-xs text-muted-foreground mt-1'>
-                  {t('course:messages.scheduleFormat')}: {courseData.schedule}
+                  {courseData.schedule}
                 </p>
               </div>
 
