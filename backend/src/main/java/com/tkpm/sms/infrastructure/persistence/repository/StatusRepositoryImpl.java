@@ -89,7 +89,8 @@ public class StatusRepositoryImpl implements StatusRepository {
 
     @Override
     public List<Status> findAllStatusesHaveThisAsTransition(Integer id) {
-        return statusJpaRepository.findAllByValidTransitionIdsContains(Collections.singletonList(id))
-                .stream().map(statusPersistenceMapper::toDomain).collect(Collectors.toList());
+        return statusJpaRepository
+                .findAllByValidTransitionIdsContains(Collections.singletonList(id)).stream()
+                .map(statusPersistenceMapper::toDomain).collect(Collectors.toList());
     }
 }

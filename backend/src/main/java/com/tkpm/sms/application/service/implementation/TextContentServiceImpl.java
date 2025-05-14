@@ -32,15 +32,7 @@ public class TextContentServiceImpl implements TextContentService {
 
         var textContent = TextContent.builder().createdAt(LocalDateTime.now())
                 .translations(Collections.singletonList(Translation.builder()
-                        .languageCode(languageCode).text(text).isOriginal(true).build())) // The
-                                                                                          // isOriginal
-                                                                                          // field
-                                                                                          // is
-                                                                                          // always
-                                                                                          // true
-                                                                                          // for the
-                                                                                          // first
-                                                                                          // translation
+                        .languageCode(languageCode).text(text).isOriginal(true).build())) // The isOriginal field is always true for the first translation
                 .build();
 
         return textContentRepository.save(textContent);
