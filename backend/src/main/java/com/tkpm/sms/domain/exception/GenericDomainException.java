@@ -18,6 +18,11 @@ public class GenericDomainException extends DomainException {
         super(message, ErrorCode.INTERNAL_SERVER_ERROR, cause);
     }
 
+
+    public GenericDomainException(String message, Object... args) {
+        super(ErrorCode.INTERNAL_SERVER_ERROR, message, args);
+    }
+
     public GenericDomainException(ErrorCode errorCode, String message, Object... args) {
         super(errorCode, message, args);
     }

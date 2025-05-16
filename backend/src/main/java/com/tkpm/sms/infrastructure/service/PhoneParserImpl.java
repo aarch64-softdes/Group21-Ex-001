@@ -116,13 +116,16 @@ public class PhoneParserImpl implements PhoneParser {
     }
 
     private void responseInvalidPhone(String phone, String countryCode) {
-        String errorMessage = String.format("Invalid phone number: %s", phone);
         if (Objects.isNull(countryCode) || countryCode.isEmpty()) {
-            errorMessage = errorMessage + ", missing country code";
+            throw new GenericDomainException(
+                    "error.phone_number.missing_country_code"
+                    , phone
+            );
         } else {
-            errorMessage = errorMessage + String.format(" with country code: %s", countryCode);
+            throw new GenericDomainException(
+                    "error.phone_number.invalid_country_code"
+                    , phone, countryCode
+            );
         }
-
-        throw new GenericDomainException(errorMessage);
     }
 }

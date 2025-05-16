@@ -17,7 +17,7 @@ public interface StudentJpaRepository
             LEFT JOIN FETCH st.permanentAddress pa
             LEFT JOIN FETCH st.temporaryAddress ta
             LEFT JOIN FETCH st.identity i
-            WHERE st.id = :id
+            WHERE st.id = :studentId
             """)
     Optional<StudentEntity> findByStudentId(String studentId);
 
