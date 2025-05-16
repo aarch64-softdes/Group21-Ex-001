@@ -1,7 +1,6 @@
 package com.tkpm.sms.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.SQLDelete;
@@ -26,9 +25,9 @@ public class StatusEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @NotNull(message = "Status's name is required")
-    @Column(unique = true)
-    String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "name_id")
+    TextContentEntity name;
 
     @Column(name = "deleted_at")
     LocalDate deletedAt;

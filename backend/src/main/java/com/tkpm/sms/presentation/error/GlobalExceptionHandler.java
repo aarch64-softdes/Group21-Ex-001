@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -26,12 +28,16 @@ public class GlobalExceptionHandler {
     static String VALUES_ATTRIBUTE = "values";
     static String FIELD_ATTRIBUTE = "field";
     static String MIN_VALUE_ATTRIBUTE = "value";
+    static String PREFIX_ERROR = "error.";
 
     ErrorCodeStatusMapper errorCodeStatusMapper;
+    MessageSource messageSource;
 
     @Autowired
-    public GlobalExceptionHandler(ErrorCodeStatusMapper errorCodeStatusMapper) {
+    public GlobalExceptionHandler(ErrorCodeStatusMapper errorCodeStatusMapper,
+            MessageSource messageSource) {
         this.errorCodeStatusMapper = errorCodeStatusMapper;
+        this.messageSource = messageSource;
     }
 
     @ExceptionHandler(DomainException.class)
@@ -41,8 +47,15 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = exception.getCode();
         HttpStatus status = errorCodeStatusMapper.getStatus(errorCode);
-        var response = ApplicationResponseDto.failure(exception, status.value());
+        String translatedMessage = exception.getMessage();
+        if (exception.getMessageKey() != null) {
+            translatedMessage = messageSource.getMessage(exception.getMessageKey(),
+                    exception.getMessageArgs(), exception.getMessage(), // fallback
+                    LocaleContextHolder.getLocale());
+        }
 
+        var response = ApplicationResponseDto
+                .failure(new GenericDomainException(translatedMessage, errorCode), status.value());
         return ResponseEntity.status(errorCodeStatusMapper.getStatus(errorCode)).body(response);
     }
 
@@ -93,7 +106,7 @@ public class GlobalExceptionHandler {
 
     private ErrorResponseInfo processValidationError(MethodArgumentNotValidException exception,
             String enumKey) {
-        log.info("Enum key: {}", enumKey);
+        log.info("Enum key: {}", PREFIX_ERROR + enumKey);
         try {
             ConstraintViolation<?> constraintViolation = exception.getBindingResult().getAllErrors()
                     .get(0).unwrap(ConstraintViolation.class);
@@ -105,7 +118,8 @@ public class GlobalExceptionHandler {
 
             ErrorCode error = ErrorCode.valueOf(enumKey);
             log.info("Error code: {}", error);
-            String formattedMessage = error.getDefaultMessage();
+            String formattedMessage = messageSource.getMessage(PREFIX_ERROR + enumKey, null,
+                    LocaleContextHolder.getLocale());
 
             if (attributes.containsKey(FIELD_ATTRIBUTE)) {
                 String requiredField = attributes.get(FIELD_ATTRIBUTE).toString();

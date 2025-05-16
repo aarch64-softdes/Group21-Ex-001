@@ -16,10 +16,7 @@ import {
 import { Input } from '@ui/input';
 import { Separator } from '@ui/separator';
 import { useCourse } from '@/features/course/api/useCourseApi';
-import {
-  useProgram,
-  useProgramsDropdown,
-} from '@/features/program/api/useProgramApi';
+import { useProgramsDropdown } from '@/features/program/api/useProgramApi';
 import {
   CreateCourseDTO,
   UpdateCourseDTO,
@@ -28,15 +25,13 @@ import { FormComponentPropsWithoutType } from '@/core/types/table';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 import LoadingButton from '@ui/loadingButton';
-import {
-  useSubject,
-  useSubjectsDropdown,
-} from '@/features/subject/api/useSubjectApi';
+import { useSubjectsDropdown } from '@/features/subject/api/useSubjectApi';
 import LoadMoreSelect from '@/components/common/LoadMoreSelect';
 import { parseSchedule } from '../types/courseSchedule';
 
 // Schedule validation pattern - ex: T2(3-6)
-const schedulePattern = /^T[2-7]\([1-9]-([1-9]|1[0-2])\)$/;
+const schedulePattern =
+  /^(T[2-7]|CN|Mon|Tue|Wed|Thu|Fri|Sat)\([1-9]-([1-9]|1[0-2])\)$/;
 
 // Define schema
 export const CourseFormSchema = (t: any) =>

@@ -19,8 +19,6 @@ public class CourseUpdateRequestDto {
     int year;
     @RequiredConstraint(field = "Course semester")
     int semester;
-    @RequiredConstraint(field = "Code")
-    String code;
     @RequiredConstraint(field = "Lecturer")
     String lecturer;
     @RequiredConstraint(field = "Max student")

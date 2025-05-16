@@ -1,19 +1,19 @@
-package com.tkpm.sms.application.dto.response.enrollment;
+package com.tkpm.sms.domain.valueobject;
 
-import com.tkpm.sms.application.dto.response.course.CourseDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HistoryDto {
-    String id;
-    String actionType;
-    CourseDto course;
+public class TextContent {
+    Integer id;
     LocalDateTime createdAt;
+    List<Translation> translations;
 }

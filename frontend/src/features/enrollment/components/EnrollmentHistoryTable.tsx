@@ -5,6 +5,7 @@ import GenericTable from '@/components/table/GenericTable';
 import { EnrollmentHistory } from '../types/enrollment';
 import { useEnrollmentHistory } from '../api/useEnrollmentApi';
 import { useTranslation } from 'react-i18next';
+import { FormattedDate } from '@/components/common/FormattedDate';
 
 interface EnrollmentHistoryTableProps {
   studentId: string;
@@ -38,14 +39,7 @@ const EnrollmentHistoryTable: React.FC<EnrollmentHistoryTableProps> = ({
     {
       header: t('history.date'),
       key: 'createdAt',
-      transform: (value) =>
-        new Date(value).toLocaleString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
+      transform: (value) => <FormattedDate date={new Date(value)} />,
     },
     {
       header: t('history.action'),

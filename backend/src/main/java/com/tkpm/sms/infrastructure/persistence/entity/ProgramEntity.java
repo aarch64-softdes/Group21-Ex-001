@@ -1,7 +1,6 @@
 package com.tkpm.sms.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.SQLDelete;
@@ -25,18 +24,18 @@ public class ProgramEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @NotNull(message = "Program's name is required")
-    @Column(unique = true)
-    String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "name_id", unique = true)
+    TextContentEntity name;
 
     @Column(name = "deleted_at")
     LocalDate deletedAt;
 
     // one-to-many relationship with students
-    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "program")
     Set<StudentEntity> students;
 
     // one-to-many relationship with courses
-    @OneToMany(mappedBy = "program", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "program", fetch = FetchType.EAGER)
     Set<CourseEntity> courses;
 }

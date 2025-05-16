@@ -123,7 +123,7 @@ const CoursePage: React.FC = () => {
           formComponent: CourseForm,
           additionalActions: [
             {
-              label: t('enrollment:title'),
+              label: t('course:enrollment.title'),
               handler(id) {
                 navigate(`/course/${id}/enrollments`);
               },

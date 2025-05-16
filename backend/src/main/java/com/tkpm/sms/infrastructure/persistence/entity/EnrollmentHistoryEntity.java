@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HistoryEntity {
+public class EnrollmentHistoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;

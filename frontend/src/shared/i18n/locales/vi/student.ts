@@ -8,6 +8,10 @@ export default {
     byFaculty: 'Tìm theo Khoa',
     facultyPlaceholder: 'Tìm theo Khoa',
   },
+  gender: {
+    male: 'Nam',
+    female: 'Nữ',
+  },
   fields: {
     studentId: 'Mã sinh viên',
     name: 'Họ và tên',

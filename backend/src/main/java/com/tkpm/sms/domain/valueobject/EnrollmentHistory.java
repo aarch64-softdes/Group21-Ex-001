@@ -14,7 +14,7 @@ import com.tkpm.sms.domain.model.Student;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class History {
+public class EnrollmentHistory {
     String id;
     Student student;
     Course course;

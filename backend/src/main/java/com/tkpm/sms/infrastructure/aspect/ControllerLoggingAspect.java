@@ -60,7 +60,7 @@ public class ControllerLoggingAspect {
     public void logBefore(JoinPoint joinPoint) {
         startTime.set(System.currentTimeMillis());
         correlationId.set(UUID.randomUUID().toString()); // TODO: get correlation ID from request
-                                                         // header after updating frontend
+                                                        // header after updating frontend
 
         HttpServletRequest request = getCurrentRequest();
         if (Objects.isNull(request)) {

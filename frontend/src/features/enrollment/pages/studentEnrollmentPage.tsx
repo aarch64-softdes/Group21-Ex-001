@@ -66,10 +66,10 @@ const StudentEnrollmentPage: React.FC = () => {
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className='mb-6'>
-          <TabsTrigger value='available'>{t('tabs.available')}</TabsTrigger>
-          <TabsTrigger value='current'>{t('tabs.current')}</TabsTrigger>
-          <TabsTrigger value='transcript'>{t('tabs.transcript')}</TabsTrigger>
-          <TabsTrigger value='history'>{t('tabs.history')}</TabsTrigger>
+          <TabsTrigger value='available'>Available Courses</TabsTrigger>
+          <TabsTrigger value='current'>Current Enrollments</TabsTrigger>
+          <TabsTrigger value='transcript'>Transcript</TabsTrigger>
+          <TabsTrigger value='enrollmentHistory'>Enrollment History</TabsTrigger>
         </TabsList>
 
         <TabsContent value='available'>
@@ -80,7 +80,7 @@ const StudentEnrollmentPage: React.FC = () => {
           <CurrentEnrollmentsTable studentId={studentId} />
         </TabsContent>
 
-        <TabsContent value='history'>
+        <TabsContent value='enrollmentHistory'>
           <EnrollmentHistoryTable studentId={studentId} />
         </TabsContent>
 

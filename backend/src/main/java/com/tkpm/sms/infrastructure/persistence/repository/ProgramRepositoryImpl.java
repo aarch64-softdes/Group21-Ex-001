@@ -21,23 +21,29 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProgramRepositoryImpl implements ProgramRepository {
     private final ProgramJpaRepository jpaRepository;
-    private final ProgramPersistenceMapper mapper;
+    private final ProgramPersistenceMapper programMapper;
 
     @Override
     public Program save(Program program) {
-        var entity = mapper.toEntity(program);
+        var entity = programMapper.toEntity(program);
+
+        var textContent = entity.getName();
+        if (textContent != null && textContent.getTranslations() != null) {
+            textContent.getTranslations().forEach(te -> te.setTextContent(textContent));
+        }
+
         var savedEntity = jpaRepository.save(entity);
-        return mapper.toDomain(savedEntity);
+        return programMapper.toDomain(savedEntity);
     }
 
     @Override
     public Optional<Program> findById(Integer id) {
-        return jpaRepository.findById(id).map(mapper::toDomain);
+        return jpaRepository.findById(id).map(programMapper::toDomain);
     }
 
     @Override
     public Optional<Program> findByName(String name) {
-        return jpaRepository.findProgramByName(name).map(mapper::toDomain);
+        return jpaRepository.findProgramByName(name).map(programMapper::toDomain);
     }
 
     @Override
@@ -59,7 +65,7 @@ public class ProgramRepositoryImpl implements ProgramRepository {
         Page<ProgramEntity> page = jpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Program> content = page.getContent().stream().map(mapper::toDomain)
+        List<Program> content = page.getContent().stream().map(programMapper::toDomain)
                 .collect(Collectors.toList());
 
         return PageResponse.of(content, page.getNumber() + 1, // Convert 0-based to 1-based
@@ -68,7 +74,7 @@ public class ProgramRepositoryImpl implements ProgramRepository {
 
     @Override
     public void delete(Program program) {
-        var entity = mapper.toEntity(program);
+        var entity = programMapper.toEntity(program);
         jpaRepository.delete(entity);
     }
 }

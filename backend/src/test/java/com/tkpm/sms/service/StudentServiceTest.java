@@ -1,4 +1,4 @@
-package com.tkpm.sms;
+package com.tkpm.sms.service;
 
 import com.tkpm.sms.application.dto.request.identity.IdentityUpdateRequestDto;
 import com.tkpm.sms.application.dto.request.phone.PhoneRequestDto;
@@ -13,6 +13,7 @@ import com.tkpm.sms.domain.enums.IdentityType;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.*;
 import com.tkpm.sms.domain.repository.StudentRepository;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.IdentityDomainValidator;
 import com.tkpm.sms.domain.service.validators.StudentDomainValidator;
 import com.tkpm.sms.domain.valueobject.Phone;
@@ -67,6 +68,9 @@ class StudentServiceTest {
     @Mock
     private PhoneParser phoneParser;
 
+    @Mock
+    private TranslatorService translatorService;
+
     private StudentService studentService;
 
     @Mock
@@ -76,8 +80,8 @@ class StudentServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         studentService = new StudentServiceImpl(studentRepository, identityValidator,
-                studentValidator, statusService, programService, facultyService, identityService,
-                studentMapper, addressMapper, identityMapper, phoneMapper, phoneParser);
+                studentValidator, statusService, programService, facultyService, studentMapper,
+                addressMapper, identityMapper, phoneParser, translatorService);
     }
 
     @Nested
@@ -110,7 +114,7 @@ class StudentServiceTest {
             Student student = new Student();
             when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
 
-            Student result = studentService.getStudentDetail(studentId);
+            Student result = studentService.getStudentDetail(studentId, "en");
 
             assertNotNull(result);
             assertEquals(student, result);
@@ -123,7 +127,7 @@ class StudentServiceTest {
             when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
             assertThrows(ResourceNotFoundException.class,
-                    () -> studentService.getStudentDetail(studentId));
+                    () -> studentService.getStudentDetail(studentId, "en"));
         }
     }
 
@@ -142,7 +146,7 @@ class StudentServiceTest {
 
             setupCreateStudentMocks(requestDto, student, phone, faculty, program, status);
 
-            Student result = studentService.createStudent(requestDto);
+            Student result = studentService.createStudent(requestDto, "en");
 
             assertNotNull(result);
             verifyCreateStudentMocks(requestDto);
@@ -199,7 +203,7 @@ class StudentServiceTest {
 
             setupUpdateStudentMocks(id, requestDto, student, phone, faculty, program, status);
 
-            Student result = studentService.updateStudent(id, requestDto);
+            Student result = studentService.updateStudent(id, requestDto, "en");
 
             assertNotNull(result);
             verifyUpdateStudentMocks(id, requestDto, student);
@@ -271,7 +275,7 @@ class StudentServiceTest {
             when(studentRepository.findById(id)).thenReturn(Optional.empty());
 
             assertThrows(ResourceNotFoundException.class,
-                    () -> studentService.updateStudent(id, requestDto));
+                    () -> studentService.updateStudent(id, requestDto, "en"));
         }
     }
 

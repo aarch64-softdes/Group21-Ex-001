@@ -66,12 +66,6 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public List<Course> findAllBySubjectId(Integer subjectId) {
-        return courseJpaRepository.findAllBySubjectId(subjectId).stream()
-                .map(coursePersistenceMapper::toDomain).collect(Collectors.toList());
-    }
-
-    @Override
     public boolean existsByCodeAndSubjectId(String code, Integer subjectId) {
         return courseJpaRepository.existsByCodeAndSubjectId(code, subjectId);
     }
@@ -79,5 +73,10 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public boolean existsByCodeAndSubjectIdAndIdNot(String code, Integer subjectId, Integer id) {
         return courseJpaRepository.existsByCodeAndSubjectIdAndIdNot(code, subjectId, id);
+    }
+
+    @Override
+    public boolean existsBySubjectIdAndIdNot(Integer subjectId, Integer id) {
+        return courseJpaRepository.existsBySubjectIdAndIdNot(subjectId, id);
     }
 }

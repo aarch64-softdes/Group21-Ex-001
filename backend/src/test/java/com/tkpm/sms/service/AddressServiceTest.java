@@ -1,4 +1,4 @@
-package com.tkpm.sms;
+package com.tkpm.sms.service;
 
 import com.tkpm.sms.application.dto.request.address.AddressCreateRequestDto;
 import com.tkpm.sms.application.dto.request.address.AddressUpdateRequestDto;
@@ -7,6 +7,8 @@ import com.tkpm.sms.application.service.implementation.AddressServiceImpl;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.model.Address;
 import com.tkpm.sms.domain.repository.AddressRepository;
+import com.tkpm.sms.domain.service.TranslatorService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,12 +28,16 @@ class AddressServiceTest {
     @Mock
     private AddressMapper addressMapper;
 
+    @Mock
+    private TranslatorService translatorService;
+
     @InjectMocks
     private AddressServiceImpl addressService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        when(translatorService.getEntityTranslatedName(Address.class)).thenReturn("Address");
     }
 
     @Test
@@ -73,10 +79,12 @@ class AddressServiceTest {
         AddressUpdateRequestDto requestDto = new AddressUpdateRequestDto();
 
         when(addressRepository.findById(id)).thenReturn(Optional.empty());
+        when(translatorService.getEntityTranslatedName(Address.class)).thenReturn("Address");
 
         assertThrows(ResourceNotFoundException.class,
                 () -> addressService.updateAddress(id, requestDto));
         verify(addressRepository).findById("1");
+        verify(translatorService).getEntityTranslatedName(Address.class);
         verifyNoMoreInteractions(addressMapper, addressRepository);
     }
 
@@ -98,8 +106,10 @@ class AddressServiceTest {
         String id = "1";
 
         when(addressRepository.findById(id)).thenReturn(Optional.empty());
+        when(translatorService.getEntityTranslatedName(Address.class)).thenReturn("Address");
 
         assertThrows(ResourceNotFoundException.class, () -> addressService.getAddressById(id));
         verify(addressRepository).findById(id);
+        verify(translatorService).getEntityTranslatedName(Address.class);
     }
 }

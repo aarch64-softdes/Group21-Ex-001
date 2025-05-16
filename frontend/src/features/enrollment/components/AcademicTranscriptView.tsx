@@ -20,11 +20,11 @@ import { Badge } from '@ui/badge';
 import { Loader2, Download, Printer } from 'lucide-react';
 import { Button } from '@ui/button';
 import { Transcript } from '../types/enrollment';
-import { format } from 'date-fns';
 import { Separator } from '@ui/separator';
 import StudentService from '@/features/student/api/studentService';
 import '../styles/transcript-print.css';
 import { useTranslation } from 'react-i18next';
+import { FormattedDate } from '@/components/common/FormattedDate';
 
 interface AcademicTranscriptProps {
   studentId: string;
@@ -178,9 +178,11 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
               </p>
               <p>
                 <strong>{t('transcript.dob')}:</strong>{' '}
-                {transcript.studentDob
-                  ? format(new Date(transcript.studentDob), 'PPP')
-                  : 'N/A'}
+                {transcript.studentDob ? (
+                  <FormattedDate date={new Date(transcript.studentDob)} />
+                ) : (
+                  'N/A'
+                )}
               </p>
               <p>
                 <strong>{t('transcript.program')}:</strong>{' '}
@@ -265,7 +267,7 @@ const AcademicTranscript: React.FC<AcademicTranscriptProps> = ({
       <CardFooter className='text-sm text-muted-foreground border-t pt-4'>
         <div className='w-full flex justify-between items-center'>
           <span>
-            {t('transcript.generatedOn')} {format(new Date(), 'PPP')}
+            {t('transcript.generatedOn')}: <FormattedDate date={new Date()} />
           </span>
           <span>{t('transcript.system')}</span>
         </div>

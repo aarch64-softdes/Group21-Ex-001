@@ -62,8 +62,7 @@ public class PhoneParserImpl implements PhoneParser {
 
             return Phone.of(countryCode, internationalNumber);
         } catch (Exception e) {
-            throw new InvalidPhoneNumberException(
-                    String.format("Invalid phone number: %s", phoneString), e);
+            throw new InvalidPhoneNumberException("error.phone_number.invalid", phoneString);
         }
     }
 
@@ -101,8 +100,7 @@ public class PhoneParserImpl implements PhoneParser {
             return new PhoneDto(phone, phoneNumberUtil.getRegionCodeForNumber(phoneNumber));
 
         } catch (Exception e) {
-            throw new InvalidPhoneNumberException(String.format("Invalid phone number: %s", phone),
-                    e);
+            throw new InvalidPhoneNumberException("error.phone_number.invalid", phone);
         }
     }
 
@@ -113,19 +111,21 @@ public class PhoneParserImpl implements PhoneParser {
             return new PhoneRequestDto(phoneNumberUtil.getRegionCodeForNumber(phoneNumber), phone);
 
         } catch (Exception e) {
-            throw new InvalidPhoneNumberException(String.format("Invalid phone number: %s", phone),
-                    e);
+            throw new InvalidPhoneNumberException("error.phone_number.invalid", phone);
         }
     }
 
     private void responseInvalidPhone(String phone, String countryCode) {
-        String errorMessage = String.format("Invalid phone number: %s", phone);
         if (Objects.isNull(countryCode) || countryCode.isEmpty()) {
-            errorMessage = errorMessage + ", missing country code";
+            throw new GenericDomainException(
+                    "error.phone_number.missing_country_code"
+                    , phone
+            );
         } else {
-            errorMessage = errorMessage + String.format(" with country code: %s", countryCode);
+            throw new GenericDomainException(
+                    "error.phone_number.invalid_country_code"
+                    , phone, countryCode
+            );
         }
-
-        throw new GenericDomainException(errorMessage);
     }
 }

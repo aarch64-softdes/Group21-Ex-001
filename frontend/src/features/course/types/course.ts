@@ -1,6 +1,6 @@
 import Program from '@/features/program/types/program';
 import Subject from '@/features/subject/types/subject';
-import { CourseScheduleDto } from './courseSchedule.ts';
+import { CourseScheduleDto, formatSchedule } from './courseSchedule.ts';
 
 export default interface Course {
   id: string;
@@ -46,7 +46,7 @@ export const mapToCourse = (data: any): Course => ({
   lecturer: data.lecturer,
   maxStudent: data.maxStudent,
   room: data.room,
-  schedule: data.schedule,
+  schedule: formatSchedule(data.schedule),
   startDate: data.startDate ? new Date(data.startDate) : new Date(),
   subject:
     typeof data.subject === 'string'

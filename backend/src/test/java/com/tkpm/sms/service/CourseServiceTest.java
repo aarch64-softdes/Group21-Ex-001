@@ -1,4 +1,4 @@
-package com.tkpm.sms;
+package com.tkpm.sms.service;
 
 import com.tkpm.sms.application.dto.request.course.CourseCreateRequestDto;
 import com.tkpm.sms.application.dto.request.course.CourseUpdateRequestDto;
@@ -12,6 +12,7 @@ import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.CourseRepository;
 import com.tkpm.sms.domain.repository.ProgramRepository;
 import com.tkpm.sms.domain.repository.SubjectRepository;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.CourseDomainValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,9 @@ class CourseServiceTest {
     private SubjectRepository subjectRepository;
 
     @Mock
+    private TranslatorService translatorService;
+
+    @Mock
     private CourseDomainValidator courseValidator;
 
     @InjectMocks
@@ -47,6 +51,11 @@ class CourseServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        // Setup common mock behaviors
+        when(translatorService.getEntityTranslatedName(Course.class)).thenReturn("Course");
+        when(translatorService.getEntityTranslatedName(Program.class)).thenReturn("Program");
+        when(translatorService.getEntityTranslatedName(Subject.class)).thenReturn("Subject");
     }
 
     // @Test
@@ -65,9 +74,12 @@ class CourseServiceTest {
 
     @Test
     void testGetCourseById_NotFound() {
-        when(courseRepository.findById(1)).thenReturn(Optional.empty());
+        Integer id = 1;
+        when(courseRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> courseService.getCourseById(1));
+        assertThrows(ResourceNotFoundException.class, () -> courseService.getCourseById(id));
+        verify(courseRepository).findById(id);
+        verify(translatorService).getEntityTranslatedName(Course.class);
     }
 
     @Test
@@ -83,25 +95,38 @@ class CourseServiceTest {
 
     @Test
     void testCreateCourse_SubjectNotActive() {
-        CourseCreateRequestDto createRequestDto = new CourseCreateRequestDto();
-        createRequestDto.setSubjectId(1);
-        createRequestDto.setProgramId(1);
+        Integer subjectId = 1;
+        Integer programId = 1;
 
-        Subject subject = mock(Subject.class);
-        when(subject.isActive()).thenReturn(false);
-        when(subjectRepository.findById(1)).thenReturn(Optional.of(subject));
-        when(programRepository.findById(1)).thenReturn(Optional.of(mock(Program.class)));
+        CourseCreateRequestDto createRequestDto = new CourseCreateRequestDto();
+        createRequestDto.setSubjectId(subjectId);
+        createRequestDto.setProgramId(programId);
+
+        Program program = new Program();
+        Subject subject = new Subject();
+        subject.setActive(false);
+        subject.setCode("SUB101");
+
+        when(programRepository.findById(programId)).thenReturn(Optional.of(program));
+        when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(subject));
 
         assertThrows(SubjectDeactivatedException.class,
                 () -> courseService.createCourse(createRequestDto));
+        verify(programRepository).findById(programId);
+        verify(subjectRepository).findById(subjectId);
     }
 
     @Test
     void testUpdateCourse_NotFound() {
-        when(courseRepository.findById(1)).thenReturn(Optional.empty());
+        Integer id = 1;
+        when(courseRepository.findById(id)).thenReturn(Optional.empty());
 
         CourseUpdateRequestDto updateRequestDto = new CourseUpdateRequestDto();
-        assertThrows(ResourceNotFoundException.class, () -> courseService.updateCourse(1, updateRequestDto));
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> courseService.updateCourse(id, updateRequestDto));
+        verify(courseRepository).findById(id);
+        verify(translatorService).getEntityTranslatedName(Course.class);
     }
 
     @Test

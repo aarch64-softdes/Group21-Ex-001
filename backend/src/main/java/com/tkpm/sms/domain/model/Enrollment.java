@@ -1,6 +1,6 @@
 package com.tkpm.sms.domain.model;
 
-import com.tkpm.sms.domain.valueobject.History;
+import com.tkpm.sms.domain.valueobject.EnrollmentHistory;
 import com.tkpm.sms.domain.valueobject.Score;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,6 +15,6 @@ public class Enrollment {
     Integer id;
     Student student;
     Course course;
-    History history;
+    EnrollmentHistory enrollmentHistory;
     Score score;
 }

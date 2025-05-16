@@ -20,9 +20,9 @@ public interface StatusRepository {
 
     boolean existsByFromStatusIdAndToStatusId(Integer fromStatusId, Integer toStatusId);
 
+    void delete(Status status);
+
     PageResponse<Status> findAll(PageRequest pageRequest);
 
     List<Status> findAllStatusesHaveThisAsTransition(Integer id);
-
-    void delete(Status status);
 }

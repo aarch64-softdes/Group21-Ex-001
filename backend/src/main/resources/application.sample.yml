@@ -24,5 +24,8 @@ logging:
     logger-type: ELASTICSEARCH
 
 app:
+  locale:
+    default: en
+    supported: en,vi
   constraint:
     deletable-duration: 30 # in minutes

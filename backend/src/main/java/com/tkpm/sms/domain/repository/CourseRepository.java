@@ -18,9 +18,9 @@ public interface CourseRepository {
 
     List<Course> findAllWithSameRoom(int semester, int year, String room);
 
-    List<Course> findAllBySubjectId(Integer subjectId);
-
     boolean existsByCodeAndSubjectId(String code, Integer subjectId);
 
     boolean existsByCodeAndSubjectIdAndIdNot(String code, Integer subjectId, Integer id);
+
+    boolean existsBySubjectIdAndIdNot(Integer subjectId, Integer id);
 }

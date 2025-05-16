@@ -92,7 +92,7 @@ public class StudentEntity {
     List<EnrollmentEntity> enrollments;
 
     @OneToMany(mappedBy = "student")
-    List<HistoryEntity> histories;
+    List<EnrollmentHistoryEntity> histories;
 
     // Soft delete
     @Column(name = "deleted_at")

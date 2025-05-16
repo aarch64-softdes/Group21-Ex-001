@@ -6,9 +6,11 @@ import com.tkpm.sms.domain.model.Status;
 import com.tkpm.sms.domain.repository.StatusRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.StatusEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.StatusJpaRepository;
+import com.tkpm.sms.infrastructure.persistence.jpa.TranslationJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.StatusPersistenceMapper;
 import com.tkpm.sms.infrastructure.utils.PagingUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -21,39 +23,45 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 public class StatusRepositoryImpl implements StatusRepository {
-    private final StatusJpaRepository jpaRepository;
-    private final StatusPersistenceMapper mapper;
+    private final StatusJpaRepository statusJpaRepository;
+    private final TranslationJpaRepository translationJpaRepository;
+
+    private final StatusPersistenceMapper statusPersistenceMapper;
 
     @Override
     public Status save(Status status) {
-        var entity = mapper.toEntity(status);
-        var savedEntity = jpaRepository.save(entity);
-        return mapper.toDomain(savedEntity);
+        StatusEntity entity = statusPersistenceMapper.toEntity(status);
+
+        entity = statusJpaRepository.save(entity);
+
+        return statusPersistenceMapper.toDomain(entity);
     }
 
     @Override
     public Optional<Status> findById(Integer id) {
-        return jpaRepository.findById(id).map(mapper::toDomain);
+        return statusJpaRepository.findById(id).map(statusPersistenceMapper::toDomain);
     }
 
     @Override
     public Optional<Status> findByName(String name) {
-        return jpaRepository.findStatusByName(name).map(mapper::toDomain);
+        return statusJpaRepository.findByName(name).map(statusPersistenceMapper::toDomain);
     }
 
     @Override
     public boolean existsByName(String name) {
-        return jpaRepository.existsStatusByName(name);
+        return statusJpaRepository.existsByName(name,
+                LocaleContextHolder.getLocale().getLanguage());
     }
 
     @Override
     public boolean existsByNameAndIdNot(String name, Integer id) {
-        return jpaRepository.existsStatusByNameAndIdNot(name, id);
+        return statusJpaRepository.existsByNameAndIdNot(name,
+                LocaleContextHolder.getLocale().getLanguage(), id);
     }
 
     @Override
     public boolean existsByFromStatusIdAndToStatusId(Integer fromStatusId, Integer toStatusId) {
-        return jpaRepository.existsByFromStatusIdAndToStatusId(fromStatusId, toStatusId);
+        return statusJpaRepository.existsByFromStatusIdAndToStatusId(fromStatusId, toStatusId);
     }
 
     @Override
@@ -62,10 +70,11 @@ public class StatusRepositoryImpl implements StatusRepository {
         Pageable pageable = PagingUtils.toSpringPageable(pageRequest);
 
         // Execute query with Spring Pageable
-        Page<StatusEntity> page = jpaRepository.findAll(pageable);
+        Page<StatusEntity> page = statusJpaRepository
+                .findAll(LocaleContextHolder.getLocale().getLanguage(), pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Status> content = page.getContent().stream().map(mapper::toDomain)
+        List<Status> content = page.getContent().stream().map(statusPersistenceMapper::toDomain)
                 .collect(Collectors.toList());
 
         return PageResponse.of(content, page.getNumber() + 1, // Convert 0-based to 1-based
@@ -74,13 +83,14 @@ public class StatusRepositoryImpl implements StatusRepository {
 
     @Override
     public void delete(Status status) {
-        var entity = mapper.toEntity(status);
-        jpaRepository.delete(entity);
+        var entity = statusPersistenceMapper.toEntity(status);
+        statusJpaRepository.delete(entity);
     }
 
     @Override
     public List<Status> findAllStatusesHaveThisAsTransition(Integer id) {
-        return jpaRepository.findAllByValidTransitionIdsContains(Collections.singletonList(id))
-                .stream().map(mapper::toDomain).collect(Collectors.toList());
+        return statusJpaRepository
+                .findAllByValidTransitionIdsContains(Collections.singletonList(id)).stream()
+                .map(statusPersistenceMapper::toDomain).collect(Collectors.toList());
     }
 }

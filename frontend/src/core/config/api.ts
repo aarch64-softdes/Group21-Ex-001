@@ -7,6 +7,7 @@ import {
   AuthorizationError,
   ServerError,
 } from '@/shared/lib/errors';
+import i18n from '@/shared/i18n/i18n';
 
 // Create axios instance
 const api = axios.create({
@@ -25,6 +26,15 @@ api.interceptors.request.use(
     return Promise.reject(error);
   },
 );
+
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  // Add authorization token to headers if available
+  const lang = i18n.language;
+  if (lang) {
+    config.headers['Content-Language'] = lang;
+  }
+  return config;
+});
 
 // Response interceptor
 api.interceptors.response.use(

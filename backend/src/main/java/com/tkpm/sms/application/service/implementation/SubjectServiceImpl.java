@@ -6,12 +6,14 @@ import com.tkpm.sms.application.dto.request.subject.SubjectUpdateRequestDto;
 import com.tkpm.sms.application.mapper.SubjectMapper;
 import com.tkpm.sms.application.service.interfaces.FacultyService;
 import com.tkpm.sms.application.service.interfaces.SubjectService;
+import com.tkpm.sms.application.service.interfaces.TextContentService;
 import com.tkpm.sms.domain.common.PageRequest;
 import com.tkpm.sms.domain.common.PageResponse;
 import com.tkpm.sms.domain.exception.ResourceNotFoundException;
 import com.tkpm.sms.domain.exception.SubjectDeletionConstraintException;
 import com.tkpm.sms.domain.model.Subject;
 import com.tkpm.sms.domain.repository.SubjectRepository;
+import com.tkpm.sms.domain.service.TranslatorService;
 import com.tkpm.sms.domain.service.validators.SubjectDomainValidator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 
 @Slf4j
 @Service
@@ -33,11 +36,19 @@ public class SubjectServiceImpl implements SubjectService {
     SubjectDomainValidator subjectValidator;
     SubjectMapper subjectMapper;
 
+    TextContentService textContentService;
+
     FacultyService facultyService;
+
+    TranslatorService translatorService;
 
     @NonFinal
     @Value("${app.constraint.deletable-duration:30}")
     int deletableDuration;
+
+    @NonFinal
+    @Value("${app.locale.default}")
+    String DEFAULT_LANGUAGE;
 
     @Override
     public PageResponse<Subject> findAll(BaseCollectionRequest request) {
@@ -47,8 +58,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject getSubjectById(Integer id) {
-        return subjectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                String.format("Subject with id %s not found", id)));
+        return subjectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        translatorService.getEntityTranslatedName(Subject.class), id));
     }
 
     @Override
@@ -58,11 +70,20 @@ public class SubjectServiceImpl implements SubjectService {
 
         Subject subject = subjectMapper.toSubject(createRequestDto);
         subject.setFaculty(facultyService.getFacultyById(createRequestDto.getFacultyId()));
+        subject.setName(textContentService.createTextContent(createRequestDto.getName()));
+        subject.setDescription(
+                textContentService.createTextContent(createRequestDto.getDescription()));
 
-        subjectValidator.validatePrerequisites(createRequestDto.getPrerequisitesId());
+        if (createRequestDto.getPrerequisitesId() == null) {
+            createRequestDto.setPrerequisitesId(Collections.emptyList());
+        } else {
+            subjectValidator.validatePrerequisites(createRequestDto.getPrerequisitesId());
 
-        var prerequisites = subjectRepository.findAllByIds(createRequestDto.getPrerequisitesId());
-        subject.setPrerequisites(prerequisites);
+            var prerequisites = subjectRepository
+                    .findAllByIds(createRequestDto.getPrerequisitesId());
+            subject.setPrerequisites(prerequisites);
+        }
+
         subject.setCreatedAt(LocalDateTime.now());
         subject.setActive(true);
 
@@ -74,15 +95,21 @@ public class SubjectServiceImpl implements SubjectService {
         subjectValidator.validateSubjectNameUniquenessForUpdate(updateRequestDto.getName(), id);
 
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        translatorService.getEntityTranslatedName(Subject.class), id));
 
-        subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
+        if (updateRequestDto.getPrerequisitesId() != null) {
+            subjectValidator.validatePrerequisites(updateRequestDto.getPrerequisitesId());
+            var prerequisites = subjectRepository
+                    .findAllByIds(updateRequestDto.getPrerequisitesId());
+            subject.setPrerequisites(prerequisites);
+        }
 
         subjectMapper.updateSubjectFromDto(subject, updateRequestDto);
-
-        var prerequisites = subjectRepository.findAllByIds(updateRequestDto.getPrerequisitesId());
-        subject.setPrerequisites(prerequisites);
+        subject.setName(textContentService.updateTextContent(subject.getName(),
+                updateRequestDto.getName()));
+        subject.setDescription(textContentService.updateTextContent(subject.getDescription(),
+                updateRequestDto.getDescription()));
 
         return subjectRepository.save(subject);
     }
@@ -90,18 +117,17 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void deleteSubject(Integer id) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        translatorService.getEntityTranslatedName(Subject.class), id));
 
         // Add time constraint check
         var createdAt = subject.getCreatedAt();
         if (createdAt != null) {
             var timeGap = ChronoUnit.MINUTES.between(createdAt, LocalDateTime.now());
             // in minutes
-            if (timeGap > deletableDuration) {
-                throw new SubjectDeletionConstraintException(
-                        "Target subject cannot be deleted after 30 minutes of creation. You can deactivate it instead.");
-            }
+            if (timeGap > deletableDuration)
+                throw new SubjectDeletionConstraintException("error.subject.delete.out_of_time",
+                        subject.getCode(), deletableDuration);
         }
 
         subjectValidator.validateSubjectForDeletionAndDeactivation(id);
@@ -112,8 +138,8 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void deactivateSubject(Integer id) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        translatorService.getEntityTranslatedName(Subject.class), id));
 
         subjectValidator.validateSubjectForDeletionAndDeactivation(id);
 
@@ -125,8 +151,8 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void activateSubject(Integer id) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Subject with id %s not found", id)));
+                .orElseThrow(() -> new ResourceNotFoundException("error.not_found.id",
+                        translatorService.getEntityTranslatedName(Subject.class), id));
 
         subject.setActive(true);
 

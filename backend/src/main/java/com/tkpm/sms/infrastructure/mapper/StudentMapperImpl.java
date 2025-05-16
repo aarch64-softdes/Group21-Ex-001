@@ -14,10 +14,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 
-@Mapper(componentModel = "spring", imports = {Gender.class, ImportFileUtils.class}, uses = {
-        PhoneMapper.class, AddressMapper.class, IdentityMapper.class, FacultyMapper.class,
-        StatusMapper.class, ProgramMapper.class})
+@Mapper(componentModel = "spring", imports = {Gender.class, ImportFileUtils.class,
+        LocaleContextHolder.class}, uses = {PhoneMapper.class, AddressMapper.class,
+                IdentityMapper.class, FacultyMapper.class, StatusMapper.class, ProgramMapper.class})
 public abstract class StudentMapperImpl implements StudentMapper {
 
     @Autowired
@@ -29,18 +30,15 @@ public abstract class StudentMapperImpl implements StudentMapper {
     public abstract StudentDto toStudentDto(Student student);
 
     @Override
-    @Mapping(target = "faculty", source = "faculty.name")
-    @Mapping(target = "program", source = "program.name")
-    @Mapping(target = "status", source = "status.name")
+    @Mapping(target = "faculty", expression = "java(student.getFaculty().getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
+    @Mapping(target = "program", expression = "java(student.getProgram().getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
+    @Mapping(target = "status", expression = "java(student.getStatus().getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
     @Mapping(target = "phone", expression = "java(phoneMapper.toPhoneDto(student.getPhone()))")
     @Mapping(target = "gender", source = "gender", qualifiedByName = "genderEnumToString")
     public abstract StudentMinimalDto toStudentMinimalDto(Student student);
 
     @Override
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "faculty", ignore = true)
-    @Mapping(target = "program", ignore = true)
-    @Mapping(target = "status", ignore = true)
     @Mapping(target = "phone", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
@@ -51,9 +49,6 @@ public abstract class StudentMapperImpl implements StudentMapper {
 
     @Override
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "faculty", ignore = true)
-    @Mapping(target = "program", ignore = true)
-    @Mapping(target = "status", ignore = true)
     @Mapping(target = "phone", ignore = true)
     @Mapping(target = "permanentAddress", ignore = true)
     @Mapping(target = "temporaryAddress", ignore = true)
@@ -86,9 +81,9 @@ public abstract class StudentMapperImpl implements StudentMapper {
     @Mapping(target = "identityHasChip", source = "identity.hasChip")
     @Mapping(target = "identityNotes", source = "identity.notes")
     @Mapping(target = "identityCountry", source = "identity.country")
-    @Mapping(target = "faculty", source = "faculty.name")
-    @Mapping(target = "program", source = "program.name")
-    @Mapping(target = "status", source = "status.name")
+    @Mapping(target = "faculty", expression = "java(student.getFaculty().getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
+    @Mapping(target = "program", expression = "java(student.getProgram().getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
+    @Mapping(target = "status", expression = "java(student.getStatus().getNameByLanguage(LocaleContextHolder.getLocale().getLanguage()))")
     @Mapping(target = "phone", expression = "java(student.getPhone().toString())")
     @Mapping(target = "gender", source = "gender", qualifiedByName = "genderEnumToString")
     public abstract StudentFileDto toStudentFileDto(Student student);

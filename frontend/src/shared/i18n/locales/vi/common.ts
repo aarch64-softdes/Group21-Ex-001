@@ -25,6 +25,20 @@ export default {
     pageNotFound: 'Không tìm thấy trang',
     somethingWentWrong: 'Đã xảy ra lỗi',
   },
+  toast: {
+    error: {
+      title: 'Lỗi',
+      description: 'Đã xảy ra lỗi trong quá trình thực hiện thao tác.',
+    },
+    success: {
+      title: 'Thành công',
+      description: 'Thao tác đã hoàn tất thành công.',
+    },
+    information: {
+      title: 'Thông tin',
+      description: 'Đây là thông tin bạn cần biết.',
+    },
+  },
   table: {
     actions: 'Thao tác',
     view: 'Xem',

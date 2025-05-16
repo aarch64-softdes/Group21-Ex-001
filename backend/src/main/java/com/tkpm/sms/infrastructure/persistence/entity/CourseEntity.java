@@ -31,7 +31,7 @@ public class CourseEntity {
     @Column(name = "start_date")
     LocalDate startDate;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "program_id")
     ProgramEntity program;
 

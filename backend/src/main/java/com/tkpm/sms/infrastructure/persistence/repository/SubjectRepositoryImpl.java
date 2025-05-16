@@ -10,6 +10,7 @@ import com.tkpm.sms.infrastructure.persistence.mapper.SubjectPersistenceMapper;
 import com.tkpm.sms.infrastructure.utils.PagingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -80,12 +81,14 @@ public class SubjectRepositoryImpl implements SubjectRepository {
 
     @Override
     public boolean existsByName(String name) {
-        return jpaRepository.existsByName(name);
+        var languageCode = LocaleContextHolder.getLocale().getLanguage();
+        return jpaRepository.existsByName(name, languageCode);
     }
 
     @Override
     public boolean existsByNameAndIdNot(String name, Integer id) {
-        return jpaRepository.existsByNameAndIdNot(name, id);
+        var languageCode = LocaleContextHolder.getLocale().getLanguage();
+        return jpaRepository.existsByNameAndIdNot(name, id, languageCode);
     }
 
     @Override

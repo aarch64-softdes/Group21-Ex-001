@@ -17,9 +17,7 @@ public interface CourseJpaRepository
 
     boolean existsByCodeAndSubjectIdAndIdNot(String code, Integer subjectId, Integer id);
 
-    List<CourseEntity> findAllByRoom(String room);
-
     List<CourseEntity> findAllBySemesterAndYearAndRoom(int semester, int year, String room);
 
-    List<CourseEntity> findAllBySubjectId(Integer subjectId);
+    boolean existsBySubjectIdAndIdNot(Integer subjectId, Integer id);
 }

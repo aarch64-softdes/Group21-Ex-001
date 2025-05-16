@@ -5,7 +5,7 @@ public class StudentPrerequisitesNotSatisfiedException extends DomainException {
         super(message, ErrorCode.STUDENT_PREREQUISITES_NOT_SATISFIED);
     }
 
-    public StudentPrerequisitesNotSatisfiedException(String message, Throwable cause) {
-        super(message, ErrorCode.STUDENT_PREREQUISITES_NOT_SATISFIED, cause);
+    public StudentPrerequisitesNotSatisfiedException(String messageKey, Object... args) {
+        super(ErrorCode.STUDENT_PREREQUISITES_NOT_SATISFIED, messageKey, args);
     }
 }

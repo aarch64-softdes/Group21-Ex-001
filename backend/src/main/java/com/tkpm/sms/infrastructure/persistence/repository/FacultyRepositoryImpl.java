@@ -6,6 +6,7 @@ import com.tkpm.sms.domain.model.Faculty;
 import com.tkpm.sms.domain.repository.FacultyRepository;
 import com.tkpm.sms.infrastructure.persistence.entity.FacultyEntity;
 import com.tkpm.sms.infrastructure.persistence.jpa.FacultyJpaRepository;
+import com.tkpm.sms.infrastructure.persistence.jpa.TranslationJpaRepository;
 import com.tkpm.sms.infrastructure.persistence.mapper.FacultyPersistenceMapper;
 import com.tkpm.sms.infrastructure.utils.PagingUtils;
 import lombok.RequiredArgsConstructor;
@@ -20,39 +21,42 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 public class FacultyRepositoryImpl implements FacultyRepository {
-    private final FacultyJpaRepository jpaRepository;
-    private final FacultyPersistenceMapper mapper;
+    private final FacultyJpaRepository facultyJpaRepository;
+    private final TranslationJpaRepository translationJpaRepository;
+
+    private final FacultyPersistenceMapper facultyMapper;
+    private final FacultyPersistenceMapper facultyPersistenceMapper;
 
     @Override
     public Faculty save(Faculty faculty) {
-        var entity = mapper.toEntity(faculty);
-        var savedEntity = jpaRepository.save(entity);
-        return mapper.toDomain(savedEntity);
+        var entity = facultyMapper.toEntity(faculty);
+        var savedEntity = facultyJpaRepository.save(entity);
+        return facultyMapper.toDomain(savedEntity);
     }
 
     @Override
     public Optional<Faculty> findById(Integer id) {
-        return jpaRepository.findById(id).map(mapper::toDomain);
+        return facultyJpaRepository.findById(id).map(facultyMapper::toDomain);
     }
 
     @Override
     public Optional<Faculty> findByName(String name) {
-        return jpaRepository.findFacultyByName(name).map(mapper::toDomain);
+        return facultyJpaRepository.findFacultyByName(name).map(facultyMapper::toDomain);
     }
 
     @Override
     public boolean existsByName(String name) {
-        return jpaRepository.existsFacultyByName(name);
+        return facultyJpaRepository.existsFacultyByName(name);
     }
 
     @Override
     public boolean existsByNameAndIdNot(String name, Integer id) {
-        return jpaRepository.existsByNameAndIdNot(name, id);
+        return facultyJpaRepository.existsByNameAndIdNot(name, id);
     }
 
     @Override
     public void deleteById(Integer id) {
-        jpaRepository.deleteById(id);
+        facultyJpaRepository.deleteById(id);
     }
 
     @Override
@@ -61,10 +65,10 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         Pageable pageable = PagingUtils.toSpringPageable(pageRequest);
 
         // Execute query with Spring Pageable
-        Page<FacultyEntity> page = jpaRepository.findAll(pageable);
+        Page<FacultyEntity> page = facultyJpaRepository.findAll(pageable);
 
         // Convert Spring Page to domain PageResponse
-        List<Faculty> content = page.getContent().stream().map(mapper::toDomain)
+        List<Faculty> content = page.getContent().stream().map(facultyMapper::toDomain)
                 .collect(Collectors.toList());
 
         return PageResponse.of(content, page.getNumber() + 1, page.getSize(),
@@ -73,7 +77,7 @@ public class FacultyRepositoryImpl implements FacultyRepository {
 
     @Override
     public void delete(Faculty faculty) {
-        var entity = mapper.toEntity(faculty);
-        jpaRepository.delete(entity);
+        var entity = facultyMapper.toEntity(faculty);
+        facultyJpaRepository.delete(entity);
     }
 }
