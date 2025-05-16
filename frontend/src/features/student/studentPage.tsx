@@ -62,6 +62,9 @@ const StudentPage: React.FC = () => {
         style: {
           width: '100px',
         },
+        transform: (value: string) => {
+          return t(`student:gender.${value.toLowerCase()}`);
+        },
       },
       {
         header: t('student:fields.faculty'),

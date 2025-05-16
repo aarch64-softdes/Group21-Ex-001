@@ -1,5 +1,6 @@
 import { toast } from 'sonner';
 import { getErrorMessage } from './utils';
+import { t } from 'i18next';
 
 /**
  * Shows an error toast with the provided error message.
@@ -7,8 +8,8 @@ import { getErrorMessage } from './utils';
  */
 export function showErrorToast(error: unknown, title?: string): void {
   const message = getErrorMessage(error);
-  toast.error(title || 'Error', {
-    description: message,
+  toast.error(title || t('common:toast.error.title'), {
+    description: message || t('common:toast.error.description'),
     duration: 5000,
   });
 }
@@ -17,8 +18,8 @@ export function showErrorToast(error: unknown, title?: string): void {
  * Shows a success toast with the provided message.
  */
 export function showSuccessToast(message: string, title?: string): void {
-  toast.success(title || 'Success', {
-    description: message,
+  toast.success(title || t('common:toast.success.title'), {
+    description: message || t('common:toast.success.description'),
     duration: 3000,
   });
 }
@@ -27,8 +28,8 @@ export function showSuccessToast(message: string, title?: string): void {
  * Shows an info toast with the provided message.
  */
 export function showInfoToast(message: string, title?: string): void {
-  toast.info(title || 'Information', {
-    description: message,
+  toast.info(title || t('common:toast.information.title'), {
+    description: message || t('common:toast.information.description'),
     duration: 3000,
   });
 }

@@ -25,6 +25,20 @@ export default {
     pageNotFound: 'Page not found',
     somethingWentWrong: 'Something went wrong',
   },
+  toast: {
+    success: {
+      title: 'Success',
+      description: 'Operation completed successfully',
+    },
+    error: {
+      title: 'Error',
+      description: 'An error occurred',
+    },
+    info: {
+      title: 'Information',
+      description: 'Please check the details',
+    },
+  },
   table: {
     actions: 'Actions',
     view: 'View',

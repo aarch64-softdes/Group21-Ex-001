@@ -8,6 +8,10 @@ export default {
     byFaculty: 'Search by Faculty',
     facultyPlaceholder: 'Search by Faculty',
   },
+  gender: {
+    male: 'Male',
+    female: 'Female',
+  },
   fields: {
     studentId: 'Student ID',
     name: 'Name',
