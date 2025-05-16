@@ -71,9 +71,6 @@ cd backend
 mvn spring-boot:run
 ```
 
-> [!WARNING]
-> If you encouter an error related to `Mojo...`, go to `backend/pom.xml` and change the version of `lombok` to `1.18.38` or higher.
-
 The API server should start on port 8080 (http://localhost:8080).
 
 ### Step 5: Start the Frontend
@@ -124,17 +121,7 @@ After Elasticsearch is running and your application has generated some logs:
 
 Now you can use Discover to search and filter your logs, or create visualizations and dashboards.
 
-## Screenshots
-
-### Multilingual Supported
-
-- User can change the language of the application in the bottom left of the page.
-  ![Change system language](documents/assets/week06/change-language.png)
-
-> [!IMPORTANT]
->
-> 1. The system currently supports dynamic content translation. If the content of the selected language is not available, it will default to English.
-> 2. To add the content for a specific language, currently user need to choose the language in the application. The newly added content will be saved with the selected language. For example, if the user selects Vietnamese, the content will be saved in Vietnamese. If the user selects English, the content will be saved in English. The system will **NOT** automatically translate the content.
+## Features
 
 ### Course
 
