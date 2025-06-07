@@ -13,6 +13,10 @@ spring:
       ddl-auto: update
     show-sql: true
 
+springdoc:
+  api-docs: 
+    path: /api-docs
+
 elasticsearch:
   host: localhost
   port: 9200
