@@ -93,32 +93,6 @@ graph TD
 - React components handle form validation, routing and internationalization using i18n files.
 
 ## 4. Detailed Data Flow
-
-<!-- 
-### 3.1 User Authentication Flow
-```mermaid
-sequenceDiagram
-    User->>Frontend: Login request (username & password)
-    Frontend->>AuthController: POST /api/auth/login
-    AuthController->>AuthService: validateCredentials()
-    AuthService->>UserRepository: findByUsername()
-    UserRepository--AuthService: User entity
-    AuthService--AuthController: JWT Token
-    AuthController--Frontend: { token }
-``` 
--->
-
-<!-- ### 3.2 Data Retrieval Flow -->
-<!-- ```mermaid
-sequenceDiagram
-    User->>Frontend: Navigate to Dashboard
-    Frontend->>BackendAPI: GET /api/users/{id}/dashboard
-    BackendAPI->>DashboardService: fetchDashboardData(userId)
-    DashboardService-RepositoryLayer: execute queries
-    RepositoryLayer--DashboardService: raw data
-    DashboardService--BackendAPI: DashboardDTO
-    BackendAPI--Frontend: JSON payload
-``` -->
 ```mermaid
 sequenceDiagram
     actor User
