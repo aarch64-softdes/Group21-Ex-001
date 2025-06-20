@@ -1,0 +1,138 @@
+// Database Schema for Student Management System
+
+Table identities {
+  id varchar [pk]
+  type varchar
+  number varchar
+  issued_by varchar
+  issued_date date
+  expiry_date date
+  has_chip boolean
+  country varchar
+  notes varchar
+}
+
+Table addresses {
+  id varchar [pk]
+  street varchar
+  ward varchar
+  district varchar
+  province varchar
+  country varchar
+}
+
+Table settings {
+  id integer [pk, increment]
+  name varchar [unique]
+  details text
+}
+
+Table faculties {
+  id integer [pk, increment]
+  name varchar [unique]
+  deleted_at date
+}
+
+Table programs {
+  id integer [pk, increment]
+  name varchar [unique]
+  deleted_at date
+}
+
+Table statuses {
+  id integer [pk, increment]
+  name varchar [unique]
+  deleted_at date
+}
+
+Table students {
+  id varchar [pk]
+  student_id varchar [unique]
+  name varchar
+  dob date
+  gender varchar
+  faculty_id integer [ref: > faculties.id]
+  school_year integer
+  program_id integer [ref: > programs.id]
+  email varchar [unique]
+  phone varchar(12) [unique]
+  status_id integer [ref: > statuses.id]
+  permanent_address_id varchar [ref: - addresses.id, unique]
+  temporary_address_id varchar [ref: - addresses.id, unique]
+  mailing_address_id varchar [ref: - addresses.id, unique]
+  identity_id varchar [ref: - identities.id, unique]
+  deleted_at date
+}
+
+Table status_transitions {
+  from_status_id integer [ref: > statuses.id]
+  to_status_id integer [ref: > statuses.id]
+  
+  indexes {
+    (from_status_id, to_status_id) [pk]
+  }
+}
+
+Table subjects {
+  id integer [pk, increment]
+  name varchar
+  code varchar(50) [unique]
+  description text
+  is_active boolean [default: true]
+  credits integer
+  faculty_id integer [ref: > faculties.id]
+  deleted_at date
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table subject_prerequisites {
+  subject_id integer [ref: > subjects.id]
+  prerequisite_id integer [ref: > subjects.id]
+  
+  indexes {
+    (subject_id, prerequisite_id) [pk]
+  }
+}
+
+Table courses {
+  id integer [pk, increment]
+  code varchar(50)
+  year integer
+  semester integer
+  lecturer varchar
+  max_student integer
+  room varchar(50)
+  schedule varchar(50)
+  start_date date
+  program_id integer [ref: > programs.id]
+  subject_id integer [ref: > subjects.id]
+  
+  indexes {
+    (code, subject_id) [unique]
+  }
+}
+
+Table scores {
+  id integer [pk, increment]
+  grade varchar
+  gpa float
+}
+
+Table enrollments {
+  id integer [pk, increment]
+  student_id varchar [ref: > students.id]
+  course_id integer [ref: > courses.id]
+  score_id integer [ref: - scores.id, unique]
+  
+  indexes {
+    (student_id, course_id) [unique]
+  }
+}
+
+Table histories {
+  id varchar [pk]
+  action_type varchar(50)
+  created_at timestamp
+  student_id varchar [ref: > students.id]
+  course_id integer [ref: > courses.id]
+}
