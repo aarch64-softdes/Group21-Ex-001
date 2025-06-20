@@ -92,8 +92,9 @@ graph TD
 - The React application under `frontend/` communicates with the backend using the REST API.
 - React components handle form validation, routing and internationalization using i18n files.
 
-## Detailed Data Flow
+## 4. Detailed Data Flow
 
+<!-- 
 ### 3.1 User Authentication Flow
 ```mermaid
 sequenceDiagram
@@ -101,21 +102,69 @@ sequenceDiagram
     Frontend->>AuthController: POST /api/auth/login
     AuthController->>AuthService: validateCredentials()
     AuthService->>UserRepository: findByUsername()
-    UserRepository-->>AuthService: User entity
-    AuthService-->>AuthController: JWT Token
-    AuthController-->>Frontend: { token }
-```
+    UserRepository--AuthService: User entity
+    AuthService--AuthController: JWT Token
+    AuthController--Frontend: { token }
+``` 
+-->
 
-### 3.2 Data Retrieval Flow
-```mermaid
+<!-- ### 3.2 Data Retrieval Flow -->
+<!-- ```mermaid
 sequenceDiagram
     User->>Frontend: Navigate to Dashboard
     Frontend->>BackendAPI: GET /api/users/{id}/dashboard
     BackendAPI->>DashboardService: fetchDashboardData(userId)
-    DashboardService->>RepositoryLayer: execute queries
-    RepositoryLayer-->>DashboardService: raw data
-    DashboardService-->>BackendAPI: DashboardDTO
-    BackendAPI-->>Frontend: JSON payload
+    DashboardService-RepositoryLayer: execute queries
+    RepositoryLayer--DashboardService: raw data
+    DashboardService--BackendAPI: DashboardDTO
+    BackendAPI--Frontend: JSON payload
+``` -->
+```mermaid
+sequenceDiagram
+    actor User
+    participant Frontend as React Frontend
+    participant Controller as REST Controllers
+    participant Service as Application Services
+    participant Mapper as DTOs/Mappers
+    participant Domain as Domain Model
+    participant Repository as Repository Interfaces
+    participant DB as PostgreSQL Database
+    
+    %% User request flow
+    User->>Frontend: Interacts with UI
+    Frontend->>Controller: HTTP Request (GET/POST/PUT/DELETE)
+    
+    %% Backend processing - example of a GET operation
+    Controller->>Service: Request DTO
+    Service->>Repository: Query request
+    Repository->>DB: SQL Query
+    DB-->>Repository: Raw data (entities)
+    Repository-->>Service: Domain objects
+    
+    %% Data transformation
+    Service->>Mapper: Convert domain to DTOs
+    Mapper-->>Service: Response DTOs
+    Service-->>Controller: Wrapped in ApplicationResponseDto
+    
+    %% Response back to user
+    Controller-->>Frontend: HTTP Response (JSON)
+    Frontend->>Frontend: Update state
+    Frontend-->>User: Render updated UI
+    
+    %% Example of a specific feature flow - File export
+    User->>Frontend: Request export (CSV/JSON/PDF)
+    Frontend->>Controller: POST /api/files/export
+    Controller->>Service: FileExportRequest
+    Service->>Service: Select strategy (CsvStrategy/JsonStrategy/PdfStrategy)
+    Service->>Domain: Process data
+    Domain->>Repository: Fetch required data
+    Repository->>DB: SQL queries
+    DB-->>Repository: Raw data
+    Repository-->>Service: Domain objects
+    Service->>Service: Transform to requested format
+    Service-->>Controller: File content
+    Controller-->>Frontend: File download response
+    Frontend-->>User: Browser download prompt
 ```
 ## 5. Cross-Cutting Concerns
 - **Logging** – Slf4j with optional Elasticsearch integration. Logback appenders write JSON files under `backend/logs` which can be shipped to the ELK stack.
