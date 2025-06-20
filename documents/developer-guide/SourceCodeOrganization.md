@@ -34,6 +34,11 @@ backend/
     │   └── resources/            # application.yml, i18n, templates, migrations
     └── test/java                # Unit tests mirroring main packages
 ```
+key Backend concepts
+* **Clean Architecture**: Domain-centric design with clear boundaries between layers
+* **Feature-based Organization**: Each feature has its own sub-package with matching service, repository, and controller classes
+* **Dependency Injection**: Relies on Spring Beans for inversion of control
+* **Domain-Driven Design**: Rich domain model with business logic encapsulation
 
 ### Frontend
 
@@ -52,6 +57,11 @@ frontend/
 ├── vite.config.ts
 └── package.json
 ```
+Frontend Architecture
+* **Component-Based Design**: Functional React components with hooks
+* **Feature-First Organization**: Code organized by domain features
+* **TypeScript**: Strong typing for improved maintainability
+* **React Query**: For API data fetching and client-side caching
 
 ### Documentation and Utilities
 
