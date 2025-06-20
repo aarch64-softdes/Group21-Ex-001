@@ -1,10 +1,8 @@
 # Architecture Overview
 
-This project follows the principles of **Clean Architecture** with distinct layers separating framework concerns from domain logic. The goal is to ensure that business rules remain independent of the surrounding infrastructure while still leveraging Spring Boot and React for rapid development.
-Dependency injection in the backend is provided by Spring's Bean container. Services and repositories are registered as beans and injected via constructors.
-
-
-
+* This project follows the principles of **Clean Architecture** with distinct layers separating framework concerns from domain logic. 
+* The goal is to ensure that business rules remain independent of the surrounding infrastructure while still leveraging Spring Boot and React for rapid development.
+* Dependency injection in the backend is provided by Spring's Bean container. Services and repositories are registered as beans and injected via constructors.
 
 ```mermaid
 graph TD
@@ -24,53 +22,108 @@ graph TD
     repo --> db
 ```
 
-## Layer Responsibilities
 
-### Presentation
+## 1. System Components
+
+### 1.1 Frontend (React + TypeScript)
+- Built with Vite and React to provide a fast, interactive UI.
+- Organized by feature modules under `src/features`, co-locating components, styles, and tests.
+- Communicates with backend services via REST APIs.
+
+### 1.2 Backend (Spring Boot + Java)
+- Monolithic Spring Boot application exposing RESTful endpoints under `/api`.
+- Layered into `controller`, `service`, `repository`, `domain`, and `dto` packages.
+- Handles authentication, business logic, and data validation.
+
+### 1.3 Persistence (Relational Database)
+- Uses a PostgreSQL (or configurable) database for core data storage.
+- Schema defined in `database_creation.sql` and managed via Flyway or Liquibase migrations.
+- Entities mapped with JPA/Hibernate.
+
+### 1.4 Logging & Search
+- Application logs output in JSON format to standard streams.
+- Elastic Stack (Elasticsearch + Kibana) for centralized log aggregation and search, configured via Docker Compose.
+
+### 1.5 CI/CD (Jenkins)
+- Jenkins pipeline defined in `Jenkinsfile` automates build, test, and deployment steps.
+- Builds Docker images for backend and deploys to staging/production environments.
+
+## 2. Development & Deployment Flow
+
+### 2.1 Local Development
+- Run `docker-compose.yml` in `/backend` to spin up PostgreSQL and Elasticsearch services.
+- Launch backend via `./mvnw spring-boot:run` and frontend via `npm run dev`.
+- Hot reload enabled for rapid feedback.
+
+### 2.2 Production Deployment
+- Backend and frontend applications are packaged into Docker images.
+- Images pushed to container registry and deployed via orchestration platform (e.g., Kubernetes).
+- Environment-specific configurations loaded from external `application.yml` profiles.
+
+## 3. Layer Responsibilities
+
+### 3.1 Presentation
 - Package `com.tkpm.sms.presentation`.
 - Exposes REST endpoints under `/api` using Spring MVC.
 - Handles global exception translation to JSON responses.
 - Interceptors such as `ContentLanguageInterceptor` set the locale per request.
-
 - Endpoints are currently open with no authentication or authorization.
-### Application
+
+### 3.2 Application
 - Package `com.tkpm.sms.application`.
 - Coordinates use cases by orchestrating domain services and repositories.
 - Maps request DTOs to domain objects using MapStruct mappers.
 - Executes use cases within transactional boundaries.
 - Contains validators and transaction boundaries.
 
-### Domain
+### 3.3 Domain
 - Package `com.tkpm.sms.domain`.
 - Contains the core entities (e.g., `Student`, `Course`) and value objects.
 - Defines repository interfaces and domain services containing business rules.
 - Domain objects are persistence-agnostic and do not depend on Spring.
 
-### Infrastructure
+### 3.4 Infrastructure
 - Package `com.tkpm.sms.infrastructure`.
 - Provides configuration, persistence adapters, logging and interceptors.
 - Repository implementations use Spring Data JPA to interact with PostgreSQL.
 - Additional modules handle caching, message translation and integration with Elasticsearch.
 
-### Frontend
+### 3.5 Frontend
 - The React application under `frontend/` communicates with the backend using the REST API.
 - React components handle form validation, routing and internationalization using i18n files.
 
-## Data Flow
-1. **Request** – A browser sends an HTTP request to the React frontend.
-2. **API Call** – React issues a REST call to the backend controller.
-3. **Application Logic** – Controllers convert the input to DTOs and delegate to services.
-4. **Domain Logic** – Services perform validations, execute domain rules and persist aggregates via repositories.
-5. **Persistence** – Repository implementations interact with PostgreSQL using JPA.
-6. **Response** – Results are mapped back to DTOs, returned through controllers and delivered to the frontend.
+## Detailed Data Flow
 
-## Cross-Cutting Concerns
+### 3.1 User Authentication Flow
+```mermaid
+sequenceDiagram
+    User->>Frontend: Login request (username & password)
+    Frontend->>AuthController: POST /api/auth/login
+    AuthController->>AuthService: validateCredentials()
+    AuthService->>UserRepository: findByUsername()
+    UserRepository-->>AuthService: User entity
+    AuthService-->>AuthController: JWT Token
+    AuthController-->>Frontend: { token }
+```
+
+### 3.2 Data Retrieval Flow
+```mermaid
+sequenceDiagram
+    User->>Frontend: Navigate to Dashboard
+    Frontend->>BackendAPI: GET /api/users/{id}/dashboard
+    BackendAPI->>DashboardService: fetchDashboardData(userId)
+    DashboardService->>RepositoryLayer: execute queries
+    RepositoryLayer-->>DashboardService: raw data
+    DashboardService-->>BackendAPI: DashboardDTO
+    BackendAPI-->>Frontend: JSON payload
+```
+## 5. Cross-Cutting Concerns
 - **Logging** – Slf4j with optional Elasticsearch integration. Logback appenders write JSON files under `backend/logs` which can be shipped to the ELK stack.
 - **Localization** – `TranslatorService` resolves messages from i18n resource bundles. The `ContentLanguageInterceptor` reads the `Content-Language` header and stores the locale in a `ThreadLocal` for the duration of the request.
 - **Error Handling** – A global `@ControllerAdvice` converts exceptions to `ApplicationResponseDto` objects for consistent JSON responses.
 
 - **Caching** – Frequently used lookups such as faculties or programs are cached with Spring's `@Cacheable` abstraction backed by Caffeine. Cache keys include the current locale when the data contains translations.
-## Build and Testing
+## 6. Build and Testing
 - Maven builds the backend; Node and Vite build the frontend.
 - Unit tests reside under `backend/src/test/java` and use JUnit 5.
 - Frontend tests can be added with Jest.

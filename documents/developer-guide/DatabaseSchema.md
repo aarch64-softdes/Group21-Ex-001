@@ -1,8 +1,38 @@
 # Database Schema
 
-The entire database structure is defined in [database_creation.sql](../../database_creation.sql). This script creates all tables, constraints and seed data used by the application.
+## 1. Introduction
+* This guide describes the database schema for the Student Management API. It covers the initial schema, migration strategy, table structures, relationships, constraints, naming conventions, and instructions for extending or modifying the schema.
 
-## Tables and Columns
+* The entire database structure is defined in [database_creation.sql](../../database_creation.sql). This script creates all tables, constraints and seed data used by the application.
+
+## 2. Migration Setup
+- **Location:** [`database_creation.sql`](../../database_creation.sql) defines the baseline schema.
+- **Tool:** Spring Boot integrates with Flyway out of the box to run migrations on startup.
+- **Next Migrations:** Create files named `V<version>__<description>.sql` in the same folder. Flyway will apply them in numeric order.
+
+## 3. Schema Overview
+The core entities and supporting tables are:
+
+| Table                    | Description                                      |
+|--------------------------|--------------------------------------------------|
+| `students`               | Central student profile                          |
+| `faculties`              | Academic faculties                               |
+| `addresses`              | Student address details                          |
+| `courses`                | Course offerings per term                        |
+| `enrollments`            | Student-course enrollment records                |
+| `histories`              | Audit trail of student actions                   |
+| `identities`             | Official identity documents                      |
+| `programs`               | Degree programs                                  |
+| `scores`                 | Grade and GPA records                            |
+| `settings`               | Application settings                             |
+| `statuses`               | Student status types                             |
+| `status_transitions`     | Allowed status changes                           |
+| `subjects`               | Academic subjects                                |
+| `subject_prerequisites`  | Subject prerequisite mapping                     |
+| `text_contents`          | Localizable text containers                      |
+| `translations`           | Language-specific translations for texts         |
+
+## 4. Tables Definitions
 
 ### addresses
 Stores permanent, temporary and mailing addresses.
