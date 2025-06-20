@@ -179,10 +179,10 @@ sequenceDiagram
 
 This layered approach keeps the domain model isolated and allows the system to evolve without coupling business rules to specific technologies.
 
-## Deployment Environments
+## 7. Deployment Environments
 Each layer can be deployed separately if required. The backend produces a runnable Spring Boot JAR while the frontend compiles to static assets served by a web server or CDN. CI pipelines run linting and tests before packaging artifacts.
 
-## Modularization Strategy
+## 8. Modularization Strategy
 Submodules within `backend/` break down features such as student management, enrollment, and notifications. Shared contracts and utilities reside in `backend/common`. This modular approach keeps features isolated and easy to maintain.
 
 ### Core Modules
@@ -210,7 +210,7 @@ graph LR
     C ---|uses| E
 ```
 
-## Example Request Flow
+## 9. Example Request Flow
 ```mermaid
 sequenceDiagram
     participant B as Browser
@@ -233,11 +233,11 @@ sequenceDiagram
 
 These additional diagrams and explanations should make the high-level design easier to understand.
 
-## Configuration and Environment Separation
+## 10. Configuration and Environment Separation
 Spring profiles allow different configuration for development and production. Properties under `src/main/resources/application-dev.yml` are loaded when `spring.profiles.active=dev`. Deployment pipelines supply `application-prod.yml` which connects to managed services such as PostgreSQL and Elasticsearch.
 
 Settings stored in the database override values defined in YAML. The `SettingService` checks the database first and falls back to configuration files if a record is missing.
 
-## Internationalization Workflow
+## 11. Internationalization Workflow
 Text displayed in the UI is stored in the `text_contents` and `translations` tables. When a translation for the current locale is missing, the application falls back to the default `is_original` text. Developers can add new languages by seeding translations and including message bundles in `src/main/resources/i18n`.
 

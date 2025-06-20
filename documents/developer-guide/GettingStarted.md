@@ -10,7 +10,7 @@ Before you begin, ensure you have the following installed:
 - **PostgreSQL**: 12.0+ (optional if using Docker)
 - **Docker & Docker Compose**: Latest stable version (recommended)
 
-## Setting Up Your Development Environment
+## 2. Setting Up Your Development Environment
 
 ### Step 1: Clone the Repository
 
@@ -93,7 +93,7 @@ The API server will start on port 8080 (http://localhost:8080).
    ```
 The React development server will start on port 5173 (http://localhost:5173).
 
-## Development Workflow
+## 3. Development Workflow
 
 ### Backend Development
 
@@ -142,7 +142,7 @@ The React development server will start on port 5173 (http://localhost:5173).
    npm run build
    ```
 
-## Troubleshooting
+## 4. Troubleshooting
 
 ### Common Issues
 

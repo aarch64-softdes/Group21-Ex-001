@@ -207,7 +207,7 @@ Localized text belonging to a `text_content` record.
 
 Foreign key constraints ensure referential integrity between these tables. Unique constraints exist on fields such as `students.student_id`, `students.email` and `courses.code` to prevent duplicates.
 
-## Entity Relationships
+## 5. Entity Relationships
 
 ```mermaid
 erDiagram
@@ -223,11 +223,11 @@ erDiagram
     text_contents ||--o{ translations : i18n
 ```
 
-## Seed Data
+## 6. Seed Data
 
 `database_creation.sql` includes sample faculties, programs, students and subjects. These allow the system to start with realistic data for development or demos.
 
-## Indexing and Performance
+## 7. Indexing and Performance
 
 Several indexes are created automatically by PostgreSQL to enforce unique constraints. Additional indexes can be added for frequently searched columns:
 
