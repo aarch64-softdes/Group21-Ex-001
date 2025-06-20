@@ -4,6 +4,13 @@
 
 Read in [this file](./dirtree.txt).
 
+## Developer Guide
+
+The backend is built with Spring Boot and relies on Spring Beans for dependency injection.
+Documentation for backend contributors is available under
+[`documents/developer-guide`](documents/developer-guide).
+Start with `ArchitectureOverview.md` for a summary of the system design and follow the other documents for specific topics such as testing or settings management.
+
 ## Dependencies
 
 - Node.js v20.0.0
